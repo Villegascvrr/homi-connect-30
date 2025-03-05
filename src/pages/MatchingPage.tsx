@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -45,7 +44,7 @@ const MatchingPage = () => {
       age: 22,
       location: 'Valencia',
       bio: 'Estudiante de Medicina. Me encanta cocinar y compartir momentos con amigos. Busco compañeros con intereses similares.',
-      imgUrl: 'https://images.unsplash.com/photo-1591123120675-6f7f1aae0e5b',
+      imgUrl: '/lovable-uploads/d0b1cafc-ad3b-4ed0-9e25-ba4b82fda9f5.png',
       tags: [
         { id: 6, name: 'Sociable' },
         { id: 7, name: 'Cocinera' },
@@ -77,7 +76,6 @@ const MatchingPage = () => {
     // Implement navigation to profile view
   };
 
-  // Reset matching to start over
   const resetMatching = () => {
     setCurrentUserIndex(0);
   };
@@ -110,7 +108,6 @@ const MatchingPage = () => {
               </div>
             </div>
             
-            {/* Filters panel */}
             {showFilters && (
               <div className="glass-card p-6 mb-8 animate-slide-up">
                 <h3 className="font-semibold mb-4">Filtros de búsqueda</h3>
@@ -155,7 +152,6 @@ const MatchingPage = () => {
               </div>
             )}
             
-            {/* Matching card */}
             <div className="flex justify-center items-center my-8">
               {currentUser ? (
                 <MatchCard 
