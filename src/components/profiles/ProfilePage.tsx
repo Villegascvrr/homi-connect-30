@@ -18,8 +18,12 @@ const ProfilePage = () => {
     university: 'Universidad Complutense de Madrid',
     occupation: 'Estudiante de Arquitectura',
     bio: 'Soy una estudiante apasionada por el diseño y la arquitectura. Me gusta leer, visitar museos y disfrutar de noches tranquilas en casa. Soy ordenada y respetuosa con los espacios compartidos. Busco un piso cerca de la universidad con personas afines a mi estilo de vida.',
-    imgUrl: '/placeholder.svg',
-    galleryImgs: ['/placeholder.svg', '/placeholder.svg', '/placeholder.svg'],
+    imgUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158',
+    galleryImgs: [
+      'https://images.unsplash.com/photo-1461749280684-dccba630e2f6',
+      'https://images.unsplash.com/photo-1518770660439-4636190af475',
+      'https://images.unsplash.com/photo-1649972904349-6e44c42644a7'
+    ],
     tags: [
       { id: 1, name: 'Ordenada' },
       { id: 2, name: 'Tranquila' },
