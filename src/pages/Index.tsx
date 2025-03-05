@@ -45,7 +45,7 @@ const Index = () => {
       age: 22,
       location: 'Valencia',
       bio: 'Estudiante de Medicina. Me encanta cocinar y compartir momentos con amigos. Busco compañeros con intereses similares.',
-      imgUrl: 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d',
+      imgUrl: 'https://images.unsplash.com/photo-1591123120675-6f7f1aae0e5b',
       tags: [
         { id: 6, name: 'Sociable' },
         { id: 7, name: 'Cocinera' },
