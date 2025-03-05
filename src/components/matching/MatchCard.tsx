@@ -60,12 +60,6 @@ const MatchCard = ({
           src={imgUrl || "/placeholder.svg"}
           alt={name}
           className="w-full h-full object-cover"
-          loading="lazy"
-          onError={(e) => {
-            const target = e.target as HTMLImageElement;
-            console.log('Image failed to load:', target.src);
-            target.src = "/placeholder.svg";
-          }}
         />
         <div 
           className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-6 text-white"
