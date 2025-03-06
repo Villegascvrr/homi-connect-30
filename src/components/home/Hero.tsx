@@ -60,12 +60,6 @@ const Hero = () => {
             </div>
           </div>
         </div>
-
-        <div className="mt-16 max-w-5xl mx-auto glass-card p-8 md:p-10 border border-homi-purple/10">
-          <div className="aspect-video rounded-xl overflow-hidden bg-homi-ultraLightPurple flex items-center justify-center">
-            <div className="text-homi-purple font-medium">Imagen o video de demostración</div>
-          </div>
-        </div>
       </div>
     </section>
   );
