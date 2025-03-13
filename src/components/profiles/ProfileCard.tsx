@@ -47,7 +47,7 @@ const ProfileCard = ({
     <div className="glass-card overflow-hidden transition-all duration-300 hover:shadow-hover">
       <div className="relative aspect-[3/4] overflow-hidden bg-gray-100">
         <img
-          src={imgUrl || "/placeholder.svg"}
+          src="https://images.unsplash.com/photo-1649972904349-6e44c42644a7"
           alt={name}
           className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
         />
