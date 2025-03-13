@@ -57,7 +57,7 @@ const MatchCard = ({
     >
       <div className="relative aspect-[3/4] overflow-hidden bg-gray-100">
         <img
-          src={imgUrl || "/placeholder.svg"}
+          src={imgUrl}
           alt={name}
           className="w-full h-full object-cover"
         />

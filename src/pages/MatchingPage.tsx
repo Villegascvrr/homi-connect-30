@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -17,7 +16,7 @@ const MatchingPage = () => {
       age: 23,
       location: 'Madrid',
       bio: 'Estudiante de Arquitectura. Me gusta leer, el arte y las noches tranquilas. Busco piso cerca de la universidad.',
-      imgUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158',
+      imgUrl: 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7',
       tags: [
         { id: 1, name: 'Ordenada' },
         { id: 2, name: 'Tranquila' },
@@ -31,7 +30,7 @@ const MatchingPage = () => {
       age: 25,
       location: 'Barcelona',
       bio: 'Desarrollador web, amante de la tecnología y los videojuegos. Busco un ambiente relajado donde pueda trabajar y descansar.',
-      imgUrl: 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b',
+      imgUrl: 'https://images.unsplash.com/photo-1581092795360-fd1ca04f0952',
       tags: [
         { id: 1, name: 'Tecnología' },
         { id: 4, name: 'Deportista' },
@@ -45,7 +44,7 @@ const MatchingPage = () => {
       age: 22,
       location: 'Valencia',
       bio: 'Estudiante de Medicina. Me encanta cocinar y compartir momentos con amigos. Busco compañeros con intereses similares.',
-      imgUrl: 'https://images.unsplash.com/photo-1591123120675-6f7f1aae0e5b',
+      imgUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158',
       tags: [
         { id: 6, name: 'Sociable' },
         { id: 7, name: 'Cocinera' },
