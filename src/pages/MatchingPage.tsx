@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -44,7 +45,7 @@ const MatchingPage = () => {
       age: 22,
       location: 'Valencia',
       bio: 'Estudiante de Medicina. Me encanta cocinar y compartir momentos con amigos. Busco compañeros con intereses similares.',
-      imgUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158',
+      imgUrl: 'https://images.unsplash.com/photo-1472396961693-142e6e269027',
       tags: [
         { id: 6, name: 'Sociable' },
         { id: 7, name: 'Cocinera' },
