@@ -1,8 +1,7 @@
-
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Home, Users, MessageSquare, User, LogIn, HelpCircle } from 'lucide-react';
+import { Menu, X, Home, Users, MessageSquare, User, LogIn } from 'lucide-react';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -22,7 +21,6 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close mobile menu when changing pages
   useEffect(() => {
     setIsMenuOpen(false);
   }, [location.pathname]);
@@ -40,12 +38,10 @@ const Navbar = () => {
       }`}
     >
       <div className="container mx-auto px-4 flex items-center justify-between">
-        {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
           <span className="text-2xl font-bold text-homi-purple">homi</span>
         </Link>
 
-        {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-8">
           <Link 
             to="/" 
@@ -66,16 +62,6 @@ const Navbar = () => {
             }`}
           >
             Encuentra Compañeros
-          </Link>
-          <Link 
-            to="/how-it-works" 
-            className={`transition-colors ${
-              isActive('/how-it-works') 
-                ? 'text-homi-purple font-medium' 
-                : 'text-foreground/80 hover:text-homi-purple'
-            }`}
-          >
-            Cómo Funciona
           </Link>
           <Link 
             to="/chat" 
@@ -99,7 +85,6 @@ const Navbar = () => {
           </Link>
         </nav>
 
-        {/* CTA Buttons */}
         <div className="hidden md:flex items-center gap-4">
           <Button asChild variant="outline" className="rounded-full">
             <Link to="/signin">Iniciar Sesión</Link>
@@ -109,7 +94,6 @@ const Navbar = () => {
           </Button>
         </div>
 
-        {/* Mobile Menu Button */}
         <button
           className="md:hidden text-foreground p-2"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -118,7 +102,6 @@ const Navbar = () => {
         </button>
       </div>
 
-      {/* Mobile Menu */}
       {isMenuOpen && (
         <div className="md:hidden bg-background border-t border-border animate-fade-in">
           <div className="container mx-auto px-4 py-4 flex flex-col">
@@ -143,17 +126,6 @@ const Navbar = () => {
             >
               <Users size={20} />
               <span>Encuentra Compañeros</span>
-            </Link>
-            <Link 
-              to="/how-it-works" 
-              className={`flex items-center gap-2 py-3 transition-colors ${
-                isActive('/how-it-works') 
-                  ? 'text-homi-purple font-medium' 
-                  : 'text-foreground/80 hover:text-homi-purple'
-              }`}
-            >
-              <HelpCircle size={20} />
-              <span>Cómo Funciona</span>
             </Link>
             <Link 
               to="/chat" 
