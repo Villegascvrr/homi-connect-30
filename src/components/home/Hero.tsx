@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Check } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Hero = () => {
   const [email, setEmail] = useState('');
@@ -37,10 +38,24 @@ const Hero = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
-            <Button size="lg" className="rounded-full bg-homi-purple hover:bg-homi-purple/90 px-8 w-full sm:w-auto">
-              Comenzar Ahora
+            <Button 
+              size="lg" 
+              className="rounded-full bg-homi-purple hover:bg-homi-purple/90 px-8 w-full sm:w-auto"
+              asChild
+            >
+              <Link to="/matching">Comenzar Ahora</Link>
             </Button>
-            <Button size="lg" variant="outline" className="rounded-full w-full sm:w-auto">
+            <Button 
+              size="lg" 
+              variant="outline" 
+              className="rounded-full w-full sm:w-auto"
+              onClick={() => {
+                const howItWorksSection = document.getElementById('how-it-works');
+                if (howItWorksSection) {
+                  howItWorksSection.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
+            >
               Cómo Funciona
             </Button>
           </div>

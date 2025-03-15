@@ -36,7 +36,7 @@ const MatchingPage = () => {
   const [showPreferences, setShowPreferences] = useState(false);
   const [budgetRange, setBudgetRange] = useState([300, 800]);
   
-  // Sample users data
+  // Sample users data with additional profiles
   const [users, setUsers] = useState<UserProfile[]>([
     {
       id: '1',
@@ -115,6 +115,110 @@ const MatchingPage = () => {
         max: 550
       },
       moveInDate: 'Septiembre 2023'
+    },
+    {
+      id: '4',
+      name: 'Miguel',
+      age: 26,
+      location: 'Madrid',
+      bio: 'Ingeniero y músico aficionado. Busco un ambiente tranquilo entre semana pero no me importa algo de movimiento los fines de semana.',
+      imgUrl: 'https://images.unsplash.com/photo-1545167622-3a6ac756afa4',
+      tags: [
+        { id: 8, name: 'Músico' },
+        { id: 9, name: 'Profesional' },
+        { id: 10, name: 'Organizado' }
+      ],
+      compatibility: 83,
+      lifestyle: {
+        cleanliness: 'Alta',
+        noise: 'Medio',
+        schedule: 'Regular',
+        guests: 'Fines de semana',
+        smoking: 'Exterior'
+      },
+      budget: {
+        min: 500,
+        max: 700
+      },
+      moveInDate: 'Noviembre 2023'
+    },
+    {
+      id: '5',
+      name: 'Ana',
+      age: 24,
+      location: 'Sevilla',
+      bio: 'Estudiante de postgrado en Bellas Artes. Creativa, tranquila y amante de la naturaleza. Busco compartir piso con personas respetuosas.',
+      imgUrl: 'https://images.unsplash.com/photo-1601412436009-d964bd02edbc',
+      tags: [
+        { id: 11, name: 'Artista' },
+        { id: 12, name: 'Ecológica' },
+        { id: 13, name: 'Lectora' }
+      ],
+      compatibility: 78,
+      lifestyle: {
+        cleanliness: 'Media',
+        noise: 'Bajo',
+        schedule: 'Flexible',
+        guests: 'Raramente',
+        smoking: 'No'
+      },
+      budget: {
+        min: 350,
+        max: 550
+      },
+      moveInDate: 'Octubre 2023'
+    },
+    {
+      id: '6',
+      name: 'Javier',
+      age: 27,
+      location: 'Barcelona',
+      bio: 'Emprendedor digital y aficionado al deporte. Busco compañeros activos y con mentalidad positiva cerca del centro.',
+      imgUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d',
+      tags: [
+        { id: 14, name: 'Emprendedor' },
+        { id: 15, name: 'Deportista' },
+        { id: 16, name: 'Madrugador' }
+      ],
+      compatibility: 90,
+      lifestyle: {
+        cleanliness: 'Alta',
+        noise: 'Medio',
+        schedule: 'Madrugador',
+        guests: 'Ocasionalmente',
+        smoking: 'No'
+      },
+      budget: {
+        min: 600,
+        max: 900
+      },
+      moveInDate: 'Septiembre 2023'
+    },
+    {
+      id: '7',
+      name: 'Lucía',
+      age: 23,
+      location: 'Valencia',
+      bio: 'Estudiante de último año de Psicología. Sociable pero respetuosa con los espacios personales. Me encantan los animales.',
+      imgUrl: 'https://images.unsplash.com/photo-1580489944761-15a19d654956',
+      tags: [
+        { id: 17, name: 'Amante de mascotas' },
+        { id: 18, name: 'Estudiante' },
+        { id: 19, name: 'Sociable' }
+      ],
+      compatibility: 85,
+      lifestyle: {
+        cleanliness: 'Media',
+        noise: 'Medio',
+        schedule: 'Nocturna',
+        guests: 'Ocasionalmente',
+        smoking: 'Exterior'
+      },
+      budget: {
+        min: 400,
+        max: 600
+      },
+      moveInDate: 'Octubre 2023'
     }
   ]);
 

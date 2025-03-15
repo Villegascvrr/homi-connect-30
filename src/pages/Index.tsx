@@ -1,4 +1,3 @@
-
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
@@ -83,7 +82,9 @@ const Index = () => {
       <main className="flex-grow">
         <Hero />
         <Features />
-        <HowItWorks />
+        <div id="how-it-works">
+          <HowItWorks />
+        </div>
         
         {/* Featured Profiles Section */}
         <section className="py-20">

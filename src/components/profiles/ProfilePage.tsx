@@ -1,7 +1,7 @@
+
 import { useState } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import CompatibilityBadge from '@/components/ui/CompatibilityBadge';
 import { Button } from '@/components/ui/button';
 import { MessageSquare, Share, Heart, Home, Briefcase, GraduationCap, UserCheck } from 'lucide-react';
 
@@ -30,7 +30,6 @@ const ProfilePage = () => {
       { id: 4, name: 'Lectora' },
       { id: 5, name: 'Madrugadora' }
     ],
-    compatibility: 87,
     verified: true,
     preferences: {
       budget: '€400-€600',
@@ -75,9 +74,6 @@ const ProfilePage = () => {
                   alt={profile.name}
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute bottom-4 right-4">
-                  <CompatibilityBadge percentage={profile.compatibility} size="lg" />
-                </div>
               </div>
               
               <div className="relative px-6 py-8">
