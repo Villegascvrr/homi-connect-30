@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import CompatibilityBadge from '@/components/ui/CompatibilityBadge';
 import { Heart, X, MessageSquare, User, DollarSign, Calendar, Home, ShieldCheck, Clock } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface Tag {
   id: number;
@@ -32,6 +33,7 @@ interface MatchCardProps {
   onLike: (id: string) => void;
   onPass: (id: string) => void;
   onView: (id: string) => void;
+  compact?: boolean;
 }
 
 const MatchCard = ({
@@ -48,7 +50,8 @@ const MatchCard = ({
   moveInDate,
   onLike,
   onPass,
-  onView
+  onView,
+  compact = false
 }: MatchCardProps) => {
   const [swiping, setSwiping] = useState<'left' | 'right' | null>(null);
   const [showDetails, setShowDetails] = useState(false);
@@ -61,9 +64,93 @@ const MatchCard = ({
       } else {
         onPass(id);
       }
+      setSwiping(null);
     }, 300);
   };
 
+  // If compact mode is enabled, show a simplified card design
+  if (compact) {
+    return (
+      <div 
+        className="relative glass-card overflow-hidden transition-all duration-300 hover:shadow-md cursor-pointer"
+        onClick={() => onView(id)}
+      >
+        <div className="relative aspect-[3/4] overflow-hidden bg-gray-100">
+          <img
+            src={imgUrl}
+            alt={name}
+            className="w-full h-full object-cover"
+          />
+          <div 
+            className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4 text-white"
+          >
+            <h3 className="text-lg font-bold">{name}, {age}</h3>
+            <p className="text-xs opacity-90 flex items-center gap-1">
+              <Home size={12} />
+              {location}
+            </p>
+          </div>
+          <div className="absolute top-2 right-2">
+            <CompatibilityBadge percentage={compatibility} size="sm" />
+          </div>
+        </div>
+        
+        <div className="p-4">
+          <p className="text-sm mb-3 line-clamp-2">{bio}</p>
+          
+          <div className="flex flex-wrap gap-1 mb-3">
+            {tags.slice(0, 2).map((tag) => (
+              <span 
+                key={tag.id} 
+                className="px-2 py-0.5 text-xs rounded-full bg-homi-ultraLightPurple text-homi-purple"
+              >
+                {tag.name}
+              </span>
+            ))}
+            {tags.length > 2 && (
+              <span className="px-2 py-0.5 text-xs rounded-full bg-muted text-muted-foreground">
+                +{tags.length - 2}
+              </span>
+            )}
+          </div>
+          
+          <div className="flex items-end justify-between">
+            <div className="flex gap-1 text-xs text-muted-foreground">
+              {budget && (
+                <span className="flex items-center gap-0.5">
+                  <DollarSign size={10} />
+                  {budget.min}-{budget.max}€
+                </span>
+              )}
+            </div>
+            
+            <div className="flex gap-1">
+              <button 
+                className="w-8 h-8 rounded-full bg-white border border-red-500 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onPass(id);
+                }}
+              >
+                <X size={15} />
+              </button>
+              <button 
+                className="w-8 h-8 rounded-full bg-white border border-homi-purple text-homi-purple flex items-center justify-center hover:bg-homi-purple hover:text-white"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onLike(id);
+                }}
+              >
+                <Heart size={15} />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Original full-size card design
   return (
     <div 
       className={`relative max-w-md w-full mx-auto glass-card overflow-hidden transition-all duration-300 shadow-lg ${

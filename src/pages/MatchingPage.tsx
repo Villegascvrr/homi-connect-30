@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -6,6 +5,7 @@ import MatchCard from '@/components/matching/MatchCard';
 import { Button } from '@/components/ui/button';
 import { Filter, Users, Sliders, MapPin, Calendar, DollarSign } from 'lucide-react';
 import { Slider } from '@/components/ui/slider';
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 
 // User profile interface
 interface UserProfile {
@@ -222,31 +222,37 @@ const MatchingPage = () => {
     }
   ]);
 
-  const [currentUserIndex, setCurrentUserIndex] = useState(0);
-  const currentUser = users[currentUserIndex];
+  const [currentPage, setCurrentPage] = useState(1);
+  const profilesPerPage = 6;
+  
+  const indexOfLastProfile = currentPage * profilesPerPage;
+  const indexOfFirstProfile = indexOfLastProfile - profilesPerPage;
+  const currentProfiles = users.slice(indexOfFirstProfile, indexOfLastProfile);
+  const totalPages = Math.ceil(users.length / profilesPerPage);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
 
   const handleLike = (id: string) => {
     console.log('Liked:', id);
-    if (currentUserIndex < users.length - 1) {
-      setCurrentUserIndex(currentUserIndex + 1);
-    }
   };
 
   const handlePass = (id: string) => {
     console.log('Passed:', id);
-    if (currentUserIndex < users.length - 1) {
-      setCurrentUserIndex(currentUserIndex + 1);
-    }
   };
 
   const handleViewProfile = (id: string) => {
     console.log('View profile:', id);
     window.location.href = `/profile`;
-  };
-
-  // Reset matching to start over
-  const resetMatching = () => {
-    setCurrentUserIndex(0);
   };
 
   // User preference settings
@@ -269,7 +275,7 @@ const MatchingPage = () => {
       
       <main className="flex-grow pt-20 pb-12">
         <div className="container mx-auto px-4">
-          <div className="max-w-5xl mx-auto">
+          <div className="max-w-7xl mx-auto">
             <div className="flex justify-between items-center mb-8">
               <h1 className="text-2xl md:text-3xl font-bold">Encuentra compañeros</h1>
               <div className="flex gap-3">
@@ -496,32 +502,68 @@ const MatchingPage = () => {
               </div>
             )}
             
-            {/* Matching card */}
-            <div className="flex justify-center items-center my-8">
-              {currentUser ? (
-                <MatchCard 
-                  {...currentUser}
-                  onLike={handleLike}
-                  onPass={handlePass}
-                  onView={handleViewProfile}
-                />
+            {/* Matching profiles grid */}
+            <div className="mb-8">
+              <h2 className="text-xl font-medium mb-6">Perfiles compatibles con tus preferencias</h2>
+              
+              {currentProfiles.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {currentProfiles.map((profile) => (
+                    <MatchCard
+                      key={profile.id}
+                      {...profile}
+                      onLike={handleLike}
+                      onPass={handlePass}
+                      onView={handleViewProfile}
+                      compact={true}
+                    />
+                  ))}
+                </div>
               ) : (
                 <div className="glass-card p-8 text-center">
-                  <h3 className="text-xl font-semibold mb-4">No hay más perfiles por mostrar</h3>
-                  <p className="text-muted-foreground mb-6">Has revisado todos los perfiles disponibles con tus filtros actuales.</p>
-                  <Button 
-                    className="rounded-full bg-homi-purple hover:bg-homi-purple/90"
-                    onClick={resetMatching}
-                  >
-                    Volver a empezar
-                  </Button>
+                  <h3 className="text-xl font-semibold mb-4">No hay perfiles que coincidan</h3>
+                  <p className="text-muted-foreground mb-6">Intenta modificar tus filtros para ver más resultados.</p>
+                </div>
+              )}
+              
+              {/* Pagination */}
+              {users.length > profilesPerPage && (
+                <div className="mt-8">
+                  <Pagination>
+                    <PaginationContent>
+                      <PaginationItem>
+                        <PaginationPrevious 
+                          className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
+                          onClick={handlePrevPage} 
+                        />
+                      </PaginationItem>
+                      
+                      {Array.from({ length: totalPages }).map((_, index) => (
+                        <PaginationItem key={index}>
+                          <PaginationLink 
+                            isActive={currentPage === index + 1}
+                            onClick={() => setCurrentPage(index + 1)}
+                          >
+                            {index + 1}
+                          </PaginationLink>
+                        </PaginationItem>
+                      ))}
+                      
+                      <PaginationItem>
+                        <PaginationNext 
+                          className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
+                          onClick={handleNextPage} 
+                        />
+                      </PaginationItem>
+                    </PaginationContent>
+                  </Pagination>
                 </div>
               )}
             </div>
             
             <div className="text-center mt-12">
               <p className="text-sm text-muted-foreground">
-                Pulsa el botón del corazón para indicar interés o el botón X para pasar al siguiente perfil.
+                Haz clic en el corazón para indicar interés, en el botón X para pasar o en el perfil para ver más detalles.
               </p>
             </div>
           </div>
