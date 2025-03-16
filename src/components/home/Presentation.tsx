@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -351,7 +350,7 @@ const sections = [
                 {[
                   "Crecimiento de la demanda de alquiler entre jóvenes.",
                   "Digitalización del sector inmobiliario.",
-                  "Expansión del modelo de "coliving" y plataformas de gestión digital."
+                  "Expansión del modelo de \"coliving\" y plataformas de gestión digital."
                 ].map((trend, i) => (
                   <div key={i} className="flex items-start">
                     <span className="text-green-500 mr-2">✅</span>
