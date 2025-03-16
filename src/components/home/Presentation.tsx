@@ -1,7 +1,9 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import { 
   BrainCircuit, 
   Users, 
@@ -167,13 +169,13 @@ const Presentation = () => {
                 </div>
                 <h2 className="text-3xl md:text-4xl font-bold mb-4">Nuestra Solución</h2>
                 <p className="text-xl text-white/80 max-w-3xl">
-                  Homi es la plataforma todo-en-uno para estudiantes y jóvenes que simplifica el proceso de alquiler y convivencia.
+                  Homi: la plataforma que simplifica el alquiler para estudiantes y jóvenes.
                 </p>
               </div>
               
               <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8">
                 <p className="text-white text-lg mb-6">
-                  Homi digitaliza y optimiza completamente el proceso de alquiler, eliminando fricciones y simplificando cada etapa mediante tecnología avanzada y automatización.
+                  Homi digitaliza el proceso de alquiler, eliminando fricciones mediante tecnología avanzada.
                 </p>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -184,7 +186,7 @@ const Presentation = () => {
                       </div>
                       <div>
                         <h3 className="text-xl font-semibold text-white mb-2">Matching Inteligente con IA</h3>
-                        <p className="text-white/70">Conecta posibles compañeros de piso compatibles según hábitos, estilo de vida y preferencias.</p>
+                        <p className="text-white/70">Conecta compañeros de piso compatibles según hábitos y estilo de vida.</p>
                       </div>
                     </div>
                   </div>
@@ -196,7 +198,7 @@ const Presentation = () => {
                       </div>
                       <div>
                         <h3 className="text-xl font-semibold text-white mb-2">Gestión Digital Completa</h3>
-                        <p className="text-white/70">Automatiza la firma de contratos, pagos recurrentes y comunicación con propietarios.</p>
+                        <p className="text-white/70">Automatiza contratos, pagos y comunicación con propietarios.</p>
                       </div>
                     </div>
                   </div>
@@ -577,4 +579,68 @@ const sections = [
             
             <CardContent className="p-8 space-y-4">
               <p className="text-base leading-relaxed">
-                Pl
+                Plataforma para estudiantes y jóvenes profesionales que buscan pisos compartidos.
+              </p>
+              <ul className="space-y-2">
+                <li className="flex items-center gap-2">
+                  <CheckCircle className="h-5 w-5 text-green-500" />
+                  <span>Matching inteligente entre compañeros</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle className="h-5 w-5 text-green-500" />
+                  <span>Búsqueda personalizada de propiedades</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle className="h-5 w-5 text-green-500" />
+                  <span>Gestión digital de contratos y pagos</span>
+                </li>
+              </ul>
+            </CardContent>
+          </Card>
+
+          <Card className="border-indigo-200 dark:border-indigo-800/30 overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-100 dark:bg-indigo-900/20 rounded-bl-full z-0"></div>
+            
+            <div className="bg-indigo-600 dark:bg-indigo-800 p-8 text-white relative z-10">
+              <div className="flex items-center mb-3">
+                <div className="bg-white/20 p-3 rounded-full mr-4">
+                  <Building className="h-7 w-7" />
+                </div>
+                <h3 className="text-2xl font-bold">Homiware</h3>
+              </div>
+              <Badge className="bg-white/90 text-indigo-600 hover:bg-white/80 mb-1">Para Propietarios</Badge>
+            </div>
+            
+            <CardContent className="p-8 space-y-4">
+              <p className="text-base leading-relaxed">
+                Software de gestión para propietarios e inmobiliarias enfocado en alquiler a estudiantes.
+              </p>
+              <ul className="space-y-2">
+                <li className="flex items-center gap-2">
+                  <CheckCircle className="h-5 w-5 text-green-500" />
+                  <span>Gestión integral de propiedades</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle className="h-5 w-5 text-green-500" />
+                  <span>Automatización de pagos y contratos</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle className="h-5 w-5 text-green-500" />
+                  <span>Análisis de rendimiento de propiedades</span>
+                </li>
+              </ul>
+            </CardContent>
+          </Card>
+        </div>
+        
+        <div className="text-center mt-10">
+          <Button className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full px-6 py-3">
+            Conoce nuestra visión completa
+          </Button>
+        </div>
+      </div>
+    )
+  }
+];
+
+export default Presentation;
