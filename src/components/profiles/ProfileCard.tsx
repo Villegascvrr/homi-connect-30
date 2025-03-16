@@ -44,7 +44,7 @@ const ProfileCard = ({
   };
 
   return (
-    <div className="glass-card overflow-hidden transition-all duration-300">
+    <div className="glass-card overflow-hidden transition-all duration-300 hover:shadow-hover">
       <div className="relative aspect-[3/4] overflow-hidden bg-gray-100">
         <img
           src={imgUrl}

@@ -120,9 +120,9 @@ export default {
         'purple-gradient': 'linear-gradient(135deg, #6A0DAD 0%, #9B6BFE 100%)',
       },
       boxShadow: {
-        'glass': 'none',
-        'card': 'none',
-        'hover': 'none',
+        'glass': '0 8px 32px rgba(106, 13, 173, 0.08)',
+        'card': '0 4px 20px rgba(0, 0, 0, 0.05)',
+        'hover': '0 10px 40px rgba(106, 13, 173, 0.15)',
       },
     }
   },

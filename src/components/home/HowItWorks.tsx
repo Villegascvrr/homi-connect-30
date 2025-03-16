@@ -1,162 +1,73 @@
-import { BrainCircuit, Home, ShieldCheck, FileText, PackageOpen, Rocket, BarChart3, Globe } from 'lucide-react';
+
+import { UserSearch, Home, Shield, FileCheck, PackageOpen } from 'lucide-react';
 
 const HowItWorks = () => {
-  const steps = [{
-    icon: <BrainCircuit className="w-8 h-8 text-white" />,
-    title: "Matching entre compañeros",
-    description: "IA que conecta compañeros compatibles según intereses y estilo de vida."
-  }, {
-    icon: <Home className="w-8 h-8 text-white" />,
-    title: "Propiedades sugeridas",
-    description: "Sugerencias inteligentes según preferencias grupales."
-  }, {
-    icon: <ShieldCheck className="w-8 h-8 text-white" />,
-    title: "Intermediación segura",
-    description: "Validación de perfiles y mediación con propietarios."
-  }, {
-    icon: <FileText className="w-8 h-8 text-white" />,
-    title: "Contrato digital",
-    description: "Smart Contracts para firmas y pagos automatizados."
-  }, {
-    icon: <PackageOpen className="w-8 h-8 text-white" />,
-    title: "Servicios adicionales",
-    description: "Mudanzas, limpieza, internet y seguros para el hogar."
-  }];
-  
-  const gradients = [
-    "from-purple-600 to-indigo-600",
-    "from-violet-600 to-purple-600",
-    "from-fuchsia-600 to-pink-600",
-    "from-pink-600 to-rose-600",
-    "from-indigo-600 to-blue-600"
-  ];
-
-  const roadmap = [
+  const steps = [
     {
-      phase: "Fase 1: 0-12 meses",
-      title: "Consolidación",
-      icon: <Rocket className="w-6 h-6 text-white" />,
-      color: "from-indigo-500 to-blue-500",
-      goals: [
-        "10,000 usuarios en ciudades clave",
-        "Validación del algoritmo de matching",
-        "Primeras colaboraciones con universidades"
-      ]
+      icon: <UserSearch className="w-8 h-8 text-homi-purple" />,
+      title: "Matching entre compañeros",
+      description: "Conectamos estudiantes y jóvenes profesionales basándonos en sus intereses y estilos de vida para encontrar compañeros ideales."
     },
     {
-      phase: "Fase 2: 12-24 meses",
-      title: "Expansión",
-      icon: <BarChart3 className="w-6 h-6 text-white" />,
-      color: "from-fuchsia-500 to-pink-500",
-      goals: [
-        "50,000 usuarios activos",
-        "Automatización de procesos",
-        "Marketplace de servicios"
-      ]
+      icon: <Home className="w-8 h-8 text-homi-purple" />,
+      title: "Propiedades sugeridas",
+      description: "Buscamos y sugerimos propiedades según las preferencias del grupo, para que encuentren el lugar perfecto para todos."
     },
     {
-      phase: "Fase 3: 24-36 meses",
-      title: "Liderazgo",
-      icon: <Globe className="w-6 h-6 text-white" />,
-      color: "from-emerald-500 to-teal-500",
-      goals: [
-        "Expansión internacional",
-        "Lanzamiento HomiNet y HomiWare",
-        "Integración con blockchain"
-      ]
+      icon: <Shield className="w-8 h-8 text-homi-purple" />,
+      title: "Intermediación segura",
+      description: "Validamos los perfiles y mediamos con propietarios para garantizar seguridad y confianza en todo el proceso."
+    },
+    {
+      icon: <FileCheck className="w-8 h-8 text-homi-purple" />,
+      title: "Contrato digital",
+      description: "Facilitamos la firma de contratos digitales y automatizamos los pagos mensuales para mayor comodidad."
+    },
+    {
+      icon: <PackageOpen className="w-8 h-8 text-homi-purple" />,
+      title: "Servicios adicionales",
+      description: "Ofrecemos acceso a servicios complementarios como mudanzas, limpieza, internet y seguros para el hogar."
     }
   ];
-  
-  return <section className="py-20 bg-gradient-to-b from-homi-ultraLightPurple/20 to-white dark:from-homi-dark/90 dark:to-homi-dark">
+
+  return (
+    <section className="py-20">
       <div className="container mx-auto px-4">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            <span className="bg-gradient-to-r from-homi-purple to-homi-lightPurple bg-clip-text text-transparent">¿Cómo funciona</span> Homi?
+            <span className="homi-gradient-text">¿Cómo funciona</span> Homi?
           </h2>
           <p className="text-muted-foreground text-lg">
-            Un proceso impulsado por IA y Smart Contracts para encontrar compañeros 
-            compatibles y el lugar perfecto para vivir.
+            Un proceso completo para encontrar compañeros compatibles y
+            el lugar perfecto para vivir, todo en una sola plataforma.
           </p>
         </div>
 
         <div className="relative">
+          {/* Connection line for desktop */}
+          <div className="absolute top-24 left-1/2 h-4/5 w-0.5 bg-homi-ultraLightPurple -translate-x-1/2 hidden md:block"></div>
+          
           <div className="grid grid-cols-1 md:grid-cols-5 gap-8 relative">
             {steps.map((step, index) => (
-              <div key={index} className="flex flex-col items-center text-center relative z-10 transform transition-all duration-300 hover:scale-105">
-                <div className={`w-20 h-20 rounded-full bg-gradient-to-br ${gradients[index]} flex items-center justify-center mb-6 shadow-lg hover:shadow-xl transition-all duration-300`}>
+              <div 
+                key={index} 
+                className="flex flex-col items-center text-center relative z-10"
+              >
+                <div className="w-20 h-20 rounded-full glass-card flex items-center justify-center mb-6 shadow-lg border border-homi-purple/10">
                   {step.icon}
                 </div>
-                <span className="absolute top-6 bg-white text-homi-purple text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center -right-1 md:right-auto md:-right-3 shadow-md border border-homi-purple/20">
+                <span className="absolute top-6 bg-purple-gradient text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center -right-1 md:right-auto md:-right-3">
                   {index + 1}
                 </span>
-                <h3 className="text-xl font-semibold mb-3 bg-gradient-to-r from-homi-purple to-homi-lightPurple bg-clip-text text-transparent">{step.title}</h3>
-                <p className="text-muted-foreground bg-white/50 dark:bg-black/20 p-3 rounded-lg shadow-sm">{step.description}</p>
+                <h3 className="text-xl font-semibold mb-3">{step.title}</h3>
+                <p className="text-muted-foreground">{step.description}</p>
               </div>
             ))}
           </div>
         </div>
-        
-        {/* Roadmap Visual Section */}
-        <div className="mt-24 mb-8">
-          <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
-            <span className="bg-gradient-to-r from-homi-purple to-homi-lightPurple bg-clip-text text-transparent">Roadmap</span> Homi
-          </h2>
-          
-          <div className="relative max-w-5xl mx-auto">
-            {/* Timeline connector line */}
-            <div className="absolute h-full w-1 bg-gradient-to-b from-indigo-500 via-fuchsia-500 to-emerald-500 left-1/2 transform -translate-x-1/2 top-0 rounded-full hidden md:block"></div>
-            
-            <div className="space-y-16 md:space-y-0">
-              {roadmap.map((item, index) => (
-                <div 
-                  key={index} 
-                  className={`flex flex-col md:flex-row items-center ${index % 2 === 0 ? 'md:flex-row-reverse' : ''} md:mb-20`}
-                >
-                  {/* Phase card */}
-                  <div className={`glass-card p-8 transform transition-all duration-500 hover:scale-105 relative overflow-hidden w-full md:w-5/12 z-10`}>
-                    <div className={`absolute inset-0 bg-gradient-to-br ${item.color} opacity-10 rounded-xl`}></div>
-                    <div className={`absolute top-0 left-0 w-2 h-full bg-gradient-to-b ${item.color}`}></div>
-                    
-                    <h3 className="text-lg font-bold text-muted-foreground mb-2">{item.phase}</h3>
-                    <h4 className="text-2xl font-bold mb-6 bg-gradient-to-r from-homi-purple to-homi-lightPurple bg-clip-text text-transparent">{item.title}</h4>
-                    
-                    <ul className="space-y-4">
-                      {item.goals.map((goal, idx) => (
-                        <li key={idx} className="flex items-start text-base">
-                          <span className={`inline-block w-3 h-3 rounded-full mt-1.5 mr-3 bg-gradient-to-br ${item.color}`}></span>
-                          <span className="font-medium">{goal}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  
-                  {/* Center icon element */}
-                  <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2">
-                    <div className={`w-14 h-14 rounded-full bg-gradient-to-br ${item.color} flex items-center justify-center shadow-lg z-20 border-4 border-white dark:border-slate-900`}>
-                      {item.icon}
-                    </div>
-                  </div>
-                  
-                  {/* Mobile icon - only visible on small screens */}
-                  <div className="md:hidden my-6 z-10">
-                    <div className={`w-14 h-14 rounded-full bg-gradient-to-br ${item.color} flex items-center justify-center shadow-lg border-4 border-white dark:border-slate-900`}>
-                      {item.icon}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-        
-        {/* Decorative elements */}
-        <div className="hidden md:block">
-          <div className="absolute top-40 left-10 w-6 h-6 rounded-full bg-purple-200 animate-pulse opacity-30"></div>
-          <div className="absolute bottom-20 right-10 w-8 h-8 rounded-full bg-indigo-300 animate-pulse opacity-40"></div>
-          <div className="absolute top-60 right-20 w-4 h-4 rounded-full bg-violet-400 animate-pulse opacity-30"></div>
-        </div>
       </div>
-    </section>;
+    </section>
+  );
 };
 
 export default HowItWorks;

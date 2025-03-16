@@ -29,7 +29,7 @@ const CompatibilityBadge = ({
 
   return (
     <div className={cn(
-      'rounded-full flex items-center justify-center text-white font-bold relative',
+      'rounded-full flex items-center justify-center text-white font-bold relative shadow-lg',
       sizeClasses[size],
       getColor(),
       className

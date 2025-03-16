@@ -14,7 +14,7 @@ interface PropertyCardProps {
 const PropertyCard = ({ property, compact = false }: PropertyCardProps) => {
   if (compact) {
     return (
-      <Card className="overflow-hidden transition-all h-full">
+      <Card className="overflow-hidden hover:shadow-md transition-all h-full">
         <div className="relative">
           <img 
             src={property.images[0]} 
@@ -68,7 +68,7 @@ const PropertyCard = ({ property, compact = false }: PropertyCardProps) => {
   }
 
   return (
-    <Card className="overflow-hidden transition-all">
+    <Card className="overflow-hidden hover:shadow-md transition-all">
       <div className="grid md:grid-cols-[1fr_2fr] gap-4">
         <div className="relative h-full">
           <img 
