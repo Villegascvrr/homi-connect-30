@@ -97,6 +97,12 @@ const EmailSignup = () => {
     
     if (!validateCurrentStep()) return;
 
+    // Make sure we only submit when we're on the confirmation step
+    if (step !== 'confirmacion') {
+      nextStep();
+      return;
+    }
+
     setIsLoading(true);
     
     // En una aplicación real, esto llamaría a un endpoint de API para almacenar los datos
@@ -370,4 +376,3 @@ const EmailSignup = () => {
 };
 
 export default EmailSignup;
-
