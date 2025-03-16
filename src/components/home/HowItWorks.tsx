@@ -5,23 +5,23 @@ const HowItWorks = () => {
   const steps = [{
     icon: <BrainCircuit className="w-8 h-8 text-homi-purple" />,
     title: "Matching entre compañeros",
-    description: "Nuestro matching inteligente con IA analiza intereses y estilo de vida para conectar compañeros de piso compatibles."
+    description: "IA que conecta compañeros compatibles según intereses y estilo de vida."
   }, {
     icon: <Home className="w-8 h-8 text-homi-purple" />,
     title: "Propiedades sugeridas",
-    description: "La IA busca y sugiere propiedades según las preferencias del grupo, optimizando la búsqueda del lugar perfecto."
+    description: "Sugerencias inteligentes según preferencias grupales."
   }, {
     icon: <ShieldCheck className="w-8 h-8 text-homi-purple" />,
     title: "Intermediación segura",
-    description: "Validamos perfiles con tecnología avanzada y mediamos con propietarios para garantizar seguridad."
+    description: "Validación de perfiles y mediación con propietarios."
   }, {
     icon: <FileText className="w-8 h-8 text-homi-purple" />,
     title: "Contrato digital",
-    description: "Firma de contratos digitales con tecnología Smart Contract, automatizando pagos para mayor comodidad."
+    description: "Smart Contracts para firmas y pagos automatizados."
   }, {
     icon: <PackageOpen className="w-8 h-8 text-homi-purple" />,
     title: "Servicios adicionales",
-    description: "Acceso a servicios como mudanzas, limpieza, internet y seguros para el hogar."
+    description: "Mudanzas, limpieza, internet y seguros para el hogar."
   }];
   
   return <section className="py-20">
@@ -37,8 +37,7 @@ const HowItWorks = () => {
         </div>
 
         <div className="relative">
-          {/* Connection line for desktop */}
-          <div className="absolute top-24 left-1/2 h-4/5 w-0.5 bg-homi-ultraLightPurple -translate-x-1/2 hidden md:block"></div>
+          {/* Removing the connection line for desktop */}
           
           <div className="grid grid-cols-1 md:grid-cols-5 gap-8 relative">
             {steps.map((step, index) => <div key={index} className="flex flex-col items-center text-center relative z-10">
