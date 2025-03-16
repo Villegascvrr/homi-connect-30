@@ -295,7 +295,7 @@ const Presentation = () => {
                     <div className="space-y-10">
                       <div className="text-center mb-12">
                         <h3 className="text-2xl font-bold mb-6 inline-block bg-gradient-to-r from-fuchsia-500 via-purple-600 to-indigo-500 bg-clip-text text-transparent pb-2">
-                          Nuestra evolución: dos plataformas complementarias
+                          Visión a futuro: dos plataformas complementarias
                         </h3>
                       </div>
                       
