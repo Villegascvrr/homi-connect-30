@@ -158,7 +158,7 @@ const Presentation = () => {
                       </div>
                       <div>
                         <h3 className="text-xl font-semibold text-white mb-2">Matching Inteligente con IA</h3>
-                        <p className="text-white/70">Algoritmos de compatiblidad te ayudan conecta con compañeros de pisos según hábitos y preferencias</p>
+                        <p className="text-white/70">Algoritmos de compatiblidad te ayudan a conectar con compañeros de pisos según hábitos y preferencias</p>
                       </div>
                     </div>
                   </div>
@@ -170,7 +170,7 @@ const Presentation = () => {
                       </div>
                       <div>
                         <h3 className="text-xl font-semibold text-white mb-2">Gestión Digital Completa</h3>
-                        <p className="text-white/70">Automatiza contratos, pagos y comunicación con propietarios.</p>
+                        <p className="text-white/70">Automatiza contratos, pagos, servicios y comunicación con propietarios.</p>
                       </div>
                     </div>
                   </div>
