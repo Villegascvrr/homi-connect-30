@@ -569,3 +569,95 @@ const sections = [
       <div className="space-y-10">
         <div className="text-center mb-12">
           <h3 className="text-2xl font-bold mb-6 inline-block border-b-2 border-indigo-400 dark:border-indigo-500 pb-2">
+            Nuestra evolución: dos plataformas complementarias
+          </h3>
+        </div>
+        
+        <div className="grid md:grid-cols-2 gap-12">
+          <Card className="border-indigo-200 dark:border-indigo-800/30 overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-100 dark:bg-indigo-900/20 rounded-bl-full z-0"></div>
+            
+            <div className="bg-indigo-600 dark:bg-indigo-800 p-8 text-white relative z-10">
+              <div className="flex items-center mb-3">
+                <div className="bg-white/20 p-3 rounded-full mr-4">
+                  <Users className="h-7 w-7" />
+                </div>
+                <h3 className="text-2xl font-bold">Homi</h3>
+              </div>
+              <Badge className="bg-white/90 text-indigo-600 hover:bg-white/80 mb-1">Para Inquilinos</Badge>
+            </div>
+            
+            <CardContent className="p-8 space-y-4">
+              <p className="text-base leading-relaxed">
+                Plataforma de matching inteligente que conecta estudiantes con compañeros de piso y 
+                propiedades ideales, facilitando la búsqueda de alojamiento y acceso a servicios.
+              </p>
+              
+              <div className="space-y-3 mt-2">
+                <div className="flex items-center text-indigo-600 dark:text-indigo-400">
+                  <CheckCircle className="h-5 w-5 mr-2 flex-shrink-0" />
+                  <span>Matching con roommates compatibles</span>
+                </div>
+                <div className="flex items-center text-indigo-600 dark:text-indigo-400">
+                  <CheckCircle className="h-5 w-5 mr-2 flex-shrink-0" />
+                  <span>Gestión completa del alquiler</span>
+                </div>
+                <div className="flex items-center text-indigo-600 dark:text-indigo-400">
+                  <CheckCircle className="h-5 w-5 mr-2 flex-shrink-0" />
+                  <span>Servicios adicionales</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="border-purple-200 dark:border-purple-800/30 overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-purple-100 dark:bg-purple-900/20 rounded-bl-full z-0"></div>
+            
+            <div className="bg-purple-600 dark:bg-purple-800 p-8 text-white relative z-10">
+              <div className="flex items-center mb-3">
+                <div className="bg-white/20 p-3 rounded-full mr-4">
+                  <Building className="h-7 w-7" />
+                </div>
+                <h3 className="text-2xl font-bold">Homiware</h3>
+              </div>
+              <Badge className="bg-white/90 text-purple-600 hover:bg-white/80 mb-1">Para Propietarios</Badge>
+            </div>
+            
+            <CardContent className="p-8 space-y-4">
+              <p className="text-base leading-relaxed">
+                Software de gestión para propietarios y administradores que simplifica el proceso de alquiler, 
+                mantenimiento y comunicación con los inquilinos.
+              </p>
+              
+              <div className="space-y-3 mt-2">
+                <div className="flex items-center text-purple-600 dark:text-purple-400">
+                  <CheckCircle className="h-5 w-5 mr-2 flex-shrink-0" />
+                  <span>Gestión integral de propiedades</span>
+                </div>
+                <div className="flex items-center text-purple-600 dark:text-purple-400">
+                  <CheckCircle className="h-5 w-5 mr-2 flex-shrink-0" />
+                  <span>Screening automatizado de inquilinos</span>
+                </div>
+                <div className="flex items-center text-purple-600 dark:text-purple-400">
+                  <CheckCircle className="h-5 w-5 mr-2 flex-shrink-0" />
+                  <span>Automatización de tareas administrativas</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        
+        <div className="text-center">
+          <Button 
+            size="lg" 
+            className="rounded-full bg-indigo-600 hover:bg-indigo-700 text-white mt-6"
+          >
+            Conoce Nuestra Visión Completa
+          </Button>
+        </div>
+      </div>
+    )
+  }
+];
+
+export default Presentation;
