@@ -7,6 +7,7 @@ import Hero from '@/components/home/Hero';
 import Features from '@/components/home/Features';
 import HowItWorks from '@/components/home/HowItWorks';
 import BusinessModel from '@/components/home/BusinessModel';
+import TeamNeeds from '@/components/home/TeamNeeds';
 import Presentation from '@/components/home/Presentation';
 import { Button } from '@/components/ui/button';
 
@@ -42,6 +43,7 @@ const Index = () => {
         </div>
         <Features />
         <BusinessModel />
+        <TeamNeeds />
         <Presentation />
         
         {/* CTA Section */}
