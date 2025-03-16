@@ -25,8 +25,24 @@ import {
   Globe, 
   Users, 
   Moon, 
-  Sun
+  Sun,
+  Search,
+  Filter,
+  UserCheck,
+  GraduationCap,
+  Cigarette,
+  CigaretteOff,
+  UserPlus
 } from "lucide-react";
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -57,6 +73,18 @@ type InterestCategory = {
   interests: string[];
 };
 
+type LookingForPreferences = {
+  numRoommates: string;
+  gender: string;
+  smoking: string;
+  occupation: string[];
+  ageRange: {
+    min: number;
+    max: number;
+  };
+  hasProperty: boolean;
+};
+
 const ProfileForm = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -77,6 +105,19 @@ const ProfileForm = () => {
     socializing: "moderado",
     cleanliness: "moderado",
     noise: "moderado",
+  });
+  
+  // Estado para las preferencias de lo que busca
+  const [lookingFor, setLookingFor] = React.useState<LookingForPreferences>({
+    numRoommates: "1-2",
+    gender: "cualquiera",
+    smoking: "no",
+    occupation: [],
+    ageRange: {
+      min: 18,
+      max: 40
+    },
+    hasProperty: true
   });
 
   // Define interest categories with their respective interests
@@ -151,13 +192,34 @@ const ProfileForm = () => {
       [field]: value
     }));
   };
+  
+  const handleLookingForChange = (field: string, value: any) => {
+    setLookingFor(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+  
+  const handleOccupationToggle = (occupation: string) => {
+    setLookingFor(prev => {
+      const newOccupations = prev.occupation.includes(occupation)
+        ? prev.occupation.filter(o => o !== occupation)
+        : [...prev.occupation, occupation];
+      
+      return {
+        ...prev,
+        occupation: newOccupations
+      };
+    });
+  };
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Combine form values with interests and lifestyle preferences
     const profileData = {
       ...values,
       interests: selectedInterests,
-      lifestyle: lifestylePreferences
+      lifestyle: lifestylePreferences,
+      lookingFor: lookingFor
     };
     
     console.log(profileData);
@@ -433,6 +495,217 @@ const ProfileForm = () => {
                   {level === "alto" && "No me molesta"}
                 </button>
               ))}
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* NUEVO APARTADO: Lo que estoy buscando */}
+      <div className="glass-card p-6 mb-8">
+        <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+          <Search className="text-homi-purple" size={20} />
+          Lo que estoy buscando
+        </h2>
+        <p className="text-muted-foreground mb-6">
+          Especifica tus preferencias para encontrar compañeros de piso ideales o un piso compartido que se adapte a tus necesidades.
+        </p>
+        
+        <div className="space-y-8">
+          {/* Situación de vivienda */}
+          <div>
+            <label className="text-base font-medium mb-3 block">¿Ya tienes un piso?</label>
+            <div className="flex gap-4">
+              <button
+                type="button"
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg border ${
+                  lookingFor.hasProperty
+                    ? 'bg-homi-purple text-white border-homi-purple'
+                    : 'bg-transparent border-input hover:bg-muted/50'
+                }`}
+                onClick={() => handleLookingForChange('hasProperty', true)}
+              >
+                <UserPlus size={18} /> Busco compañeros para mi piso
+              </button>
+              <button
+                type="button"
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg border ${
+                  !lookingFor.hasProperty
+                    ? 'bg-homi-purple text-white border-homi-purple'
+                    : 'bg-transparent border-input hover:bg-muted/50'
+                }`}
+                onClick={() => handleLookingForChange('hasProperty', false)}
+              >
+                <Search size={18} /> Busco un piso compartido
+              </button>
+            </div>
+          </div>
+          
+          {/* Número de compañeros */}
+          <div>
+            <label className="text-base font-medium mb-3 block">¿Cuántos compañeros buscas?</label>
+            <div className="grid grid-cols-4 gap-3">
+              {["1", "1-2", "2-3", "3+"].map((num) => (
+                <button
+                  key={num}
+                  type="button"
+                  className={`px-4 py-2 rounded-lg border ${
+                    lookingFor.numRoommates === num
+                      ? 'bg-homi-purple text-white border-homi-purple'
+                      : 'bg-transparent border-input hover:bg-muted/50'
+                  }`}
+                  onClick={() => handleLookingForChange('numRoommates', num)}
+                >
+                  {num}
+                </button>
+              ))}
+            </div>
+          </div>
+          
+          {/* Género */}
+          <div>
+            <label htmlFor="gender-preference" className="text-base font-medium mb-3 block">Preferencia de género</label>
+            <Select
+              value={lookingFor.gender}
+              onValueChange={(value) => handleLookingForChange('gender', value)}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Selecciona una preferencia" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="cualquiera">Cualquier género</SelectItem>
+                <SelectItem value="mujeres">Solo mujeres</SelectItem>
+                <SelectItem value="hombres">Solo hombres</SelectItem>
+                <SelectItem value="mixto">Piso mixto</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          
+          {/* Fumadores */}
+          <div>
+            <label className="text-base font-medium mb-3 block">Preferencia sobre fumar</label>
+            <RadioGroup
+              value={lookingFor.smoking}
+              onValueChange={(value) => handleLookingForChange('smoking', value)}
+              className="flex gap-4"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="si" id="smoking-yes" />
+                <label htmlFor="smoking-yes" className="flex items-center gap-2">
+                  <Cigarette size={18} /> Acepto fumadores
+                </label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="exterior" id="smoking-outside" />
+                <label htmlFor="smoking-outside" className="flex items-center gap-2">
+                  Solo en exterior
+                </label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="no" id="smoking-no" />
+                <label htmlFor="smoking-no" className="flex items-center gap-2">
+                  <CigaretteOff size={18} /> No fumadores
+                </label>
+              </div>
+            </RadioGroup>
+          </div>
+          
+          {/* Ocupación */}
+          <div>
+            <label className="text-base font-medium mb-3 block">Ocupación preferida</label>
+            <div className="space-y-2">
+              <div className="flex items-top space-x-2">
+                <Checkbox
+                  id="occupation-student"
+                  checked={lookingFor.occupation.includes('estudiante')}
+                  onCheckedChange={() => handleOccupationToggle('estudiante')}
+                />
+                <div className="grid gap-1.5 leading-none">
+                  <label
+                    htmlFor="occupation-student"
+                    className="text-sm font-medium leading-none flex items-center gap-2 pt-0.5"
+                  >
+                    <GraduationCap size={16} /> Estudiantes
+                  </label>
+                  <p className="text-sm text-muted-foreground">
+                    Personas que estén cursando estudios universitarios
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-top space-x-2">
+                <Checkbox
+                  id="occupation-worker" 
+                  checked={lookingFor.occupation.includes('trabajador')}
+                  onCheckedChange={() => handleOccupationToggle('trabajador')}
+                />
+                <div className="grid gap-1.5 leading-none">
+                  <label
+                    htmlFor="occupation-worker"
+                    className="text-sm font-medium leading-none flex items-center gap-2 pt-0.5"
+                  >
+                    Trabajadores
+                  </label>
+                  <p className="text-sm text-muted-foreground">
+                    Personas con empleo y horario laboral
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-top space-x-2">
+                <Checkbox
+                  id="occupation-any" 
+                  checked={lookingFor.occupation.includes('cualquiera')}
+                  onCheckedChange={() => handleOccupationToggle('cualquiera')}
+                />
+                <div className="grid gap-1.5 leading-none">
+                  <label
+                    htmlFor="occupation-any"
+                    className="text-sm font-medium leading-none flex items-center gap-2 pt-0.5"
+                  >
+                    Cualquiera
+                  </label>
+                  <p className="text-sm text-muted-foreground">
+                    No tengo preferencia sobre su ocupación
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Rango de edad */}
+          <div>
+            <label className="text-base font-medium mb-3 block">Rango de edad preferido</label>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm text-muted-foreground mb-1 block">Edad mínima</label>
+                <Input
+                  type="number"
+                  min="18"
+                  max="99"
+                  value={lookingFor.ageRange.min}
+                  onChange={(e) => 
+                    handleLookingForChange('ageRange', {
+                      ...lookingFor.ageRange,
+                      min: parseInt(e.target.value) || 18
+                    })
+                  }
+                />
+              </div>
+              <div>
+                <label className="text-sm text-muted-foreground mb-1 block">Edad máxima</label>
+                <Input
+                  type="number"
+                  min="18"
+                  max="99"
+                  value={lookingFor.ageRange.max}
+                  onChange={(e) => 
+                    handleLookingForChange('ageRange', {
+                      ...lookingFor.ageRange,
+                      max: parseInt(e.target.value) || 40
+                    })
+                  }
+                />
+              </div>
             </div>
           </div>
         </div>
