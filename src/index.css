@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
@@ -117,6 +118,23 @@
   
   .purple-gradient-box {
     @apply bg-gradient-to-br from-purple-600 to-violet-600 text-white shadow-lg;
+  }
+  
+  /* Vision section gradients */
+  .vision-gradient-1 {
+    @apply bg-gradient-to-r from-indigo-600 to-blue-600;
+  }
+  
+  .vision-gradient-2 {
+    @apply bg-gradient-to-r from-fuchsia-600 to-pink-600;
+  }
+  
+  .vision-card-1 {
+    @apply bg-gradient-to-b from-indigo-50 to-white dark:from-indigo-900/30 dark:to-black/20;
+  }
+  
+  .vision-card-2 {
+    @apply bg-gradient-to-b from-fuchsia-50 to-white dark:from-fuchsia-900/30 dark:to-black/20;
   }
 }
 

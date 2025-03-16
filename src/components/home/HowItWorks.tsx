@@ -45,9 +45,6 @@ const HowItWorks = () => {
         </div>
 
         <div className="relative">
-          {/* Rainbow gradient connector for desktop */}
-          <div className="absolute top-10 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 via-indigo-500 to-violet-500 hidden md:block rounded-full"></div>
-          
           <div className="grid grid-cols-1 md:grid-cols-5 gap-8 relative">
             {steps.map((step, index) => (
               <div key={index} className="flex flex-col items-center text-center relative z-10 transform transition-all duration-300 hover:scale-105">

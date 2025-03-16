@@ -4,9 +4,11 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { BrainCircuit, Users, Building, Target, PieChart, TrendingUp, CheckCircle, Sparkles, UserRound, BarChart3, Rocket, ChevronDown, ChevronUp, ChevronRight, Zap, ShieldCheck, ArrowRight } from 'lucide-react';
+
 const Presentation = () => {
   const [activeSection, setActiveSection] = useState<string | null>("solucion");
   const [visibleSections, setVisibleSections] = useState<Set<string>>(new Set(["solucion"]));
+
   useEffect(() => {
     const handleScroll = () => {
       const sectionElements = document.querySelectorAll('[data-section-id]');
@@ -23,6 +25,7 @@ const Presentation = () => {
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
   const toggleSection = (section: string) => {
     if (activeSection === section) {
       setActiveSection(null);
@@ -39,7 +42,6 @@ const Presentation = () => {
     }
   };
 
-  // Style variations by section
   const getSectionStyle = (sectionId: string) => {
     const styles: Record<string, string> = {
       problema: "bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-950/30 dark:to-orange-950/20",
@@ -57,7 +59,6 @@ const Presentation = () => {
     return styles[sectionId] || "bg-white dark:bg-black/20";
   };
 
-  // Accent color variations by section
   const getSectionAccentColor = (sectionId: string) => {
     const colors: Record<string, string> = {
       problema: "text-red-600 dark:text-red-400",
@@ -75,7 +76,6 @@ const Presentation = () => {
     return colors[sectionId] || "text-homi-purple";
   };
 
-  // Border color variations by section
   const getSectionBorderColor = (sectionId: string) => {
     const colors: Record<string, string> = {
       problema: "border-red-200 dark:border-red-800/50",
@@ -93,7 +93,6 @@ const Presentation = () => {
     return colors[sectionId] || "border-gray-200 dark:border-gray-800/50";
   };
 
-  // Display styles for sections
   const getSectionDisplayStyle = (sectionId: string) => {
     switch (sectionId) {
       case 'problema':
@@ -122,6 +121,7 @@ const Presentation = () => {
         return 'standard-section';
     }
   };
+
   return <section id="presentation" className="py-20 bg-gradient-to-b from-white to-homi-ultraLightPurple/30 dark:from-homi-dark dark:to-homi-dark/80">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16 animate-on-scroll">
@@ -133,7 +133,6 @@ const Presentation = () => {
           </p>
         </div>
         
-        {/* Solution Section at Top */}
         <div className="mb-24 animate-on-scroll">
           <div className="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-3xl overflow-hidden shadow-xl">
             <div className="px-6 py-10 md:p-12">
@@ -148,7 +147,7 @@ const Presentation = () => {
               </div>
               
               <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8">
-                <p className="text-white text-lg mb-6">Homi digitaliza y optimiza todas las fases del proceso de alquiler </p>
+                <p className="text-white text-lg mb-6">Homi digitaliza y optimiza todas las fases del proceso de alquiler </p>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="bg-white/10 backdrop-blur-sm p-6 rounded-xl hover:bg-white/20 transition-all">
@@ -212,7 +211,6 @@ const Presentation = () => {
           </div>
         </div>
         
-        {/* Navigation Pills - Horizontal scrolling on mobile */}
         <div className="flex overflow-x-auto pb-4 mb-12 -mx-4 px-4 snap-x scroll-px-4 scrollbar-hide">
           <div className="flex gap-3 mx-auto">
             {sections.filter(section => section.id !== "solucion").map(section => <div key={section.id} className="snap-start">
@@ -224,13 +222,11 @@ const Presentation = () => {
           </div>
         </div>
         
-        {/* Content Sections */}
         <div className="space-y-32">
           {sections.filter(section => section.id !== "solucion").map(section => {
           const isVisible = visibleSections.has(section.id);
           const isCurrent = activeSection === section.id;
           return <div key={section.id} data-section-id={section.id} className={`transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}>
-                {/* Section header with unique styling */}
                 <div className={`rounded-3xl overflow-hidden shadow-lg mb-12 border ${getSectionBorderColor(section.id)}`}>
                   <div className={`${getSectionStyle(section.id)} p-8 transition-all duration-300`}>
                     <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
@@ -256,7 +252,6 @@ const Presentation = () => {
                   </div>
                 </div>
                 
-                {/* Section content with different display styles */}
                 <div className={`transition-all duration-500 overflow-hidden ${isCurrent || activeSection === null ? "max-h-[5000px] opacity-100" : "max-h-0 opacity-0"}`}>
                   <div className={`py-6 px-4 md:px-8 ${getSectionDisplayStyle(section.id)}`}>
                     {section.content}
@@ -266,7 +261,125 @@ const Presentation = () => {
         })}
         </div>
         
-        {/* Call to Action */}
+        {sections.filter(section => section.id === "vision").map(section => {
+          const isVisible = visibleSections.has(section.id);
+          const isCurrent = activeSection === section.id;
+          return <div key={section.id} data-section-id={section.id} className={`transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}>
+                <div className={`rounded-3xl overflow-hidden shadow-lg mb-12 border ${getSectionBorderColor(section.id)}`}>
+                  <div className="bg-gradient-to-r from-fuchsia-500 to-purple-600 p-8 transition-all duration-300">
+                    <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
+                      <div className="rounded-full h-20 w-20 flex items-center justify-center bg-white/20 shrink-0">
+                        <section.icon className="h-10 w-10 text-white" />
+                      </div>
+                      
+                      <div className="text-center md:text-left">
+                        <h2 className="text-3xl font-bold mb-2 text-white">
+                          {section.title}
+                        </h2>
+                        <p className="text-white/80 text-lg max-w-2xl">
+                          {section.subtitle}
+                        </p>
+                      </div>
+                      
+                      <div className="md:ml-auto flex items-center">
+                        <Button variant="ghost" size="icon" className="rounded-full text-white hover:bg-white/20" onClick={() => toggleSection(section.id)}>
+                          {isCurrent ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className={`transition-all duration-500 overflow-hidden ${isCurrent || activeSection === null ? "max-h-[5000px] opacity-100" : "max-h-0 opacity-0"}`}>
+                  <div className="py-6 px-4 md:px-8 vision-section">
+                    <div className="space-y-10">
+                      <div className="text-center mb-12">
+                        <h3 className="text-2xl font-bold mb-6 inline-block bg-gradient-to-r from-fuchsia-500 via-purple-600 to-indigo-500 bg-clip-text text-transparent pb-2">
+                          Nuestra evolución: dos plataformas complementarias
+                        </h3>
+                      </div>
+                      
+                      <div className="grid md:grid-cols-2 gap-12">
+                        <Card className="border-indigo-200 dark:border-indigo-800/30 overflow-hidden relative">
+                          <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-100 dark:bg-indigo-900/20 rounded-bl-full z-0"></div>
+                          
+                          <div className="bg-gradient-to-r from-violet-600 to-indigo-600 p-8 text-white relative z-10">
+                            <div className="flex items-center mb-3">
+                              <div className="bg-white/20 p-3 rounded-full mr-4">
+                                <Users className="h-7 w-7" />
+                              </div>
+                              <h3 className="text-2xl font-bold">Homi</h3>
+                            </div>
+                            <Badge className="bg-white/90 text-indigo-600 hover:bg-white/80 mb-1">Para Inquilinos</Badge>
+                          </div>
+                          
+                          <CardContent className="p-8 space-y-4 bg-gradient-to-b from-indigo-50 to-white dark:from-indigo-950/30 dark:to-black/20">
+                            <p className="text-base leading-relaxed">
+                              Plataforma para estudiantes y jóvenes profesionales que buscan pisos compartidos.
+                            </p>
+                            <ul className="space-y-2">
+                              <li className="flex items-center gap-2">
+                                <CheckCircle className="h-5 w-5 text-green-500" />
+                                <span>Matching inteligente entre compañeros</span>
+                              </li>
+                              <li className="flex items-center gap-2">
+                                <CheckCircle className="h-5 w-5 text-green-500" />
+                                <span>Búsqueda personalizada de propiedades</span>
+                              </li>
+                              <li className="flex items-center gap-2">
+                                <CheckCircle className="h-5 w-5 text-green-500" />
+                                <span>Gestión digital de contratos y pagos</span>
+                              </li>
+                            </ul>
+                          </CardContent>
+                        </Card>
+
+                        <Card className="border-purple-200 dark:border-purple-800/30 overflow-hidden relative">
+                          <div className="absolute top-0 right-0 w-24 h-24 bg-purple-100 dark:bg-purple-900/20 rounded-bl-full z-0"></div>
+                          
+                          <div className="bg-gradient-to-r from-fuchsia-600 to-purple-600 p-8 text-white relative z-10">
+                            <div className="flex items-center mb-3">
+                              <div className="bg-white/20 p-3 rounded-full mr-4">
+                                <Building className="h-7 w-7" />
+                              </div>
+                              <h3 className="text-2xl font-bold">Homiware</h3>
+                            </div>
+                            <Badge className="bg-white/90 text-purple-600 hover:bg-white/80 mb-1">Para Propietarios</Badge>
+                          </div>
+                          
+                          <CardContent className="p-8 space-y-4 bg-gradient-to-b from-fuchsia-50 to-white dark:from-fuchsia-950/30 dark:to-black/20">
+                            <p className="text-base leading-relaxed">
+                              Software de gestión para propietarios e inmobiliarias enfocado en alquiler a estudiantes.
+                            </p>
+                            <ul className="space-y-2">
+                              <li className="flex items-center gap-2">
+                                <CheckCircle className="h-5 w-5 text-green-500" />
+                                <span>Gestión integral de propiedades</span>
+                              </li>
+                              <li className="flex items-center gap-2">
+                                <CheckCircle className="h-5 w-5 text-green-500" />
+                                <span>Automatización de pagos y contratos</span>
+                              </li>
+                              <li className="flex items-center gap-2">
+                                <CheckCircle className="h-5 w-5 text-green-500" />
+                                <span>Análisis de rendimiento de propiedades</span>
+                              </li>
+                            </ul>
+                          </CardContent>
+                        </Card>
+                      </div>
+                      
+                      <div className="text-center mt-10">
+                        <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-full px-6 py-3">
+                          Conoce nuestra visión completa
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>;
+        })}
+        
         <div className="mt-32 text-center animate-on-scroll bg-gradient-to-r from-homi-purple/90 to-homi-lightPurple/90 p-12 rounded-3xl shadow-xl text-white">
           <h3 className="text-3xl font-bold mb-4">
             ¿Quieres saber más sobre <span className="text-white">Homi</span>?
@@ -282,13 +395,12 @@ const Presentation = () => {
     </section>;
 };
 
-// Section data
 const sections = [{
   id: "solucion",
   title: "Solución",
   subtitle: "¿Cuál es la USP (Propuesta Única de Valor)?",
   icon: Sparkles,
-  content: null // Contenido movido a la parte superior
+  content: null
 }, {
   id: "problema",
   title: "Problema",
@@ -567,4 +679,5 @@ const sections = [{
         </div>
       </div>
 }];
+
 export default Presentation;
