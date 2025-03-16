@@ -1,27 +1,32 @@
 
-import { User, Users, MessageSquare, Home } from 'lucide-react';
+import { UserSearch, Home, Shield, FileCheck, PackageOpen } from 'lucide-react';
 
 const HowItWorks = () => {
   const steps = [
     {
-      icon: <User className="w-8 h-8 text-homi-purple" />,
-      title: "Crea tu perfil",
-      description: "Registra tus preferencias, hábitos de convivencia y lo que buscas en un compañero de piso."
-    },
-    {
-      icon: <Users className="w-8 h-8 text-homi-purple" />,
-      title: "Encuentra matches",
-      description: "Nuestro algoritmo te mostrará posibles compañeros ordenados por porcentaje de compatibilidad."
-    },
-    {
-      icon: <MessageSquare className="w-8 h-8 text-homi-purple" />,
-      title: "Conecta y conversa",
-      description: "Inicia una conversación con tus matches para conocerse mejor a través del chat integrado."
+      icon: <UserSearch className="w-8 h-8 text-homi-purple" />,
+      title: "Matching entre compañeros",
+      description: "Conectamos estudiantes y jóvenes profesionales basándonos en sus intereses y estilos de vida para encontrar compañeros ideales."
     },
     {
       icon: <Home className="w-8 h-8 text-homi-purple" />,
-      title: "Forma tu hogar",
-      description: "Decide con quién quieres compartir piso y comienza esta nueva etapa juntos."
+      title: "Propiedades sugeridas",
+      description: "Buscamos y sugerimos propiedades según las preferencias del grupo, para que encuentren el lugar perfecto para todos."
+    },
+    {
+      icon: <Shield className="w-8 h-8 text-homi-purple" />,
+      title: "Intermediación segura",
+      description: "Validamos los perfiles y mediamos con propietarios para garantizar seguridad y confianza en todo el proceso."
+    },
+    {
+      icon: <FileCheck className="w-8 h-8 text-homi-purple" />,
+      title: "Contrato digital",
+      description: "Facilitamos la firma de contratos digitales y automatizamos los pagos mensuales para mayor comodidad."
+    },
+    {
+      icon: <PackageOpen className="w-8 h-8 text-homi-purple" />,
+      title: "Servicios adicionales",
+      description: "Ofrecemos acceso a servicios complementarios como mudanzas, limpieza, internet y seguros para el hogar."
     }
   ];
 
@@ -30,19 +35,19 @@ const HowItWorks = () => {
       <div className="container mx-auto px-4">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            <span className="homi-gradient-text">Cómo funciona</span> Homi
+            <span className="homi-gradient-text">¿Cómo funciona</span> Homi?
           </h2>
           <p className="text-muted-foreground text-lg">
-            Un proceso simple y efectivo para encontrar compañeros de piso compatibles
-            con tus preferencias y estilo de vida.
+            Un proceso completo para encontrar compañeros compatibles y
+            el lugar perfecto para vivir, todo en una sola plataforma.
           </p>
         </div>
 
         <div className="relative">
-          {/* Connection line */}
-          <div className="absolute top-24 left-1/2 h-2/3 w-0.5 bg-homi-ultraLightPurple -translate-x-1/2 hidden md:block"></div>
+          {/* Connection line for desktop */}
+          <div className="absolute top-24 left-1/2 h-4/5 w-0.5 bg-homi-ultraLightPurple -translate-x-1/2 hidden md:block"></div>
           
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-8 relative">
             {steps.map((step, index) => (
               <div 
                 key={index} 

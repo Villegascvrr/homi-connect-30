@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Filter } from 'lucide-react';
-import { PropertyFilterType } from '@/types/property';
+import { PropertyFilter as PropertyFilterType } from '@/types/property';
 import PropertyFilter from './PropertyFilter';
 import {
   Sheet,
