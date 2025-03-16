@@ -1,5 +1,5 @@
 
-import { Wallet, Coins, BarChart3, PiggyBank, HandCoins, ShieldCheck, BadgeDollarSign } from 'lucide-react';
+import { Wallet, BarChart3, ShieldCheck, BadgeDollarSign } from 'lucide-react';
 
 const BusinessModel = () => {
   const revenue = [
@@ -17,11 +17,6 @@ const BusinessModel = () => {
       icon: <BarChart3 className="w-8 h-8 text-homi-purple" />,
       title: "Servicios adicionales",
       description: "Comisiones por referir servicios complementarios como seguros, mudanzas, limpieza e internet."
-    },
-    {
-      icon: <PiggyBank className="w-8 h-8 text-homi-purple" />,
-      title: "Gestión de pagos",
-      description: "Pequeña tarifa por la gestión automatizada de pagos mensuales entre inquilinos y propietarios."
     },
     {
       icon: <ShieldCheck className="w-8 h-8 text-homi-purple" />,
