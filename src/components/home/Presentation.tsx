@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -569,3 +570,58 @@ const sections = [
                   <CheckCircle className="h-5 w-5 mr-2 flex-shrink-0" />
                   <span>Matching con roommates compatibles</span>
                 </div>
+                <div className="flex items-center text-indigo-600 dark:text-indigo-400">
+                  <CheckCircle className="h-5 w-5 mr-2 flex-shrink-0" />
+                  <span>Búsqueda de vivienda personalizada</span>
+                </div>
+                <div className="flex items-center text-indigo-600 dark:text-indigo-400">
+                  <CheckCircle className="h-5 w-5 mr-2 flex-shrink-0" />
+                  <span>Contratos digitales y gestión de pagos</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="border-indigo-200 dark:border-indigo-800/30 overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-100 dark:bg-indigo-900/20 rounded-bl-full z-0"></div>
+            
+            <div className="bg-indigo-600 dark:bg-indigo-800 p-8 text-white relative z-10">
+              <div className="flex items-center mb-3">
+                <div className="bg-white/20 p-3 rounded-full mr-4">
+                  <Building className="h-7 w-7" />
+                </div>
+                <h3 className="text-2xl font-bold">Homiware</h3>
+              </div>
+              <Badge className="bg-white/90 text-indigo-600 hover:bg-white/80 mb-1">Para Propietarios</Badge>
+            </div>
+            
+            <CardContent className="p-8 space-y-4">
+              <p className="text-base leading-relaxed">
+                Plataforma 100% digital que reemplaza a las inmobiliarias tradicionales, 
+                permitiendo la gestión integral del alquiler, con selección de inquilinos, 
+                automatización de pagos y contratos digitales.
+              </p>
+              
+              <div className="space-y-3 mt-2">
+                <div className="flex items-center text-indigo-600 dark:text-indigo-400">
+                  <CheckCircle className="h-5 w-5 mr-2 flex-shrink-0" />
+                  <span>Gestión automatizada de propiedades</span>
+                </div>
+                <div className="flex items-center text-indigo-600 dark:text-indigo-400">
+                  <CheckCircle className="h-5 w-5 mr-2 flex-shrink-0" />
+                  <span>Inquilinos pre-verificados</span>
+                </div>
+                <div className="flex items-center text-indigo-600 dark:text-indigo-400">
+                  <CheckCircle className="h-5 w-5 mr-2 flex-shrink-0" />
+                  <span>Seguimiento de pagos y mantenimiento</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    )
+  }
+];
+
+export default Presentation;
