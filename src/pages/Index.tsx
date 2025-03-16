@@ -5,6 +5,7 @@ import Footer from '@/components/layout/Footer';
 import Hero from '@/components/home/Hero';
 import Features from '@/components/home/Features';
 import HowItWorks from '@/components/home/HowItWorks';
+import BusinessModel from '@/components/home/BusinessModel';
 import { Button } from '@/components/ui/button';
 import ProfileCard from '@/components/profiles/ProfileCard';
 
@@ -85,6 +86,7 @@ const Index = () => {
           <HowItWorks />
         </div>
         <Features />
+        <BusinessModel />
         
         {/* Featured Profiles Section */}
         <section className="py-20">
