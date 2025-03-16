@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -6,9 +7,10 @@ import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { CheckCircle2, ArrowRight, User, Mail, MapPin, ChevronDown, ChevronUp, Home, Wifi, Utensils } from 'lucide-react';
+import { CheckCircle2, ArrowRight, User, Mail, MapPin, ChevronDown, ChevronUp, BookOpen, Music, Heart, Users, Film, Utensils, Globe, Moon, Sun, Pencil } from 'lucide-react';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { 
   Form,
   FormControl,
@@ -16,6 +18,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from "@/components/ui/form";
 import {
   Collapsible,
@@ -25,35 +28,43 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-// Schema for form validation - simplified version of RegisterPage schema
+// Schema for form validation - profile-focused version
 const formSchema = z.object({
   // Account section
   nombre: z.string().min(2, { message: 'El nombre debe tener al menos 2 caracteres' }),
   email: z.string().email({ message: 'Email inválido' }),
   
   // Profile section
-  edad: z.string().optional(),
-  zona: z.string().min(2, {
-    message: "La zona es requerida.",
+  edad: z.string().refine((val) => {
+    const num = parseInt(val);
+    return !val || (num >= 18 && num <= 99);
+  }, {
+    message: "La edad debe ser un número entre 18 y 99.",
   }),
-  presupuesto: z.array(z.number()),
-  comentarios: z.string().optional(),
+  ubicacion: z.string().min(2, {
+    message: "La ubicación es requerida.",
+  }).optional(),
+  ocupacion: z.string().optional(),
+  universidad: z.string().optional(),
+  bio: z.string().min(10, {
+    message: "La bio debe tener al menos 10 caracteres.",
+  }).max(500, {
+    message: "La bio no puede tener más de 500 caracteres.",
+  }).optional(),
 });
 
-type InteresCategoria = 'ambiente' | 'servicios' | 'habitacion' | 'ubicacion' | 'convivencia';
-
-interface InteresOpcion {
+type InterestCategory = {
   id: string;
-  label: string;
-  categoria: InteresCategoria;
-}
+  name: string;
+  icon: JSX.Element;
+  interests: string[];
+};
 
 const EmailSignup = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("datos");
-  const [openCategories, setOpenCategories] = useState<InteresCategoria[]>(['ambiente']);
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const navigate = useNavigate();
   
@@ -63,9 +74,10 @@ const EmailSignup = () => {
       nombre: '',
       email: '',
       edad: '',
-      zona: '',
-      presupuesto: [400], // Valor predeterminado de 400€
-      comentarios: '',
+      ubicacion: '',
+      ocupacion: '',
+      universidad: '',
+      bio: '',
     },
   });
 
@@ -77,79 +89,69 @@ const EmailSignup = () => {
     noise: "moderado",
   });
 
-  const zonasSevilla = [
-    'Triana', 'Los Remedios', 'Nervión', 'Centro', 'Macarena', 
-    'Alameda', 'Santa Justa', 'Sur', 'Este', 'Aljarafe', 'Otro'
+  // Define interest categories
+  const interestCategories: InterestCategory[] = [
+    {
+      id: "reading",
+      name: "Lectura y cultura",
+      icon: <BookOpen size={18} />,
+      interests: [
+        "Ficción", "No-ficción", "Poesía", "Audiolibros", 
+        "Clubs de lectura", "Museos", "Teatro", "Arte"
+      ]
+    },
+    {
+      id: "music",
+      name: "Música",
+      icon: <Music size={18} />,
+      interests: [
+        "Pop", "Rock", "Clásica", "Electrónica", "Jazz", "Hip-hop", 
+        "Indie", "Folk", "Conciertos", "Tocar instrumentos"
+      ]
+    },
+    {
+      id: "social",
+      name: "Social",
+      icon: <Users size={18} />,
+      interests: [
+        "Fiestas", "Cenas", "Eventos", "Voluntariado", 
+        "Deportes en equipo", "Juegos de mesa", "Debates"
+      ]
+    },
+    {
+      id: "food",
+      name: "Gastronomía",
+      icon: <Utensils size={18} />,
+      interests: [
+        "Cocinar", "Repostería", "Salir a comer", "Comida internacional", 
+        "Vegetariano/Vegano", "Vino", "Cafeterías", "Food trucks"
+      ]
+    },
+    {
+      id: "entertainment",
+      name: "Entretenimiento",
+      icon: <Film size={18} />,
+      interests: [
+        "Cine", "Series", "Documentales", "Videojuegos", 
+        "Realidad virtual", "Podcast", "Fotografía"
+      ]
+    },
+    {
+      id: "travel",
+      name: "Viajes",
+      icon: <Globe size={18} />,
+      interests: [
+        "Mochilero", "Viajes culturales", "Ecoturismo", "Camping", 
+        "Playa", "Montaña", "Ciudades", "Idiomas"
+      ]
+    }
   ];
 
-  // Lista ampliada de intereses organizados por categorías
-  const categorias: Record<InteresCategoria, string> = {
-    ambiente: 'Ambiente y estilo',
-    servicios: 'Servicios incluidos',
-    habitacion: 'Características de la habitación',
-    ubicacion: 'Ubicación',
-    convivencia: 'Convivencia'
-  };
-
-  const interesesOpciones: InteresOpcion[] = [
-    // Ambiente y estilo
-    { id: 'piso-centrico', label: 'Piso céntrico', categoria: 'ambiente' },
-    { id: 'ambiente-tranquilo', label: 'Ambiente tranquilo', categoria: 'ambiente' },
-    { id: 'ambiente-estudiantil', label: 'Ambiente estudiantil', categoria: 'ambiente' },
-    { id: 'decoracion-moderna', label: 'Decoración moderna', categoria: 'ambiente' },
-    { id: 'estilo-minimalista', label: 'Estilo minimalista', categoria: 'ambiente' },
-    { id: 'zona-con-ocio', label: 'Zona con ocio', categoria: 'ambiente' },
-    
-    // Servicios incluidos
-    { id: 'wifi-incluido', label: 'WiFi incluido', categoria: 'servicios' },
-    { id: 'agua-incluida', label: 'Agua incluida', categoria: 'servicios' },
-    { id: 'luz-incluida', label: 'Luz incluida', categoria: 'servicios' },
-    { id: 'limpieza-incluida', label: 'Servicio de limpieza', categoria: 'servicios' },
-    { id: 'lavadora', label: 'Lavadora', categoria: 'servicios' },
-    { id: 'secadora', label: 'Secadora', categoria: 'servicios' },
-    { id: 'cocina-equipada', label: 'Cocina totalmente equipada', categoria: 'servicios' },
-    { id: 'aire-acondicionado', label: 'Aire acondicionado', categoria: 'servicios' },
-    { id: 'calefaccion', label: 'Calefacción', categoria: 'servicios' },
-    
-    // Características de la habitación
-    { id: 'bano-privado', label: 'Baño privado', categoria: 'habitacion' },
-    { id: 'escritorio-trabajo', label: 'Escritorio de trabajo', categoria: 'habitacion' },
-    { id: 'armario-amplio', label: 'Armario amplio', categoria: 'habitacion' },
-    { id: 'cama-grande', label: 'Cama grande (>90cm)', categoria: 'habitacion' },
-    { id: 'ventana-exterior', label: 'Ventana exterior', categoria: 'habitacion' },
-    { id: 'terraza', label: 'Terraza o balcón', categoria: 'habitacion' },
-    
-    // Ubicación
-    { id: 'cerca-universidad', label: 'Cerca de universidad', categoria: 'ubicacion' },
-    { id: 'cerca-metro', label: 'Cerca de metro/tranvía', categoria: 'ubicacion' },
-    { id: 'cerca-supermercado', label: 'Cerca de supermercado', categoria: 'ubicacion' },
-    { id: 'zona-verde', label: 'Cerca de parques', categoria: 'ubicacion' },
-    { id: 'buen-transporte', label: 'Buen transporte público', categoria: 'ubicacion' },
-    
-    // Convivencia
-    { id: 'companeros-estudiantes', label: 'Compañeros estudiantes', categoria: 'convivencia' },
-    { id: 'companeros-trabajadores', label: 'Compañeros trabajadores', categoria: 'convivencia' },
-    { id: 'con-mascotas', label: 'Con mascotas', categoria: 'convivencia' },
-    { id: 'sin-mascotas', label: 'Sin mascotas', categoria: 'convivencia' },
-    { id: 'fumadores', label: 'Fumadores', categoria: 'convivencia' },
-    { id: 'no-fumadores', label: 'No fumadores', categoria: 'convivencia' },
-    { id: 'lgbtq-friendly', label: 'LGBTQ+ friendly', categoria: 'convivencia' },
-    { id: 'internacional', label: 'Ambiente internacional', categoria: 'convivencia' }
-  ];
-
-  const toggleInteres = (interesId: string) => {
+  const toggleInterest = (interest: string) => {
     setSelectedInterests(prev => 
-      prev.includes(interesId)
-        ? prev.filter(i => i !== interesId)
-        : [...prev, interesId]
-    );
-  };
-
-  const toggleCategory = (categoria: InteresCategoria) => {
-    setOpenCategories(prev => 
-      prev.includes(categoria) 
-        ? prev.filter(cat => cat !== categoria)
-        : [...prev, categoria]
+      prev.includes(interest)
+        ? prev.filter(i => i !== interest)
+        : [...prev, interest]
     );
   };
 
@@ -158,10 +160,6 @@ const EmailSignup = () => {
       ...prev,
       [field]: value
     }));
-  };
-
-  const handleSliderChange = (value: number[]) => {
-    form.setValue("presupuesto", value);
   };
 
   // Validar primera pestaña para habilitar la segunda
@@ -193,7 +191,7 @@ const EmailSignup = () => {
       setIsSubmitted(true);
       toast({
         title: "¡Registro exitoso!",
-        description: "Te notificaremos cuando Homi esté disponible.",
+        description: "Tu perfil se ha creado correctamente.",
       });
       setIsLoading(false);
       
@@ -204,36 +202,24 @@ const EmailSignup = () => {
 
   // Obtener el nombre de un interés por su ID
   const getInteresLabel = (interesId: string): string => {
-    const interes = interesesOpciones.find(opt => opt.id === interesId);
-    return interes ? interes.label : interesId;
-  };
-
-  // Renderizar la sección de intereses en el paso de confirmación
-  const renderInteresesSeleccionados = () => {
-    if (selectedInterests.length === 0) {
-      return <span className="text-muted-foreground italic">Ninguno seleccionado</span>;
+    for (const category of interestCategories) {
+      if (category.interests.includes(interesId)) {
+        return interesId;
+      }
     }
-
-    return (
-      <div className="flex flex-wrap gap-1">
-        {selectedInterests.map(interesId => (
-          <Badge key={interesId} variant="outline" className="bg-homi-ultraLightPurple text-homi-purple">
-            {getInteresLabel(interesId)}
-          </Badge>
-        ))}
-      </div>
-    );
+    return interesId;
   };
 
   // Renderizar el icono según la categoría
-  const getCategoryIcon = (categoria: InteresCategoria) => {
+  const getCategoryIcon = (categoria: string) => {
     switch (categoria) {
-      case 'ambiente': return <Home className="h-4 w-4 mr-2" />;
-      case 'servicios': return <Wifi className="h-4 w-4 mr-2" />;
-      case 'habitacion': return <Home className="h-4 w-4 mr-2" />;
-      case 'ubicacion': return <MapPin className="h-4 w-4 mr-2" />;
-      case 'convivencia': return <Utensils className="h-4 w-4 mr-2" />;
-      default: return <Home className="h-4 w-4 mr-2" />;
+      case 'reading': return <BookOpen className="h-4 w-4 mr-2" />;
+      case 'music': return <Music className="h-4 w-4 mr-2" />;
+      case 'social': return <Users className="h-4 w-4 mr-2" />;
+      case 'food': return <Utensils className="h-4 w-4 mr-2" />;
+      case 'entertainment': return <Film className="h-4 w-4 mr-2" />;
+      case 'travel': return <Globe className="h-4 w-4 mr-2" />;
+      default: return <Heart className="h-4 w-4 mr-2" />;
     }
   };
 
@@ -243,7 +229,7 @@ const EmailSignup = () => {
         <CheckCircle2 className="h-16 w-16 text-green-500 mb-4" />
         <h3 className="text-2xl font-bold mb-3">¡Gracias por registrarte!</h3>
         <p className="text-center text-lg mb-4">
-          Te notificaremos cuando Homi esté disponible en {form.getValues('zona')}.
+          Hemos creado tu perfil personalizado en Homi.
         </p>
         <div className="text-sm text-muted-foreground">
           <p>Hemos enviado un correo de confirmación a <span className="font-semibold">{form.getValues('email')}</span></p>
@@ -255,9 +241,9 @@ const EmailSignup = () => {
   return (
     <div className="w-full max-w-3xl mx-auto">
       <div className="mb-6 text-center">
-        <h3 className="text-xl font-semibold mb-2">¿Quieres ser de los primeros en usar Homi?</h3>
+        <h3 className="text-xl font-semibold mb-2">Crea tu perfil personalizado en Homi</h3>
         <p className="text-muted-foreground">
-          Regístrate ahora y obtén acceso preferente cuando lancemos en tu zona.
+          Cuéntanos sobre ti para que podamos encontrar compañeros compatibles con tu estilo de vida.
         </p>
       </div>
 
@@ -271,11 +257,11 @@ const EmailSignup = () => {
           <TabsList className="grid grid-cols-2 mb-8">
             <TabsTrigger value="datos">Datos personales</TabsTrigger>
             <TabsTrigger 
-              value="preferencias" 
+              value="perfil" 
               disabled={!isPersonalDataValid}
               className={!isPersonalDataValid ? "cursor-not-allowed" : ""}
             >
-              Preferencias
+              Perfil personal
             </TabsTrigger>
           </TabsList>
           
@@ -332,7 +318,7 @@ const EmailSignup = () => {
                     type="button" 
                     onClick={() => {
                       if (isPersonalDataValid) {
-                        setActiveTab("preferencias");
+                        setActiveTab("perfil");
                       } else {
                         form.trigger(["nombre", "email"]);
                       }
@@ -345,112 +331,160 @@ const EmailSignup = () => {
                 </div>
               </TabsContent>
               
-              <TabsContent value="preferencias" className="space-y-6">
-                <FormField
-                  control={form.control}
-                  name="zona"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Zona de Sevilla donde buscas vivienda *</FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <select
-                            id="zona"
-                            className="flex h-10 w-full rounded-md border border-input bg-background pl-10 pr-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-                            {...field}
-                          >
-                            <option value="">Selecciona una zona</option>
-                            {zonasSevilla.map(zona => (
-                              <option key={zona} value={zona}>{zona}</option>
-                            ))}
-                          </select>
-                          <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="edad"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Edad</FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <Input
-                            id="edad"
-                            type="number"
-                            min="18"
-                            max="99"
-                            placeholder="Tu edad"
-                            className="pl-10"
-                            {...field}
-                          />
-                          <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <div>
-                  <Label className="block text-sm font-medium mb-3">Presupuesto mensual: {form.getValues('presupuesto')[0]}€</Label>
-                  <Slider
-                    defaultValue={[400]}
-                    max={1200}
-                    min={200}
-                    step={50}
-                    value={form.getValues('presupuesto')}
-                    onValueChange={handleSliderChange}
-                    className="my-5"
+              <TabsContent value="perfil" className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="edad"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Edad</FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <Input
+                              id="edad"
+                              type="number"
+                              min="18"
+                              max="99"
+                              placeholder="Tu edad"
+                              className="pl-10"
+                              {...field}
+                            />
+                            <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
-                  <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                    <span>200€</span>
-                    <span>700€</span>
-                    <span>1200€</span>
-                  </div>
+                  
+                  <FormField
+                    control={form.control}
+                    name="ubicacion"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Ciudad</FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <Input
+                              id="ubicacion"
+                              placeholder="¿Dónde vives?"
+                              className="pl-10"
+                              {...field}
+                            />
+                            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
                 
-                <div>
-                  <p className="text-sm font-medium mb-3">¿Qué buscas en tu próximo hogar?</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="ocupacion"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Ocupación</FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <Input
+                              id="ocupacion"
+                              placeholder="¿A qué te dedicas?"
+                              className="pl-10"
+                              {...field}
+                            />
+                            <Pencil className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                   
-                  {Object.entries(categorias).map(([categoriaKey, categoriaLabel]) => {
-                    const categoria = categoriaKey as InteresCategoria;
-                    const isOpen = openCategories.includes(categoria);
-                    const interesesCategoria = interesesOpciones.filter(i => i.categoria === categoria);
+                  <FormField
+                    control={form.control}
+                    name="universidad"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Universidad (si aplica)</FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <Input
+                              id="universidad"
+                              placeholder="¿Dónde estudias?"
+                              className="pl-10"
+                              {...field}
+                            />
+                            <BookOpen className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                
+                <FormField
+                  control={form.control}
+                  name="bio"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Sobre mí</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          id="bio"
+                          placeholder="Cuéntanos un poco sobre ti, tus rutinas y lo que te gusta hacer..."
+                          className="min-h-[100px]"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Comparte algo que te defina y ayude a otros a conocerte mejor.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <div>
+                  <h3 className="text-base font-medium mb-3">Intereses y aficiones</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Selecciona intereses que te definan para encontrar personas afines.
+                  </p>
+                  
+                  {interestCategories.map((category) => {
+                    const isOpen = true; // Mantener todas las categorías abiertas para simplificar
                     
                     return (
                       <Collapsible 
-                        key={categoria} 
-                        open={isOpen} 
-                        onOpenChange={() => toggleCategory(categoria)}
+                        key={category.id} 
+                        open={isOpen}
                         className="mb-3 border border-border rounded-lg"
                       >
                         <CollapsibleTrigger className="flex items-center justify-between w-full p-3 hover:bg-muted/50 transition-colors rounded-lg">
                           <div className="flex items-center">
-                            {getCategoryIcon(categoria)}
-                            <span className="font-medium">{categoriaLabel}</span>
+                            {getCategoryIcon(category.id)}
+                            <span className="font-medium">{category.name}</span>
                           </div>
-                          {isOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                          <ChevronUp className="h-4 w-4" />
                         </CollapsibleTrigger>
                         <CollapsibleContent className="p-3 pt-0">
                           <div className="flex flex-wrap gap-2 mt-2">
-                            {interesesCategoria.map(interes => (
+                            {category.interests.map(interest => (
                               <button
-                                key={interes.id}
+                                key={interest}
                                 type="button"
-                                onClick={() => toggleInteres(interes.id)}
+                                onClick={() => toggleInterest(interest)}
                                 className={`px-3 py-1 rounded-full text-sm transition-colors ${
-                                  selectedInterests.includes(interes.id)
+                                  selectedInterests.includes(interest)
                                     ? 'bg-homi-purple text-white'
                                     : 'bg-homi-ultraLightPurple text-homi-purple hover:bg-homi-purple/20'
                                 }`}
                               >
-                                {interes.label}
+                                {interest}
                               </button>
                             ))}
                           </div>
@@ -458,26 +492,131 @@ const EmailSignup = () => {
                       </Collapsible>
                     );
                   })}
+                  
+                  {selectedInterests.length > 0 && (
+                    <div className="mt-4 pt-4 border-t">
+                      <h3 className="text-sm font-medium mb-2">Intereses seleccionados:</h3>
+                      <div className="flex flex-wrap gap-2">
+                        {selectedInterests.map(interest => (
+                          <Badge 
+                            key={interest} 
+                            className="bg-homi-purple text-white flex items-center gap-1"
+                          >
+                            {interest}
+                            <button 
+                              type="button" 
+                              className="ml-1 hover:bg-white/20 rounded-full h-4 w-4 flex items-center justify-center"
+                              onClick={() => toggleInterest(interest)}
+                            >
+                              ×
+                            </button>
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
                 
-                <FormField
-                  control={form.control}
-                  name="comentarios"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>¿Algo más que debamos saber?</FormLabel>
-                      <FormControl>
-                        <textarea
-                          id="comentarios"
-                          placeholder="Coméntanos cualquier detalle adicional sobre lo que buscas..."
-                          className="min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <div>
+                  <h3 className="text-base font-medium mb-3">Estilo de vida</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Cuéntanos sobre tus hábitos para encontrar compañeros compatibles.
+                  </p>
+                  
+                  <div className="space-y-6">
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">¿Eres más de mañanas o de noches?</label>
+                      <div className="flex gap-4">
+                        <button
+                          type="button"
+                          className={`flex items-center gap-2 px-4 py-2 rounded-lg border ${
+                            lifestylePreferences.morningPerson
+                              ? 'bg-homi-purple text-white border-homi-purple'
+                              : 'bg-transparent border-input hover:bg-muted/50'
+                          }`}
+                          onClick={() => handleLifestyleChange('morningPerson', !lifestylePreferences.morningPerson)}
+                        >
+                          <Sun size={18} /> Madrugador/a
+                        </button>
+                        <button
+                          type="button"
+                          className={`flex items-center gap-2 px-4 py-2 rounded-lg border ${
+                            lifestylePreferences.nightPerson
+                              ? 'bg-homi-purple text-white border-homi-purple'
+                              : 'bg-transparent border-input hover:bg-muted/50'
+                          }`}
+                          onClick={() => handleLifestyleChange('nightPerson', !lifestylePreferences.nightPerson)}
+                        >
+                          <Moon size={18} /> Noctámbulo/a
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">Socialización en casa</label>
+                      <div className="grid grid-cols-3 gap-3">
+                        {["poco", "moderado", "mucho"].map((level) => (
+                          <button
+                            key={level}
+                            type="button"
+                            className={`px-4 py-2 rounded-lg border ${
+                              lifestylePreferences.socializing === level
+                                ? 'bg-homi-purple text-white border-homi-purple'
+                                : 'bg-transparent border-input hover:bg-muted/50'
+                            }`}
+                            onClick={() => handleLifestyleChange('socializing', level)}
+                          >
+                            {level === "poco" && "Prefiero tranquilidad"}
+                            {level === "moderado" && "Balance"}
+                            {level === "mucho" && "Me gusta socializar"}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">Limpieza y orden</label>
+                      <div className="grid grid-cols-3 gap-3">
+                        {["básico", "moderado", "muy ordenado"].map((level) => (
+                          <button
+                            key={level}
+                            type="button"
+                            className={`px-4 py-2 rounded-lg border ${
+                              lifestylePreferences.cleanliness === level
+                                ? 'bg-homi-purple text-white border-homi-purple'
+                                : 'bg-transparent border-input hover:bg-muted/50'
+                            }`}
+                            onClick={() => handleLifestyleChange('cleanliness', level)}
+                          >
+                            {level}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">Tolerancia al ruido</label>
+                      <div className="grid grid-cols-3 gap-3">
+                        {["bajo", "moderado", "alto"].map((level) => (
+                          <button
+                            key={level}
+                            type="button"
+                            className={`px-4 py-2 rounded-lg border ${
+                              lifestylePreferences.noise === level
+                                ? 'bg-homi-purple text-white border-homi-purple'
+                                : 'bg-transparent border-input hover:bg-muted/50'
+                            }`}
+                            onClick={() => handleLifestyleChange('noise', level)}
+                          >
+                            {level === "bajo" && "Prefiero silencio"}
+                            {level === "moderado" && "Nivel medio"}
+                            {level === "alto" && "No me molesta"}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 
                 <div className="flex justify-between">
                   <Button 
@@ -494,7 +633,7 @@ const EmailSignup = () => {
                     disabled={isLoading}
                     className="rounded-full bg-homi-purple hover:bg-homi-purple/90"
                   >
-                    {isLoading ? "Enviando..." : "Completar registro"}
+                    {isLoading ? "Enviando..." : "Completar perfil"}
                   </Button>
                 </div>
               </TabsContent>
@@ -504,7 +643,7 @@ const EmailSignup = () => {
       </div>
       
       <div className="mt-4 text-center text-xs text-muted-foreground">
-        Al registrarte, aceptas recibir notificaciones cuando Homi esté disponible en tu ciudad.
+        Al crear tu perfil, aceptas nuestros términos y condiciones.
       </div>
     </div>
   );
