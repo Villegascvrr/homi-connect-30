@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -238,47 +239,74 @@ const ProfilePage = () => {
                   </p>
                   
                   <div className="mt-4 flex flex-col items-center">
+                    {/* Instagram story-style profile card */}
                     <div 
                       id="profile-card" 
-                      className="w-full max-w-md p-6 bg-white rounded-xl shadow-md mb-4 relative overflow-hidden"
+                      className="w-[360px] h-[640px] bg-gradient-to-br from-purple-600 to-pink-500 rounded-xl shadow-xl overflow-hidden relative mx-auto mb-6"
                     >
-                      <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-homi-purple to-pink-500"></div>
-                      <div className="flex items-center gap-4">
-                        <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-homi-purple">
-                          <img
-                            src={profile.imgUrl}
-                            alt={profile.name}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <div>
-                          <h3 className="text-xl font-bold">{profile.name}, {profile.age}</h3>
-                          <p className="text-sm text-muted-foreground">{profile.location}</p>
-                          <p className="text-sm">{profile.occupation}</p>
-                        </div>
+                      {/* Profile header */}
+                      <div className="absolute top-0 left-0 w-full h-1/2 overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-purple-800/70"></div>
+                        <img
+                          src={profile.imgUrl}
+                          alt={profile.name}
+                          className="w-full h-full object-cover"
+                        />
                       </div>
                       
-                      <div className="flex justify-between items-center mt-4">
-                        <div className="flex-1">
-                          <div className="flex flex-wrap gap-1 mb-2">
-                            {profile.tags.slice(0, 3).map((tag) => (
+                      {/* Profile content */}
+                      <div className="absolute bottom-0 left-0 w-full h-2/3 bg-gradient-to-t from-purple-900/90 to-transparent p-6 flex flex-col justify-end">
+                        <div className="mb-4 flex items-center gap-3">
+                          <div className="w-16 h-16 rounded-full border-2 border-white overflow-hidden">
+                            <img
+                              src={profile.imgUrl}
+                              alt={profile.name}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <div>
+                            <h3 className="text-xl font-bold text-white flex items-center gap-1">
+                              {profile.name}, {profile.age}
+                              {profile.verified && (
+                                <div className="bg-white text-purple-600 p-0.5 rounded-full">
+                                  <UserCheck size={14} />
+                                </div>
+                              )}
+                            </h3>
+                            <p className="text-sm text-white/80">{profile.location} · {profile.occupation}</p>
+                          </div>
+                        </div>
+                        
+                        <div className="mb-4">
+                          <div className="flex flex-wrap gap-2 mb-3">
+                            {profile.tags.slice(0, 5).map((tag) => (
                               <span 
                                 key={tag.id} 
-                                className="px-2 py-0.5 text-xs rounded-full bg-homi-ultraLightPurple text-homi-purple"
+                                className="px-3 py-1 text-xs rounded-full bg-white/20 text-white"
                               >
                                 {tag.name}
                               </span>
                             ))}
                           </div>
-                          <p className="text-xs line-clamp-2">{profile.bio}</p>
+                          
+                          <p className="text-white/90 text-sm line-clamp-3 mb-6">
+                            {profile.bio}
+                          </p>
                         </div>
-                        <div className="ml-4">
-                          <QRCodeSVG value={profileUrl} size={80} />
+                        
+                        <div className="flex justify-between items-center bg-white/10 p-3 rounded-lg backdrop-blur-sm">
+                          <div>
+                            <h4 className="text-xs text-white/60 mb-1">Escanea para conectar</h4>
+                            <p className="text-sm font-medium text-white">homi-connect.app</p>
+                          </div>
+                          <div className="bg-white p-2 rounded-lg">
+                            <QRCodeSVG value={profileUrl} size={64} bgColor="#FFFFFF" fgColor="#6E59A5" />
+                          </div>
                         </div>
-                      </div>
-                      
-                      <div className="mt-3 text-center text-xs text-muted-foreground">
-                        <p>¡Escanea el código para ver mi perfil completo en Homi!</p>
+                        
+                        <div className="absolute bottom-2 left-0 w-full text-center text-white/50 text-xs">
+                          <p>Encuentra tu compañero de piso ideal con Homi</p>
+                        </div>
                       </div>
                     </div>
                     
@@ -477,4 +505,3 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
-
