@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -322,6 +321,35 @@ const sections = [
           </CardContent>
         </Card>
         
+        {/* New Content: Solution Overview */}
+        <Card className="border-purple-200 dark:border-purple-800/30 bg-purple-50/50 dark:bg-purple-950/10 shadow-md">
+          <CardContent className="p-8">
+            <p className="font-medium text-lg mb-6">
+              Homi digitaliza y optimiza completamente el proceso de alquiler, eliminando fricciones y simplificando cada etapa mediante tecnología avanzada y automatización.
+            </p>
+            <div className="space-y-4">
+              <div className="flex items-start">
+                <div className="text-green-600 dark:text-green-400 shrink-0 mt-1 mr-3">
+                  <CheckCircle className="h-6 w-6" />
+                </div>
+                <div>
+                  <span className="font-semibold text-lg">Matching Inteligente con IA</span>
+                  <p className="text-muted-foreground mt-1">Conecta posibles compañeros de piso compatibles según hábitos, estilo de vida y preferencias.</p>
+                </div>
+              </div>
+              <div className="flex items-start">
+                <div className="text-green-600 dark:text-green-400 shrink-0 mt-1 mr-3">
+                  <CheckCircle className="h-6 w-6" />
+                </div>
+                <div>
+                  <span className="font-semibold text-lg">Gestión Digital Completa del Alquiler</span>
+                  <p className="text-muted-foreground mt-1">Automatiza la firma de contratos, pagos recurrentes y comunicación con propietarios, eliminando procesos manuales y asegurando una experiencia fluida y segura.</p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card className="border border-purple-200 dark:border-purple-800/30 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <CardContent className="p-8">
@@ -541,87 +569,3 @@ const sections = [
       <div className="space-y-10">
         <div className="text-center mb-12">
           <h3 className="text-2xl font-bold mb-6 inline-block border-b-2 border-indigo-400 dark:border-indigo-500 pb-2">
-            Nuestra evolución: dos plataformas complementarias
-          </h3>
-        </div>
-        
-        <div className="grid md:grid-cols-2 gap-12">
-          <Card className="border-indigo-200 dark:border-indigo-800/30 overflow-hidden relative">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-100 dark:bg-indigo-900/20 rounded-bl-full z-0"></div>
-            
-            <div className="bg-indigo-600 dark:bg-indigo-800 p-8 text-white relative z-10">
-              <div className="flex items-center mb-3">
-                <div className="bg-white/20 p-3 rounded-full mr-4">
-                  <Users className="h-7 w-7" />
-                </div>
-                <h3 className="text-2xl font-bold">Homi</h3>
-              </div>
-              <Badge className="bg-white/90 text-indigo-600 hover:bg-white/80 mb-1">Para Inquilinos</Badge>
-            </div>
-            
-            <CardContent className="p-8 space-y-4">
-              <p className="text-base leading-relaxed">
-                Plataforma de matching inteligente que conecta estudiantes con compañeros de piso y 
-                propiedades ideales, facilitando la búsqueda de alojamiento y acceso a servicios.
-              </p>
-              
-              <div className="space-y-3 mt-2">
-                <div className="flex items-center text-indigo-600 dark:text-indigo-400">
-                  <CheckCircle className="h-5 w-5 mr-2 flex-shrink-0" />
-                  <span>Matching con roommates compatibles</span>
-                </div>
-                <div className="flex items-center text-indigo-600 dark:text-indigo-400">
-                  <CheckCircle className="h-5 w-5 mr-2 flex-shrink-0" />
-                  <span>Búsqueda de vivienda personalizada</span>
-                </div>
-                <div className="flex items-center text-indigo-600 dark:text-indigo-400">
-                  <CheckCircle className="h-5 w-5 mr-2 flex-shrink-0" />
-                  <span>Contratos digitales y gestión de pagos</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="border-indigo-200 dark:border-indigo-800/30 overflow-hidden relative">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-100 dark:bg-indigo-900/20 rounded-bl-full z-0"></div>
-            
-            <div className="bg-indigo-600 dark:bg-indigo-800 p-8 text-white relative z-10">
-              <div className="flex items-center mb-3">
-                <div className="bg-white/20 p-3 rounded-full mr-4">
-                  <Building className="h-7 w-7" />
-                </div>
-                <h3 className="text-2xl font-bold">Homiware</h3>
-              </div>
-              <Badge className="bg-white/90 text-indigo-600 hover:bg-white/80 mb-1">Para Propietarios</Badge>
-            </div>
-            
-            <CardContent className="p-8 space-y-4">
-              <p className="text-base leading-relaxed">
-                Plataforma 100% digital que reemplaza a las inmobiliarias tradicionales, 
-                permitiendo la gestión integral del alquiler, con selección de inquilinos, 
-                automatización de pagos y contratos digitales.
-              </p>
-              
-              <div className="space-y-3 mt-2">
-                <div className="flex items-center text-indigo-600 dark:text-indigo-400">
-                  <CheckCircle className="h-5 w-5 mr-2 flex-shrink-0" />
-                  <span>Gestión automatizada de propiedades</span>
-                </div>
-                <div className="flex items-center text-indigo-600 dark:text-indigo-400">
-                  <CheckCircle className="h-5 w-5 mr-2 flex-shrink-0" />
-                  <span>Inquilinos pre-verificados</span>
-                </div>
-                <div className="flex items-center text-indigo-600 dark:text-indigo-400">
-                  <CheckCircle className="h-5 w-5 mr-2 flex-shrink-0" />
-                  <span>Seguimiento de pagos y mantenimiento</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    )
-  }
-];
-
-export default Presentation;
