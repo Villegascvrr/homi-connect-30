@@ -4,17 +4,31 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { CheckCircle2, ArrowRight, User, Mail, MapPin } from 'lucide-react';
+import { CheckCircle2, ArrowRight, User, Mail, MapPin, ChevronDown, ChevronUp, Home, Wifi, Utensils } from 'lucide-react';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { Badge } from '@/components/ui/badge';
 
 type Step = 'datos' | 'intereses' | 'confirmacion';
+type InteresCategoria = 'ambiente' | 'servicios' | 'habitacion' | 'ubicacion' | 'convivencia';
+
+interface InteresOpcion {
+  id: string;
+  label: string;
+  categoria: InteresCategoria;
+}
 
 const EmailSignup = () => {
   const [step, setStep] = useState<Step>('datos');
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { toast } = useToast();
+  const [openCategories, setOpenCategories] = useState<InteresCategoria[]>(['ambiente']);
   
   // Formulario
   const [formData, setFormData] = useState({
@@ -32,13 +46,62 @@ const EmailSignup = () => {
     'Alameda', 'Santa Justa', 'Sur', 'Este', 'Aljarafe', 'Otro'
   ];
 
-  const interesesOpciones = [
-    'Piso céntrico', 'Ambiente tranquilo', 'Compañeros estudiantes',
-    'Zona con ocio', 'Con mascotas', 'Sin mascotas', 'Fumadores',
-    'No fumadores', 'Espacio de trabajo'
+  // Lista ampliada de intereses organizados por categorías
+  const categorias: Record<InteresCategoria, string> = {
+    ambiente: 'Ambiente y estilo',
+    servicios: 'Servicios incluidos',
+    habitacion: 'Características de la habitación',
+    ubicacion: 'Ubicación',
+    convivencia: 'Convivencia'
+  };
+
+  const interesesOpciones: InteresOpcion[] = [
+    // Ambiente y estilo
+    { id: 'piso-centrico', label: 'Piso céntrico', categoria: 'ambiente' },
+    { id: 'ambiente-tranquilo', label: 'Ambiente tranquilo', categoria: 'ambiente' },
+    { id: 'ambiente-estudiantil', label: 'Ambiente estudiantil', categoria: 'ambiente' },
+    { id: 'decoracion-moderna', label: 'Decoración moderna', categoria: 'ambiente' },
+    { id: 'estilo-minimalista', label: 'Estilo minimalista', categoria: 'ambiente' },
+    { id: 'zona-con-ocio', label: 'Zona con ocio', categoria: 'ambiente' },
+    
+    // Servicios incluidos
+    { id: 'wifi-incluido', label: 'WiFi incluido', categoria: 'servicios' },
+    { id: 'agua-incluida', label: 'Agua incluida', categoria: 'servicios' },
+    { id: 'luz-incluida', label: 'Luz incluida', categoria: 'servicios' },
+    { id: 'limpieza-incluida', label: 'Servicio de limpieza', categoria: 'servicios' },
+    { id: 'lavadora', label: 'Lavadora', categoria: 'servicios' },
+    { id: 'secadora', label: 'Secadora', categoria: 'servicios' },
+    { id: 'cocina-equipada', label: 'Cocina totalmente equipada', categoria: 'servicios' },
+    { id: 'aire-acondicionado', label: 'Aire acondicionado', categoria: 'servicios' },
+    { id: 'calefaccion', label: 'Calefacción', categoria: 'servicios' },
+    
+    // Características de la habitación
+    { id: 'bano-privado', label: 'Baño privado', categoria: 'habitacion' },
+    { id: 'escritorio-trabajo', label: 'Escritorio de trabajo', categoria: 'habitacion' },
+    { id: 'armario-amplio', label: 'Armario amplio', categoria: 'habitacion' },
+    { id: 'cama-grande', label: 'Cama grande (>90cm)', categoria: 'habitacion' },
+    { id: 'ventana-exterior', label: 'Ventana exterior', categoria: 'habitacion' },
+    { id: 'terraza', label: 'Terraza o balcón', categoria: 'habitacion' },
+    
+    // Ubicación
+    { id: 'cerca-universidad', label: 'Cerca de universidad', categoria: 'ubicacion' },
+    { id: 'cerca-metro', label: 'Cerca de metro/tranvía', categoria: 'ubicacion' },
+    { id: 'cerca-supermercado', label: 'Cerca de supermercado', categoria: 'ubicacion' },
+    { id: 'zona-verde', label: 'Cerca de parques', categoria: 'ubicacion' },
+    { id: 'buen-transporte', label: 'Buen transporte público', categoria: 'ubicacion' },
+    
+    // Convivencia
+    { id: 'companeros-estudiantes', label: 'Compañeros estudiantes', categoria: 'convivencia' },
+    { id: 'companeros-trabajadores', label: 'Compañeros trabajadores', categoria: 'convivencia' },
+    { id: 'con-mascotas', label: 'Con mascotas', categoria: 'convivencia' },
+    { id: 'sin-mascotas', label: 'Sin mascotas', categoria: 'convivencia' },
+    { id: 'fumadores', label: 'Fumadores', categoria: 'convivencia' },
+    { id: 'no-fumadores', label: 'No fumadores', categoria: 'convivencia' },
+    { id: 'lgbtq-friendly', label: 'LGBTQ+ friendly', categoria: 'convivencia' },
+    { id: 'internacional', label: 'Ambiente internacional', categoria: 'convivencia' }
   ];
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
@@ -47,14 +110,22 @@ const EmailSignup = () => {
     setFormData(prev => ({ ...prev, presupuesto: value }));
   };
 
-  const toggleInteres = (interes: string) => {
+  const toggleInteres = (interesId: string) => {
     setFormData(prev => {
-      const interesesActualizados = prev.intereses.includes(interes)
-        ? prev.intereses.filter(i => i !== interes)
-        : [...prev.intereses, interes];
+      const interesesActualizados = prev.intereses.includes(interesId)
+        ? prev.intereses.filter(i => i !== interesId)
+        : [...prev.intereses, interesId];
       
       return { ...prev, intereses: interesesActualizados };
     });
+  };
+
+  const toggleCategory = (categoria: InteresCategoria) => {
+    setOpenCategories(prev => 
+      prev.includes(categoria) 
+        ? prev.filter(cat => cat !== categoria)
+        : [...prev, categoria]
+    );
   };
 
   const validateCurrentStep = () => {
@@ -115,6 +186,12 @@ const EmailSignup = () => {
     }, 1000);
   };
 
+  // Obtener el nombre de un interés por su ID
+  const getInteresLabel = (interesId: string): string => {
+    const interes = interesesOpciones.find(opt => opt.id === interesId);
+    return interes ? interes.label : interesId;
+  };
+
   if (isSubmitted) {
     return (
       <div className="flex flex-col items-center justify-center p-8 bg-gradient-to-br from-homi-ultraLightPurple to-white dark:from-homi-purple/20 dark:to-background rounded-xl border border-homi-purple/20 shadow-md animate-fade-in">
@@ -144,6 +221,40 @@ const EmailSignup = () => {
     if (step === 'datos') return "Tus datos";
     if (step === 'intereses') return "Preferencias";
     return "Confirma tus datos";
+  };
+
+  // Agrupar intereses por categoría
+  const getInteresesByCategoria = (categoria: InteresCategoria) => {
+    return interesesOpciones.filter(interes => interes.categoria === categoria);
+  };
+
+  // Renderiza un icono según la categoría
+  const getCategoryIcon = (categoria: InteresCategoria) => {
+    switch (categoria) {
+      case 'ambiente': return <Home className="h-4 w-4 mr-2" />;
+      case 'servicios': return <Wifi className="h-4 w-4 mr-2" />;
+      case 'habitacion': return <Home className="h-4 w-4 mr-2" />;
+      case 'ubicacion': return <MapPin className="h-4 w-4 mr-2" />;
+      case 'convivencia': return <Utensils className="h-4 w-4 mr-2" />;
+      default: return <Home className="h-4 w-4 mr-2" />;
+    }
+  };
+
+  // Renderizar la sección de intereses en el paso de confirmación
+  const renderInteresesSeleccionados = () => {
+    if (formData.intereses.length === 0) {
+      return <span className="text-muted-foreground italic">Ninguno seleccionado</span>;
+    }
+
+    return (
+      <div className="flex flex-wrap gap-1">
+        {formData.intereses.map(interesId => (
+          <Badge key={interesId} variant="outline" className="bg-homi-ultraLightPurple text-homi-purple">
+            {getInteresLabel(interesId)}
+          </Badge>
+        ))}
+      </div>
+    );
   };
 
   return (
@@ -209,7 +320,7 @@ const EmailSignup = () => {
                   id="zona"
                   name="zona"
                   value={formData.zona}
-                  onChange={handleInputChange as any}
+                  onChange={handleInputChange}
                   className="flex h-10 w-full rounded-md border border-input bg-background pl-10 pr-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                 >
                   <option value="">Selecciona una zona</option>
@@ -263,22 +374,47 @@ const EmailSignup = () => {
           <div className="space-y-6">
             <div>
               <p className="text-sm font-medium mb-3">¿Qué buscas en tu próximo hogar?</p>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {interesesOpciones.map(interes => (
-                  <button
-                    key={interes}
-                    type="button"
-                    onClick={() => toggleInteres(interes)}
-                    className={`px-3 py-1 rounded-full text-sm transition-colors ${
-                      formData.intereses.includes(interes)
-                        ? 'bg-homi-purple text-white'
-                        : 'bg-homi-ultraLightPurple text-homi-purple hover:bg-homi-purple/20'
-                    }`}
+              
+              {Object.entries(categorias).map(([categoriaKey, categoriaLabel]) => {
+                const categoria = categoriaKey as InteresCategoria;
+                const isOpen = openCategories.includes(categoria);
+                const interesesCategoria = getInteresesByCategoria(categoria);
+                
+                return (
+                  <Collapsible 
+                    key={categoria} 
+                    open={isOpen} 
+                    onOpenChange={() => toggleCategory(categoria)}
+                    className="mb-3 border border-border rounded-lg"
                   >
-                    {interes}
-                  </button>
-                ))}
-              </div>
+                    <CollapsibleTrigger className="flex items-center justify-between w-full p-3 hover:bg-muted/50 transition-colors rounded-lg">
+                      <div className="flex items-center">
+                        {getCategoryIcon(categoria)}
+                        <span className="font-medium">{categoriaLabel}</span>
+                      </div>
+                      {isOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="p-3 pt-0">
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {interesesCategoria.map(interes => (
+                          <button
+                            key={interes.id}
+                            type="button"
+                            onClick={() => toggleInteres(interes.id)}
+                            className={`px-3 py-1 rounded-full text-sm transition-colors ${
+                              formData.intereses.includes(interes.id)
+                                ? 'bg-homi-purple text-white'
+                                : 'bg-homi-ultraLightPurple text-homi-purple hover:bg-homi-purple/20'
+                            }`}
+                          >
+                            {interes.label}
+                          </button>
+                        ))}
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+                );
+              })}
             </div>
             
             <div>
@@ -318,7 +454,7 @@ const EmailSignup = () => {
                 </div>
                 <div>
                   <span className="block text-muted-foreground">Intereses:</span>
-                  <span className="font-medium">{formData.intereses.length > 0 ? formData.intereses.join(', ') : "Ninguno seleccionado"}</span>
+                  {renderInteresesSeleccionados()}
                 </div>
               </div>
             </div>
