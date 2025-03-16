@@ -115,6 +115,22 @@
   .animate-on-scroll.active {
     @apply opacity-100 translate-y-0;
   }
+  
+  .feature-card {
+    @apply p-6 rounded-2xl transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
+  }
+  
+  .button-glow {
+    @apply relative overflow-hidden;
+  }
+  
+  .button-glow::after {
+    @apply absolute content-[''] top-0 left-[-100%] w-full h-full bg-white/20 skew-x-[-25deg] transition-all duration-700;
+  }
+  
+  .button-glow:hover::after {
+    @apply left-[100%];
+  }
 }
 
 /* Custom scroll bar */
@@ -133,3 +149,23 @@
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-homi-lightPurple/50;
 }
+
+/* Custom Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 5px rgba(155, 107, 254, 0.5); }
+  50% { box-shadow: 0 0 20px rgba(155, 107, 254, 0.8); }
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
