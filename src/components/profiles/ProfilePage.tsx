@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -18,7 +17,7 @@ import {
   QrCode, 
   Camera 
 } from 'lucide-react';
-import QRCode from 'qrcode.react';
+import { QRCodeSVG } from 'qrcode.react';
 import html2canvas from 'html2canvas';
 
 const ProfilePage = () => {
@@ -26,7 +25,6 @@ const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [showShareDialog, setShowShareDialog] = useState(false);
   
-  // Sample profile data - in a real app, this would come from your backend
   const profile = {
     id: '1',
     name: 'Elena García',
@@ -81,7 +79,6 @@ const ProfilePage = () => {
   const handleEditProfile = () => {
     setIsEditing(true);
     console.log('Edit profile:', profile.id);
-    // In a real implementation, this would navigate to the edit form
   };
 
   const handleDownloadCard = () => {
@@ -96,7 +93,6 @@ const ProfilePage = () => {
     }
   };
 
-  // Generate the profile URL - in a real app, use your actual domain
   const profileUrl = `https://homi-connect.app/profile/${profile.id}`;
 
   return (
@@ -106,7 +102,6 @@ const ProfilePage = () => {
       <main className="flex-grow pt-20 pb-12">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
-            {/* Profile header */}
             <div className="glass-card overflow-hidden">
               <div className="relative h-64 bg-homi-ultraLightPurple">
                 <img
@@ -115,7 +110,6 @@ const ProfilePage = () => {
                   className="w-full h-full object-cover"
                 />
                 
-                {/* Edit profile button */}
                 <Button 
                   variant="outline" 
                   size="sm" 
@@ -128,7 +122,6 @@ const ProfilePage = () => {
               </div>
               
               <div className="relative px-6 py-8">
-                {/* Profile avatar */}
                 <div className="absolute -top-16 left-6 w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-lg">
                   <img
                     src={profile.imgUrl}
@@ -186,9 +179,7 @@ const ProfilePage = () => {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-              {/* Left column */}
               <div className="md:col-span-2 space-y-6">
-                {/* Bio section */}
                 <div className="glass-card p-6">
                   <h2 className="text-xl font-semibold mb-4">Sobre mí</h2>
                   <p>{profile.bio}</p>
@@ -222,7 +213,6 @@ const ProfilePage = () => {
                   </div>
                 </div>
                 
-                {/* Gallery */}
                 <div className="glass-card p-6">
                   <h2 className="text-xl font-semibold mb-4">Galería</h2>
                   <div className="grid grid-cols-3 gap-4">
@@ -238,7 +228,6 @@ const ProfilePage = () => {
                   </div>
                 </div>
 
-                {/* Profile presentation card */}
                 <div className="glass-card p-6">
                   <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
                     <QrCode size={20} className="text-homi-purple" />
@@ -284,7 +273,7 @@ const ProfilePage = () => {
                           <p className="text-xs line-clamp-2">{profile.bio}</p>
                         </div>
                         <div className="ml-4">
-                          <QRCode value={profileUrl} size={80} />
+                          <QRCodeSVG value={profileUrl} size={80} />
                         </div>
                       </div>
                       
@@ -314,9 +303,7 @@ const ProfilePage = () => {
                 </div>
               </div>
               
-              {/* Right column */}
               <div className="space-y-6">
-                {/* Preferences */}
                 <div className="glass-card p-6">
                   <h2 className="text-xl font-semibold mb-4">Preferencias de vivienda</h2>
                   <div className="space-y-3">
@@ -339,7 +326,6 @@ const ProfilePage = () => {
                   </div>
                 </div>
                 
-                {/* Lifestyle */}
                 <div className="glass-card p-6">
                   <h2 className="text-xl font-semibold mb-4">Estilo de vida</h2>
                   <div className="space-y-3">
@@ -366,7 +352,6 @@ const ProfilePage = () => {
                   </div>
                 </div>
 
-                {/* QR Code */}
                 <div className="glass-card p-6">
                   <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
                     <QrCode size={20} className="text-homi-purple" />
@@ -374,7 +359,7 @@ const ProfilePage = () => {
                   </h2>
                   <div className="flex flex-col items-center">
                     <div className="bg-white p-4 rounded-xl mb-3">
-                      <QRCode value={profileUrl} size={150} />
+                      <QRCodeSVG value={profileUrl} size={150} />
                     </div>
                     <p className="text-sm text-center text-muted-foreground mb-3">
                       Escanea este código para compartir tu perfil con posibles compañeros de piso
@@ -396,7 +381,6 @@ const ProfilePage = () => {
         </div>
       </main>
       
-      {/* Share dialog */}
       <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -493,3 +477,4 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
+
