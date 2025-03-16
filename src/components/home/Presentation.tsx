@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -235,16 +234,6 @@ const Presentation = () => {
                     <p className="text-white/70">Elimina papeleo, ahorra tiempo y simplifica todo el proceso.</p>
                   </CardContent>
                 </Card>
-              </div>
-              
-              <div className="mt-10 text-center">
-                <Button 
-                  size="lg" 
-                  className="bg-white text-purple-600 hover:bg-white/90 rounded-full px-8 group"
-                >
-                  Descubre Cómo Funciona 
-                  <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-                </Button>
               </div>
             </div>
           </div>
