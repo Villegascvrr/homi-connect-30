@@ -136,7 +136,7 @@ const PropertyFilter = ({
               <SelectValue placeholder="Cualquier ciudad" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Cualquier ciudad</SelectItem>
+              <SelectItem value="any">Cualquier ciudad</SelectItem>
               {cities.map((city) => (
                 <SelectItem key={city} value={city}>{city}</SelectItem>
               ))}
@@ -220,7 +220,7 @@ const PropertyFilter = ({
                 <SelectValue placeholder="Cualquiera" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Cualquiera</SelectItem>
+                <SelectItem value="any">Cualquiera</SelectItem>
                 <SelectItem value="1">1+</SelectItem>
                 <SelectItem value="2">2+</SelectItem>
                 <SelectItem value="3">3+</SelectItem>
@@ -242,7 +242,7 @@ const PropertyFilter = ({
                 <SelectValue placeholder="Cualquiera" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Cualquiera</SelectItem>
+                <SelectItem value="any">Cualquiera</SelectItem>
                 <SelectItem value="1">1+</SelectItem>
                 <SelectItem value="2">2+</SelectItem>
                 <SelectItem value="3">3+</SelectItem>
