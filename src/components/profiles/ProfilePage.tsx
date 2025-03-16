@@ -123,7 +123,8 @@ const ProfilePage = () => {
         toast({
           title: 'Tarjeta descargada',
           description: 'Tu tarjeta se ha descargado con éxito',
-          variant: 'success',
+          // Fixed TypeScript error by using valid variant
+          variant: 'default',
         });
       } catch (error) {
         console.error('Error downloading card:', error);
@@ -166,7 +167,8 @@ const ProfilePage = () => {
         toast({
           title: 'QR descargado',
           description: 'Tu código QR se ha descargado con éxito',
-          variant: 'success',
+          // Fixed TypeScript error by using valid variant
+          variant: 'default',
         });
       } catch (error) {
         console.error('Error downloading QR:', error);
@@ -251,9 +253,9 @@ const ProfilePage = () => {
                 </Button>
               </div>
               
-              {/* Profile Info Section */}
+              {/* Profile Info Section - Improved mobile spacing */}
               <div className="relative px-4 md:px-6 py-6 md:py-8">
-                <div className={`${isMobile ? 'absolute -top-12 left-4' : 'absolute -top-16 left-6'} ${isMobile ? 'w-24 h-24' : 'w-32 h-32'} rounded-full overflow-hidden border-4 border-white shadow-lg`}>
+                <div className={`${isMobile ? 'absolute -top-14 left-4' : 'absolute -top-16 left-6'} ${isMobile ? 'w-24 h-24' : 'w-32 h-32'} rounded-full overflow-hidden border-4 border-white shadow-lg`}>
                   <img
                     src={profile.imgUrl}
                     alt={profile.name}
@@ -266,7 +268,7 @@ const ProfilePage = () => {
                   )}
                 </div>
                 
-                <div className={isMobile ? 'mt-16' : 'ml-36'}>
+                <div className={isMobile ? 'mt-14' : 'ml-36'}>
                   <div className={`flex ${isMobile ? 'flex-col gap-3' : 'justify-between'}`}>
                     <div>
                       <h1 className="text-xl md:text-3xl font-bold flex items-center gap-2">
@@ -321,7 +323,7 @@ const ProfilePage = () => {
               </div>
             </div>
             
-            {/* Main content grid */}
+            {/* Main content grid - Improved mobile spacing */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mt-4 md:mt-6">
               <div className="md:col-span-2 space-y-4 md:space-y-6">
                 {/* Bio section */}
@@ -358,7 +360,7 @@ const ProfilePage = () => {
                   </div>
                 </div>
                 
-                {/* Gallery section */}
+                {/* Gallery section - Improved mobile view */}
                 <div className="glass-card p-4 md:p-6">
                   <h2 className="text-lg md:text-xl font-semibold mb-3 md:mb-4">Galería</h2>
                   
@@ -391,12 +393,14 @@ const ProfilePage = () => {
                         <ChevronRight size={16} />
                       </Button>
                       
-                      <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1">
+                      {/* Improved mobile indicators */}
+                      <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-2">
                         {profile.galleryImgs.map((_, index) => (
-                          <span 
+                          <button 
                             key={index} 
-                            className={`h-2 w-2 rounded-full ${activeGalleryIndex === index ? 'bg-white' : 'bg-white/50'}`}
+                            className={`h-2.5 w-2.5 rounded-full ${activeGalleryIndex === index ? 'bg-white' : 'bg-white/50'}`}
                             onClick={() => setActiveGalleryIndex(index)}
+                            aria-label={`Ver imagen ${index + 1}`}
                           />
                         ))}
                       </div>
@@ -523,7 +527,7 @@ const ProfilePage = () => {
                 )}
               </div>
               
-              {/* Sidebar */}
+              {/* Sidebar - Improved for mobile */}
               <div className="space-y-4 md:space-y-6">
                 {/* Preferences */}
                 <div className="glass-card p-4 md:p-6">
@@ -575,7 +579,7 @@ const ProfilePage = () => {
                   </div>
                 </div>
 
-                {/* QR Code */}
+                {/* QR Code - Improved for mobile */}
                 <div className="glass-card p-4 md:p-6">
                   <h2 className="text-lg md:text-xl font-semibold mb-3 md:mb-4 flex items-center gap-2">
                     <QrCode size={20} className="text-homi-purple" />
@@ -622,9 +626,9 @@ const ProfilePage = () => {
         </div>
       </main>
       
-      {/* Share Dialog */}
+      {/* Share Dialog - Improved for mobile */}
       <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
-        <DialogContent className="sm:max-w-md mx-4">
+        <DialogContent className="sm:max-w-md mx-auto p-4 md:p-6">
           <DialogHeader>
             <DialogTitle>Compartir mi perfil</DialogTitle>
           </DialogHeader>
@@ -634,14 +638,14 @@ const ProfilePage = () => {
                 <p className="text-sm text-muted-foreground">
                   Enlace a tu perfil:
                 </p>
-                <div className="flex">
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-0">
                   <input
-                    className="flex h-10 w-full rounded-l-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="flex h-10 w-full sm:rounded-r-none rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                     value={getProfileUrl()}
                     readOnly
                   />
                   <Button 
-                    className="rounded-l-none bg-homi-purple hover:bg-homi-purple/90"
+                    className="sm:rounded-l-none rounded-md bg-homi-purple hover:bg-homi-purple/90"
                     onClick={handleCopyLink}
                   >
                     Copiar
@@ -650,14 +654,14 @@ const ProfilePage = () => {
               </div>
             </div>
             
-            {/* Social media sharing buttons */}
+            {/* Social media sharing buttons - Improved for mobile */}
             <div className="grid grid-cols-4 gap-2">
               <Button 
                 variant="outline" 
-                className="flex flex-col h-auto p-2 md:p-3 items-center justify-center"
+                className="flex flex-col h-auto p-2 items-center justify-center"
                 onClick={() => shareToSocialMedia('whatsapp')}
               >
-                <div className="h-8 w-8 md:h-10 md:w-10 rounded-full bg-green-500 flex items-center justify-center mb-1">
+                <div className="h-10 w-10 rounded-full bg-green-500 flex items-center justify-center mb-1">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M19.1131 4.96331C15.2938 1.07156 8.95542 1.07156 5.13615 4.96331C1.9246 8.23331 1.31688 13.2791 3.44764 17.1158L2.25605 22L7.2333 20.8084C8.91444 21.7458 10.7062 22.21 12.5062 22.21C17.8396 22.21 22.2119 17.7458 22.2119 12.3042C22.1208 9.61331 21.0219 7.0975 19.1131 4.96331ZM12.4242 20.4042C10.8065 20.4042 9.18915 19.94 7.7521 19.0937L7.42187 18.9116L4.54644 19.6284L5.2271 16.7033L5.04498 16.3302C2.32498 12.7684 3.35035 7.8253 7.00873 5.10586C10.6671 2.38642 15.4923 3.41165 18.2123 7.06998C20.9323 10.7283 19.9069 15.5534 16.2485 18.2733C14.8115 19.6284 13.6562 20.4042 12.4242 20.4042ZM16.8562 14.7233L16.221 14.3958C16.221 14.3958 15.2938 13.9772 14.6946 13.6402C14.6035 13.6402 14.5125 13.5491 14.4215 13.5491C14.2394 13.5491 14.1483 13.6402 14.0573 13.6402C14.0573 13.6402 14.0573 13.7312 13.5477 14.3958C13.4567 14.5778 13.2746 14.5778 13.1835 14.4958C13.0923 14.4958 12.0846 14.0772 11.0767 13.1538C10.2598 12.4369 9.71654 11.5588 9.53442 11.2958C9.53442 11.2047 9.44338 11.1136 9.44338 11.0228V10.85C9.44338 10.759 9.53442 10.6679 9.53442 10.6679C9.53442 10.6679 9.80209 10.3947 9.98421 10.2126C10.0752 10.1214 10.1663 9.93937 10.2573 9.84833C10.3483 9.6662 10.2573 9.48411 10.1663 9.39307C10.1663 9.39307 9.53442 8.01307 9.35231 7.74543C9.17019 7.47779 8.89795 7.47779 8.71584 7.47779C8.71584 7.47779 8.34348 7.47779 8.06246 7.47779C7.97142 7.47779 7.88038 7.56884 7.78934 7.56884L7.7521 7.60607C7.7521 7.60607 7.2427 7.74543 6.88372 8.19142C6.5248 8.57301 6.0696 9.39307 6.0696 10.6679C6.0696 11.8516 6.70773 12.9441 6.88372 13.2118C6.97476 13.3028 8.8 16.1298 11.5404 17.3136C13.0923 17.9872 13.7304 18.0782 14.55 17.8961C15.0685 17.805 15.8483 17.296 16.0304 16.618C16.2125 15.9491 16.2123 15.3689 16.1213 15.2869C16.221 15.296 16.7667 15.0598 16.8562 14.7233Z" fill="white"/>
                   </svg>
@@ -667,10 +671,10 @@ const ProfilePage = () => {
               
               <Button 
                 variant="outline" 
-                className="flex flex-col h-auto p-2 md:p-3 items-center justify-center"
+                className="flex flex-col h-auto p-2 items-center justify-center"
                 onClick={() => shareToSocialMedia('telegram')}
               >
-                <div className="h-8 w-8 md:h-10 md:w-10 rounded-full bg-blue-500 flex items-center justify-center mb-1">
+                <div className="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center mb-1">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" fill="#229ED9"/>
                     <path d="M17.28 8.32L15.3733 17.1067C15.3733 17.1067 15.1067 17.76 14.4133 17.4933L9.94667 13.7867L8.53334 13.12L5.81334 12.24C5.81334 12.24 5.41334 12.1067 5.38667 11.84C5.36 11.5733 5.84 11.4133 5.84 11.4133L16.56 7.45332C16.56 7.45332 17.28 7.12 17.28 7.68V8.32Z" fill="white"/>
@@ -683,10 +687,10 @@ const ProfilePage = () => {
               
               <Button 
                 variant="outline" 
-                className="flex flex-col h-auto p-2 md:p-3 items-center justify-center"
+                className="flex flex-col h-auto p-2 items-center justify-center"
                 onClick={() => shareToSocialMedia('facebook')}
               >
-                <div className="h-8 w-8 md:h-10 md:w-10 rounded-full bg-blue-600 flex items-center justify-center mb-1">
+                <div className="h-10 w-10 rounded-full bg-blue-600 flex items-center justify-center mb-1">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M13.397 20.997V12.801H16.162L16.573 9.59201H13.397V7.54801C13.397 6.62201 13.655 5.98801 14.984 5.98801H16.668V3.12701C16.3704 3.08774 15.1609 3.00001 13.7745 3.00001C10.8954 3.00001 8.9079 4.65701 8.9079 7.22301V9.59201H6.33203V12.801H8.9079V20.997H13.397Z" fill="white"/>
                   </svg>
@@ -696,10 +700,10 @@ const ProfilePage = () => {
               
               <Button 
                 variant="outline" 
-                className="flex flex-col h-auto p-2 md:p-3 items-center justify-center"
+                className="flex flex-col h-auto p-2 items-center justify-center"
                 onClick={() => shareToSocialMedia('twitter')}
               >
-                <div className="h-8 w-8 md:h-10 md:w-10 rounded-full bg-black flex items-center justify-center mb-1">
+                <div className="h-10 w-10 rounded-full bg-black flex items-center justify-center mb-1">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M14.2832 10.7144L19.9395 4H18.5254L13.6543 9.71429L9.75977 4H4L10.0254 12.5714L4 19.7143H5.41406L10.6543 13.5714L14.8008 19.7143H20.5605L14.2832 10.7144ZM11.377 12.6857L10.7051 11.7286L6.0625 5.07143H8.95996L12.6152 10.4L13.2871 11.3571L18.1836 18.4286H15.2861L11.377 12.6857Z" fill="white"/>
                   </svg>
