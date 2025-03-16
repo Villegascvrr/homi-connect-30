@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import MatchingPage from "./pages/MatchingPage";
 import ProfilePage from "./components/profiles/ProfilePage";
 import ProfileForm from "./components/profiles/ProfileForm";
+import ProfileViewPage from "./components/profiles/ProfileViewPage";
 import ChatPage from "./pages/ChatPage";
 import SignInPage from "./pages/SignInPage";
 import RegisterPage from "./pages/RegisterPage";
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/matching" element={<MatchingPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/profile/:id" element={<ProfileViewPage />} />
           <Route path="/profile/create" element={<ProfileForm />} />
           <Route path="/chat" element={<ChatPage />} />
           <Route path="/signin" element={<SignInPage />} />
