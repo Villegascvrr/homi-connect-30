@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Check } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import EmailSignup from './EmailSignup';
 
 const Hero = () => {
   const [email, setEmail] = useState('');
@@ -60,7 +61,7 @@ const Hero = () => {
             </Button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto mb-16">
             <div className="flex items-center gap-2">
               <Check className="text-homi-purple" size={20} />
               <span>Matching inteligente</span>
@@ -73,6 +74,11 @@ const Hero = () => {
               <Check className="text-homi-purple" size={20} />
               <span>Perfiles verificados</span>
             </div>
+          </div>
+          
+          {/* Email Signup Component */}
+          <div className="mt-8 bg-white dark:bg-background border border-border rounded-xl p-6 shadow-sm">
+            <EmailSignup />
           </div>
         </div>
       </div>
