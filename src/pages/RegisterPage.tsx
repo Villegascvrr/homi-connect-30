@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -41,9 +40,7 @@ import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useIsMobile } from '@/hooks/use-mobile';
 
-// Schema for form validation
 const formSchema = z.object({
-  // Account section
   name: z.string().min(2, { message: 'El nombre debe tener al menos 2 caracteres' }),
   email: z.string().email({ message: 'Email inválido' }),
   password: z.string().min(6, { message: 'La contraseña debe tener al menos 6 caracteres' }),
@@ -52,7 +49,6 @@ const formSchema = z.object({
     message: 'Debes aceptar los términos y condiciones',
   }),
   
-  // Profile section
   age: z.string().refine((val) => {
     const num = parseInt(val);
     return !isNaN(num) && num >= 18 && num <= 99;
@@ -114,16 +110,12 @@ const RegisterPage = () => {
     mode: "onChange"
   });
 
-  // Google Sign-in handler
   const handleGoogleSignIn = () => {
-    // In a real implementation, this would integrate with Google OAuth
-    // For this example, we'll simulate a successful sign-in with mock data
     const mockGoogleData = {
       name: "Usuario Google",
       email: "usuario@gmail.com",
     };
     
-    // Fill the form with the data from Google
     form.setValue("name", mockGoogleData.name);
     form.setValue("email", mockGoogleData.email);
     
@@ -133,7 +125,6 @@ const RegisterPage = () => {
     });
   };
 
-  // Definir categorías de intereses
   const interestCategories: InterestCategory[] = [
     {
       id: "reading",
@@ -207,27 +198,22 @@ const RegisterPage = () => {
   };
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    // Combinar todos los datos del formulario con intereses y estilo de vida
     const userData = {
       ...values,
       interests: selectedInterests,
       lifestyle: lifestylePreferences
     };
     
-    // En una aplicación real, esto llamaría a una API de registro
     console.log('Datos completos del usuario:', userData);
     
-    // Simular registro exitoso
     toast({
       title: "Registro exitoso",
       description: "¡Tu perfil ha sido creado! Ahora puedes encontrar tu compañero de piso ideal.",
     });
     
-    // Redirigir al perfil del usuario después del registro exitoso
     navigate('/profile');
   };
 
-  // Validar primera pestaña para habilitar la segunda
   const isAccountValid = form.formState.isValid && 
     form.getValues('name') && 
     form.getValues('email') && 
@@ -235,6 +221,30 @@ const RegisterPage = () => {
     form.getValues('confirmPassword') && 
     form.getValues('terms') &&
     form.getValues('password') === form.getValues('confirmPassword');
+
+  const handleContinueClick = () => {
+    form.trigger(['name', 'email', 'password', 'confirmPassword', 'terms']);
+    
+    const hasErrors = !!form.formState.errors.name || 
+                     !!form.formState.errors.email || 
+                     !!form.formState.errors.password || 
+                     !!form.formState.errors.confirmPassword || 
+                     !!form.formState.errors.terms;
+    
+    if (!hasErrors && isAccountValid) {
+      setActiveTab("perfil");
+      toast({
+        title: "Datos guardados",
+        description: "Completa tu perfil para finalizar el registro"
+      });
+    } else {
+      toast({
+        title: "Error en el formulario",
+        description: "Por favor, completa correctamente todos los campos",
+        variant: "destructive"
+      });
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -273,7 +283,6 @@ const RegisterPage = () => {
                 <Form {...form}>
                   <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                     <TabsContent value="cuenta" className="space-y-6">
-                      {/* Google sign-in button */}
                       <div className="mb-6">
                         <Button
                           type="button"
@@ -432,7 +441,7 @@ const RegisterPage = () => {
                           type="button" 
                           className="rounded-full bg-homi-purple hover:bg-homi-purple/90"
                           disabled={!isAccountValid}
-                          onClick={() => setActiveTab("perfil")}
+                          onClick={handleContinueClick}
                         >
                           Continuar
                         </Button>
@@ -545,7 +554,6 @@ const RegisterPage = () => {
                       
                       <Separator className="my-8" />
                       
-                      {/* Intereses sección */}
                       <div>
                         <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
                           <Heart className="text-homi-purple" size={20} />
@@ -608,7 +616,6 @@ const RegisterPage = () => {
                       
                       <Separator className="my-8" />
                       
-                      {/* Estilo de vida */}
                       <div>
                         <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
                           <Users className="text-homi-purple" size={20} />
