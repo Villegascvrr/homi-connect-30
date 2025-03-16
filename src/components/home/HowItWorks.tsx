@@ -1,4 +1,3 @@
-
 import { BrainCircuit, Home, ShieldCheck, FileText, PackageOpen, Rocket, BarChart3, Globe } from 'lucide-react';
 
 const HowItWorks = () => {
@@ -99,36 +98,54 @@ const HowItWorks = () => {
         
         {/* Roadmap Visual Section */}
         <div className="mt-24 mb-8">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
             <span className="bg-gradient-to-r from-homi-purple to-homi-lightPurple bg-clip-text text-transparent">Roadmap</span> Homi
           </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-            {roadmap.map((item, index) => (
-              <div 
-                key={index} 
-                className={`glass-card p-6 hover:shadow-lg transition-all duration-300 hover:scale-105 relative overflow-hidden`}
-              >
-                <div className={`absolute inset-0 bg-gradient-to-br ${item.color} opacity-10 rounded-xl`}></div>
-                <div className={`absolute top-0 left-0 w-2 h-full bg-gradient-to-b ${item.color}`}></div>
-                
-                <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${item.color} flex items-center justify-center mb-4 shadow-md`}>
-                  {item.icon}
+          <div className="relative max-w-5xl mx-auto">
+            {/* Timeline connector line */}
+            <div className="absolute h-full w-1 bg-gradient-to-b from-indigo-500 via-fuchsia-500 to-emerald-500 left-1/2 transform -translate-x-1/2 top-0 rounded-full hidden md:block"></div>
+            
+            <div className="space-y-16 md:space-y-0">
+              {roadmap.map((item, index) => (
+                <div 
+                  key={index} 
+                  className={`flex flex-col md:flex-row items-center ${index % 2 === 0 ? 'md:flex-row-reverse' : ''} md:mb-20`}
+                >
+                  {/* Phase card */}
+                  <div className={`glass-card p-8 transform transition-all duration-500 hover:scale-105 relative overflow-hidden w-full md:w-5/12 z-10`}>
+                    <div className={`absolute inset-0 bg-gradient-to-br ${item.color} opacity-10 rounded-xl`}></div>
+                    <div className={`absolute top-0 left-0 w-2 h-full bg-gradient-to-b ${item.color}`}></div>
+                    
+                    <h3 className="text-lg font-bold text-muted-foreground mb-2">{item.phase}</h3>
+                    <h4 className="text-2xl font-bold mb-6 bg-gradient-to-r from-homi-purple to-homi-lightPurple bg-clip-text text-transparent">{item.title}</h4>
+                    
+                    <ul className="space-y-4">
+                      {item.goals.map((goal, idx) => (
+                        <li key={idx} className="flex items-start text-base">
+                          <span className={`inline-block w-3 h-3 rounded-full mt-1.5 mr-3 bg-gradient-to-br ${item.color}`}></span>
+                          <span className="font-medium">{goal}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  
+                  {/* Center icon element */}
+                  <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2">
+                    <div className={`w-14 h-14 rounded-full bg-gradient-to-br ${item.color} flex items-center justify-center shadow-lg z-20 border-4 border-white dark:border-slate-900`}>
+                      {item.icon}
+                    </div>
+                  </div>
+                  
+                  {/* Mobile icon - only visible on small screens */}
+                  <div className="md:hidden my-6 z-10">
+                    <div className={`w-14 h-14 rounded-full bg-gradient-to-br ${item.color} flex items-center justify-center shadow-lg border-4 border-white dark:border-slate-900`}>
+                      {item.icon}
+                    </div>
+                  </div>
                 </div>
-                
-                <h3 className="text-sm font-bold text-muted-foreground mb-1">{item.phase}</h3>
-                <h4 className="text-xl font-bold mb-4 homi-gradient-text">{item.title}</h4>
-                
-                <ul className="space-y-2 ml-1">
-                  {item.goals.map((goal, idx) => (
-                    <li key={idx} className="flex items-start text-sm">
-                      <span className={`inline-block w-2 h-2 rounded-full mt-1.5 mr-2 bg-gradient-to-br ${item.color}`}></span>
-                      {goal}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
         
