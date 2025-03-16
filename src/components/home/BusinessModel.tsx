@@ -6,7 +6,9 @@ const BusinessModel = () => {
     {
       icon: <Wallet className="w-8 h-8 text-homi-purple" />,
       title: "Servicio de agencia",
-      description: "Comisión por búsqueda y gestión del alquiler de pisos, simplificando el proceso para inquilinos y propietarios."
+      description: "Comisión por búsqueda y gestión del alquiler de pisos, simplificando el proceso para inquilinos y propietarios.",
+      highlight: true,
+      price: "Aprox. 250€ por estudiante"
     },
     {
       icon: <BadgeDollarSign className="w-8 h-8 text-homi-purple" />,
@@ -36,26 +38,37 @@ const BusinessModel = () => {
             Generamos valor para todos los actores del ecosistema mientras construimos
             una plataforma sostenible y escalable.
           </p>
+          <div className="mt-4 inline-block border border-homi-purple/30 bg-homi-ultraLightPurple/30 px-4 py-2 rounded-lg">
+            <p className="text-homi-purple font-medium">
+              Mercado potencial: millones de estudiantes y jóvenes profesionales
+            </p>
+          </div>
         </div>
 
         <div className="max-w-4xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {revenue.slice(0, 2).map((item, index) => (
-              <div key={index} className="glass-card p-6 transition-all duration-300 animate-on-scroll">
+            {revenue.map((item, index) => (
+              <div 
+                key={index} 
+                className={`glass-card p-6 transition-all duration-300 animate-on-scroll ${item.highlight ? "border-2 border-homi-purple ring-2 ring-homi-purple/20" : ""}`}
+              >
                 <div className="w-14 h-14 rounded-full bg-homi-ultraLightPurple flex items-center justify-center mb-4">
                   {item.icon}
                 </div>
-                <h3 className="text-xl font-semibold mb-3">{item.title}</h3>
-                <p className="text-muted-foreground">{item.description}</p>
-              </div>
-            ))}
-            {revenue.slice(2, 4).map((item, index) => (
-              <div key={index + 2} className="glass-card p-6 transition-all duration-300 animate-on-scroll">
-                <div className="w-14 h-14 rounded-full bg-homi-ultraLightPurple flex items-center justify-center mb-4">
-                  {item.icon}
+                <div className="flex justify-between items-start">
+                  <h3 className="text-xl font-semibold mb-3">{item.title}</h3>
+                  {item.highlight && (
+                    <span className="bg-homi-purple text-white text-xs font-medium px-2.5 py-0.5 rounded-full">
+                      Principal
+                    </span>
+                  )}
                 </div>
-                <h3 className="text-xl font-semibold mb-3">{item.title}</h3>
                 <p className="text-muted-foreground">{item.description}</p>
+                {item.price && (
+                  <div className="mt-3 bg-homi-purple/10 p-2 rounded-md">
+                    <p className="text-homi-purple font-medium text-sm">{item.price}</p>
+                  </div>
+                )}
               </div>
             ))}
           </div>
