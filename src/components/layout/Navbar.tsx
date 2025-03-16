@@ -40,7 +40,7 @@ const Navbar = () => {
     >
       <div className="container mx-auto px-4 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-          <span className="text-2xl font-bold text-homi-purple">Hominet</span>
+          <span className="text-2xl font-bold text-homi-purple">Homi</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-8">
