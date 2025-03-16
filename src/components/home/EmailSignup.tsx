@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -166,9 +165,11 @@ const EmailSignup = () => {
   };
 
   // Validar primera pestaña para habilitar la segunda
-  const isPersonalDataValid = form.formState.isValid && 
-    form.getValues('nombre') && 
-    form.getValues('email');
+  const isPersonalDataValid = 
+    form.getValues('nombre')?.length > 0 && 
+    form.getValues('email')?.length > 0 &&
+    !form.formState.errors.nombre &&
+    !form.formState.errors.email;
 
   // Esta función maneja el envío final del formulario
   const onSubmit = (values: z.infer<typeof formSchema>) => {
@@ -329,9 +330,14 @@ const EmailSignup = () => {
                 <div className="flex justify-end mt-6">
                   <Button 
                     type="button" 
-                    onClick={() => isPersonalDataValid && setActiveTab("preferencias")}
+                    onClick={() => {
+                      if (isPersonalDataValid) {
+                        setActiveTab("preferencias");
+                      } else {
+                        form.trigger(["nombre", "email"]);
+                      }
+                    }}
                     className="rounded-full bg-homi-purple hover:bg-homi-purple/90 ml-auto"
-                    disabled={!isPersonalDataValid}
                   >
                     Siguiente 
                     <ArrowRight className="ml-1 h-4 w-4" />
