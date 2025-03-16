@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -94,7 +93,20 @@ const ProfilePage = () => {
     }
   };
 
-  const profileUrl = `https://homi-connect.app/profile/${profile.id}`;
+  const baseUrl = window.location.origin;
+  const profileUrl = `${baseUrl}/profile/${profile.id}`;
+
+  const handleDownloadQR = () => {
+    const qrCodeElement = document.getElementById('profile-qr');
+    if (qrCodeElement) {
+      html2canvas(qrCodeElement).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `qr-${profile.name.toLowerCase().replace(/\s+/g, '-')}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      });
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -386,7 +398,7 @@ const ProfilePage = () => {
                     Código QR de mi perfil
                   </h2>
                   <div className="flex flex-col items-center">
-                    <div className="bg-white p-4 rounded-xl mb-3">
+                    <div id="profile-qr" className="bg-white p-4 rounded-xl mb-3">
                       <QRCodeSVG value={profileUrl} size={150} />
                     </div>
                     <p className="text-sm text-center text-muted-foreground mb-3">
@@ -395,7 +407,7 @@ const ProfilePage = () => {
                     <Button 
                       variant="outline" 
                       size="sm" 
-                      onClick={handleDownloadCard}
+                      onClick={handleDownloadQR}
                       className="w-full"
                     >
                       <Download size={16} className="mr-2" />
