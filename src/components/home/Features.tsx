@@ -31,7 +31,7 @@ const Features = () => {
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Todo lo que necesitas para encontrar 
-            <span className="homi-gradient-text"> al compañero ideal</span>
+            <span className="text-homi-purple"> al compañero ideal</span>
           </h2>
           <p className="text-muted-foreground text-lg">
             Homi ofrece todas las herramientas necesarias para hacer de la búsqueda
@@ -43,9 +43,9 @@ const Features = () => {
           {features.map((feature, index) => (
             <div 
               key={index} 
-              className="glass-card p-6 transition-all duration-300 hover:shadow-hover"
+              className="glass-card p-6 transition-all duration-300"
             >
-              <div className="w-16 h-16 rounded-full bg-purple-gradient flex items-center justify-center mb-5">
+              <div className="w-16 h-16 rounded-full bg-homi-purple flex items-center justify-center mb-5">
                 {feature.icon}
               </div>
               <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>

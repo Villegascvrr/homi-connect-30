@@ -41,7 +41,7 @@ const BusinessModel = () => {
         <div className="max-w-4xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {revenue.slice(0, 2).map((item, index) => (
-              <div key={index} className="glass-card p-6 hover:shadow-hover transition-shadow duration-300 animate-on-scroll">
+              <div key={index} className="glass-card p-6 transition-all duration-300 animate-on-scroll">
                 <div className="w-14 h-14 rounded-full bg-homi-ultraLightPurple flex items-center justify-center mb-4">
                   {item.icon}
                 </div>
@@ -50,7 +50,7 @@ const BusinessModel = () => {
               </div>
             ))}
             {revenue.slice(2, 4).map((item, index) => (
-              <div key={index + 2} className="glass-card p-6 hover:shadow-hover transition-shadow duration-300 animate-on-scroll">
+              <div key={index + 2} className="glass-card p-6 transition-all duration-300 animate-on-scroll">
                 <div className="w-14 h-14 rounded-full bg-homi-ultraLightPurple flex items-center justify-center mb-4">
                   {item.icon}
                 </div>
