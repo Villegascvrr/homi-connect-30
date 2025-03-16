@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -40,8 +39,9 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-// Esquema para la validación de los datos de cuenta
-const accountSchema = z.object({
+// Schema for form validation
+const formSchema = z.object({
+  // Account section
   name: z.string().min(2, { message: 'El nombre debe tener al menos 2 caracteres' }),
   email: z.string().email({ message: 'Email inválido' }),
   password: z.string().min(6, { message: 'La contraseña debe tener al menos 6 caracteres' }),
@@ -49,13 +49,8 @@ const accountSchema = z.object({
   terms: z.boolean().refine(val => val === true, {
     message: 'Debes aceptar los términos y condiciones',
   }),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Las contraseñas no coinciden",
-  path: ["confirmPassword"],
-});
-
-// Esquema para la validación de los datos de perfil
-const profileSchema = z.object({
+  
+  // Profile section
   age: z.string().refine((val) => {
     const num = parseInt(val);
     return !isNaN(num) && num >= 18 && num <= 99;
@@ -72,10 +67,10 @@ const profileSchema = z.object({
   }).max(500, {
     message: "La bio no puede tener más de 500 caracteres.",
   }),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Las contraseñas no coinciden",
+  path: ["confirmPassword"],
 });
-
-// Esquema combinado para todo el formulario
-const formSchema = accountSchema.merge(profileSchema);
 
 type InterestCategory = {
   id: string;
