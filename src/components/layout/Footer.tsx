@@ -32,6 +32,11 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
+                <Link to="/properties" className="text-muted-foreground hover:text-homi-purple transition-colors">
+                  Buscar Pisos
+                </Link>
+              </li>
+              <li>
                 <Link to="/how-it-works" className="text-muted-foreground hover:text-homi-purple transition-colors">
                   Cómo Funciona
                 </Link>
