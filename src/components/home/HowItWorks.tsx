@@ -3,32 +3,40 @@ import { BrainCircuit, Home, ShieldCheck, FileText, PackageOpen } from 'lucide-r
 
 const HowItWorks = () => {
   const steps = [{
-    icon: <BrainCircuit className="w-8 h-8 text-homi-purple" />,
+    icon: <BrainCircuit className="w-8 h-8 text-white" />,
     title: "Matching entre compañeros",
     description: "IA que conecta compañeros compatibles según intereses y estilo de vida."
   }, {
-    icon: <Home className="w-8 h-8 text-homi-purple" />,
+    icon: <Home className="w-8 h-8 text-white" />,
     title: "Propiedades sugeridas",
     description: "Sugerencias inteligentes según preferencias grupales."
   }, {
-    icon: <ShieldCheck className="w-8 h-8 text-homi-purple" />,
+    icon: <ShieldCheck className="w-8 h-8 text-white" />,
     title: "Intermediación segura",
     description: "Validación de perfiles y mediación con propietarios."
   }, {
-    icon: <FileText className="w-8 h-8 text-homi-purple" />,
+    icon: <FileText className="w-8 h-8 text-white" />,
     title: "Contrato digital",
     description: "Smart Contracts para firmas y pagos automatizados."
   }, {
-    icon: <PackageOpen className="w-8 h-8 text-homi-purple" />,
+    icon: <PackageOpen className="w-8 h-8 text-white" />,
     title: "Servicios adicionales",
     description: "Mudanzas, limpieza, internet y seguros para el hogar."
   }];
   
-  return <section className="py-20">
+  const gradients = [
+    "from-purple-600 to-indigo-600",
+    "from-violet-600 to-purple-600",
+    "from-fuchsia-600 to-pink-600",
+    "from-pink-600 to-rose-600",
+    "from-indigo-600 to-blue-600"
+  ];
+  
+  return <section className="py-20 bg-gradient-to-b from-homi-ultraLightPurple/20 to-white dark:from-homi-dark/90 dark:to-homi-dark">
       <div className="container mx-auto px-4">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            <span className="homi-gradient-text">¿Cómo funciona</span> Homi?
+            <span className="bg-gradient-to-r from-homi-purple to-homi-lightPurple bg-clip-text text-transparent">¿Cómo funciona</span> Homi?
           </h2>
           <p className="text-muted-foreground text-lg">
             Un proceso impulsado por IA y Smart Contracts para encontrar compañeros 
@@ -37,20 +45,30 @@ const HowItWorks = () => {
         </div>
 
         <div className="relative">
-          {/* Removing the connection line for desktop */}
+          {/* Rainbow gradient connector for desktop */}
+          <div className="absolute top-10 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 via-indigo-500 to-violet-500 hidden md:block rounded-full"></div>
           
           <div className="grid grid-cols-1 md:grid-cols-5 gap-8 relative">
-            {steps.map((step, index) => <div key={index} className="flex flex-col items-center text-center relative z-10">
-                <div className="w-20 h-20 rounded-full glass-card flex items-center justify-center mb-6 shadow-lg border border-homi-purple/10">
+            {steps.map((step, index) => (
+              <div key={index} className="flex flex-col items-center text-center relative z-10 transform transition-all duration-300 hover:scale-105">
+                <div className={`w-20 h-20 rounded-full bg-gradient-to-br ${gradients[index]} flex items-center justify-center mb-6 shadow-lg hover:shadow-xl transition-all duration-300`}>
                   {step.icon}
                 </div>
-                <span className="absolute top-6 bg-purple-gradient text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center -right-1 md:right-auto md:-right-3">
+                <span className="absolute top-6 bg-white text-homi-purple text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center -right-1 md:right-auto md:-right-3 shadow-md border border-homi-purple/20">
                   {index + 1}
                 </span>
-                <h3 className="text-xl font-semibold mb-3">{step.title}</h3>
-                <p className="text-muted-foreground">{step.description}</p>
-              </div>)}
+                <h3 className="text-xl font-semibold mb-3 bg-gradient-to-r from-homi-purple to-homi-lightPurple bg-clip-text text-transparent">{step.title}</h3>
+                <p className="text-muted-foreground bg-white/50 dark:bg-black/20 p-3 rounded-lg shadow-sm">{step.description}</p>
+              </div>
+            ))}
           </div>
+        </div>
+        
+        {/* Decorative elements */}
+        <div className="hidden md:block">
+          <div className="absolute top-40 left-10 w-6 h-6 rounded-full bg-purple-200 animate-pulse opacity-30"></div>
+          <div className="absolute bottom-20 right-10 w-8 h-8 rounded-full bg-indigo-300 animate-pulse opacity-40"></div>
+          <div className="absolute top-60 right-20 w-4 h-4 rounded-full bg-violet-400 animate-pulse opacity-30"></div>
         </div>
       </div>
     </section>;
