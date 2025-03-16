@@ -34,36 +34,36 @@ const HowItWorks = () => {
 
   const roadmap = [
     {
-      phase: "Fase 1: 0-12 meses",
-      title: "Consolidación",
+      phase: "Fase Inicial",
+      title: "Lanzamiento",
       icon: <Rocket className="w-6 h-6 text-white" />,
       color: "from-indigo-500 to-blue-500",
       goals: [
-        "10,000 usuarios en ciudades clave",
-        "Validación del algoritmo de matching",
-        "Primeras colaboraciones con universidades"
+        "Plataforma en ciudades principales",
+        "Matching inteligente entre usuarios",
+        "Alianzas universitarias estratégicas"
       ]
     },
     {
-      phase: "Fase 2: 12-24 meses",
-      title: "Expansión",
+      phase: "Fase Media",
+      title: "Crecimiento",
       icon: <BarChart3 className="w-6 h-6 text-white" />,
       color: "from-fuchsia-500 to-pink-500",
       goals: [
-        "50,000 usuarios activos",
+        "Expansión nacional",
         "Automatización de procesos",
-        "Marketplace de servicios"
+        "Marketplace de servicios completo"
       ]
     },
     {
-      phase: "Fase 3: 24-36 meses",
-      title: "Liderazgo",
+      phase: "Fase Avanzada",
+      title: "Consolidación",
       icon: <Globe className="w-6 h-6 text-white" />,
       color: "from-emerald-500 to-teal-500",
       goals: [
         "Expansión internacional",
-        "Lanzamiento HomiNet y HomiWare",
-        "Integración con blockchain"
+        "HomiNet y HomiWare",
+        "Ecosistema completo de vivienda"
       ]
     }
   ];
@@ -100,7 +100,7 @@ const HowItWorks = () => {
         {/* Roadmap Visual Section */}
         <div className="mt-24 mb-8">
           <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">
-            <span className="bg-gradient-to-r from-homi-purple to-homi-lightPurple bg-clip-text text-transparent">Roadmap</span> Homi
+            <span className="bg-gradient-to-r from-homi-purple to-homi-lightPurple bg-clip-text text-transparent">Nuestro</span> Camino
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
@@ -112,18 +112,18 @@ const HowItWorks = () => {
                 <div className={`absolute inset-0 bg-gradient-to-br ${item.color} opacity-10 rounded-xl`}></div>
                 <div className={`absolute top-0 left-0 w-2 h-full bg-gradient-to-b ${item.color}`}></div>
                 
-                <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${item.color} flex items-center justify-center mb-4 shadow-md`}>
+                <div className={`w-14 h-14 rounded-full bg-gradient-to-br ${item.color} flex items-center justify-center mb-4 shadow-md`}>
                   {item.icon}
                 </div>
                 
-                <h3 className="text-sm font-bold text-muted-foreground mb-1">{item.phase}</h3>
-                <h4 className="text-xl font-bold mb-4 homi-gradient-text">{item.title}</h4>
+                <h3 className="text-lg font-bold text-muted-foreground mb-1">{item.phase}</h3>
+                <h4 className="text-2xl font-bold mb-4 homi-gradient-text">{item.title}</h4>
                 
-                <ul className="space-y-2 ml-1">
+                <ul className="space-y-3 ml-1">
                   {item.goals.map((goal, idx) => (
-                    <li key={idx} className="flex items-start text-sm">
-                      <span className={`inline-block w-2 h-2 rounded-full mt-1.5 mr-2 bg-gradient-to-br ${item.color}`}></span>
-                      {goal}
+                    <li key={idx} className="flex items-start">
+                      <span className={`inline-block w-3 h-3 rounded-full mt-1.5 mr-3 bg-gradient-to-br ${item.color}`}></span>
+                      <span className="text-base">{goal}</span>
                     </li>
                   ))}
                 </ul>
