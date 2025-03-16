@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Check, ChevronDown, Sparkles, Mail } from 'lucide-react';
+import { Check, ChevronDown, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import EmailSignup from './EmailSignup';
 
