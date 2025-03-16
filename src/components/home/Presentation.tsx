@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -538,43 +537,35 @@ const sections = [
     subtitle: "La Evolución de Homi",
     icon: Rocket,
     content: (
-      <div className="grid md:grid-cols-2 gap-8">
-        <Card className="border-indigo-200 dark:border-indigo-800/30 overflow-hidden transform transition-all duration-500 hover:shadow-xl hover:-translate-y-2">
-          <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-6 text-white">
-            <h3 className="text-2xl font-bold mb-2 flex items-center">
-              <Users className="h-7 w-7 mr-3" />
-              Homi
-            </h3>
-            <p className="text-white/80">Para Inquilinos</p>
-          </div>
-          <CardContent className="p-6">
-            <div className="space-y-4">
-              <p className="text-base">
-                Plataforma de matching inteligente que conecta estudiantes con compañeros de piso y propiedades ideales, facilitando la búsqueda de alojamiento y acceso a servicios como pagos digitales, seguros y asesoría legal.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+      <div className="space-y-10">
+        <div className="text-center mb-12">
+          <h3 className="text-2xl font-bold mb-6 inline-block border-b-2 border-indigo-400 dark:border-indigo-500 pb-2">
+            Nuestra evolución: dos plataformas complementarias
+          </h3>
+        </div>
         
-        <Card className="border-indigo-200 dark:border-indigo-800/30 overflow-hidden transform transition-all duration-500 hover:shadow-xl hover:-translate-y-2">
-          <div className="bg-gradient-to-r from-cyan-600 to-blue-600 p-6 text-white">
-            <h3 className="text-2xl font-bold mb-2 flex items-center">
-              <Building className="h-7 w-7 mr-3" />
-              Homiware
-            </h3>
-            <p className="text-white/80">Para Propietarios</p>
-          </div>
-          <CardContent className="p-6">
-            <div className="space-y-4">
-              <p className="text-base">
-                Plataforma 100% digital que reemplaza a las inmobiliarias tradicionales, permitiendo la gestión integral del alquiler, con selección de inquilinos, automatización de pagos, contratos digitales y herramientas para maximizar rentabilidad.
-              </p>
+        <div className="grid md:grid-cols-2 gap-12">
+          <Card className="border-indigo-200 dark:border-indigo-800/30 overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-100 dark:bg-indigo-900/20 rounded-bl-full z-0"></div>
+            
+            <div className="bg-indigo-600 dark:bg-indigo-800 p-8 text-white relative z-10">
+              <div className="flex items-center mb-3">
+                <div className="bg-white/20 p-3 rounded-full mr-4">
+                  <Users className="h-7 w-7" />
+                </div>
+                <h3 className="text-2xl font-bold">Homi</h3>
+              </div>
+              <Badge className="bg-white/90 text-indigo-600 hover:bg-white/80 mb-1">Para Inquilinos</Badge>
             </div>
-          </CardContent>
-        </Card>
-      </div>
-    )
-  }
-];
-
-export default Presentation;
+            
+            <CardContent className="p-8 space-y-4">
+              <p className="text-base leading-relaxed">
+                Plataforma de matching inteligente que conecta estudiantes con compañeros de piso y 
+                propiedades ideales, facilitando la búsqueda de alojamiento y acceso a servicios.
+              </p>
+              
+              <div className="space-y-3 mt-2">
+                <div className="flex items-center text-indigo-600 dark:text-indigo-400">
+                  <CheckCircle className="h-5 w-5 mr-2 flex-shrink-0" />
+                  <span>Matching con roommates compatibles</span>
+                </div>
