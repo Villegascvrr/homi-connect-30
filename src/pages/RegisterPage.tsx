@@ -225,24 +225,25 @@ const RegisterPage = () => {
     navigate('/profile');
   };
 
-  const isAccountValid = form.formState.isValid && 
-    form.getValues('name') && 
-    form.getValues('email') && 
-    form.getValues('password') && 
-    form.getValues('confirmPassword') && 
-    form.getValues('terms') &&
-    form.getValues('password') === form.getValues('confirmPassword');
+  const isAccountValid = () => {
+    const name = form.getValues('name');
+    const email = form.getValues('email');
+    const password = form.getValues('password');
+    const confirmPassword = form.getValues('confirmPassword');
+    const terms = form.getValues('terms');
+    
+    return name && 
+           email && 
+           password && 
+           confirmPassword && 
+           password === confirmPassword &&
+           terms;
+  };
 
-  const handleContinueClick = () => {
-    form.trigger(['name', 'email', 'password', 'confirmPassword', 'terms']);
+  const handleContinueClick = async () => {
+    const result = await form.trigger(['name', 'email', 'password', 'confirmPassword', 'terms']);
     
-    const hasErrors = !!form.formState.errors.name || 
-                     !!form.formState.errors.email || 
-                     !!form.formState.errors.password || 
-                     !!form.formState.errors.confirmPassword || 
-                     !!form.formState.errors.terms;
-    
-    if (!hasErrors && isAccountValid) {
+    if (result && isAccountValid()) {
       setActiveTab("perfil");
       toast({
         title: "Datos guardados",
@@ -462,7 +463,6 @@ const RegisterPage = () => {
                         <Button 
                           type="button" 
                           className="rounded-full bg-homi-purple hover:bg-homi-purple/90"
-                          disabled={!isAccountValid}
                           onClick={handleContinueClick}
                         >
                           Continuar
