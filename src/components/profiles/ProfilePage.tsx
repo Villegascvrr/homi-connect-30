@@ -304,8 +304,8 @@ const ProfilePage = () => {
                           </div>
                         </div>
                         
-                        <div className="absolute bottom-2 left-0 w-full text-center text-white/50 text-xs">
-                          <p>Encuentra tu compañero de piso ideal con Homi</p>
+                        <div className="absolute bottom-2 left-0 w-full text-center text-white/80 text-xs px-6">
+                          <p>Descárgate Homi para encontrar tu compañero de piso ideal. Escanea mi código o búscame por mi nombre de usuario en Homi para conectar</p>
                         </div>
                       </div>
                     </div>
