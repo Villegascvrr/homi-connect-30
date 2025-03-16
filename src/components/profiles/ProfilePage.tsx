@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -489,19 +488,4 @@ const ProfilePage = () => {
               >
                 <div className="h-10 w-10 rounded-full bg-black flex items-center justify-center mb-1">
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M14.2832 10.7144L19.9395 4H18.5254L13.6543 9.71429L9.75977 4H4L10.0254 12.5714L4 19.7143H5.41406L10.6543 13.5714L14.8008 19.7143H20.5605L14.2832 10.7144ZM11.377 12.6857L10.7051 11.7286L6.0625 5.07143H8.95996L12.6152 10.4L13.2871 11.3571L18.1836 18.4286H15.2861L11.377 12.6857Z" fill="white"/>
-                  </svg>
-                </div>
-                <span className="text-xs">Twitter</span>
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-      
-      <Footer />
-    </div>
-  );
-};
-
-export default ProfilePage;
+                    <path d="M14.2832 10.7144L19.9395 4H18.5254L13.6543 9.71429L9.75977 4H4L10.0254 12.5714L4 19.7143H5.41406L10.6543 13.5714L14.8008 19.7143H20.5605L1
