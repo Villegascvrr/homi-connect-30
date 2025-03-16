@@ -3,49 +3,26 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { 
-  BrainCircuit, 
-  Users, 
-  Building, 
-  Target, 
-  PieChart, 
-  TrendingUp, 
-  CheckCircle, 
-  Sparkles, 
-  UserRound, 
-  BarChart3,
-  Rocket,
-  ChevronDown,
-  ChevronUp,
-  ChevronRight,
-  Zap,
-  ShieldCheck,
-  ArrowRight
-} from 'lucide-react';
-
+import { BrainCircuit, Users, Building, Target, PieChart, TrendingUp, CheckCircle, Sparkles, UserRound, BarChart3, Rocket, ChevronDown, ChevronUp, ChevronRight, Zap, ShieldCheck, ArrowRight } from 'lucide-react';
 const Presentation = () => {
   const [activeSection, setActiveSection] = useState<string | null>("solucion");
   const [visibleSections, setVisibleSections] = useState<Set<string>>(new Set(["solucion"]));
-  
   useEffect(() => {
     const handleScroll = () => {
       const sectionElements = document.querySelectorAll('[data-section-id]');
-      sectionElements.forEach((el) => {
+      sectionElements.forEach(el => {
         const rect = el.getBoundingClientRect();
         const sectionId = el.getAttribute('data-section-id');
-        
         if (rect.top < window.innerHeight * 0.75 && rect.bottom > 0 && sectionId) {
           setVisibleSections(prev => new Set([...prev, sectionId]));
         }
       });
     };
-    
     window.addEventListener('scroll', handleScroll);
     handleScroll(); // Check on initial load
-    
+
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-  
   const toggleSection = (section: string) => {
     if (activeSection === section) {
       setActiveSection(null);
@@ -54,11 +31,14 @@ const Presentation = () => {
       // Scroll to section
       const element = document.querySelector(`[data-section-id="${section}"]`);
       if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        element.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
       }
     }
   };
-  
+
   // Style variations by section
   const getSectionStyle = (sectionId: string) => {
     const styles: Record<string, string> = {
@@ -72,12 +52,11 @@ const Presentation = () => {
       validacion: "bg-gradient-to-br from-sky-50 to-blue-50 dark:from-sky-950/30 dark:to-blue-950/20",
       necesidades: "bg-gradient-to-br from-rose-50 to-pink-50 dark:from-rose-950/30 dark:to-pink-950/20",
       equipo: "bg-gradient-to-br from-teal-50 to-emerald-50 dark:from-teal-950/30 dark:to-emerald-950/20",
-      vision: "bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/30 dark:to-purple-950/20",
+      vision: "bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/30 dark:to-purple-950/20"
     };
-    
     return styles[sectionId] || "bg-white dark:bg-black/20";
   };
-  
+
   // Accent color variations by section
   const getSectionAccentColor = (sectionId: string) => {
     const colors: Record<string, string> = {
@@ -91,12 +70,11 @@ const Presentation = () => {
       validacion: "text-sky-600 dark:text-sky-400",
       necesidades: "text-rose-600 dark:text-rose-400",
       equipo: "text-teal-600 dark:text-teal-400",
-      vision: "text-indigo-600 dark:text-indigo-400",
+      vision: "text-indigo-600 dark:text-indigo-400"
     };
-    
     return colors[sectionId] || "text-homi-purple";
   };
-  
+
   // Border color variations by section
   const getSectionBorderColor = (sectionId: string) => {
     const colors: Record<string, string> = {
@@ -110,12 +88,11 @@ const Presentation = () => {
       validacion: "border-sky-200 dark:border-sky-800/50",
       necesidades: "border-rose-200 dark:border-rose-800/50",
       equipo: "border-teal-200 dark:border-teal-800/50",
-      vision: "border-indigo-200 dark:border-indigo-800/50",
+      vision: "border-indigo-200 dark:border-indigo-800/50"
     };
-    
     return colors[sectionId] || "border-gray-200 dark:border-gray-800/50";
   };
-  
+
   // Display styles for sections
   const getSectionDisplayStyle = (sectionId: string) => {
     switch (sectionId) {
@@ -145,9 +122,7 @@ const Presentation = () => {
         return 'standard-section';
     }
   };
-  
-  return (
-    <section id="presentation" className="py-20 bg-gradient-to-b from-white to-homi-ultraLightPurple/30 dark:from-homi-dark dark:to-homi-dark/80">
+  return <section id="presentation" className="py-20 bg-gradient-to-b from-white to-homi-ultraLightPurple/30 dark:from-homi-dark dark:to-homi-dark/80">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16 animate-on-scroll">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -173,9 +148,7 @@ const Presentation = () => {
               </div>
               
               <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8">
-                <p className="text-white text-lg mb-6">
-                  Homi digitaliza el proceso de alquiler, eliminando fricciones mediante tecnología avanzada.
-                </p>
+                <p className="text-white text-lg mb-6">Homi digitaliza y optimiza todas las fases del proceso de alquiler </p>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="bg-white/10 backdrop-blur-sm p-6 rounded-xl hover:bg-white/20 transition-all">
@@ -185,7 +158,7 @@ const Presentation = () => {
                       </div>
                       <div>
                         <h3 className="text-xl font-semibold text-white mb-2">Matching Inteligente con IA</h3>
-                        <p className="text-white/70">Conecta compañeros de piso compatibles según hábitos y estilo de vida.</p>
+                        <p className="text-white/70">Algoritmos de compatiblidad te ayudan conecta con compañeros de pisos según hábitos y preferencias</p>
                       </div>
                     </div>
                   </div>
@@ -242,39 +215,21 @@ const Presentation = () => {
         {/* Navigation Pills - Horizontal scrolling on mobile */}
         <div className="flex overflow-x-auto pb-4 mb-12 -mx-4 px-4 snap-x scroll-px-4 scrollbar-hide">
           <div className="flex gap-3 mx-auto">
-            {sections.filter(section => section.id !== "solucion").map((section) => (
-              <div key={section.id} className="snap-start">
-                <Button
-                  variant={activeSection === section.id ? "default" : "outline"}
-                  className={`whitespace-nowrap rounded-full transition-all ${
-                    activeSection === section.id 
-                      ? `bg-${getSectionAccentColor(section.id).replace('text-', 'bg-').replace('dark:', '')} text-white` 
-                      : `hover:bg-${getSectionAccentColor(section.id).replace('text-', 'bg-').replace('dark:', '')}/10`
-                  }`}
-                  onClick={() => toggleSection(section.id)}
-                >
+            {sections.filter(section => section.id !== "solucion").map(section => <div key={section.id} className="snap-start">
+                <Button variant={activeSection === section.id ? "default" : "outline"} className={`whitespace-nowrap rounded-full transition-all ${activeSection === section.id ? `bg-${getSectionAccentColor(section.id).replace('text-', 'bg-').replace('dark:', '')} text-white` : `hover:bg-${getSectionAccentColor(section.id).replace('text-', 'bg-').replace('dark:', '')}/10`}`} onClick={() => toggleSection(section.id)}>
                   <section.icon className="mr-2 h-4 w-4" />
                   {section.title}
                 </Button>
-              </div>
-            ))}
+              </div>)}
           </div>
         </div>
         
         {/* Content Sections */}
         <div className="space-y-32">
-          {sections.filter(section => section.id !== "solucion").map((section) => {
-            const isVisible = visibleSections.has(section.id);
-            const isCurrent = activeSection === section.id;
-            
-            return (
-              <div 
-                key={section.id}
-                data-section-id={section.id}
-                className={`transition-all duration-700 ${
-                  isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-                }`}
-              >
+          {sections.filter(section => section.id !== "solucion").map(section => {
+          const isVisible = visibleSections.has(section.id);
+          const isCurrent = activeSection === section.id;
+          return <div key={section.id} data-section-id={section.id} className={`transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}>
                 {/* Section header with unique styling */}
                 <div className={`rounded-3xl overflow-hidden shadow-lg mb-12 border ${getSectionBorderColor(section.id)}`}>
                   <div className={`${getSectionStyle(section.id)} p-8 transition-all duration-300`}>
@@ -293,12 +248,7 @@ const Presentation = () => {
                       </div>
                       
                       <div className="md:ml-auto flex items-center">
-                        <Button 
-                          variant="ghost" 
-                          size="icon"
-                          className={`rounded-full ${getSectionAccentColor(section.id)} hover:bg-opacity-20`}
-                          onClick={() => toggleSection(section.id)}
-                        >
+                        <Button variant="ghost" size="icon" className={`rounded-full ${getSectionAccentColor(section.id)} hover:bg-opacity-20`} onClick={() => toggleSection(section.id)}>
                           {isCurrent ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
                         </Button>
                       </div>
@@ -307,18 +257,13 @@ const Presentation = () => {
                 </div>
                 
                 {/* Section content with different display styles */}
-                <div className={`transition-all duration-500 overflow-hidden ${
-                  isCurrent || activeSection === null
-                    ? "max-h-[5000px] opacity-100" 
-                    : "max-h-0 opacity-0"
-                }`}>
+                <div className={`transition-all duration-500 overflow-hidden ${isCurrent || activeSection === null ? "max-h-[5000px] opacity-100" : "max-h-0 opacity-0"}`}>
                   <div className={`py-6 px-4 md:px-8 ${getSectionDisplayStyle(section.id)}`}>
                     {section.content}
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              </div>;
+        })}
         </div>
         
         {/* Call to Action */}
@@ -329,34 +274,27 @@ const Presentation = () => {
           <p className="text-white/80 text-lg mb-6 max-w-2xl mx-auto">
             Estamos transformando la forma en que los estudiantes y jóvenes profesionales encuentran su hogar ideal.
           </p>
-          <Button 
-            size="lg"
-            className="bg-white text-homi-purple hover:bg-white/90 rounded-full px-8 py-6 text-lg mt-4 shadow-md hover:shadow-lg transition-all"
-          >
+          <Button size="lg" className="bg-white text-homi-purple hover:bg-white/90 rounded-full px-8 py-6 text-lg mt-4 shadow-md hover:shadow-lg transition-all">
             Contáctanos <ChevronRight className="ml-1" />
           </Button>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
 
 // Section data
-const sections = [
-  {
-    id: "solucion",
-    title: "Solución",
-    subtitle: "¿Cuál es la USP (Propuesta Única de Valor)?",
-    icon: Sparkles,
-    content: null // Contenido movido a la parte superior
-  },
-  {
-    id: "problema",
-    title: "Problema",
-    subtitle: "¿Qué problema real solucionamos a nuestros clientes?",
-    icon: Users,
-    content: (
-      <div className="space-y-6">
+const sections = [{
+  id: "solucion",
+  title: "Solución",
+  subtitle: "¿Cuál es la USP (Propuesta Única de Valor)?",
+  icon: Sparkles,
+  content: null // Contenido movido a la parte superior
+}, {
+  id: "problema",
+  title: "Problema",
+  subtitle: "¿Qué problema real solucionamos a nuestros clientes?",
+  icon: Users,
+  content: <div className="space-y-6">
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">📌 Para los Inquilinos (Estudiantes y Jóvenes Profesionales):</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -396,15 +334,12 @@ const sections = [
           </CardContent>
         </Card>
       </div>
-    )
-  },
-  {
-    id: "producto",
-    title: "Producto",
-    subtitle: "¿En qué consiste esa solución? (MVP)",
-    icon: BrainCircuit,
-    content: (
-      <div className="space-y-6">
+}, {
+  id: "producto",
+  title: "Producto",
+  subtitle: "¿En qué consiste esa solución? (MVP)",
+  icon: BrainCircuit,
+  content: <div className="space-y-6">
         <Card className="border-blue-200 dark:border-blue-800/30 bg-blue-50/50 dark:bg-blue-950/10 shadow-md mb-8">
           <CardContent className="p-8">
             <p className="font-semibold text-xl flex items-center justify-center">
@@ -417,22 +352,37 @@ const sections = [
         </Card>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {[
-            { num: "1️⃣", title: "Matching entre compañeros", desc: "Encuentra roommates ideales según compatibilidad." },
-            { num: "2️⃣", title: "Propiedades sugeridas", desc: "Homi encuentra y recomienda pisos según el grupo." },
-            { num: "3️⃣", title: "Intermediación segura", desc: "Validación de perfiles y negociación con propietarios." },
-            { num: "4️⃣", title: "Firma de contrato digital", desc: "Todo el proceso es legal, digital y automatizado." },
-            { num: "5️⃣", title: "Gestión de pagos", desc: "Automatización del pago del alquiler y división de gastos." },
-            { num: "6️⃣", title: "Servicios adicionales", desc: "Acceso a seguros, mudanzas, internet y limpieza." }
-          ].map((item, i) => (
-            <div key={i} className="flex flex-col p-6 rounded-xl bg-white dark:bg-gray-900/50 border border-blue-100 dark:border-blue-900/20 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+          {[{
+        num: "1️⃣",
+        title: "Matching entre compañeros",
+        desc: "Encuentra roommates ideales según compatibilidad."
+      }, {
+        num: "2️⃣",
+        title: "Propiedades sugeridas",
+        desc: "Homi encuentra y recomienda pisos según el grupo."
+      }, {
+        num: "3️⃣",
+        title: "Intermediación segura",
+        desc: "Validación de perfiles y negociación con propietarios."
+      }, {
+        num: "4️⃣",
+        title: "Firma de contrato digital",
+        desc: "Todo el proceso es legal, digital y automatizado."
+      }, {
+        num: "5️⃣",
+        title: "Gestión de pagos",
+        desc: "Automatización del pago del alquiler y división de gastos."
+      }, {
+        num: "6️⃣",
+        title: "Servicios adicionales",
+        desc: "Acceso a seguros, mudanzas, internet y limpieza."
+      }].map((item, i) => <div key={i} className="flex flex-col p-6 rounded-xl bg-white dark:bg-gray-900/50 border border-blue-100 dark:border-blue-900/20 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
               <div className="flex items-center gap-4 mb-3">
                 <div className="text-blue-600 dark:text-blue-400 text-3xl font-bold">{item.num}</div>
                 <h4 className="text-xl font-semibold text-blue-700 dark:text-blue-300">{item.title}</h4>
               </div>
               <p className="text-muted-foreground">{item.desc}</p>
-            </div>
-          ))}
+            </div>)}
         </div>
         
         <Card className="border-green-200 dark:border-green-800/30 bg-green-50/50 dark:bg-green-950/10 shadow-md mt-6">
@@ -444,15 +394,12 @@ const sections = [
           </CardContent>
         </Card>
       </div>
-    )
-  },
-  {
-    id: "mercado",
-    title: "Mercado",
-    subtitle: "TAM, SAM, SOM",
-    icon: Target,
-    content: (
-      <div className="space-y-10">
+}, {
+  id: "mercado",
+  title: "Mercado",
+  subtitle: "TAM, SAM, SOM",
+  icon: Target,
+  content: <div className="space-y-10">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card className="border-emerald-200 dark:border-emerald-800/30 overflow-hidden">
             <div className="bg-emerald-600 dark:bg-emerald-800 p-4 text-white text-center">
@@ -520,32 +467,23 @@ const sections = [
             </div>
             <CardContent className="p-6">
               <div className="space-y-3">
-                {[
-                  "Crecimiento de la demanda de alquiler entre jóvenes.",
-                  "Digitalización del sector inmobiliario.",
-                  "Expansión del modelo de \"coliving\" y plataformas de gestión digital."
-                ].map((trend, i) => (
-                  <div key={i} className="flex items-center p-3 bg-emerald-50/50 dark:bg-emerald-950/10 rounded-lg">
+                {["Crecimiento de la demanda de alquiler entre jóvenes.", "Digitalización del sector inmobiliario.", "Expansión del modelo de \"coliving\" y plataformas de gestión digital."].map((trend, i) => <div key={i} className="flex items-center p-3 bg-emerald-50/50 dark:bg-emerald-950/10 rounded-lg">
                     <div className="text-emerald-600 dark:text-emerald-400 mr-3">
                       <TrendingUp className="h-5 w-5" />
                     </div>
                     <span>{trend}</span>
-                  </div>
-                ))}
+                  </div>)}
               </div>
             </CardContent>
           </Card>
         </div>
       </div>
-    )
-  },
-  {
-    id: "vision",
-    title: "Visión a Futuro",
-    subtitle: "La Evolución de Homi",
-    icon: Rocket,
-    content: (
-      <div className="space-y-10">
+}, {
+  id: "vision",
+  title: "Visión a Futuro",
+  subtitle: "La Evolución de Homi",
+  icon: Rocket,
+  content: <div className="space-y-10">
         <div className="text-center mb-12">
           <h3 className="text-2xl font-bold mb-6 inline-block border-b-2 border-indigo-400 dark:border-indigo-500 pb-2">
             Nuestra evolución: dos plataformas complementarias
@@ -628,8 +566,5 @@ const sections = [
           </Button>
         </div>
       </div>
-    )
-  }
-];
-
+}];
 export default Presentation;
