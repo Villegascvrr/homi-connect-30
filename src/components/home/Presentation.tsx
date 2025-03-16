@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -519,4 +520,61 @@ const sections = [
                 ].map((trend, i) => (
                   <div key={i} className="flex items-center p-3 bg-emerald-50/50 dark:bg-emerald-950/10 rounded-lg">
                     <div className="text-emerald-600 dark:text-emerald-400 mr-3">
-                      <TrendingUp className="h-
+                      <TrendingUp className="h-5 w-5" />
+                    </div>
+                    <span>{trend}</span>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    )
+  },
+  {
+    id: "vision",
+    title: "Visión a Futuro",
+    subtitle: "La Evolución de Homi",
+    icon: Rocket,
+    content: (
+      <div className="grid md:grid-cols-2 gap-8">
+        <Card className="border-indigo-200 dark:border-indigo-800/30 overflow-hidden transform transition-all duration-500 hover:shadow-xl hover:-translate-y-2">
+          <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-6 text-white">
+            <h3 className="text-2xl font-bold mb-2 flex items-center">
+              <Users className="h-7 w-7 mr-3" />
+              Homi
+            </h3>
+            <p className="text-white/80">Para Inquilinos</p>
+          </div>
+          <CardContent className="p-6">
+            <div className="space-y-4">
+              <p className="text-base">
+                Plataforma de matching inteligente que conecta estudiantes con compañeros de piso y propiedades ideales, facilitando la búsqueda de alojamiento y acceso a servicios como pagos digitales, seguros y asesoría legal.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="border-indigo-200 dark:border-indigo-800/30 overflow-hidden transform transition-all duration-500 hover:shadow-xl hover:-translate-y-2">
+          <div className="bg-gradient-to-r from-cyan-600 to-blue-600 p-6 text-white">
+            <h3 className="text-2xl font-bold mb-2 flex items-center">
+              <Building className="h-7 w-7 mr-3" />
+              Homiware
+            </h3>
+            <p className="text-white/80">Para Propietarios</p>
+          </div>
+          <CardContent className="p-6">
+            <div className="space-y-4">
+              <p className="text-base">
+                Plataforma 100% digital que reemplaza a las inmobiliarias tradicionales, permitiendo la gestión integral del alquiler, con selección de inquilinos, automatización de pagos, contratos digitales y herramientas para maximizar rentabilidad.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+];
+
+export default Presentation;
