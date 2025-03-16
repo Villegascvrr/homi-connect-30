@@ -3,9 +3,17 @@ import { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const Presentation = () => {
   const [activeSlide, setActiveSlide] = useState(0);
+  const [dialogOpen, setDialogOpen] = useState(false);
   
   const slides = [
     {
@@ -446,86 +454,169 @@ const Presentation = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
           {slides.slice(0, 6).map((slide, index) => (
-            <div 
-              key={slide.id} 
-              className="glass-card p-6 hover:shadow-lg transition-all duration-300 animate-on-scroll"
-              onClick={() => setActiveSlide(index)}
-            >
-              <h3 className="text-xl font-bold text-homi-purple mb-2">{slide.title}</h3>
-              <p className="text-muted-foreground mb-4">{slide.subtitle}</p>
-              <Button 
-                variant="outline" 
-                className="w-full"
-                onClick={() => setActiveSlide(index)}
-              >
-                Ver detalles
-              </Button>
-            </div>
+            <Dialog key={slide.id} open={dialogOpen && activeSlide === index} onOpenChange={(open) => {
+              setDialogOpen(open);
+              if (open) setActiveSlide(index);
+            }}>
+              <DialogTrigger asChild>
+                <div 
+                  className="glass-card p-6 hover:shadow-lg transition-all duration-300 animate-on-scroll cursor-pointer"
+                >
+                  <h3 className="text-xl font-bold text-homi-purple mb-2">{slide.title}</h3>
+                  <p className="text-muted-foreground mb-4">{slide.subtitle}</p>
+                  <Button 
+                    variant="outline" 
+                    className="w-full"
+                  >
+                    Ver detalles
+                  </Button>
+                </div>
+              </DialogTrigger>
+              <DialogContent className="max-w-3xl">
+                <DialogHeader>
+                  <DialogTitle className="text-2xl font-bold text-homi-purple">
+                    {slide.title} <span className="text-muted-foreground font-normal text-lg ml-2">{slide.subtitle}</span>
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="min-h-[400px] max-h-[60vh] custom-scrollbar overflow-y-auto pr-2 mt-4">
+                  {slide.content}
+                </div>
+                <div className="flex justify-between items-center mt-6">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="rounded-full"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setActiveSlide(prev => (prev === 0 ? slides.length - 1 : prev - 1));
+                    }}
+                  >
+                    <ChevronLeft className="h-5 w-5" />
+                    <span className="sr-only">Anterior</span>
+                  </Button>
+                  <Button className="bg-homi-purple hover:bg-homi-purple/90 rounded-full">
+                    Conoce más sobre Homi
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="rounded-full"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setActiveSlide(prev => (prev === slides.length - 1 ? 0 : prev + 1));
+                    }}
+                  >
+                    <ChevronRight className="h-5 w-5" />
+                    <span className="sr-only">Siguiente</span>
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
           ))}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
           {slides.slice(6, 10).map((slide, index) => (
-            <div 
-              key={slide.id} 
-              className="glass-card p-6 hover:shadow-lg transition-all duration-300 animate-on-scroll"
-              onClick={() => setActiveSlide(index + 6)}
-            >
-              <h3 className="text-xl font-bold text-homi-purple mb-2">{slide.title}</h3>
-              <p className="text-muted-foreground mb-4">{slide.subtitle}</p>
-              <Button 
-                variant="outline" 
-                className="w-full"
-                onClick={() => setActiveSlide(index + 6)}
-              >
-                Ver detalles
-              </Button>
-            </div>
+            <Dialog key={slide.id} open={dialogOpen && activeSlide === index + 6} onOpenChange={(open) => {
+              setDialogOpen(open);
+              if (open) setActiveSlide(index + 6);
+            }}>
+              <DialogTrigger asChild>
+                <div 
+                  className="glass-card p-6 hover:shadow-lg transition-all duration-300 animate-on-scroll cursor-pointer"
+                >
+                  <h3 className="text-xl font-bold text-homi-purple mb-2">{slide.title}</h3>
+                  <p className="text-muted-foreground mb-4">{slide.subtitle}</p>
+                  <Button 
+                    variant="outline" 
+                    className="w-full"
+                  >
+                    Ver detalles
+                  </Button>
+                </div>
+              </DialogTrigger>
+              <DialogContent className="max-w-3xl">
+                <DialogHeader>
+                  <DialogTitle className="text-2xl font-bold text-homi-purple">
+                    {slide.title} <span className="text-muted-foreground font-normal text-lg ml-2">{slide.subtitle}</span>
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="min-h-[400px] max-h-[60vh] custom-scrollbar overflow-y-auto pr-2 mt-4">
+                  {slide.content}
+                </div>
+                <div className="flex justify-between items-center mt-6">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="rounded-full"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setActiveSlide(prev => (prev === 0 ? slides.length - 1 : prev - 1));
+                    }}
+                  >
+                    <ChevronLeft className="h-5 w-5" />
+                    <span className="sr-only">Anterior</span>
+                  </Button>
+                  <Button className="bg-homi-purple hover:bg-homi-purple/90 rounded-full">
+                    Conoce más sobre Homi
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="rounded-full"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setActiveSlide(prev => (prev === slides.length - 1 ? 0 : prev + 1));
+                    }}
+                  >
+                    <ChevronRight className="h-5 w-5" />
+                    <span className="sr-only">Siguiente</span>
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
           ))}
         </div>
-
-        {/* Active slide details */}
-        <div className="glass-card p-8 mb-8 shadow-lg animate-on-scroll">
-          <div className="flex justify-between items-center mb-6">
-            <div>
-              <h3 className="text-2xl font-bold text-homi-purple">
-                {slides[activeSlide].title}
-              </h3>
-              <p className="text-muted-foreground">
-                {slides[activeSlide].subtitle}
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="icon"
-                className="rounded-full"
-                onClick={() => setActiveSlide(prev => (prev === 0 ? slides.length - 1 : prev - 1))}
-              >
-                <ChevronLeft className="h-5 w-5" />
-                <span className="sr-only">Anterior</span>
-              </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                className="rounded-full"
-                onClick={() => setActiveSlide(prev => (prev === slides.length - 1 ? 0 : prev + 1))}
-              >
-                <ChevronRight className="h-5 w-5" />
-                <span className="sr-only">Siguiente</span>
-              </Button>
-            </div>
-          </div>
-
-          <div className="min-h-[400px] custom-scrollbar overflow-y-auto pr-2">
-            {slides[activeSlide].content}
-          </div>
-        </div>
+        
+        {/* Removing the active slide details section to save space */}
         
         <div className="text-center mt-8">
-          <Button className="bg-homi-purple hover:bg-homi-purple/90 rounded-full">
-            Conoce más sobre Homi
-          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button className="bg-homi-purple hover:bg-homi-purple/90 rounded-full">
+                Conoce más sobre Homi
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-3xl">
+              <DialogHeader>
+                <DialogTitle className="text-2xl font-bold text-homi-purple">
+                  Homi: Revolucionando el alquiler para estudiantes y jóvenes profesionales
+                </DialogTitle>
+              </DialogHeader>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                {slides.map((slide, index) => (
+                  <Button 
+                    key={slide.id}
+                    variant="outline" 
+                    className="justify-start px-4 py-6 h-auto"
+                    onClick={() => {
+                      setActiveSlide(index);
+                      setDialogOpen(true);
+                    }}
+                  >
+                    <div className="text-left">
+                      <h3 className="text-base font-bold text-homi-purple mb-1">{slide.title}</h3>
+                      <p className="text-muted-foreground text-sm">{slide.subtitle}</p>
+                    </div>
+                  </Button>
+                ))}
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
     </section>
