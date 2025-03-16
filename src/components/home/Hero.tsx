@@ -3,9 +3,18 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Check, ChevronDown, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import PreRegisterForm from './PreRegisterForm';
+import EmailSignup from './EmailSignup';
 
 const Hero = () => {
+  const [email, setEmail] = useState('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Handle newsletter subscription
+    console.log('Subscribed with email:', email);
+    setEmail('');
+  };
+
   return (
     <section className="relative pt-36 pb-24 overflow-hidden">
       {/* Background elements */}
@@ -84,9 +93,12 @@ const Hero = () => {
             </div>
           </div>
           
-          {/* Pre-registration Form */}
-          <div className="mt-12 max-w-4xl mx-auto">
-            <PreRegisterForm />
+          {/* Email Signup Component */}
+          <div className="mt-12 glass-card p-8 max-w-xl mx-auto relative">
+            <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 rounded-full bg-gradient-to-r from-homi-purple to-homi-lightPurple flex items-center justify-center shadow-lg">
+              <Mail className="text-white" size={20} />
+            </div>
+            <EmailSignup />
           </div>
         </div>
       </div>
