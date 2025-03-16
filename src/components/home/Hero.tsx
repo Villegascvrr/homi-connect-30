@@ -1,20 +1,10 @@
 
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Check, ChevronDown, Sparkles } from 'lucide-react';
+import { Check, ChevronDown, Mail, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import EmailSignup from './EmailSignup';
+import PreRegisterForm from './PreRegisterForm';
 
 const Hero = () => {
-  const [email, setEmail] = useState('');
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle newsletter subscription
-    console.log('Subscribed with email:', email);
-    setEmail('');
-  };
-
   return (
     <section className="relative pt-36 pb-24 overflow-hidden">
       {/* Background elements */}
@@ -25,7 +15,7 @@ const Hero = () => {
       </div>
 
       <div className="container mx-auto px-4">
-        <div className="max-w-5xl mx-auto text-center">
+        <div className="max-w-5xl mx-auto text-center mb-16">
           <div className="inline-block px-6 py-2 mb-8 rounded-full bg-gradient-to-r from-homi-ultraLightPurple to-homi-lightPurple/20 text-homi-purple text-sm font-semibold border border-homi-purple/10 shadow-sm animate-pulse-soft">
             <div className="flex items-center gap-2">
               <Sparkles size={16} className="text-homi-lightPurple" />
@@ -92,14 +82,14 @@ const Hero = () => {
               <span className="font-medium">Perfiles verificados</span>
             </div>
           </div>
+        </div>
           
-          {/* Email Signup Component */}
-          <div className="mt-12 glass-card p-8 max-w-xl mx-auto relative">
-            <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 rounded-full bg-gradient-to-r from-homi-purple to-homi-lightPurple flex items-center justify-center shadow-lg">
-              <Mail className="text-white" size={20} />
-            </div>
-            <EmailSignup />
+        {/* Pre-registration Form */}
+        <div className="max-w-xl mx-auto relative">
+          <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 rounded-full bg-gradient-to-r from-homi-purple to-homi-lightPurple flex items-center justify-center shadow-lg">
+            <Mail className="text-white" size={20} />
           </div>
+          <PreRegisterForm />
         </div>
       </div>
     </section>
