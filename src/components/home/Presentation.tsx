@@ -12,7 +12,8 @@ import {
   CheckCircle, 
   Sparkles, 
   UserRound, 
-  BarChart3
+  BarChart3,
+  Rocket
 } from 'lucide-react';
 
 const Presentation = () => {
@@ -645,6 +646,95 @@ const sections = [
             <Button className="mt-4 bg-homi-purple hover:bg-homi-purple/90 rounded-full">
               Únete a la revolución del alquiler con Homi
             </Button>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  },
+  {
+    id: "vision",
+    title: "Visión a Futuro",
+    subtitle: "La Evolución de Homi",
+    icon: Rocket,
+    content: (
+      <div className="space-y-6">
+        <Card className="border-homi-purple/20 bg-homi-ultraLightPurple/20">
+          <CardContent className="p-6">
+            <p className="font-semibold text-lg">
+              <span className="text-homi-purple">🔮</span> Nuestra visión a largo plazo es convertir a Homi en un ecosistema integral del alquiler, separando la experiencia de inquilinos y propietarios en dos plataformas especializadas.
+            </p>
+          </CardContent>
+        </Card>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-start">
+                <span className="text-homi-purple mr-3 text-xl">🔹</span>
+                <div>
+                  <h4 className="font-semibold mb-2">Solución Integral e Interconectada</h4>
+                  <p className="text-muted-foreground">
+                    Homi revoluciona el mercado del alquiler con un ecosistema dual que resuelve los problemas tanto de inquilinos como de propietarios, integrando sus soluciones para optimizar la oferta y la demanda.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-start">
+                <span className="text-homi-purple mr-3 text-xl">🔹</span>
+                <div>
+                  <h4 className="font-semibold mb-2">Homi (Para Inquilinos)</h4>
+                  <p className="text-muted-foreground">
+                    Plataforma de matching inteligente que conecta estudiantes con compañeros de piso y propiedades ideales, facilitando la búsqueda de alojamiento y acceso a servicios como pagos digitales, seguros y asesoría legal.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-start">
+                <span className="text-homi-purple mr-3 text-xl">🔹</span>
+                <div>
+                  <h4 className="font-semibold mb-2">Homiware (Para Propietarios)</h4>
+                  <p className="text-muted-foreground">
+                    Plataforma 100% digital que reemplaza a las inmobiliarias tradicionales, permitiendo la gestión integral del alquiler, con selección de inquilinos, automatización de pagos, contratos digitales y herramientas para maximizar rentabilidad.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-start">
+                <span className="text-homi-purple mr-3 text-xl">🔹</span>
+                <div>
+                  <h4 className="font-semibold mb-2">Enfoque Estratégico con Marcas Diferenciadas</h4>
+                  <p className="text-muted-foreground">
+                    Al separar las marcas, podemos posicionar y promocionar cada solución de manera más efectiva y atractiva, adaptando la comunicación a las necesidades de cada segmento de clientes.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        
+        <Card className="border-green-100 dark:border-green-900/30 bg-green-50/50 dark:bg-green-900/10">
+          <CardContent className="p-6">
+            <div className="flex items-start">
+              <span className="text-homi-purple mr-3 text-xl">🔹</span>
+              <div>
+                <h4 className="font-semibold mb-2">Sinergia y Equilibrio en el Mercado</h4>
+                <p className="text-muted-foreground">
+                  La interdependencia entre Homi y Homiware permite una experiencia fluida y segura para inquilinos y propietarios, asegurando un alquiler más eficiente, sin intermediarios costosos y con mayor confianza.
+                </p>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>
