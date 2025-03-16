@@ -1,17 +1,17 @@
 
-import { Wallet, Coins, BarChart3, PiggyBank, HandCoins } from 'lucide-react';
+import { Wallet, Coins, BarChart3, PiggyBank, HandCoins, ShieldCheck, BadgeDollarSign } from 'lucide-react';
 
 const BusinessModel = () => {
   const revenue = [
     {
       icon: <Wallet className="w-8 h-8 text-homi-purple" />,
-      title: "Comisión por contrato",
-      description: "Pequeña comisión al completar exitosamente el contrato entre inquilinos y propietarios."
+      title: "Servicio de agencia",
+      description: "Comisión por búsqueda y gestión del alquiler de pisos, simplificando el proceso para inquilinos y propietarios."
     },
     {
-      icon: <Coins className="w-8 h-8 text-homi-purple" />,
-      title: "Modelo freemium",
-      description: "Funcionalidades básicas gratuitas y plan premium con acceso a herramientas avanzadas de búsqueda y matching."
+      icon: <BadgeDollarSign className="w-8 h-8 text-homi-purple" />,
+      title: "Suscripciones premium",
+      description: "Planes con mayor visibilidad en el sistema de matching y herramientas avanzadas de búsqueda."
     },
     {
       icon: <BarChart3 className="w-8 h-8 text-homi-purple" />,
@@ -24,9 +24,9 @@ const BusinessModel = () => {
       description: "Pequeña tarifa por la gestión automatizada de pagos mensuales entre inquilinos y propietarios."
     },
     {
-      icon: <HandCoins className="w-8 h-8 text-homi-purple" />,
-      title: "Propiedades destacadas",
-      description: "Los propietarios pueden pagar para destacar sus propiedades en los resultados de búsqueda."
+      icon: <ShieldCheck className="w-8 h-8 text-homi-purple" />,
+      title: "Publicidad segmentada",
+      description: "Espacios publicitarios para empresas con target estudiantil y de jóvenes profesionales."
     }
   ];
   
