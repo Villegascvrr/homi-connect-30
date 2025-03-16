@@ -1,4 +1,3 @@
-
 import { Wallet, BarChart3, ShieldCheck, BadgeDollarSign } from 'lucide-react';
 
 const BusinessModel = () => {
@@ -46,31 +45,41 @@ const BusinessModel = () => {
         </div>
 
         <div className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {revenue.map((item, index) => (
-              <div 
-                key={index} 
-                className={`glass-card p-6 transition-all duration-300 animate-on-scroll ${item.highlight ? "border-2 border-homi-purple ring-2 ring-homi-purple/20" : ""}`}
-              >
-                <div className="w-14 h-14 rounded-full bg-homi-ultraLightPurple flex items-center justify-center mb-4">
-                  {item.icon}
-                </div>
-                <div className="flex justify-between items-start">
-                  <h3 className="text-xl font-semibold mb-3">{item.title}</h3>
-                  {item.highlight && (
-                    <span className="bg-homi-purple text-white text-xs font-medium px-2.5 py-0.5 rounded-full">
-                      Principal
-                    </span>
-                  )}
-                </div>
-                <p className="text-muted-foreground">{item.description}</p>
-                {item.price && (
-                  <div className="mt-3 bg-homi-purple/10 p-2 rounded-md">
-                    <p className="text-homi-purple font-medium text-sm">{item.price}</p>
-                  </div>
-                )}
+          <div className="grid grid-cols-1 gap-8">
+            {/* Agency Service - Larger Card */}
+            <div 
+              className="glass-card p-6 transition-all duration-300 animate-on-scroll border-2 border-homi-purple ring-2 ring-homi-purple/20"
+            >
+              <div className="w-16 h-16 rounded-full bg-homi-ultraLightPurple flex items-center justify-center mb-4">
+                {revenue[0].icon}
               </div>
-            ))}
+              <div className="flex justify-between items-start">
+                <h3 className="text-2xl font-semibold mb-3">{revenue[0].title}</h3>
+                <span className="bg-homi-purple text-white text-xs font-medium px-2.5 py-0.5 rounded-full">
+                  Principal
+                </span>
+              </div>
+              <p className="text-muted-foreground text-lg">{revenue[0].description}</p>
+              <div className="mt-3 bg-homi-purple/10 p-3 rounded-md">
+                <p className="text-homi-purple font-medium">{revenue[0].price}</p>
+              </div>
+            </div>
+            
+            {/* Other Revenue Streams - Smaller Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {revenue.slice(1).map((item, index) => (
+                <div 
+                  key={index} 
+                  className="glass-card p-4 transition-all duration-300 animate-on-scroll"
+                >
+                  <div className="w-12 h-12 rounded-full bg-homi-ultraLightPurple flex items-center justify-center mb-3">
+                    {item.icon}
+                  </div>
+                  <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
+                  <p className="text-muted-foreground text-sm">{item.description}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
