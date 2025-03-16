@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Home, Users, MessageSquare, User, LogIn, Home as HomeIcon } from 'lucide-react';
+import { Menu, X, Home, Users, MessageSquare, User, LogIn } from 'lucide-react';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -40,7 +40,7 @@ const Navbar = () => {
     >
       <div className="container mx-auto px-4 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-          <span className="text-2xl font-bold text-homi-purple">Homi</span>
+          <span className="text-2xl font-bold text-homi-purple">Hominet</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-8">
@@ -63,16 +63,6 @@ const Navbar = () => {
             }`}
           >
             Encuentra Compañeros
-          </Link>
-          <Link 
-            to="/properties" 
-            className={`transition-colors ${
-              isActive('/properties') 
-                ? 'text-homi-purple font-medium' 
-                : 'text-foreground/80 hover:text-homi-purple'
-            }`}
-          >
-            Buscar Pisos
           </Link>
           <Link 
             to="/chat" 
@@ -137,17 +127,6 @@ const Navbar = () => {
             >
               <Users size={20} />
               <span>Encuentra Compañeros</span>
-            </Link>
-            <Link 
-              to="/properties" 
-              className={`flex items-center gap-2 py-3 transition-colors ${
-                isActive('/properties') 
-                  ? 'text-homi-purple font-medium' 
-                  : 'text-foreground/80 hover:text-homi-purple'
-              }`}
-            >
-              <HomeIcon size={20} />
-              <span>Buscar Pisos</span>
             </Link>
             <Link 
               to="/chat" 

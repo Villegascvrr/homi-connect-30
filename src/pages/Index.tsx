@@ -81,10 +81,10 @@ const Index = () => {
       
       <main className="flex-grow">
         <Hero />
+        <Features />
         <div id="how-it-works">
           <HowItWorks />
         </div>
-        <Features />
         
         {/* Featured Profiles Section */}
         <section className="py-20">
