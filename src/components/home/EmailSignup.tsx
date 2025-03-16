@@ -92,7 +92,7 @@ const EmailSignup = () => {
     else if (step === 'confirmacion') setStep('intereses');
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!validateCurrentStep()) return;
@@ -107,19 +107,21 @@ const EmailSignup = () => {
     
     // En una aplicación real, esto llamaría a un endpoint de API para almacenar los datos
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setIsSubmitted(true);
-      toast({
-        title: "¡Registro exitoso!",
-        description: "Te notificaremos cuando Homi esté disponible.",
-      });
+      // Simulating API call
+      setTimeout(() => {
+        setIsSubmitted(true);
+        toast({
+          title: "¡Registro exitoso!",
+          description: "Te notificaremos cuando Homi esté disponible.",
+        });
+        setIsLoading(false);
+      }, 1000);
     } catch (error) {
       toast({
         title: "Error",
         description: "Ha ocurrido un error. Por favor, inténtalo de nuevo más tarde.",
         variant: "destructive",
       });
-    } finally {
       setIsLoading(false);
     }
   };
