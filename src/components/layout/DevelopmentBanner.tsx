@@ -8,7 +8,7 @@ const DevelopmentBanner = () => {
         <div className="flex items-center justify-center gap-2 text-center text-sm text-homi-purple">
           <Info size={16} />
           <p>
-            <span className="font-semibold">Homi está en desarrollo.</span> ¡Regístrate ahora para ser de los primeros en usarlo!
+            <span className="font-semibold">Homi está en desarrollo.</span> ¡Regístrate ahora para ser de los primeros en usarlo en Sevilla!
           </p>
         </div>
       </div>

@@ -5,6 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { CheckCircle2, ArrowRight, User, Mail, MapPin, Home, Briefcase } from 'lucide-react';
+import { Slider } from '@/components/ui/slider';
+import { Label } from '@/components/ui/label';
 
 type Step = 'datos' | 'intereses' | 'confirmacion';
 
@@ -18,12 +20,17 @@ const EmailSignup = () => {
   const [formData, setFormData] = useState({
     nombre: '',
     email: '',
-    ciudad: '',
-    ocupacion: '',
-    presupuesto: '',
+    zona: '',
+    edad: '',
+    presupuesto: [400], // Valor predeterminado de 400€
     comentarios: '',
     intereses: [] as string[]
   });
+
+  const zonasSevilla = [
+    'Triana', 'Los Remedios', 'Nervión', 'Centro', 'Macarena', 
+    'Alameda', 'Santa Justa', 'Sur', 'Este', 'Aljarafe', 'Otro'
+  ];
 
   const interesesOpciones = [
     'Piso céntrico', 'Ambiente tranquilo', 'Compañeros estudiantes',
@@ -34,6 +41,10 @@ const EmailSignup = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSliderChange = (value: number[]) => {
+    setFormData(prev => ({ ...prev, presupuesto: value }));
   };
 
   const toggleInteres = (interes: string) => {
@@ -57,10 +68,10 @@ const EmailSignup = () => {
         return false;
       }
     } else if (step === 'intereses') {
-      if (!formData.ciudad) {
+      if (!formData.zona) {
         toast({
           title: "Datos incompletos",
-          description: "Por favor, indica al menos tu ciudad.",
+          description: "Por favor, indica al menos tu zona de interés.",
           variant: "destructive",
         });
         return false;
@@ -129,7 +140,7 @@ const EmailSignup = () => {
         <CheckCircle2 className="h-16 w-16 text-green-500 mb-4" />
         <h3 className="text-2xl font-bold mb-3">¡Gracias por registrarte!</h3>
         <p className="text-center text-lg mb-4">
-          Te notificaremos cuando Homi esté disponible en {formData.ciudad}.
+          Te notificaremos cuando Homi esté disponible en {formData.zona}.
         </p>
         <div className="text-sm text-muted-foreground">
           <p>Hemos enviado un correo de confirmación a <span className="font-semibold">{formData.email}</span></p>
@@ -143,7 +154,7 @@ const EmailSignup = () => {
       <div className="mb-6 text-center">
         <h3 className="text-xl font-semibold mb-2">¿Quieres ser de los primeros en usar Homi?</h3>
         <p className="text-muted-foreground">
-          Regístrate ahora y obtén acceso preferente cuando lancemos en tu ciudad.
+          Regístrate ahora y obtén acceso preferente cuando lancemos en tu zona.
         </p>
         {renderStepIndicator()}
       </div>
@@ -194,47 +205,57 @@ const EmailSignup = () => {
         {step === 'intereses' && (
           <div className="space-y-4">
             <div>
-              <label htmlFor="ciudad" className="block text-sm font-medium mb-1">Ciudad donde buscas vivienda *</label>
+              <label htmlFor="zona" className="block text-sm font-medium mb-1">Zona de Sevilla donde buscas vivienda *</label>
               <div className="relative">
-                <Input
-                  id="ciudad"
-                  name="ciudad"
-                  placeholder="Ej: Madrid, Barcelona, Valencia..."
-                  value={formData.ciudad}
-                  onChange={handleInputChange}
-                  className="pl-10"
-                />
+                <select
+                  id="zona"
+                  name="zona"
+                  value={formData.zona}
+                  onChange={handleInputChange as any}
+                  className="flex h-10 w-full rounded-md border border-input bg-background pl-10 pr-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                >
+                  <option value="">Selecciona una zona</option>
+                  {zonasSevilla.map(zona => (
+                    <option key={zona} value={zona}>{zona}</option>
+                  ))}
+                </select>
                 <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               </div>
             </div>
             
             <div>
-              <label htmlFor="ocupacion" className="block text-sm font-medium mb-1">Ocupación</label>
+              <label htmlFor="edad" className="block text-sm font-medium mb-1">Edad</label>
               <div className="relative">
                 <Input
-                  id="ocupacion"
-                  name="ocupacion"
-                  placeholder="Ej: Estudiante, Profesional, Remoto..."
-                  value={formData.ocupacion}
+                  id="edad"
+                  name="edad"
+                  type="number"
+                  min="18"
+                  max="99"
+                  placeholder="Tu edad"
+                  value={formData.edad}
                   onChange={handleInputChange}
                   className="pl-10"
                 />
-                <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               </div>
             </div>
             
             <div>
-              <label htmlFor="presupuesto" className="block text-sm font-medium mb-1">Presupuesto mensual aproximado</label>
-              <div className="relative">
-                <Input
-                  id="presupuesto"
-                  name="presupuesto"
-                  placeholder="Ej: 400€, 500-600€..."
-                  value={formData.presupuesto}
-                  onChange={handleInputChange}
-                  className="pl-10"
-                />
-                <Home className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+              <Label className="block text-sm font-medium mb-3">Presupuesto mensual: {formData.presupuesto[0]}€</Label>
+              <Slider
+                defaultValue={[400]}
+                max={1200}
+                min={200}
+                step={50}
+                value={formData.presupuesto}
+                onValueChange={handleSliderChange}
+                className="my-5"
+              />
+              <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                <span>200€</span>
+                <span>700€</span>
+                <span>1200€</span>
               </div>
             </div>
           </div>
@@ -243,7 +264,7 @@ const EmailSignup = () => {
         {step === 'confirmacion' && (
           <div className="space-y-6">
             <div>
-              <p className="text-sm font-medium mb-1">¿Qué buscas en tu próximo hogar?</p>
+              <p className="text-sm font-medium mb-3">¿Qué buscas en tu próximo hogar?</p>
               <div className="flex flex-wrap gap-2 mt-2">
                 {interesesOpciones.map(interes => (
                   <button
@@ -286,16 +307,20 @@ const EmailSignup = () => {
                   <span className="font-medium">{formData.email}</span>
                 </div>
                 <div>
-                  <span className="block text-muted-foreground">Ciudad:</span>
-                  <span className="font-medium">{formData.ciudad}</span>
+                  <span className="block text-muted-foreground">Zona:</span>
+                  <span className="font-medium">{formData.zona}</span>
                 </div>
                 <div>
-                  <span className="block text-muted-foreground">Ocupación:</span>
-                  <span className="font-medium">{formData.ocupacion || "No especificada"}</span>
+                  <span className="block text-muted-foreground">Edad:</span>
+                  <span className="font-medium">{formData.edad || "No especificada"}</span>
                 </div>
                 <div>
                   <span className="block text-muted-foreground">Presupuesto:</span>
-                  <span className="font-medium">{formData.presupuesto || "No especificado"}</span>
+                  <span className="font-medium">{formData.presupuesto[0]}€</span>
+                </div>
+                <div>
+                  <span className="block text-muted-foreground">Intereses:</span>
+                  <span className="font-medium">{formData.intereses.length > 0 ? formData.intereses.join(', ') : "Ninguno seleccionado"}</span>
                 </div>
               </div>
             </div>
@@ -345,3 +370,4 @@ const EmailSignup = () => {
 };
 
 export default EmailSignup;
+
