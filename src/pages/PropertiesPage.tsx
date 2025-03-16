@@ -1,7 +1,6 @@
-
 import { useState, useEffect } from 'react';
 import { filterProperties } from '@/services/propertyService';
-import { Property, PropertyFilter } from '@/types/property';
+import { Property, PropertyFilter as PropertyFilterType } from '@/types/property';
 import { useQuery } from '@tanstack/react-query';
 import PropertyCard from '@/components/properties/PropertyCard';
 import PropertyFilter from '@/components/properties/PropertyFilter';
@@ -20,7 +19,7 @@ import {
 import { List, MapPin, Loader2 } from 'lucide-react';
 
 const PropertiesPage = () => {
-  const [filters, setFilters] = useState<PropertyFilter>({});
+  const [filters, setFilters] = useState<PropertyFilterType>({});
   const [currentPage, setCurrentPage] = useState(1);
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
   const propertiesPerPage = 6;
@@ -31,15 +30,13 @@ const PropertiesPage = () => {
   });
 
   useEffect(() => {
-    // Reset to first page when filters change
     setCurrentPage(1);
   }, [filters]);
 
-  const handleFilterChange = (newFilters: PropertyFilter) => {
+  const handleFilterChange = (newFilters: PropertyFilterType) => {
     setFilters(newFilters);
   };
 
-  // Pagination logic
   const indexOfLastProperty = currentPage * propertiesPerPage;
   const indexOfFirstProperty = indexOfLastProperty - propertiesPerPage;
   const currentProperties = properties.slice(indexOfFirstProperty, indexOfLastProperty);
@@ -57,7 +54,6 @@ const PropertiesPage = () => {
     const maxVisiblePages = 5;
     
     if (totalPages <= maxVisiblePages) {
-      // Show all pages if there are less than maxVisiblePages
       for (let i = 1; i <= totalPages; i++) {
         items.push(
           <PaginationItem key={i}>
@@ -71,7 +67,6 @@ const PropertiesPage = () => {
         );
       }
     } else {
-      // Show first page
       items.push(
         <PaginationItem key={1}>
           <PaginationLink 
@@ -83,7 +78,6 @@ const PropertiesPage = () => {
         </PaginationItem>
       );
       
-      // Show ellipsis if currentPage is not close to first page
       if (currentPage > 3) {
         items.push(
           <PaginationItem key="ellipsis1">
@@ -92,7 +86,6 @@ const PropertiesPage = () => {
         );
       }
       
-      // Show pages around current page
       const startPage = Math.max(2, currentPage - 1);
       const endPage = Math.min(totalPages - 1, currentPage + 1);
       
@@ -109,7 +102,6 @@ const PropertiesPage = () => {
         );
       }
       
-      // Show ellipsis if currentPage is not close to last page
       if (currentPage < totalPages - 2) {
         items.push(
           <PaginationItem key="ellipsis2">
@@ -118,7 +110,6 @@ const PropertiesPage = () => {
         );
       }
       
-      // Show last page
       items.push(
         <PaginationItem key={totalPages}>
           <PaginationLink 
@@ -145,14 +136,12 @@ const PropertiesPage = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-6">
-          {/* Sidebar with filters */}
           <div className="order-2 lg:order-1">
             <div className="sticky top-24">
               <PropertyFilter onFilterChange={handleFilterChange} />
             </div>
           </div>
 
-          {/* Main content */}
           <div className="order-1 lg:order-2">
             <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
@@ -206,7 +195,6 @@ const PropertiesPage = () => {
                           ))}
                         </div>
                         
-                        {/* Pagination */}
                         {totalPages > 1 && (
                           <Pagination className="my-8">
                             <PaginationContent>
