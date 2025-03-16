@@ -15,21 +15,21 @@ const Hero = () => {
   };
 
   return (
-    <section className="relative pt-32 pb-20 overflow-hidden">
+    <section className="relative pt-32 pb-20 overflow-hidden bg-white dark:bg-slate-950">
       {/* Background elements */}
       <div className="absolute inset-0 -z-10">
-        <div className="absolute top-0 left-0 w-96 h-96 bg-homi-ultraLightPurple rounded-full opacity-50 blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-homi-ultraLightPurple rounded-full opacity-50 blur-3xl translate-x-1/3 translate-y-1/3"></div>
+        <div className="absolute top-0 left-0 w-96 h-96 bg-homi-ultraLightPurple/30 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-homi-ultraLightPurple/30 rounded-full blur-3xl translate-x-1/3 translate-y-1/3"></div>
       </div>
 
       <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto text-center">
-          <div className="inline-block px-4 py-1.5 mb-6 rounded-full bg-homi-ultraLightPurple text-homi-purple text-sm font-medium animate-pulse-soft">
+          <div className="inline-block px-4 py-1.5 mb-6 rounded-full bg-white dark:bg-slate-800 text-homi-purple text-sm font-medium animate-pulse-soft border border-homi-ultraLightPurple">
             ¡Encuentra al compañero de piso ideal!
           </div>
           
           <h1 className="text-4xl md:text-6xl font-bold mb-6 animate-slide-up">
-            Conecta con compañeros de piso <span className="homi-gradient-text">compatibles</span>
+            Conecta con compañeros de piso <span className="text-homi-purple">compatibles</span>
           </h1>
           
           <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">

@@ -45,20 +45,19 @@ const Index = () => {
         <Presentation />
         
         {/* CTA Section */}
-        <section className="py-20 bg-homi-purple text-white">
+        <section className="py-20 bg-white dark:bg-slate-900 text-homi-purple dark:text-white">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center animate-on-scroll">
               <h2 className="text-3xl md:text-4xl font-bold mb-6">
                 ¿Listo para encontrar a tu compañero ideal?
               </h2>
-              <p className="text-xl mb-8 text-white/80">
+              <p className="text-xl mb-8 text-muted-foreground">
                 Únete a Homi y comienza a conectar con personas compatibles con tu estilo de vida.
               </p>
               <Link to="/matching">
                 <Button 
                   size="lg" 
-                  variant="secondary" 
-                  className="rounded-full bg-white text-homi-purple hover:bg-white/90 px-8"
+                  className="rounded-full bg-homi-purple text-white hover:bg-homi-purple/90 px-8"
                 >
                   Comenzar Ahora
                 </Button>

@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
@@ -92,7 +93,7 @@
   }
   
   .purple-card {
-    @apply rounded-2xl bg-purple-gradient text-white shadow-card;
+    @apply rounded-2xl bg-homi-purple text-white shadow-card;
   }
   
   .btn-primary {
@@ -101,10 +102,6 @@
   
   .btn-secondary {
     @apply px-6 py-3 rounded-full bg-white text-homi-purple border border-homi-purple/20 font-medium transition-all hover:shadow-lg hover:bg-homi-ultraLightPurple/50 active:scale-95;
-  }
-  
-  .homi-gradient-text {
-    @apply bg-purple-gradient bg-clip-text text-transparent;
   }
 
   .animate-on-scroll {
