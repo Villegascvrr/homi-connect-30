@@ -38,13 +38,13 @@ const Index = () => {
       
       <main className="flex-grow">
         <Hero />
+        <Presentation />
         <div id="how-it-works">
           <HowItWorks />
         </div>
         <Features />
         <BusinessModel />
         <TeamNeeds />
-        <Presentation />
         
         {/* CTA Section */}
         <section className="py-20 bg-white dark:bg-slate-900 text-homi-purple dark:text-white">

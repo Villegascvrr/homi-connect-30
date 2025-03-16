@@ -16,12 +16,15 @@ import {
   Rocket,
   ChevronDown,
   ChevronUp,
-  ChevronRight
+  ChevronRight,
+  Zap,
+  ShieldCheck,
+  ArrowRight
 } from 'lucide-react';
 
 const Presentation = () => {
-  const [activeSection, setActiveSection] = useState<string | null>(null);
-  const [visibleSections, setVisibleSections] = useState<Set<string>>(new Set());
+  const [activeSection, setActiveSection] = useState<string | null>("solucion");
+  const [visibleSections, setVisibleSections] = useState<Set<string>>(new Set(["solucion"]));
   
   useEffect(() => {
     const handleScroll = () => {
@@ -154,16 +157,107 @@ const Presentation = () => {
           </p>
         </div>
         
+        {/* Solution Section at Top */}
+        <div className="mb-24 animate-on-scroll">
+          <div className="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-3xl overflow-hidden shadow-xl">
+            <div className="px-6 py-10 md:p-12">
+              <div className="flex flex-col items-center text-center text-white mb-10">
+                <div className="h-16 w-16 bg-white/20 rounded-full flex items-center justify-center mb-6">
+                  <Zap className="h-8 w-8 text-white" />
+                </div>
+                <h2 className="text-3xl md:text-4xl font-bold mb-4">Nuestra Solución</h2>
+                <p className="text-xl text-white/80 max-w-3xl">
+                  Homi es la plataforma todo-en-uno para estudiantes y jóvenes que simplifica el proceso de alquiler y convivencia.
+                </p>
+              </div>
+              
+              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8">
+                <p className="text-white text-lg mb-6">
+                  Homi digitaliza y optimiza completamente el proceso de alquiler, eliminando fricciones y simplificando cada etapa mediante tecnología avanzada y automatización.
+                </p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="bg-white/10 backdrop-blur-sm p-6 rounded-xl hover:bg-white/20 transition-all">
+                    <div className="flex items-start">
+                      <div className="bg-purple-500/30 p-3 rounded-full mr-4 flex-shrink-0">
+                        <BrainCircuit className="h-6 w-6 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-semibold text-white mb-2">Matching Inteligente con IA</h3>
+                        <p className="text-white/70">Conecta posibles compañeros de piso compatibles según hábitos, estilo de vida y preferencias.</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white/10 backdrop-blur-sm p-6 rounded-xl hover:bg-white/20 transition-all">
+                    <div className="flex items-start">
+                      <div className="bg-purple-500/30 p-3 rounded-full mr-4 flex-shrink-0">
+                        <ShieldCheck className="h-6 w-6 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-semibold text-white mb-2">Gestión Digital Completa</h3>
+                        <p className="text-white/70">Automatiza la firma de contratos, pagos recurrentes y comunicación con propietarios.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <Card className="bg-white/10 backdrop-blur-sm text-white border-white/20 hover:bg-white/20 transition-all">
+                  <CardContent className="p-6">
+                    <div className="rounded-full bg-white/20 h-12 w-12 flex items-center justify-center mb-4">
+                      <Users className="h-6 w-6" />
+                    </div>
+                    <h3 className="text-lg font-semibold mb-2">Encuentra Roommates</h3>
+                    <p className="text-white/70">Conecta con compañeros con estilos de vida compatibles al tuyo.</p>
+                  </CardContent>
+                </Card>
+                
+                <Card className="bg-white/10 backdrop-blur-sm text-white border-white/20 hover:bg-white/20 transition-all">
+                  <CardContent className="p-6">
+                    <div className="rounded-full bg-white/20 h-12 w-12 flex items-center justify-center mb-4">
+                      <Building className="h-6 w-6" />
+                    </div>
+                    <h3 className="text-lg font-semibold mb-2">Propiedades Ideales</h3>
+                    <p className="text-white/70">Te ayudamos a encontrar el hogar perfecto para tu grupo.</p>
+                  </CardContent>
+                </Card>
+                
+                <Card className="bg-white/10 backdrop-blur-sm text-white border-white/20 hover:bg-white/20 transition-all">
+                  <CardContent className="p-6">
+                    <div className="rounded-full bg-white/20 h-12 w-12 flex items-center justify-center mb-4">
+                      <CheckCircle className="h-6 w-6" />
+                    </div>
+                    <h3 className="text-lg font-semibold mb-2">Sin Complicaciones</h3>
+                    <p className="text-white/70">Elimina papeleo, ahorra tiempo y simplifica todo el proceso.</p>
+                  </CardContent>
+                </Card>
+              </div>
+              
+              <div className="mt-10 text-center">
+                <Button 
+                  size="lg" 
+                  className="bg-white text-purple-600 hover:bg-white/90 rounded-full px-8 group"
+                >
+                  Descubre Cómo Funciona 
+                  <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
         {/* Navigation Pills - Horizontal scrolling on mobile */}
         <div className="flex overflow-x-auto pb-4 mb-12 -mx-4 px-4 snap-x scroll-px-4 scrollbar-hide">
           <div className="flex gap-3 mx-auto">
-            {sections.map((section) => (
+            {sections.filter(section => section.id !== "solucion").map((section) => (
               <div key={section.id} className="snap-start">
                 <Button
                   variant={activeSection === section.id ? "default" : "outline"}
                   className={`whitespace-nowrap rounded-full transition-all ${
                     activeSection === section.id 
-                      ? `bg-${section.id === "solucion" ? "homi-purple" : getSectionAccentColor(section.id).replace('text-', 'bg-').replace('dark:', '')} text-white` 
+                      ? `bg-${getSectionAccentColor(section.id).replace('text-', 'bg-').replace('dark:', '')} text-white` 
                       : `hover:bg-${getSectionAccentColor(section.id).replace('text-', 'bg-').replace('dark:', '')}/10`
                   }`}
                   onClick={() => toggleSection(section.id)}
@@ -178,7 +272,7 @@ const Presentation = () => {
         
         {/* Content Sections */}
         <div className="space-y-32">
-          {sections.map((section) => {
+          {sections.filter(section => section.id !== "solucion").map((section) => {
             const isVisible = visibleSections.has(section.id);
             const isCurrent = activeSection === section.id;
             
@@ -259,6 +353,13 @@ const Presentation = () => {
 // Section data
 const sections = [
   {
+    id: "solucion",
+    title: "Solución",
+    subtitle: "¿Cuál es la USP (Propuesta Única de Valor)?",
+    icon: Sparkles,
+    content: null // Contenido movido a la parte superior
+  },
+  {
     id: "problema",
     title: "Problema",
     subtitle: "¿Qué problema real solucionamos a nuestros clientes?",
@@ -301,119 +402,6 @@ const sections = [
               <span className="text-red-600 bg-red-100 dark:bg-red-900/30 rounded-full p-2 mr-3 flex-shrink-0">👉</span> 
               <span>El proceso de alquiler es ineficiente, inseguro y requiere múltiples plataformas.</span>
             </p>
-          </CardContent>
-        </Card>
-      </div>
-    )
-  },
-  {
-    id: "solucion",
-    title: "Solución",
-    subtitle: "¿Cuál es la USP (Propuesta Única de Valor)?",
-    icon: Sparkles,
-    content: (
-      <div className="space-y-8">
-        <Card className="border-homi-purple/20 bg-homi-ultraLightPurple/20 shadow-md">
-          <CardContent className="p-8">
-            <p className="font-semibold text-xl text-center">
-              <span className="homi-gradient-text text-xl">🚀</span> Homi es la plataforma todo-en-uno para estudiantes y jóvenes que simplifica el proceso de alquiler y convivencia.
-            </p>
-          </CardContent>
-        </Card>
-        
-        {/* New Content: Solution Overview */}
-        <Card className="border-purple-200 dark:border-purple-800/30 bg-purple-50/50 dark:bg-purple-950/10 shadow-md">
-          <CardContent className="p-8">
-            <p className="font-medium text-lg mb-6">
-              Homi digitaliza y optimiza completamente el proceso de alquiler, eliminando fricciones y simplificando cada etapa mediante tecnología avanzada y automatización.
-            </p>
-            <div className="space-y-4">
-              <div className="flex items-start">
-                <div className="text-green-600 dark:text-green-400 shrink-0 mt-1 mr-3">
-                  <CheckCircle className="h-6 w-6" />
-                </div>
-                <div>
-                  <span className="font-semibold text-lg">Matching Inteligente con IA</span>
-                  <p className="text-muted-foreground mt-1">Conecta posibles compañeros de piso compatibles según hábitos, estilo de vida y preferencias.</p>
-                </div>
-              </div>
-              <div className="flex items-start">
-                <div className="text-green-600 dark:text-green-400 shrink-0 mt-1 mr-3">
-                  <CheckCircle className="h-6 w-6" />
-                </div>
-                <div>
-                  <span className="font-semibold text-lg">Gestión Digital Completa del Alquiler</span>
-                  <p className="text-muted-foreground mt-1">Automatiza la firma de contratos, pagos recurrentes y comunicación con propietarios, eliminando procesos manuales y asegurando una experiencia fluida y segura.</p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="border border-purple-200 dark:border-purple-800/30 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-            <CardContent className="p-8">
-              <div className="flex items-start gap-4">
-                <div className="rounded-full bg-purple-100 dark:bg-purple-900/30 p-4">
-                  <Users className="h-8 w-8 text-purple-600 dark:text-purple-400" />
-                </div>
-                <div>
-                  <h4 className="text-xl font-semibold mb-2 text-purple-600 dark:text-purple-400">Matching Inteligente</h4>
-                  <p className="text-base text-muted-foreground">Encuentra compañeros de piso compatibles basados en intereses y hábitos de convivencia.</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="border border-purple-200 dark:border-purple-800/30 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-            <CardContent className="p-8">
-              <div className="flex items-start gap-4">
-                <div className="rounded-full bg-purple-100 dark:bg-purple-900/30 p-4">
-                  <Building className="h-8 w-8 text-purple-600 dark:text-purple-400" />
-                </div>
-                <div>
-                  <h4 className="text-xl font-semibold mb-2 text-purple-600 dark:text-purple-400">Búsqueda Personalizada</h4>
-                  <p className="text-base text-muted-foreground">Homi actúa como agencia y filtra las mejores opciones para el grupo.</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="border border-purple-200 dark:border-purple-800/30 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-            <CardContent className="p-8">
-              <div className="flex items-start gap-4">
-                <div className="rounded-full bg-purple-100 dark:bg-purple-900/30 p-4">
-                  <CheckCircle className="h-8 w-8 text-purple-600 dark:text-purple-400" />
-                </div>
-                <div>
-                  <h4 className="text-xl font-semibold mb-2 text-purple-600 dark:text-purple-400">Intermediación Segura</h4>
-                  <p className="text-base text-muted-foreground">Validación de perfiles y mediación con propietarios para garantizar seguridad.</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="border border-purple-200 dark:border-purple-800/30 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-            <CardContent className="p-8">
-              <div className="flex items-start gap-4">
-                <div className="rounded-full bg-purple-100 dark:bg-purple-900/30 p-4">
-                  <BrainCircuit className="h-8 w-8 text-purple-600 dark:text-purple-400" />
-                </div>
-                <div>
-                  <h4 className="text-xl font-semibold mb-2 text-purple-600 dark:text-purple-400">Contrato Digital</h4>
-                  <p className="text-base text-muted-foreground">Automatización de procesos clave para eliminar fricciones.</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-        
-        <Card className="border-green-200 dark:border-green-800/30 bg-green-50/50 dark:bg-green-950/10 shadow-md">
-          <CardContent className="p-8 flex items-center">
-            <span className="text-green-600 bg-green-100 dark:bg-green-900/30 rounded-full p-3 mr-4 flex-shrink-0">
-              <CheckCircle className="h-6 w-6" />
-            </span>
-            <p className="font-medium text-lg">Homi revoluciona el alquiler para inquilinos, asegurando rapidez, seguridad y comodidad.</p>
           </CardContent>
         </Card>
       </div>
@@ -589,75 +577,4 @@ const sections = [
             
             <CardContent className="p-8 space-y-4">
               <p className="text-base leading-relaxed">
-                Plataforma de matching inteligente que conecta estudiantes con compañeros de piso y 
-                propiedades ideales, facilitando la búsqueda de alojamiento y acceso a servicios.
-              </p>
-              
-              <div className="space-y-3 mt-2">
-                <div className="flex items-center text-indigo-600 dark:text-indigo-400">
-                  <CheckCircle className="h-5 w-5 mr-2 flex-shrink-0" />
-                  <span>Matching con roommates compatibles</span>
-                </div>
-                <div className="flex items-center text-indigo-600 dark:text-indigo-400">
-                  <CheckCircle className="h-5 w-5 mr-2 flex-shrink-0" />
-                  <span>Gestión completa del alquiler</span>
-                </div>
-                <div className="flex items-center text-indigo-600 dark:text-indigo-400">
-                  <CheckCircle className="h-5 w-5 mr-2 flex-shrink-0" />
-                  <span>Servicios adicionales</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="border-purple-200 dark:border-purple-800/30 overflow-hidden relative">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-purple-100 dark:bg-purple-900/20 rounded-bl-full z-0"></div>
-            
-            <div className="bg-purple-600 dark:bg-purple-800 p-8 text-white relative z-10">
-              <div className="flex items-center mb-3">
-                <div className="bg-white/20 p-3 rounded-full mr-4">
-                  <Building className="h-7 w-7" />
-                </div>
-                <h3 className="text-2xl font-bold">Homiware</h3>
-              </div>
-              <Badge className="bg-white/90 text-purple-600 hover:bg-white/80 mb-1">Para Propietarios</Badge>
-            </div>
-            
-            <CardContent className="p-8 space-y-4">
-              <p className="text-base leading-relaxed">
-                Software de gestión para propietarios y administradores que simplifica el proceso de alquiler, 
-                mantenimiento y comunicación con los inquilinos.
-              </p>
-              
-              <div className="space-y-3 mt-2">
-                <div className="flex items-center text-purple-600 dark:text-purple-400">
-                  <CheckCircle className="h-5 w-5 mr-2 flex-shrink-0" />
-                  <span>Gestión integral de propiedades</span>
-                </div>
-                <div className="flex items-center text-purple-600 dark:text-purple-400">
-                  <CheckCircle className="h-5 w-5 mr-2 flex-shrink-0" />
-                  <span>Screening automatizado de inquilinos</span>
-                </div>
-                <div className="flex items-center text-purple-600 dark:text-purple-400">
-                  <CheckCircle className="h-5 w-5 mr-2 flex-shrink-0" />
-                  <span>Automatización de tareas administrativas</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-        
-        <div className="text-center">
-          <Button 
-            size="lg" 
-            className="rounded-full bg-indigo-600 hover:bg-indigo-700 text-white mt-6"
-          >
-            Conoce Nuestra Visión Completa
-          </Button>
-        </div>
-      </div>
-    )
-  }
-];
-
-export default Presentation;
+                Pl
