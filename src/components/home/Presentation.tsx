@@ -591,6 +591,249 @@ const sections = [{
         </div>
       </div>
 }, {
+  id: "plan",
+  title: "Plan a Futuro",
+  subtitle: "¿Cómo crecerá Homi para convertirse en una gran plataforma?",
+  icon: TrendingUp,
+  content: <div className="space-y-10">
+        <div className="text-center mb-12">
+          <h3 className="text-2xl font-bold mb-6 inline-block bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 bg-clip-text text-transparent pb-2">
+            Plan de Homi a Corto y Medio Plazo para Convertirse en una Gran Plataforma
+          </h3>
+          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+            Homi tiene una estrategia escalable y bien estructurada para convertirse en la plataforma líder en el alquiler digital para estudiantes y jóvenes.
+          </p>
+        </div>
+        
+        <div className="space-y-16">
+          {/* Fase 1 */}
+          <div className="relative">
+            <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-green-400 to-emerald-600 rounded-full hidden md:block"></div>
+            
+            <div className="md:ml-8 relative">
+              <div className="absolute -left-12 top-0 w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center text-white font-bold hidden md:flex">1</div>
+              
+              <Card className="border-green-200 dark:border-green-800/30 overflow-hidden">
+                <div className="bg-gradient-to-r from-green-500 to-emerald-600 p-6 text-white">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <Badge className="bg-white/90 text-emerald-700 hover:bg-white">Fase 1</Badge>
+                    <h3 className="text-xl font-bold">Consolidación y Crecimiento Inicial</h3>
+                    <Badge variant="outline" className="ml-auto border-white/50 text-white">0-12 meses</Badge>
+                  </div>
+                </div>
+                
+                <CardContent className="p-6 bg-gradient-to-b from-green-50/80 to-white dark:from-green-900/20 dark:to-transparent">
+                  <div className="mb-4">
+                    <div className="flex items-center mb-3">
+                      <div className="p-2 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 mr-3">
+                        <Target className="h-5 w-5" />
+                      </div>
+                      <p className="font-semibold text-lg">Objetivo: Validar el producto, conseguir tracción y establecer la marca en el mercado estudiantil.</p>
+                    </div>
+                  </div>
+                  
+                  <h4 className="text-lg font-semibold mb-3 flex items-center">
+                    <CheckCircle className="mr-2 h-5 w-5 text-green-500" /> Acciones clave:
+                  </h4>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+                    {[
+                      "Lanzamiento del MVP en ciudades estratégicas (Madrid, Barcelona, Valencia).",
+                      "Captación de los primeros 10,000 usuarios mediante campañas en TikTok, Instagram y eventos universitarios.",
+                      "Colaboraciones con universidades y residencias estudiantiles para ganar credibilidad y usuarios rápidamente.",
+                      "Estrategia de referral: bonificaciones y descuentos para quienes recomienden la plataforma.",
+                      "Optimización del algoritmo de matching basado en el comportamiento y feedback de los usuarios.",
+                      "Pruebas piloto con propietarios para validar el modelo de gestión de alquileres."
+                    ].map((item, i) => (
+                      <div key={i} className="flex items-start gap-2">
+                        <div className="bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full w-6 h-6 flex-shrink-0 flex items-center justify-center text-xs font-bold mt-0.5">
+                          {i+1}
+                        </div>
+                        <p>{item}</p>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <div className="bg-green-50 dark:bg-green-900/10 p-4 rounded-lg mb-4">
+                    <h4 className="text-lg font-semibold mb-2 flex items-center">
+                      <div className="p-1 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 mr-2">
+                        <PieChart className="h-4 w-4" />
+                      </div>
+                      Monetización en esta fase:
+                    </h4>
+                    <ul className="space-y-2 pl-6 list-disc">
+                      <li>Suscripciones premium para inquilinos.</li>
+                      <li>Comisión por reservas de propiedades.</li>
+                      <li>Tarifa por validación de perfiles y contratos digitales.</li>
+                    </ul>
+                  </div>
+                  
+                  <div className="bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900/40 dark:to-emerald-900/30 p-4 rounded-lg flex items-center">
+                    <BarChart3 className="h-6 w-6 text-green-600 dark:text-green-400 mr-3" />
+                    <p className="font-medium">Meta en 12 meses: 15,000 inquilinos activos y 3,000 propietarios registrados en la plataforma.</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+          
+          {/* Fase 2 */}
+          <div className="relative">
+            <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-emerald-500 to-teal-600 rounded-full hidden md:block"></div>
+            
+            <div className="md:ml-8 relative">
+              <div className="absolute -left-12 top-0 w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white font-bold hidden md:flex">2</div>
+              
+              <Card className="border-teal-200 dark:border-teal-800/30 overflow-hidden">
+                <div className="bg-gradient-to-r from-emerald-500 to-teal-600 p-6 text-white">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <Badge className="bg-white/90 text-teal-700 hover:bg-white">Fase 2</Badge>
+                    <h3 className="text-xl font-bold">Expansión y Diferenciación</h3>
+                    <Badge variant="outline" className="ml-auto border-white/50 text-white">12-24 meses</Badge>
+                  </div>
+                </div>
+                
+                <CardContent className="p-6 bg-gradient-to-b from-teal-50/80 to-white dark:from-teal-900/20 dark:to-transparent">
+                  <div className="mb-4">
+                    <div className="flex items-center mb-3">
+                      <div className="p-2 rounded-full bg-teal-100 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400 mr-3">
+                        <Target className="h-5 w-5" />
+                      </div>
+                      <p className="font-semibold text-lg">Objetivo: Escalar la plataforma a más ciudades y diversificar los servicios.</p>
+                    </div>
+                  </div>
+                  
+                  <h4 className="text-lg font-semibold mb-3 flex items-center">
+                    <CheckCircle className="mr-2 h-5 w-5 text-teal-500" /> Acciones clave:
+                  </h4>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+                    {[
+                      "Expansión nacional a más ciudades universitarias en España.",
+                      "Mejora de la gestión digital de alquileres con herramientas más avanzadas para propietarios.",
+                      "Automatización de procesos clave (validación de inquilinos, generación de contratos, pagos automatizados).",
+                      "Implementación de seguros de impago y garantías de alquiler como un servicio premium.",
+                      "Ampliación del marketplace de servicios (mudanzas, limpieza, internet, mobiliario).",
+                      "Integración de pagos y fianzas digitales mediante acuerdos con bancos y fintechs."
+                    ].map((item, i) => (
+                      <div key={i} className="flex items-start gap-2">
+                        <div className="bg-teal-100 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400 rounded-full w-6 h-6 flex-shrink-0 flex items-center justify-center text-xs font-bold mt-0.5">
+                          {i+1}
+                        </div>
+                        <p>{item}</p>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <div className="bg-teal-50 dark:bg-teal-900/10 p-4 rounded-lg mb-4">
+                    <h4 className="text-lg font-semibold mb-2 flex items-center">
+                      <div className="p-1 rounded-full bg-teal-100 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400 mr-2">
+                        <PieChart className="h-4 w-4" />
+                      </div>
+                      Monetización en esta fase:
+                    </h4>
+                    <ul className="space-y-2 pl-6 list-disc">
+                      <li>Comisión por pagos y contratos digitales automatizados.</li>
+                      <li>Venta de seguros de impago y garantías para propietarios.</li>
+                      <li>Expansión del marketplace con proveedores afiliados.</li>
+                    </ul>
+                  </div>
+                  
+                  <div className="bg-gradient-to-r from-emerald-100 to-teal-100 dark:from-emerald-900/40 dark:to-teal-900/30 p-4 rounded-lg flex items-center">
+                    <BarChart3 className="h-6 w-6 text-teal-600 dark:text-teal-400 mr-3" />
+                    <p className="font-medium">Meta en 24 meses: 50,000 inquilinos activos y 10,000 propietarios en la plataforma.</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+          
+          {/* Fase 3 */}
+          <div className="relative">
+            <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-teal-500 to-cyan-600 rounded-full hidden md:block"></div>
+            
+            <div className="md:ml-8 relative">
+              <div className="absolute -left-12 top-0 w-8 h-8 rounded-full bg-gradient-to-br from-teal-500 to-cyan-600 flex items-center justify-center text-white font-bold hidden md:flex">3</div>
+              
+              <Card className="border-cyan-200 dark:border-cyan-800/30 overflow-hidden">
+                <div className="bg-gradient-to-r from-teal-500 to-cyan-600 p-6 text-white">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <Badge className="bg-white/90 text-cyan-700 hover:bg-white">Fase 3</Badge>
+                    <h3 className="text-xl font-bold">Escalabilidad y Posicionamiento como Plataforma Líder</h3>
+                    <Badge variant="outline" className="ml-auto border-white/50 text-white">24-36 meses</Badge>
+                  </div>
+                </div>
+                
+                <CardContent className="p-6 bg-gradient-to-b from-cyan-50/80 to-white dark:from-cyan-900/20 dark:to-transparent">
+                  <div className="mb-4">
+                    <div className="flex items-center mb-3">
+                      <div className="p-2 rounded-full bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400 mr-3">
+                        <Target className="h-5 w-5" />
+                      </div>
+                      <p className="font-semibold text-lg">Objetivo: Convertir Homi en el estándar del alquiler estudiantil y expandirse internacionalmente.</p>
+                    </div>
+                  </div>
+                  
+                  <h4 className="text-lg font-semibold mb-3 flex items-center">
+                    <CheckCircle className="mr-2 h-5 w-5 text-cyan-500" /> Acciones clave:
+                  </h4>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+                    {[
+                      "Internacionalización en mercados estratégicos (Francia, Alemania, Italia, Portugal).",
+                      "Diferenciación en dos plataformas especializadas.",
+                      "Implementación de contratos inteligentes con blockchain para mayor seguridad y automatización.",
+                      "Desarrollo de una solución para inversores inmobiliarios (HomiInvest) que permita comprar y gestionar propiedades 100% online.",
+                      "Estrategia de partnerships con grandes empresas de vivienda y fintechs para ofrecer financiación de depósitos y garantías."
+                    ].map((item, i) => (
+                      <div key={i} className="flex items-start gap-2">
+                        <div className="bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400 rounded-full w-6 h-6 flex-shrink-0 flex items-center justify-center text-xs font-bold mt-0.5">
+                          {i+1}
+                        </div>
+                        <p>{item}</p>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <div className="p-4 rounded-lg mb-6 bg-gradient-to-r from-blue-100/80 to-sky-100/80 dark:from-blue-900/30 dark:to-sky-900/20">
+                    <h4 className="text-lg font-semibold mb-3">Diferenciación en dos plataformas especializadas:</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="bg-white/80 dark:bg-black/20 p-4 rounded-lg shadow">
+                        <h5 className="text-md font-semibold text-blue-700 dark:text-blue-400 mb-2">HomiNet</h5>
+                        <p>Plataforma centrada en inquilinos con servicios premium para mejorar la experiencia de convivencia.</p>
+                      </div>
+                      <div className="bg-white/80 dark:bg-black/20 p-4 rounded-lg shadow">
+                        <h5 className="text-md font-semibold text-cyan-700 dark:text-cyan-400 mb-2">HomiWare</h5>
+                        <p>Plataforma exclusiva para propietarios con herramientas de gestión digital avanzada.</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-cyan-50 dark:bg-cyan-900/10 p-4 rounded-lg mb-4">
+                    <h4 className="text-lg font-semibold mb-2 flex items-center">
+                      <div className="p-1 rounded-full bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400 mr-2">
+                        <PieChart className="h-4 w-4" />
+                      </div>
+                      Monetización en esta fase:
+                    </h4>
+                    <ul className="space-y-2 pl-6 list-disc">
+                      <li>Expansión de los modelos de suscripción y transacción.</li>
+                      <li>Marketplace ampliado con servicios financieros y legales.</li>
+                      <li>Acceso a inversión inmobiliaria digital.</li>
+                    </ul>
+                  </div>
+                  
+                  <div className="bg-gradient-to-r from-teal-100 to-cyan-100 dark:from-teal-900/40 dark:to-cyan-900/30 p-4 rounded-lg flex items-center">
+                    <BarChart3 className="h-6 w-6 text-cyan-600 dark:text-cyan-400 mr-3" />
+                    <p className="font-medium">Meta en 36 meses: 150,000 inquilinos activos y 25,000 propietarios en la plataforma, presencia en 5 países.</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </div>
+}, {
   id: "vision",
   title: "Visión a Futuro",
   subtitle: "La Evolución de Homi",
