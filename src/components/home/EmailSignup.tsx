@@ -1,10 +1,9 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { CheckCircle2, ArrowRight, User, Mail, MapPin, Home, Briefcase } from 'lucide-react';
+import { CheckCircle2, ArrowRight, User, Mail, MapPin } from 'lucide-react';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
 
@@ -95,51 +94,32 @@ const EmailSignup = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!validateCurrentStep()) return;
-
-    // Make sure we only submit when we're on the confirmation step
     if (step !== 'confirmacion') {
       nextStep();
       return;
     }
-
+    
+    if (!validateCurrentStep()) return;
+    
     setIsLoading(true);
     
-    // En una aplicación real, esto llamaría a un endpoint de API para almacenar los datos
-    try {
-      // Simulating API call
-      setTimeout(() => {
+    setTimeout(() => {
+      try {
         setIsSubmitted(true);
         toast({
           title: "¡Registro exitoso!",
           description: "Te notificaremos cuando Homi esté disponible.",
         });
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Ha ocurrido un error. Por favor, inténtalo de nuevo más tarde.",
+          variant: "destructive",
+        });
+      } finally {
         setIsLoading(false);
-      }, 1000);
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Ha ocurrido un error. Por favor, inténtalo de nuevo más tarde.",
-        variant: "destructive",
-      });
-      setIsLoading(false);
-    }
-  };
-
-  const renderStepIndicator = () => (
-    <div className="flex items-center justify-center space-x-2 mb-8">
-      <div className={`w-3 h-3 rounded-full ${step === 'datos' ? 'bg-homi-purple' : (step === 'intereses' || step === 'confirmacion') ? 'bg-homi-lightPurple' : 'bg-gray-300'}`}></div>
-      <div className={`w-10 h-1 ${(step === 'intereses' || step === 'confirmacion') ? 'bg-homi-lightPurple' : 'bg-gray-300'}`}></div>
-      <div className={`w-3 h-3 rounded-full ${step === 'intereses' ? 'bg-homi-purple' : step === 'confirmacion' ? 'bg-homi-lightPurple' : 'bg-gray-300'}`}></div>
-      <div className={`w-10 h-1 ${step === 'confirmacion' ? 'bg-homi-lightPurple' : 'bg-gray-300'}`}></div>
-      <div className={`w-3 h-3 rounded-full ${step === 'confirmacion' ? 'bg-homi-purple' : 'bg-gray-300'}`}></div>
-    </div>
-  );
-
-  const renderStepTitle = () => {
-    if (step === 'datos') return "Tus datos";
-    if (step === 'intereses') return "Preferencias";
-    return "Confirma tus datos";
+      }
+    }, 1000);
   };
 
   if (isSubmitted) {
@@ -156,6 +136,22 @@ const EmailSignup = () => {
       </div>
     );
   }
+
+  const renderStepIndicator = () => (
+    <div className="flex items-center justify-center space-x-2 mb-8">
+      <div className={`w-3 h-3 rounded-full ${step === 'datos' ? 'bg-homi-purple' : (step === 'intereses' || step === 'confirmacion') ? 'bg-homi-lightPurple' : 'bg-gray-300'}`}></div>
+      <div className={`w-10 h-1 ${(step === 'intereses' || step === 'confirmacion') ? 'bg-homi-lightPurple' : 'bg-gray-300'}`}></div>
+      <div className={`w-3 h-3 rounded-full ${step === 'intereses' ? 'bg-homi-purple' : step === 'confirmacion' ? 'bg-homi-lightPurple' : 'bg-gray-300'}`}></div>
+      <div className={`w-10 h-1 ${step === 'confirmacion' ? 'bg-homi-lightPurple' : 'bg-gray-300'}`}></div>
+      <div className={`w-3 h-3 rounded-full ${step === 'confirmacion' ? 'bg-homi-purple' : 'bg-gray-300'}`}></div>
+    </div>
+  );
+
+  const renderStepTitle = () => {
+    if (step === 'datos') return "Tus datos";
+    if (step === 'intereses') return "Preferencias";
+    return "Confirma tus datos";
+  };
 
   return (
     <div className="w-full max-w-3xl mx-auto">
