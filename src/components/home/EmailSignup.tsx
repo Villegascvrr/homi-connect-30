@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -91,34 +92,26 @@ const EmailSignup = () => {
     else if (step === 'confirmacion') setStep('intereses');
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Esta función maneja la navegación entre pasos, no envía datos
+  const handleStepNavigation = (e: React.MouseEvent) => {
     e.preventDefault();
-    
-    if (step !== 'confirmacion') {
-      nextStep();
-      return;
-    }
-    
+    nextStep();
+  };
+
+  // Esta función maneja el envío final del formulario
+  const submitForm = () => {
     if (!validateCurrentStep()) return;
     
     setIsLoading(true);
     
+    // Simulación de envío a API
     setTimeout(() => {
-      try {
-        setIsSubmitted(true);
-        toast({
-          title: "¡Registro exitoso!",
-          description: "Te notificaremos cuando Homi esté disponible.",
-        });
-      } catch (error) {
-        toast({
-          title: "Error",
-          description: "Ha ocurrido un error. Por favor, inténtalo de nuevo más tarde.",
-          variant: "destructive",
-        });
-      } finally {
-        setIsLoading(false);
-      }
+      setIsSubmitted(true);
+      toast({
+        title: "¡Registro exitoso!",
+        description: "Te notificaremos cuando Homi esté disponible.",
+      });
+      setIsLoading(false);
     }, 1000);
   };
 
@@ -163,7 +156,8 @@ const EmailSignup = () => {
         {renderStepIndicator()}
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-white dark:bg-card border border-border shadow-sm rounded-xl p-6 md:p-8 animate-fade-in">
+      {/* Removed the form element from here to prevent automatic submissions */}
+      <div className="bg-white dark:bg-card border border-border shadow-sm rounded-xl p-6 md:p-8 animate-fade-in">
         <h4 className="text-lg font-medium mb-6 flex items-center">
           {step === 'datos' && <User className="mr-2 h-5 w-5 text-homi-purple" />}
           {step === 'intereses' && <MapPin className="mr-2 h-5 w-5 text-homi-purple" />}
@@ -348,7 +342,7 @@ const EmailSignup = () => {
           {step !== 'confirmacion' ? (
             <Button 
               type="button" 
-              onClick={nextStep}
+              onClick={handleStepNavigation}
               className="rounded-full bg-homi-purple hover:bg-homi-purple/90 ml-auto"
             >
               Siguiente 
@@ -356,7 +350,8 @@ const EmailSignup = () => {
             </Button>
           ) : (
             <Button 
-              type="submit" 
+              type="button" 
+              onClick={submitForm}
               disabled={isLoading}
               className="rounded-full bg-homi-purple hover:bg-homi-purple/90 ml-auto"
             >
@@ -364,7 +359,7 @@ const EmailSignup = () => {
             </Button>
           )}
         </div>
-      </form>
+      </div>
       
       <div className="mt-4 text-center text-xs text-muted-foreground">
         Al registrarte, aceptas recibir notificaciones cuando Homi esté disponible en tu ciudad.
