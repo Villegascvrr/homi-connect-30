@@ -61,16 +61,7 @@ const Hero = () => {
             </Button>
           </div>
           
-          {/* Add Create Profile button */}
-          <div className="mb-6">
-            <Button 
-              variant="ghost" 
-              className="text-homi-purple hover:text-homi-purple/90 hover:bg-homi-ultraLightPurple"
-              asChild
-            >
-              <Link to="/profile/create">Crear perfil personalizado →</Link>
-            </Button>
-          </div>
+          {/* "Crear perfil personalizado" button removed as requested */}
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto mb-16">
             <div className="flex items-center gap-2">
