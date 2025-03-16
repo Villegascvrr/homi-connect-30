@@ -58,11 +58,11 @@ const RegisterPage = () => {
     // Simulate successful registration
     toast({
       title: "Registro exitoso",
-      description: "Bienvenido a Homi. ¡Encuentra tu compañero de piso ideal!",
+      description: "¡Ahora completa tu perfil para encontrar tu compañero de piso ideal!",
     });
     
-    // Redirect to profile page after successful registration
-    navigate('/profile');
+    // Redirect to profile creation page after successful registration
+    navigate('/profile/create');
   };
 
   return (

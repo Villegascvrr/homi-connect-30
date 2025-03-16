@@ -38,7 +38,7 @@ const Hero = () => {
             de piso que comparten tus intereses, hábitos y estilo de vida.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
             <Button 
               size="lg" 
               className="rounded-full bg-homi-purple hover:bg-homi-purple/90 px-8 w-full sm:w-auto"
@@ -58,6 +58,17 @@ const Hero = () => {
               }}
             >
               Cómo Funciona
+            </Button>
+          </div>
+          
+          {/* Add Create Profile button */}
+          <div className="mb-6">
+            <Button 
+              variant="ghost" 
+              className="text-homi-purple hover:text-homi-purple/90 hover:bg-homi-ultraLightPurple"
+              asChild
+            >
+              <Link to="/profile/create">Crear perfil personalizado →</Link>
             </Button>
           </div>
 
