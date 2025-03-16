@@ -432,14 +432,6 @@ const Presentation = () => {
     }
   ];
 
-  const handlePrevSlide = () => {
-    setActiveSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
-  };
-
-  const handleNextSlide = () => {
-    setActiveSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
-  };
-
   return (
     <section id="presentation" className="py-20 bg-gradient-to-b from-white to-homi-ultraLightPurple/30 dark:from-homi-dark dark:to-homi-dark/80">
       <div className="container mx-auto px-4">
@@ -452,7 +444,48 @@ const Presentation = () => {
           </p>
         </div>
 
-        <div className="glass-card p-8 mb-8 shadow-lg max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+          {slides.slice(0, 6).map((slide, index) => (
+            <div 
+              key={slide.id} 
+              className="glass-card p-6 hover:shadow-lg transition-all duration-300 animate-on-scroll"
+              onClick={() => setActiveSlide(index)}
+            >
+              <h3 className="text-xl font-bold text-homi-purple mb-2">{slide.title}</h3>
+              <p className="text-muted-foreground mb-4">{slide.subtitle}</p>
+              <Button 
+                variant="outline" 
+                className="w-full"
+                onClick={() => setActiveSlide(index)}
+              >
+                Ver detalles
+              </Button>
+            </div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+          {slides.slice(6, 10).map((slide, index) => (
+            <div 
+              key={slide.id} 
+              className="glass-card p-6 hover:shadow-lg transition-all duration-300 animate-on-scroll"
+              onClick={() => setActiveSlide(index + 6)}
+            >
+              <h3 className="text-xl font-bold text-homi-purple mb-2">{slide.title}</h3>
+              <p className="text-muted-foreground mb-4">{slide.subtitle}</p>
+              <Button 
+                variant="outline" 
+                className="w-full"
+                onClick={() => setActiveSlide(index + 6)}
+              >
+                Ver detalles
+              </Button>
+            </div>
+          ))}
+        </div>
+
+        {/* Active slide details */}
+        <div className="glass-card p-8 mb-8 shadow-lg animate-on-scroll">
           <div className="flex justify-between items-center mb-6">
             <div>
               <h3 className="text-2xl font-bold text-homi-purple">
@@ -463,50 +496,29 @@ const Presentation = () => {
               </p>
             </div>
             <div className="flex items-center gap-2">
-              {slides.map((slide, index) => (
-                <button
-                  key={slide.id}
-                  onClick={() => setActiveSlide(index)}
-                  className={cn(
-                    "w-3 h-3 rounded-full transition-all",
-                    activeSlide === index
-                      ? "bg-homi-purple scale-125"
-                      : "bg-gray-300 dark:bg-gray-600 hover:bg-homi-lightPurple"
-                  )}
-                  aria-label={`Ir a diapositiva ${index + 1}`}
-                />
-              ))}
+              <Button
+                variant="outline"
+                size="icon"
+                className="rounded-full"
+                onClick={() => setActiveSlide(prev => (prev === 0 ? slides.length - 1 : prev - 1))}
+              >
+                <ChevronLeft className="h-5 w-5" />
+                <span className="sr-only">Anterior</span>
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                className="rounded-full"
+                onClick={() => setActiveSlide(prev => (prev === slides.length - 1 ? 0 : prev + 1))}
+              >
+                <ChevronRight className="h-5 w-5" />
+                <span className="sr-only">Siguiente</span>
+              </Button>
             </div>
           </div>
 
-          <div className="min-h-[400px]">
+          <div className="min-h-[400px] custom-scrollbar overflow-y-auto pr-2">
             {slides[activeSlide].content}
-          </div>
-
-          <div className="flex justify-between mt-8">
-            <Button
-              variant="outline"
-              size="icon"
-              className="rounded-full"
-              onClick={handlePrevSlide}
-            >
-              <ChevronLeft className="h-5 w-5" />
-              <span className="sr-only">Anterior</span>
-            </Button>
-
-            <div className="text-sm text-muted-foreground">
-              {activeSlide + 1} / {slides.length}
-            </div>
-
-            <Button
-              variant="outline"
-              size="icon"
-              className="rounded-full"
-              onClick={handleNextSlide}
-            >
-              <ChevronRight className="h-5 w-5" />
-              <span className="sr-only">Siguiente</span>
-            </Button>
           </div>
         </div>
         
