@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useState, useRef, ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
@@ -34,6 +35,7 @@ const ProfilePage = () => {
   const [profile, setProfile] = useState({
     id: '1',
     name: 'Elena García',
+    username: 'elena_garcia',
     age: 23,
     location: 'Madrid',
     university: 'Universidad Complutense de Madrid',
@@ -881,4 +883,3 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
-
