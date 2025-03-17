@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -82,6 +82,7 @@ const EmailSignup = () => {
   const [activeTab, setActiveTab] = useState("datos");
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const navigate = useNavigate();
+  const formContainerRef = useRef<HTMLDivElement>(null);
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -97,6 +98,13 @@ const EmailSignup = () => {
       bio: '',
     },
   });
+
+  useEffect(() => {
+    if (formContainerRef.current) {
+      formContainerRef.current.scrollTo(0, 0);
+      window.scrollTo(0, formContainerRef.current.offsetTop);
+    }
+  }, [activeTab]);
 
   const [lifestylePreferences, setLifestylePreferences] = useState({
     morningPerson: false,
@@ -219,7 +227,7 @@ const EmailSignup = () => {
   }
 
   return (
-    <div className="w-full max-w-3xl mx-auto">
+    <div className="w-full max-w-3xl mx-auto" ref={formContainerRef}>
       <div className="mb-6 text-center">
         <h3 className="text-xl font-semibold mb-2">Crea tu perfil personalizado en Homi</h3>
         <p className="text-muted-foreground">

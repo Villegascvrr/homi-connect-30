@@ -1,5 +1,4 @@
-
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -93,6 +92,14 @@ const RegisterPage = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const formContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (formContainerRef.current) {
+      formContainerRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      window.scrollTo(0, formContainerRef.current.offsetTop);
+    }
+  }, [activeTab]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -235,7 +242,7 @@ const RegisterPage = () => {
       
       <main className="flex-grow pt-20 pb-12">
         <div className="container mx-auto px-4 py-8">
-          <div className="max-w-3xl mx-auto">
+          <div className="max-w-3xl mx-auto" ref={formContainerRef}>
             <div className="glass-card p-6 md:p-8">
               <div className="text-center mb-8">
                 <h1 className="text-2xl md:text-3xl font-bold mb-2">
