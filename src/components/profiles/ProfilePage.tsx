@@ -373,12 +373,12 @@ const ProfilePage = () => {
                     
                     <div className="mt-4 flex flex-col items-center">
                       <div id="profile-card" ref={profileCardRef} className="w-[360px] h-[640px] bg-gradient-to-br from-purple-600 to-pink-500 rounded-xl shadow-xl overflow-hidden relative mx-auto mb-6">
-                        <div className="absolute top-0 left-0 w-full h-1/2 overflow-hidden">
+                        <div className="absolute top-0 left-0 w-full h-1/3 overflow-hidden">
                           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-purple-800/70"></div>
                           <img src={profile.imgUrl} alt={profile.name} className="w-full h-full object-cover" />
                         </div>
                         
-                        <div className="absolute bottom-0 left-0 w-full h-2/3 bg-gradient-to-t from-purple-900/90 to-transparent p-6 flex flex-col justify-end">
+                        <div className="absolute bottom-0 left-0 w-full h-3/4 bg-gradient-to-t from-purple-900/90 to-transparent p-6 flex flex-col justify-end">
                           <div className="mb-4 flex items-center gap-3">
                             <div className="w-16 h-16 rounded-full border-2 border-white overflow-hidden">
                               <img src={profile.imgUrl} alt={profile.name} className="w-full h-full object-cover" />
@@ -394,16 +394,42 @@ const ProfilePage = () => {
                             </div>
                           </div>
                           
-                          <div className="mb-4">
-                            <div className="flex flex-wrap gap-2 mb-3">
-                              {profile.tags.slice(0, 5).map(tag => <span key={tag.id} className="px-3 py-1 text-xs rounded-full bg-white/20 text-white">
+                          <div className="mb-3">
+                            <div className="flex flex-wrap gap-2 mb-2">
+                              {profile.tags.slice(0, 3).map(tag => <span key={tag.id} className="px-3 py-1 text-xs rounded-full bg-white/20 text-white">
                                   {tag.name}
                                 </span>)}
                             </div>
                             
-                            <p className="text-white/90 text-sm line-clamp-3">
+                            <p className="text-white/90 text-sm line-clamp-2">
                               {profile.bio}
                             </p>
+                          </div>
+                          
+                          <div className="mb-3 text-white/90">
+                            <h4 className="text-xs font-medium text-white/70 mb-1 flex items-center gap-1">
+                              <Search size={12} />
+                              Lo que estoy buscando:
+                            </h4>
+                            <div className="grid grid-cols-2 gap-x-2 gap-y-1 text-xs">
+                              <div>
+                                <span className="text-white/60">Presupuesto:</span>
+                                <p>€{profile.lookingFor.budgetRange[0]} - €{profile.lookingFor.budgetRange[1]}</p>
+                              </div>
+                              <div>
+                                <span className="text-white/60">Género:</span>
+                                <p>{profile.lookingFor.genderPreference === 'mujeres' ? 'Solo mujeres' : 
+                                   profile.lookingFor.genderPreference === 'hombres' ? 'Solo hombres' : 'Cualquier género'}</p>
+                              </div>
+                              <div>
+                                <span className="text-white/60">Edad:</span>
+                                <p>{profile.lookingFor.minAge} - {profile.lookingFor.maxAge} años</p>
+                              </div>
+                              <div>
+                                <span className="text-white/60">Compañeros:</span>
+                                <p>{profile.lookingFor.roommatesCount}</p>
+                              </div>
+                            </div>
                           </div>
                           
                           <div className="flex justify-between items-center bg-white/10 p-3 rounded-lg backdrop-blur-sm mx-0 px-[12px] py-[12px] mb-8">
