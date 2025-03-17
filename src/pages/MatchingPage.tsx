@@ -58,6 +58,29 @@ const mockProfiles = [
   }
 ];
 
+// Convert mock profiles to expected format for MatchCard
+const formatProfileForMatchCard = (profile: any) => {
+  const tags = profile.interests.map((interest: string, index: number) => ({
+    id: index + 1,
+    name: interest
+  }));
+  
+  return {
+    id: profile.id.toString(),
+    name: profile.name,
+    age: profile.age,
+    location: profile.location,
+    bio: profile.bio,
+    imgUrl: profile.profileImage,
+    tags: tags,
+    compatibility: profile.compatibility,
+    // Add empty handler functions
+    onLike: () => {},
+    onPass: () => {},
+    onView: () => {},
+  };
+};
+
 const MatchingPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredProfiles, setFilteredProfiles] = useState(mockProfiles);
@@ -86,6 +109,30 @@ const MatchingPage = () => {
     });
   };
 
+  const handleLike = (id: string) => {
+    toast({
+      title: "¡Te interesa!",
+      description: "Has mostrado interés en este perfil",
+      variant: "default"
+    });
+  };
+
+  const handlePass = (id: string) => {
+    toast({
+      title: "Pasas",
+      description: "Has pasado de este perfil",
+      variant: "default"
+    });
+  };
+
+  const handleView = (id: string) => {
+    toast({
+      title: "Ver perfil",
+      description: "Viendo el perfil completo",
+      variant: "default"
+    });
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -111,9 +158,18 @@ const MatchingPage = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredProfiles.length > 0 ? (
-              filteredProfiles.map(profile => (
-                <MatchCard key={profile.id} profile={profile} />
-              ))
+              filteredProfiles.map(profile => {
+                const cardProps = formatProfileForMatchCard(profile);
+                return (
+                  <MatchCard 
+                    key={profile.id}
+                    {...cardProps}
+                    onLike={handleLike}
+                    onPass={handlePass}
+                    onView={handleView}
+                  />
+                );
+              })
             ) : (
               <div className="col-span-full text-center py-16">
                 <p className="text-xl text-muted-foreground">
