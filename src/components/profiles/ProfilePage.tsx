@@ -436,6 +436,16 @@ const ProfilePage = () => {
                         </div>
                         
                         <div className="absolute inset-0 bg-gradient-to-t from-purple-900/90 to-purple-600/60 p-6 flex flex-col justify-end">
+                          {/* Eye-catching banner for roommate search */}
+                          <div className="absolute top-1/4 left-0 right-0 transform -rotate-6 z-20">
+                            <div className="bg-gradient-to-r from-orange-500 to-pink-500 text-white font-bold py-3 px-4 shadow-lg text-center mx-2">
+                              <div className="flex items-center justify-center gap-2 text-base md:text-lg transform rotate-6">
+                                <Search size={18} className="flex-shrink-0" strokeWidth={3} />
+                                <span className="uppercase tracking-wider">¡Buscando compañero de piso!</span>
+                              </div>
+                            </div>
+                          </div>
+                          
                           <div className="mb-8 flex items-center gap-3 mt-8">
                             <div className="w-20 h-20 rounded-full border-2 border-white overflow-hidden">
                               <img src={profile.imgUrl} alt={profile.name} className="w-full h-full object-cover" />
@@ -714,107 +724,4 @@ const ProfilePage = () => {
                           </div>
                           
                           <div className="space-y-2">
-                            <label className="text-xs md:text-sm text-muted-foreground">
-                              Preferencia tabaco:
-                            </label>
-                            <select 
-                              className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm" 
-                              value={profile.lookingFor.smokingPreference} 
-                              onChange={e => handleLookingForChange('smokingPreference', e.target.value)}
-                            >
-                              <option value="no">No fumadores</option>
-                              <option value="ocasional">Fumador ocasional</option>
-                              <option value="si">Fumadores permitidos</option>
-                            </select>
-                          </div>
-                          
-                          <div className="space-y-2">
-                            <label className="text-xs md:text-sm text-muted-foreground">
-                              Ocupación:
-                            </label>
-                            <select 
-                              className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm" 
-                              value={profile.lookingFor.occupationPreference} 
-                              onChange={e => handleLookingForChange('occupationPreference', e.target.value)}
-                            >
-                              <option value="estudiantes">Estudiantes</option>
-                              <option value="trabajadores">Trabajadores</option>
-                              <option value="cualquiera">Cualquier ocupación</option>
-                            </select>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
-      
-      <Footer />
-      
-      <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-center">Compartir Perfil</DialogTitle>
-          </DialogHeader>
-          
-          <div className="p-4">
-            <div className="text-center mb-6">
-              <p className="text-sm text-muted-foreground mb-2">Compartir en redes sociales</p>
-              <div className="flex justify-center gap-4">
-                <button onClick={() => shareToSocialMedia('whatsapp')} className="p-2 bg-green-500 text-white rounded-full">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M17.498 14.382c-.301-.15-1.767-.867-2.04-.966-.274-.101-.474-.15-.673.15-.2.3-.767.966-.94 1.164-.173.199-.347.223-.646.075-.3-.15-1.267-.465-2.411-1.485-.893-.795-1.494-1.775-1.667-2.074-.173-.3-.018-.461.13-.611.134-.133.3-.347.451-.52.151-.174.2-.298.3-.497.099-.198.05-.371-.025-.52-.075-.149-.672-1.62-.922-2.217-.241-.584-.486-.51-.672-.51-.173 0-.4-.024-.6-.024-.199 0-.52.074-.792.372-.272.3-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.57-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
-                    <path d="M5.005 11.054c-.312.028-.624.04-.937.04a11.2 11.2 0 01-4.056-.752.992.992 0 00-1.117.242.986.986 0 00-.156 1.084l1.33 2.663c.192.366.549.607.953.607h.018a10.16 10.16 0 003.325-.554c1.03 1.887 2.834 3.262 5.043 3.598a6.09 6.09 0 00.769.057 6.132 6.132 0 004.842-2.388l.026-.033c.232-.293.65-.36.962-.128.313.232.38.65.149.963l-.026.033a8.116 8.116 0 01-6.421 3.165 8.12 8.12 0 01-.988-.06 8.16 8.16 0 01-5.715-3.528 8.171 8.171 0 01.692-9.621l.012-.014c.256-.272.67-.308.964-.052.294.256.33.67.075.964l-.013.014a6.116 6.116 0 00.3 7.67z"/>
-                  </svg>
-                </button>
-                <button onClick={() => shareToSocialMedia('telegram')} className="p-2 bg-blue-500 text-white rounded-full">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M22.05 2.013l-3.598 16.98a1.288 1.288 0 01-2.045.667l-5.563-4.04-2.676 2.574c-.296.285-.7.442-1.12.442-.275 0-.548-.063-.796-.186l.849-5.229 9.616-8.69a.544.544 0 00-.652-.868l-11.852 7.463-5.093-1.59c-.71-.22-.704-1.188.018-1.399l19.535-7.538c.702-.213 1.406.372 1.377 1.414z"/>
-                  </svg>
-                </button>
-                <button onClick={() => shareToSocialMedia('facebook')} className="p-2 bg-blue-600 text-white rounded-full">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
-                  </svg>
-                </button>
-                <button onClick={() => shareToSocialMedia('twitter')} className="p-2 bg-sky-500 text-white rounded-full">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path>
-                  </svg>
-                </button>
-              </div>
-            </div>
-            
-            <div className="mb-6">
-              <p className="text-sm text-muted-foreground mb-2 text-center">O copia el enlace</p>
-              <div className="flex gap-2">
-                <Input value={getProfileUrl()} readOnly className="bg-muted" />
-                <Button size="sm" onClick={handleCopyLink}>Copiar</Button>
-              </div>
-            </div>
-            
-            <div className="text-center">
-              <p className="text-sm text-muted-foreground mb-2">Código QR</p>
-              <div 
-                ref={qrCodeRef} 
-                className="mx-auto bg-white p-4 rounded-xl inline-block"
-              >
-                <QRCodeSVG value={getProfileUrl()} size={150} bgColor="#FFFFFF" fgColor="#6E59A5" />
-              </div>
-              <Button size="sm" variant="outline" className="mt-3" onClick={handleDownloadQR}>
-                <Download size={16} className="mr-2" />
-                Descargar QR
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-    </div>
-  );
-};
-
-export default ProfilePage;
+                            <label className="text-xs md:text-sm text-muted
