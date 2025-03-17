@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import { MatchCard } from '@/components/matching/MatchCard';
+import MatchCard from '@/components/matching/MatchCard';
 import ProfileSearchBar from '@/components/profiles/ProfileSearchBar';
 import { useToast } from '@/hooks/use-toast';
 
