@@ -324,7 +324,6 @@ const ProfilePage = () => {
               </div>
             </div>
             
-            
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mt-6 md:mt-8">
               <div className="md:col-span-2 space-y-6 md:space-y-8">
                 <div className="glass-card p-5 md:p-7">
@@ -356,7 +355,6 @@ const ProfilePage = () => {
                     </div>
                   </div>
                 </div>
-                
                 
                 <div className="glass-card p-5 md:p-7">
                   <h2 className="text-lg md:text-xl font-semibold mb-4 md:mb-5">Galería</h2>
@@ -414,7 +412,6 @@ const ProfilePage = () => {
                     </div>
                   )}
                 </div>
-                
                 
                 {!isMobile && (
                   <div className="glass-card p-7">
@@ -532,7 +529,6 @@ const ProfilePage = () => {
                 )}
               </div>
               
-              
               <div className="space-y-6 md:space-y-8">
                 <div className="glass-card p-5 md:p-7">
                   <div className="flex justify-between items-center mb-4 md:mb-5">
@@ -558,7 +554,6 @@ const ProfilePage = () => {
                   </div>
                   
                   <div className="space-y-5">
-                    
                     {!isEditingLookingFor ? (
                       <div className="space-y-6">
                         <div className="flex items-center gap-2 text-sm md:text-base">
@@ -736,3 +731,5 @@ const ProfilePage = () => {
                             <label className="text-xs md:text-sm text-muted-foreground">
                               Ocupación:
                             </label>
+                            <select 
+                              className="w-full h
