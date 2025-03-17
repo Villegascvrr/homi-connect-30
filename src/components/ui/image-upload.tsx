@@ -7,15 +7,15 @@ import { useToast } from '@/hooks/use-toast';
 
 interface ImageUploadProps {
   onChange: (value: string | string[]) => void;
-  value?: string | string[];
   multiple?: boolean;
+  value?: string | string[];
   className?: string;
 }
 
 export const ImageUpload: React.FC<ImageUploadProps> = ({
   onChange,
-  value = multiple ? [] : "",
   multiple = false,
+  value = multiple ? [] : "",
   className
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
