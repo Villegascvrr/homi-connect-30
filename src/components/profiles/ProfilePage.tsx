@@ -248,7 +248,8 @@ const ProfilePage = () => {
     }));
   };
 
-  return <div className="min-h-screen flex flex-col">
+  return (
+    <div className="min-h-screen flex flex-col">
       <Navbar />
       
       <main className="flex-grow pt-16 md:pt-20 pb-8 md:pb-12">
@@ -268,9 +269,11 @@ const ProfilePage = () => {
               <div className="relative px-4 md:px-6 py-6 md:py-8">
                 <div className={`${isMobile ? 'absolute -top-14 left-4' : 'absolute -top-16 left-6'} ${isMobile ? 'w-24 h-24' : 'w-32 h-32'} rounded-full overflow-hidden border-4 border-white shadow-lg`}>
                   <img src={profile.imgUrl} alt={profile.name} className="w-full h-full object-cover" />
-                  {profile.verified && <div className="absolute bottom-0 right-0 bg-homi-purple text-white p-1 rounded-full">
+                  {profile.verified && (
+                    <div className="absolute bottom-0 right-0 bg-homi-purple text-white p-1 rounded-full">
                       <UserCheck size={isMobile ? 14 : 16} />
-                    </div>}
+                    </div>
+                  )}
                 </div>
                 
                 <div className={isMobile ? 'mt-14' : 'ml-36'}>
@@ -285,20 +288,33 @@ const ProfilePage = () => {
                       </p>
                     </div>
                     <div className={`flex ${isMobile ? 'justify-between' : 'gap-2'} mt-2 md:mt-0`}>
-                      <Button variant={liked ? "default" : "outline"} size={isMobile ? "icon" : "sm"} className={`rounded-full ${liked ? 'bg-homi-purple hover:bg-homi-purple/90' : ''}`} onClick={handleLike}>
-                        {isMobile ? <Heart size={18} className={liked ? 'fill-white' : ''} /> : <>
+                      <Button 
+                        variant={liked ? "default" : "outline"} 
+                        size={isMobile ? "icon" : "sm"} 
+                        className={`rounded-full ${liked ? 'bg-homi-purple hover:bg-homi-purple/90' : ''}`} 
+                        onClick={handleLike}
+                      >
+                        {isMobile ? (
+                          <Heart size={18} className={liked ? 'fill-white' : ''} />
+                        ) : (
+                          <>
                             <Heart size={18} className={liked ? 'mr-2 fill-white' : 'mr-2'} />
                             {liked ? 'Te gusta' : 'Me gusta'}
-                          </>}
+                          </>
+                        )}
                       </Button>
                       <Button variant="outline" size={isMobile ? "icon" : "sm"} className="rounded-full" onClick={handleShare}>
                         <Share size={18} />
                       </Button>
                       <Button size={isMobile ? "icon" : "sm"} className="rounded-full bg-homi-purple hover:bg-homi-purple/90" onClick={handleMessage}>
-                        {isMobile ? <MessageSquare size={18} /> : <>
+                        {isMobile ? (
+                          <MessageSquare size={18} />
+                        ) : (
+                          <>
                             <MessageSquare size={18} className="mr-2" />
                             Mensaje
-                          </>}
+                          </>
+                        )}
                       </Button>
                     </div>
                   </div>
@@ -329,9 +345,11 @@ const ProfilePage = () => {
                   <div className="mt-4 md:mt-6">
                     <h3 className="font-medium mb-2">Intereses</h3>
                     <div className="flex flex-wrap gap-2">
-                      {profile.tags.map(tag => <span key={tag.id} className="px-2 md:px-3 py-1 text-xs md:text-sm rounded-full bg-homi-ultraLightPurple text-homi-purple">
+                      {profile.tags.map(tag => (
+                        <span key={tag.id} className="px-2 md:px-3 py-1 text-xs md:text-sm rounded-full bg-homi-ultraLightPurple text-homi-purple">
                           {tag.name}
-                        </span>)}
+                        </span>
+                      ))}
                     </div>
                   </div>
                 </div>
@@ -339,30 +357,62 @@ const ProfilePage = () => {
                 <div className="glass-card p-4 md:p-6">
                   <h2 className="text-lg md:text-xl font-semibold mb-3 md:mb-4">Galería</h2>
                   
-                  {isMobile ? <div className="relative">
+                  {isMobile ? (
+                    <div className="relative">
                       <div className="aspect-square rounded-lg overflow-hidden bg-muted">
-                        <img src={profile.galleryImgs[activeGalleryIndex]} alt={`Imagen ${activeGalleryIndex + 1}`} className="w-full h-full object-cover" />
+                        <img 
+                          src={profile.galleryImgs[activeGalleryIndex]} 
+                          alt={`Imagen ${activeGalleryIndex + 1}`} 
+                          className="w-full h-full object-cover" 
+                        />
                       </div>
                       
-                      <Button variant="outline" size="icon" className="absolute left-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-white/80" onClick={handlePrevGalleryImage}>
+                      <Button 
+                        variant="outline" 
+                        size="icon" 
+                        className="absolute left-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-white/80" 
+                        onClick={handlePrevGalleryImage}
+                      >
                         <ChevronLeft size={16} />
                       </Button>
                       
-                      <Button variant="outline" size="icon" className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-white/80" onClick={handleNextGalleryImage}>
+                      <Button 
+                        variant="outline" 
+                        size="icon" 
+                        className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-white/80" 
+                        onClick={handleNextGalleryImage}
+                      >
                         <ChevronRight size={16} />
                       </Button>
                       
                       <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-2">
-                        {profile.galleryImgs.map((_, index) => <button key={index} className={`h-2.5 w-2.5 rounded-full ${activeGalleryIndex === index ? 'bg-white' : 'bg-white/50'}`} onClick={() => setActiveGalleryIndex(index)} aria-label={`Ver imagen ${index + 1}`} />)}
+                        {profile.galleryImgs.map((_, index) => (
+                          <button 
+                            key={index} 
+                            className={`h-2.5 w-2.5 rounded-full ${activeGalleryIndex === index ? 'bg-white' : 'bg-white/50'}`} 
+                            onClick={() => setActiveGalleryIndex(index)} 
+                            aria-label={`Ver imagen ${index + 1}`} 
+                          />
+                        ))}
                       </div>
-                    </div> : <div className="grid grid-cols-3 gap-4">
-                      {profile.galleryImgs.map((img, index) => <div key={index} className="aspect-square rounded-lg overflow-hidden bg-muted">
-                          <img src={img} alt={`Imagen ${index + 1}`} className="w-full h-full object-cover transition-transform hover:scale-105" />
-                        </div>)}
-                    </div>}
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-3 gap-4">
+                      {profile.galleryImgs.map((img, index) => (
+                        <div key={index} className="aspect-square rounded-lg overflow-hidden bg-muted">
+                          <img 
+                            src={img} 
+                            alt={`Imagen ${index + 1}`} 
+                            className="w-full h-full object-cover transition-transform hover:scale-105" 
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 
-                {!isMobile && <div className="glass-card p-6">
+                {!isMobile && (
+                  <div className="glass-card p-6">
                     <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
                       <QrCode size={20} className="text-homi-purple" />
                       Tarjeta de presentación
@@ -372,7 +422,11 @@ const ProfilePage = () => {
                     </p>
                     
                     <div className="mt-4 flex flex-col items-center">
-                      <div id="profile-card" ref={profileCardRef} className="w-[360px] h-[640px] bg-gradient-to-br from-purple-600 to-pink-500 rounded-xl shadow-xl overflow-hidden relative mx-auto mb-6">
+                      <div 
+                        id="profile-card" 
+                        ref={profileCardRef} 
+                        className="w-[360px] h-[640px] bg-gradient-to-br from-purple-600 to-pink-500 rounded-xl shadow-xl overflow-hidden relative mx-auto mb-6"
+                      >
                         <div className="absolute top-0 left-0 w-full h-1/3 overflow-hidden">
                           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-purple-800/70"></div>
                           <img src={profile.imgUrl} alt={profile.name} className="w-full h-full object-cover" />
@@ -386,9 +440,11 @@ const ProfilePage = () => {
                             <div>
                               <h3 className="text-xl font-bold text-white flex items-center gap-1">
                                 {profile.name}, {profile.age}
-                                {profile.verified && <div className="bg-white text-purple-600 p-0.5 rounded-full">
+                                {profile.verified && (
+                                  <div className="bg-white text-purple-600 p-0.5 rounded-full">
                                     <UserCheck size={14} />
-                                  </div>}
+                                  </div>
+                                )}
                               </h3>
                               <p className="text-sm text-white/80">{profile.location} · {profile.occupation}</p>
                             </div>
@@ -396,9 +452,11 @@ const ProfilePage = () => {
                           
                           <div className="mb-3">
                             <div className="flex flex-wrap gap-2 mb-2">
-                              {profile.tags.slice(0, 3).map(tag => <span key={tag.id} className="px-3 py-1 text-xs rounded-full bg-white/20 text-white">
+                              {profile.tags.slice(0, 3).map(tag => (
+                                <span key={tag.id} className="px-3 py-1 text-xs rounded-full bg-white/20 text-white">
                                   {tag.name}
-                                </span>)}
+                                </span>
+                              ))}
                             </div>
                             
                             <p className="text-white/90 text-sm line-clamp-2">
@@ -418,8 +476,13 @@ const ProfilePage = () => {
                               </div>
                               <div>
                                 <span className="text-white/60">Género:</span>
-                                <p>{profile.lookingFor.genderPreference === 'mujeres' ? 'Solo mujeres' : 
-                                   profile.lookingFor.genderPreference === 'hombres' ? 'Solo hombres' : 'Cualquier género'}</p>
+                                <p>
+                                  {profile.lookingFor.genderPreference === 'mujeres' 
+                                    ? 'Solo mujeres' 
+                                    : profile.lookingFor.genderPreference === 'hombres' 
+                                      ? 'Solo hombres' 
+                                      : 'Cualquier género'}
+                                </p>
                               </div>
                               <div>
                                 <span className="text-white/60">Edad:</span>
@@ -460,7 +523,8 @@ const ProfilePage = () => {
                         </Button>
                       </div>
                     </div>
-                  </div>}
+                  </div>
+                )}
                 
                 <div className="glass-card p-4 md:p-6">
                   <div className="flex justify-between items-center mb-3 md:mb-4">
@@ -469,20 +533,25 @@ const ProfilePage = () => {
                       Preferencias y búsqueda
                     </h2>
                     
-                    {!isEditingLookingFor ? <Button variant="outline" size="sm" onClick={handleEditLookingFor} className="rounded-full h-8 w-8 p-0">
+                    {!isEditingLookingFor ? (
+                      <Button variant="outline" size="sm" onClick={handleEditLookingFor} className="rounded-full h-8 w-8 p-0">
                         <Pencil size={15} />
-                      </Button> : <div className="flex gap-2">
+                      </Button>
+                    ) : (
+                      <div className="flex gap-2">
                         <Button variant="outline" size="sm" onClick={handleCancelEditLookingFor} className="rounded-full h-8 w-8 p-0 border-red-400 text-red-500">
                           <X size={15} />
                         </Button>
                         <Button variant="outline" size="sm" onClick={handleSaveLookingFor} className="rounded-full h-8 w-8 p-0 border-green-400 text-green-500">
                           <Check size={15} />
                         </Button>
-                      </div>}
+                      </div>
+                    )}
                   </div>
                   
                   <div className="space-y-4">
-                    {!isEditingLookingFor ? <div className="space-y-6">
+                    {!isEditingLookingFor ? (
+                      <div className="space-y-6">
                         <div className="flex items-center gap-2 text-sm md:text-base">
                           <div className="bg-homi-ultraLightPurple text-homi-purple p-1.5 rounded-full">
                             <Home size={16} />
@@ -587,7 +656,9 @@ const ProfilePage = () => {
                             </div>
                           </div>
                         </div>
-                      </div> : <>
+                      </div>
+                    ) : (
+                      <>
                         <div className="flex items-center justify-between gap-2 p-3 border border-input rounded-md bg-background/50">
                           <div className="flex items-center gap-2">
                             <div className="bg-homi-ultraLightPurple text-homi-purple p-1.5 rounded-full">
@@ -597,7 +668,10 @@ const ProfilePage = () => {
                               {profile.lookingFor.hasApartment ? 'Ya tengo piso y busco compañeros' : 'Busco piso compartido'}
                             </span>
                           </div>
-                          <Switch checked={profile.lookingFor.hasApartment} onCheckedChange={checked => handleLookingForChange('hasApartment', checked)} />
+                          <Switch 
+                            checked={profile.lookingFor.hasApartment} 
+                            onCheckedChange={checked => handleLookingForChange('hasApartment', checked)} 
+                          />
                         </div>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -605,7 +679,11 @@ const ProfilePage = () => {
                             <label className="text-xs md:text-sm text-muted-foreground">
                               Número de compañeros:
                             </label>
-                            <select className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm" value={profile.lookingFor.roommatesCount} onChange={e => handleLookingForChange('roommatesCount', e.target.value)}>
+                            <select 
+                              className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm" 
+                              value={profile.lookingFor.roommatesCount} 
+                              onChange={e => handleLookingForChange('roommatesCount', e.target.value)}
+                            >
                               <option value="1">1</option>
                               <option value="2">2</option>
                               <option value="3">3</option>
@@ -617,7 +695,11 @@ const ProfilePage = () => {
                             <label className="text-xs md:text-sm text-muted-foreground">
                               Preferencia de género:
                             </label>
-                            <select className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm" value={profile.lookingFor.genderPreference} onChange={e => handleLookingForChange('genderPreference', e.target.value)}>
+                            <select 
+                              className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm" 
+                              value={profile.lookingFor.genderPreference} 
+                              onChange={e => handleLookingForChange('genderPreference', e.target.value)}
+                            >
                               <option value="mujeres">Solo mujeres</option>
                               <option value="hombres">Solo hombres</option>
                               <option value="cualquiera">Cualquier género</option>
@@ -628,7 +710,11 @@ const ProfilePage = () => {
                             <label className="text-xs md:text-sm text-muted-foreground">
                               Preferencia tabaco:
                             </label>
-                            <select className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm" value={profile.lookingFor.smokingPreference} onChange={e => handleLookingForChange('smokingPreference', e.target.value)}>
+                            <select 
+                              className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm" 
+                              value={profile.lookingFor.smokingPreference} 
+                              onChange={e => handleLookingForChange('smokingPreference', e.target.value)}
+                            >
                               <option value="no">No fumadores</option>
                               <option value="ocasional">Fumador ocasional</option>
                               <option value="si">Fumadores permitidos</option>
@@ -639,18 +725,5 @@ const ProfilePage = () => {
                             <label className="text-xs md:text-sm text-muted-foreground">
                               Ocupación:
                             </label>
-                            <select className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm" value={profile.lookingFor.occupationPreference} onChange={e => handleLookingForChange('occupationPreference', e.target.value)}>
-                              <option value="estudiantes">Estudiantes</option>
-                              <option value="trabajadores">Trabajadores</option>
-                              <option value="cualquiera">Cualquier ocupación</option>
-                            </select>
-                          </div>
-                          
-                          <div className="space-y-2 md:col-span-2">
-                            <label className="text-xs md:text-sm text-muted-foreground">
-                              Rango de edad:
-                            </label>
-                            <div className="flex gap-2 items-center">
-                              <input type="number" className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm" min="18" max="99" value={profile.lookingFor.minAge} onChange={e => handleLookingForChange('minAge', e.target.value)} />
-                              <span className="text-sm">-</span>
-                              <input type="number" className="w-full h-10 rounded-md
+                            <select 
+                              className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
