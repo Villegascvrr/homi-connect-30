@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useState, useRef, ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
@@ -430,12 +429,8 @@ const ProfilePage = () => {
                         ref={profileCardRef} 
                         className="w-[360px] h-[640px] bg-gradient-to-br from-purple-600 to-pink-500 rounded-xl shadow-xl overflow-hidden relative mx-auto mb-8"
                       >
-                        <div className="absolute top-0 left-0 w-full h-1/3 overflow-hidden">
-                          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-purple-800/70"></div>
-                          <img src={profile.imgUrl} alt={profile.name} className="w-full h-full object-cover" />
-                        </div>
                         
-                        <div className="absolute bottom-0 left-0 w-full h-3/4 bg-gradient-to-t from-purple-900/90 to-transparent p-6 flex flex-col justify-end">
+                        <div className="absolute inset-0 bg-gradient-to-t from-purple-900/90 to-purple-600/60 p-6 flex flex-col justify-end">
                           <div className="mb-5 flex items-center gap-3">
                             <div className="w-16 h-16 rounded-full border-2 border-white overflow-hidden">
                               <img src={profile.imgUrl} alt={profile.name} className="w-full h-full object-cover" />
@@ -739,128 +734,3 @@ const ProfilePage = () => {
                             >
                               <option value="estudiantes">Estudiantes</option>
                               <option value="trabajadores">Trabajadores</option>
-                              <option value="cualquiera">Cualquier ocupación</option>
-                            </select>
-                          </div>
-                          
-                          <div className="space-y-2">
-                            <label className="text-xs md:text-sm text-muted-foreground">
-                              Edad mínima:
-                            </label>
-                            <Input 
-                              type="number" 
-                              min="18" 
-                              max="99"
-                              value={profile.lookingFor.minAge} 
-                              onChange={e => handleLookingForChange('minAge', e.target.value)} 
-                            />
-                          </div>
-                          
-                          <div className="space-y-2">
-                            <label className="text-xs md:text-sm text-muted-foreground">
-                              Edad máxima:
-                            </label>
-                            <Input 
-                              type="number" 
-                              min="18" 
-                              max="99"
-                              value={profile.lookingFor.maxAge} 
-                              onChange={e => handleLookingForChange('maxAge', e.target.value)} 
-                            />
-                          </div>
-                          
-                          <div className="md:col-span-2 space-y-2">
-                            <label className="text-xs md:text-sm text-muted-foreground">
-                              Presupuesto:
-                            </label>
-                            <div className="px-2">
-                              <Slider 
-                                value={profile.lookingFor.budgetRange}
-                                min={200}
-                                max={2000}
-                                step={50}
-                                onValueChange={value => handleLookingForChange('budgetRange', value)} 
-                              />
-                            </div>
-                            <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                              <span>€{profile.lookingFor.budgetRange[0]}</span>
-                              <span>€{profile.lookingFor.budgetRange[1]}</span>
-                            </div>
-                          </div>
-                          
-                          <div className="md:col-span-2 space-y-2">
-                            <label className="text-xs md:text-sm text-muted-foreground">
-                              Precio exacto:
-                            </label>
-                            <Input 
-                              type="number" 
-                              min={profile.lookingFor.budgetRange[0]} 
-                              max={profile.lookingFor.budgetRange[1]}
-                              value={profile.lookingFor.exactPrice} 
-                              onChange={e => handleLookingForChange('exactPrice', Number(e.target.value))} 
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
-      
-      <Footer />
-      
-      <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Compartir Perfil</DialogTitle>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="flex items-center gap-4 justify-center">
-              <Button variant="outline" className="w-10 h-10 p-0 rounded-full" onClick={() => shareToSocialMedia('whatsapp')}>
-                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="text-green-600"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
-              </Button>
-              <Button variant="outline" className="w-10 h-10 p-0 rounded-full" onClick={() => shareToSocialMedia('telegram')}>
-                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500"><path d="M21.198 2.433a2.242 2.242 0 0 0-1.022.215l-8.609 3.33c-2.068.8-4.133 1.598-5.724 2.21a405.15 405.15 0 0 1-2.849 1.09c-.42.147-.99.332-1.473.901-.728.968.193 1.798.919 2.286 1.61.516 3.275 1.009 4.654 1.472.846 1.467 1.618 2.796 2.33 3.977 1.109 1.993 2.248 3.592 3.696 3.592 1.12 0 1.931-.944 2.486-1.776.555-.83 2.037-4.515 2.037-4.515l6.356-15.55c.2-.488.315-.948.315-1.431 0-.57-.259-1.128-.887-1.5a2.38 2.38 0 0 0-1.228-.34zm-.22 1.45l-6.325 15.473s-1.993 3.857-2.384 4.551c-.39.694-.702 1.02-.923 1.02-.22 0-.72-.926-1.484-2.303-1.42-2.56-3.75-6.749-3.75-6.749l-4.68-1.447c-1.8-.587-2.819-.839-3.198-1.01-.38-.17-.501-.3-.618-.42.12-.12.42-.25.923-.444 1.548-.55 3.878-1.412 6.121-2.217l8.422-3.265c.15-.047.29-.075.416-.075h.05z"/></svg>
-              </Button>
-              <Button variant="outline" className="w-10 h-10 p-0 rounded-full" onClick={() => shareToSocialMedia('facebook')}>
-                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="text-blue-600"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
-              </Button>
-              <Button variant="outline" className="w-10 h-10 p-0 rounded-full" onClick={() => shareToSocialMedia('twitter')}>
-                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="text-blue-400"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
-              </Button>
-            </div>
-            
-            <div className="relative">
-              <Input 
-                value={getProfileUrl()}
-                readOnly
-                className="pr-16"
-              />
-              <Button 
-                className="absolute right-0 top-0 h-10 rounded-l-none"
-                onClick={handleCopyLink}
-              >
-                Copiar
-              </Button>
-            </div>
-            
-            <div ref={qrCodeRef} className="mx-auto bg-white p-4 rounded-lg">
-              <QRCodeSVG value={getProfileUrl()} size={150} bgColor="#FFFFFF" fgColor="#000000" />
-            </div>
-            
-            <Button variant="outline" onClick={handleDownloadQR}>
-              <Download size={16} className="mr-2" />
-              Descargar QR
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-    </div>
-  );
-};
-
-export default ProfilePage;
