@@ -35,8 +35,8 @@ const Navbar = () => {
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled 
           ? 'py-2 bg-white/80 dark:bg-homi-dark/80 backdrop-blur-md shadow-sm' 
-          : 'py-4 bg-transparent'
-      }`}
+          : 'py-3 bg-transparent'
+      } mt-[29px]`} // Added mt-[29px] to account for the development banner
     >
       <div className="container mx-auto px-4 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
