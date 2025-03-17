@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useState, useRef, ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
@@ -18,6 +17,7 @@ import { Select } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Slider } from '@/components/ui/slider';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const ProfilePage = () => {
   const [liked, setLiked] = useState(false);
@@ -259,19 +259,12 @@ const ProfilePage = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="glass-card overflow-hidden">
-              <div className="relative h-48 md:h-64 bg-homi-ultraLightPurple">
-                <img src={profile.imgUrl} alt={profile.name} className="w-full h-full object-cover" />
-                
-                <Link to="/profile/edit">
-                  <Button variant="outline" size="sm" className="absolute top-4 right-4 rounded-full bg-white/80 hover:bg-white">
-                    {isMobile ? <Pencil size={16} /> : <><Pencil size={16} className="mr-2" />Editar Perfil</>}
-                  </Button>
-                </Link>
-              </div>
-              
-              <div className="relative px-4 md:px-6 py-10 md:py-12">
-                <div className={`${isMobile ? 'absolute -top-14 left-4' : 'absolute -top-16 left-6'} ${isMobile ? 'w-24 h-24' : 'w-32 h-32'} rounded-full overflow-hidden border-4 border-white shadow-lg`}>
-                  <img src={profile.imgUrl} alt={profile.name} className="w-full h-full object-cover" />
+              <div className="relative p-6 pt-16 md:pt-20 pb-6 md:pb-8">
+                <div className="absolute top-6 left-6">
+                  <Avatar className={`${isMobile ? 'w-24 h-24' : 'w-32 h-32'} border-4 border-white shadow-lg`}>
+                    <AvatarImage src={profile.imgUrl} alt={profile.name} />
+                    <AvatarFallback>{profile.name.charAt(0)}</AvatarFallback>
+                  </Avatar>
                   {profile.verified && (
                     <div className="absolute bottom-0 right-0 bg-homi-purple text-white p-1 rounded-full">
                       <UserCheck size={isMobile ? 14 : 16} />
@@ -279,7 +272,13 @@ const ProfilePage = () => {
                   )}
                 </div>
                 
-                <div className={isMobile ? 'mt-16' : 'ml-36'}>
+                <Link to="/profile/edit">
+                  <Button variant="outline" size="sm" className="absolute top-6 right-6 rounded-full bg-white/80 hover:bg-white">
+                    {isMobile ? <Pencil size={16} /> : <><Pencil size={16} className="mr-2" />Editar Perfil</>}
+                  </Button>
+                </Link>
+                
+                <div className={isMobile ? 'mt-28 ml-2' : 'ml-44'}>
                   <div className={`flex ${isMobile ? 'flex-col gap-3' : 'justify-between'}`}>
                     <div>
                       <h1 className="text-xl md:text-3xl font-bold flex items-center gap-2">
@@ -325,6 +324,7 @@ const ProfilePage = () => {
               </div>
             </div>
             
+            
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mt-6 md:mt-8">
               <div className="md:col-span-2 space-y-6 md:space-y-8">
                 <div className="glass-card p-5 md:p-7">
@@ -356,6 +356,7 @@ const ProfilePage = () => {
                     </div>
                   </div>
                 </div>
+                
                 
                 <div className="glass-card p-5 md:p-7">
                   <h2 className="text-lg md:text-xl font-semibold mb-4 md:mb-5">Galería</h2>
@@ -413,6 +414,7 @@ const ProfilePage = () => {
                     </div>
                   )}
                 </div>
+                
                 
                 {!isMobile && (
                   <div className="glass-card p-7">
@@ -530,6 +532,7 @@ const ProfilePage = () => {
                 )}
               </div>
               
+              
               <div className="space-y-6 md:space-y-8">
                 <div className="glass-card p-5 md:p-7">
                   <div className="flex justify-between items-center mb-4 md:mb-5">
@@ -555,6 +558,7 @@ const ProfilePage = () => {
                   </div>
                   
                   <div className="space-y-5">
+                    
                     {!isEditingLookingFor ? (
                       <div className="space-y-6">
                         <div className="flex items-center gap-2 text-sm md:text-base">
@@ -732,145 +736,3 @@ const ProfilePage = () => {
                             <label className="text-xs md:text-sm text-muted-foreground">
                               Ocupación:
                             </label>
-                            <select 
-                              className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
-                              value={profile.lookingFor.occupationPreference} 
-                              onChange={e => handleLookingForChange('occupationPreference', e.target.value)}
-                            >
-                              <option value="estudiantes">Estudiantes</option>
-                              <option value="trabajadores">Trabajadores</option>
-                              <option value="cualquiera">Cualquier ocupación</option>
-                            </select>
-                          </div>
-                          
-                          <div className="space-y-2 md:col-span-2">
-                            <label className="text-xs md:text-sm text-muted-foreground">
-                              Rango de edad:
-                            </label>
-                            <div className="flex gap-2 items-center">
-                              <input 
-                                type="number" 
-                                className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm" 
-                                min="18" 
-                                max="99" 
-                                value={profile.lookingFor.minAge} 
-                                onChange={e => handleLookingForChange('minAge', e.target.value)} 
-                              />
-                              <span className="text-sm">-</span>
-                              <input 
-                                type="number" 
-                                className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm" 
-                                min="18" 
-                                max="99" 
-                                value={profile.lookingFor.maxAge} 
-                                onChange={e => handleLookingForChange('maxAge', e.target.value)} 
-                              />
-                            </div>
-                          </div>
-                          
-                          <div className="space-y-2 md:col-span-2">
-                            <label className="text-xs md:text-sm text-muted-foreground">
-                              {profile.lookingFor.hasApartment ? 'Precio por habitación:' : 'Presupuesto:'}
-                            </label>
-                            <div className="flex gap-2 items-center">
-                              <input 
-                                type="number" 
-                                className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
-                                min="0"
-                                value={profile.lookingFor.exactPrice} 
-                                onChange={e => handleLookingForChange('exactPrice', parseInt(e.target.value))} 
-                              />
-                              <span className="text-sm">€/mes</span>
-                            </div>
-                            <p className="text-xs text-muted-foreground mt-1">
-                              {profile.lookingFor.hasApartment 
-                                ? 'Precio mensual de cada habitación' 
-                                : 'Presupuesto mensual que estás dispuesto a pagar'}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
-      
-      <Footer />
-      
-      <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Compartir perfil</DialogTitle>
-          </DialogHeader>
-          <div className="flex flex-col space-y-4">
-            <div className="flex justify-center p-4" ref={qrCodeRef}>
-              <QRCodeSVG value={getProfileUrl()} size={200} bgColor="#FFFFFF" fgColor="#6E59A5" />
-            </div>
-            
-            <div className="flex flex-col space-y-2">
-              <p className="text-sm text-center text-muted-foreground mb-1">Enlace de tu perfil</p>
-              <div className="flex items-center space-x-2">
-                <Input value={getProfileUrl()} readOnly />
-                <Button size="sm" onClick={handleCopyLink}>
-                  Copiar
-                </Button>
-              </div>
-            </div>
-            
-            <div className="flex flex-col space-y-2">
-              <p className="text-sm text-center text-muted-foreground mb-1">Compartir en redes sociales</p>
-              <div className="flex justify-center space-x-4">
-                <Button 
-                  variant="outline" 
-                  size="icon" 
-                  className="h-10 w-10 rounded-full" 
-                  onClick={() => shareToSocialMedia('whatsapp')}
-                >
-                  <img src="/whatsapp-icon.png" alt="WhatsApp" className="h-5 w-5" />
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="icon" 
-                  className="h-10 w-10 rounded-full" 
-                  onClick={() => shareToSocialMedia('telegram')}
-                >
-                  <img src="/telegram-icon.png" alt="Telegram" className="h-5 w-5" />
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="icon" 
-                  className="h-10 w-10 rounded-full" 
-                  onClick={() => shareToSocialMedia('facebook')}
-                >
-                  <img src="/facebook-icon.png" alt="Facebook" className="h-5 w-5" />
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="icon" 
-                  className="h-10 w-10 rounded-full" 
-                  onClick={() => shareToSocialMedia('twitter')}
-                >
-                  <img src="/twitter-icon.png" alt="Twitter" className="h-5 w-5" />
-                </Button>
-              </div>
-            </div>
-            
-            <div className="flex flex-col space-y-2">
-              <p className="text-sm text-center text-muted-foreground mb-1">Descargar código QR</p>
-              <Button variant="outline" onClick={handleDownloadQR}>
-                <Download size={16} className="mr-2" />
-                Descargar QR
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-    </div>
-  );
-};
-
-export default ProfilePage;
