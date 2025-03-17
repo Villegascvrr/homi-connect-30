@@ -239,7 +239,7 @@ const ProfilePage = () => {
     setIsEditingLookingFor(false);
   };
 
-  const handleLookingForChange = (field: string, value: string | boolean | number | number[]) => {
+  const handleLookingForChange = (field: string, value: any) => {
     setProfile(prev => ({
       ...prev,
       lookingFor: {
@@ -576,10 +576,15 @@ const ProfilePage = () => {
                           <div>
                             <div className="flex items-center gap-2 mb-2">
                               <DollarSign size={16} className="text-homi-purple" />
-                              <span className="font-medium">Presupuesto</span>
+                              <span className="font-medium">
+                                {profile.lookingFor.hasApartment ? 'Precio por persona' : 'Presupuesto'}
+                              </span>
                             </div>
                             <p className="text-sm md:text-base">
-                              €{profile.lookingFor.budgetRange[0]} - €{profile.lookingFor.budgetRange[1]}
+                              {profile.lookingFor.hasApartment 
+                                ? `€${profile.lookingFor.budgetRange[0]} - €${profile.lookingFor.budgetRange[1]}`
+                                : `€${profile.lookingFor.budgetRange[0]} - €${profile.lookingFor.budgetRange[1]}`
+                              }
                             </p>
                           </div>
                           
@@ -774,7 +779,7 @@ const ProfilePage = () => {
                           
                           <div className="space-y-2 md:col-span-2">
                             <label className="text-xs md:text-sm text-muted-foreground">
-                              Presupuesto:
+                              {profile.lookingFor.hasApartment ? 'Precio por persona:' : 'Presupuesto:'}
                             </label>
                             <div className="flex gap-2 items-center">
                               <input 
@@ -793,6 +798,11 @@ const ProfilePage = () => {
                                 onChange={e => handleLookingForChange('budgetRange', [profile.lookingFor.budgetRange[0], parseInt(e.target.value)])} 
                               />
                             </div>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {profile.lookingFor.hasApartment 
+                                ? 'Precio que pagaría cada compañero por el alquiler mensual' 
+                                : 'Rango de presupuesto que estás dispuesto a pagar mensualmente'}
+                            </p>
                           </div>
                         </div>
                       </>
