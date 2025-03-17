@@ -40,8 +40,7 @@ export function FormImageUpload<TFieldValues extends FieldValues>({
               value={field.value}
               onChange={(value) => {
                 if (onChange) {
-                  // Use a type assertion here to fix the type mismatch
-                  onChange(field as ControllerRenderProps<TFieldValues, Path<TFieldValues>>, value);
+                  onChange(field as any, value);
                 } else {
                   field.onChange(value);
                 }

@@ -1,7 +1,9 @@
+
 import React from 'react';
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
+import { useToast } from "@/hooks/use-toast"
 
 import {
   Form,
@@ -22,11 +24,13 @@ const formSchema = z.object({
   email: z.string().email({
     message: "Please enter a valid email address.",
   }),
-  profileImage: z.string(),
-  galleryImages: z.array(z.string()),
+  profileImage: z.string().optional(),
+  galleryImages: z.array(z.string()).optional(),
 })
 
 const ProfileForm = () => {
+  const { toast } = useToast();
+  
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -38,7 +42,12 @@ const ProfileForm = () => {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
+    console.log("Form submitted with values:", values);
+    
+    toast({
+      title: "Profile updated",
+      description: "Your profile information has been saved.",
+    });
   }
 
   return (

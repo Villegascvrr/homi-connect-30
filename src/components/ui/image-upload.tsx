@@ -14,7 +14,7 @@ interface ImageUploadProps {
 
 export const ImageUpload: React.FC<ImageUploadProps> = ({
   onChange,
-  value,
+  value = multiple ? [] : "",
   multiple = false,
   className
 }) => {
