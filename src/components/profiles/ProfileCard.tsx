@@ -53,7 +53,7 @@ const ProfileCard = ({
           </div>
         </div>
         
-        <div className="aspect-[4/5] overflow-hidden bg-gradient-to-br from-purple-100 to-pink-50">
+        <div className="aspect-[4/5] overflow-hidden bg-gradient-to-br from-purple-100 to-pink-50 relative">
           <img
             src={imgUrl}
             alt={name}
@@ -64,7 +64,7 @@ const ProfileCard = ({
           </div>
           
           {/* Banner indicando búsqueda de compañero */}
-          <div className="absolute bottom-0 left-0 right-0 bg-homi-purple/80 text-white py-1.5 px-3 text-center backdrop-blur-sm">
+          <div className="absolute bottom-0 left-0 w-full bg-homi-purple/80 text-white py-1.5 px-3 text-center backdrop-blur-sm">
             <div className="flex items-center justify-center gap-1.5 text-sm font-medium">
               <Search size={14} />
               <span>Buscando compañero de piso</span>
