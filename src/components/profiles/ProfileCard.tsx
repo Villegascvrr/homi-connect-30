@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import CompatibilityBadge from '@/components/ui/CompatibilityBadge';
 import { Button } from '@/components/ui/button';
-import { MessageSquare, User, Heart, MapPin } from 'lucide-react';
+import { MessageSquare, User, Heart, MapPin, Search } from 'lucide-react';
 
 interface Tag {
   id: number;
@@ -61,6 +61,14 @@ const ProfileCard = ({
           />
           <div className="absolute top-3 right-3">
             <CompatibilityBadge percentage={compatibility} />
+          </div>
+          
+          {/* Banner indicando búsqueda de compañero */}
+          <div className="absolute bottom-0 left-0 right-0 bg-homi-purple/80 text-white py-1.5 px-3 text-center backdrop-blur-sm">
+            <div className="flex items-center justify-center gap-1.5 text-sm font-medium">
+              <Search size={14} />
+              <span>Buscando compañero de piso</span>
+            </div>
           </div>
         </div>
       </div>
