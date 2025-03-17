@@ -63,13 +63,21 @@ const ProfileCard = ({
             <CompatibilityBadge percentage={compatibility} />
           </div>
           
-          {/* Banner indicating roommate search - with stronger styling to ensure visibility */}
-          <div className="absolute bottom-0 left-0 w-full bg-homi-purple text-white py-2 px-3 text-center z-20">
+          {/* Banner indicating roommate search - completely opaque and higher z-index */}
+          <div className="absolute bottom-0 left-0 right-0 w-full bg-homi-purple text-white py-2 px-3 text-center z-50 shadow-md">
             <div className="flex items-center justify-center gap-1.5 text-sm font-medium">
-              <Search size={14} />
-              <span>Buscando compañero de piso</span>
+              <Search size={14} className="flex-shrink-0" />
+              <span className="whitespace-nowrap">Buscando compañero de piso</span>
             </div>
           </div>
+        </div>
+      </div>
+      
+      {/* Banner added again as a separate element in case the previous one is somehow hidden */}
+      <div className="w-full bg-homi-purple text-white py-2 px-3 text-center">
+        <div className="flex items-center justify-center gap-1.5 text-sm font-medium">
+          <Search size={14} className="flex-shrink-0" />
+          <span>Buscando compañero de piso</span>
         </div>
       </div>
       
