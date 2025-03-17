@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -11,12 +10,7 @@ import {
   Mail, 
   User, 
   Heart, 
-  BookOpen, 
-  Music, 
   Users, 
-  Film, 
-  Utensils, 
-  Globe, 
   Moon, 
   Sun,
   AtSign
@@ -76,11 +70,9 @@ const formSchema = z.object({
   path: ["confirmPassword"],
 });
 
-type InterestCategory = {
+type Interest = {
   id: string;
   name: string;
-  icon: JSX.Element;
-  interests: string[];
 };
 
 const RegisterPage = () => {
@@ -142,61 +134,23 @@ const RegisterPage = () => {
     }, 1000);
   };
 
-  const interestCategories: InterestCategory[] = [
-    {
-      id: "reading",
-      name: "Lectura y cultura",
-      icon: <BookOpen size={18} />,
-      interests: [
-        "Ficción", "No-ficción", "Poesía", "Audiolibros", 
-        "Clubs de lectura", "Museos", "Teatro", "Arte"
-      ]
-    },
-    {
-      id: "music",
-      name: "Música",
-      icon: <Music size={18} />,
-      interests: [
-        "Pop", "Rock", "Clásica", "Electrónica", "Jazz", "Hip-hop", 
-        "Indie", "Folk", "Conciertos", "Tocar instrumentos"
-      ]
-    },
-    {
-      id: "social",
-      name: "Social",
-      icon: <Users size={18} />,
-      interests: [
-        "Fiestas", "Cenas", "Eventos", "Voluntariado", 
-        "Deportes en equipo", "Juegos de mesa", "Debates"
-      ]
-    },
-    {
-      id: "food",
-      name: "Gastronomía",
-      icon: <Utensils size={18} />,
-      interests: [
-        "Cocinar", "Repostería", "Salir a comer", "Comida internacional", 
-        "Vegetariano/Vegano", "Vino", "Cafeterías", "Food trucks"
-      ]
-    },
-    {
-      id: "entertainment",
-      name: "Entretenimiento",
-      icon: <Film size={18} />,
-      interests: [
-        "Cine", "Series", "Documentales", "Videojuegos", 
-        "Realidad virtual", "Podcast", "Fotografía"
-      ]
-    },
-    {
-      id: "travel",
-      name: "Viajes",
-      icon: <Globe size={18} />,
-      interests: [
-        "Mochilero", "Viajes culturales", "Ecoturismo", "Camping", 
-        "Playa", "Montaña", "Ciudades", "Idiomas"
-      ]
-    }
+  const interests: Interest[] = [
+    { id: "deporte", name: "Deporte y actividades físicas" },
+    { id: "arte", name: "Arte y cultura" },
+    { id: "musica", name: "Música" },
+    { id: "cine", name: "Cine y series" },
+    { id: "lectura", name: "Lectura" },
+    { id: "viajes", name: "Viajes" },
+    { id: "gastronomia", name: "Gastronomía y comida" },
+    { id: "tecnologia", name: "Tecnología" },
+    { id: "naturaleza", name: "Naturaleza y aire libre" },
+    { id: "fotografia", name: "Fotografía" },
+    { id: "moda", name: "Moda y diseño" },
+    { id: "gaming", name: "Videojuegos" },
+    { id: "voluntariado", name: "Voluntariado" },
+    { id: "aprendizaje", name: "Aprendizaje y educación" },
+    { id: "mascotas", name: "Mascotas y animales" },
+    { id: "fiestas", name: "Fiestas y vida nocturna" },
   ];
 
   const toggleInterest = (interest: string) => {
@@ -618,52 +572,45 @@ const RegisterPage = () => {
                           Selecciona intereses que te definan. Esto nos ayudará a conectarte con personas con gustos similares.
                         </p>
                         
-                        <div className="space-y-6">
-                          {interestCategories.map((category) => (
-                            <div key={category.id} className="mb-4">
-                              <h3 className="text-lg font-medium mb-3 flex items-center gap-2">
-                                {category.icon}
-                                {category.name}
-                              </h3>
-                              <div className="flex flex-wrap gap-2">
-                                {category.interests.map((interest) => (
-                                  <button
-                                    key={interest}
-                                    type="button"
-                                    className={`px-3 py-1 text-sm rounded-full transition-colors ${
-                                      selectedInterests.includes(interest)
-                                        ? 'bg-homi-purple text-white'
-                                        : 'bg-homi-ultraLightPurple text-homi-purple hover:bg-homi-purple/20'
-                                    }`}
-                                    onClick={() => toggleInterest(interest)}
-                                  >
-                                    {interest}
-                                  </button>
-                                ))}
-                              </div>
-                            </div>
+                        <div className="flex flex-wrap gap-3 mb-6">
+                          {interests.map((interest) => (
+                            <button
+                              key={interest.id}
+                              type="button"
+                              className={`px-4 py-2 text-sm rounded-full transition-colors ${
+                                selectedInterests.includes(interest.id)
+                                  ? 'bg-homi-purple text-white'
+                                  : 'bg-homi-ultraLightPurple text-homi-purple hover:bg-homi-purple/20'
+                              }`}
+                              onClick={() => toggleInterest(interest.id)}
+                            >
+                              {interest.name}
+                            </button>
                           ))}
                         </div>
                         
                         {selectedInterests.length > 0 && (
                           <div className="mt-4 pt-4 border-t">
-                            <h3 className="text-sm font-medium mb-2">Intereses seleccionados:</h3>
+                            <h3 className="text-sm font-medium mb-2">Intereses seleccionados ({selectedInterests.length}):</h3>
                             <div className="flex flex-wrap gap-2">
-                              {selectedInterests.map(interest => (
-                                <div 
-                                  key={interest} 
-                                  className="bg-homi-purple text-white px-3 py-1 text-sm rounded-full flex items-center gap-1"
-                                >
-                                  {interest}
-                                  <button 
-                                    type="button" 
-                                    className="ml-1 hover:bg-white/20 rounded-full h-4 w-4 flex items-center justify-center"
-                                    onClick={() => toggleInterest(interest)}
+                              {selectedInterests.map(interestId => {
+                                const interest = interests.find(i => i.id === interestId);
+                                return (
+                                  <div 
+                                    key={interestId} 
+                                    className="bg-homi-purple text-white px-3 py-1 text-sm rounded-full flex items-center gap-1"
                                   >
-                                    ×
-                                  </button>
-                                </div>
-                              ))}
+                                    {interest?.name}
+                                    <button 
+                                      type="button" 
+                                      className="ml-1 hover:bg-white/20 rounded-full h-4 w-4 flex items-center justify-center"
+                                      onClick={() => toggleInterest(interestId)}
+                                    >
+                                      ×
+                                    </button>
+                                  </div>
+                                );
+                              })}
                             </div>
                           </div>
                         )}
