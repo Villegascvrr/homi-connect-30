@@ -13,10 +13,10 @@ import {
   Users, 
   Moon, 
   Sun,
-  AtSign
+  AtSign,
+  Camera
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
@@ -35,6 +35,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useIsMobile } from '@/hooks/use-mobile';
+import { FormImageUpload } from '@/components/ui/form-image-upload';
 
 const formSchema = z.object({
   firstName: z.string().min(2, { message: 'El nombre debe tener al menos 2 caracteres' }),
@@ -66,6 +67,8 @@ const formSchema = z.object({
   }).max(500, {
     message: "La bio no puede tener más de 500 caracteres.",
   }),
+  profileImage: z.string().optional(),
+  galleryImages: z.array(z.string()).optional(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Las contraseñas no coinciden",
   path: ["confirmPassword"],
@@ -128,6 +131,8 @@ const RegisterPage = () => {
       occupation: '',
       university: '',
       bio: '',
+      profileImage: '',
+      galleryImages: [],
     },
     mode: "onChange"
   });
@@ -193,6 +198,7 @@ const RegisterPage = () => {
   };
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
+    console.log('Form submitted:', values);
     const userData = {
       ...values,
       interests: selectedInterests,
@@ -275,8 +281,8 @@ const RegisterPage = () => {
                   <TabsTrigger value="cuenta">Datos de cuenta</TabsTrigger>
                   <TabsTrigger 
                     value="perfil" 
-                    disabled={!isAccountValid}
-                    className={!isAccountValid ? "cursor-not-allowed" : ""}
+                    disabled={!isAccountValid()}
+                    className={!isAccountValid() ? "cursor-not-allowed" : ""}
                   >
                     Perfil personal
                   </TabsTrigger>
@@ -516,6 +522,19 @@ const RegisterPage = () => {
                     </TabsContent>
                     
                     <TabsContent value="perfil" className="space-y-8">
+                      <div className="space-y-4">
+                        <h2 className="text-xl font-semibold flex items-center gap-2">
+                          <Camera className="text-homi-purple" size={20} />
+                          Foto de perfil
+                        </h2>
+                        <FormImageUpload
+                          name="profileImage"
+                          description="Sube una foto clara de tu rostro para que otros usuarios puedan identificarte"
+                        />
+                      </div>
+                      
+                      <Separator className="my-4" />
+                      
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <FormField
                           control={form.control}
@@ -610,7 +629,7 @@ const RegisterPage = () => {
                         )}
                       />
                       
-                      <Separator className="my-8" />
+                      <Separator className="my-4" />
                       
                       <div>
                         <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
@@ -665,7 +684,7 @@ const RegisterPage = () => {
                         )}
                       </div>
                       
-                      <Separator className="my-8" />
+                      <Separator className="my-4" />
                       
                       <div>
                         <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
@@ -770,6 +789,20 @@ const RegisterPage = () => {
                           </div>
                         </div>
                       </div>
+                      
+                      <div className="space-y-4">
+                        <h2 className="text-xl font-semibold flex items-center gap-2">
+                          <Camera className="text-homi-purple" size={20} />
+                          Galería de fotos
+                        </h2>
+                        <FormImageUpload
+                          name="galleryImages"
+                          multiple={true}
+                          description="Comparte algunas fotos para que otros usuarios te conozcan mejor (máximo 5)"
+                        />
+                      </div>
+                      
+                      <Separator className="my-4" />
                       
                       <div className="flex justify-between mt-8">
                         <Button 

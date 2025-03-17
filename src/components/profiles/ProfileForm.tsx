@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
@@ -30,6 +30,7 @@ const formSchema = z.object({
 
 const ProfileForm = () => {
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -42,12 +43,17 @@ const ProfileForm = () => {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsSubmitting(true);
     console.log("Form submitted with values:", values);
     
-    toast({
-      title: "Profile updated",
-      description: "Your profile information has been saved.",
-    });
+    // Simulate API call with timeout
+    setTimeout(() => {
+      setIsSubmitting(false);
+      toast({
+        title: "Profile updated",
+        description: "Your profile information has been saved.",
+      });
+    }, 1000);
   }
 
   return (
@@ -105,8 +111,8 @@ const ProfileForm = () => {
           />
         </div>
 
-        <Button type="submit" className="w-full">
-          Submit
+        <Button type="submit" className="w-full" disabled={isSubmitting}>
+          {isSubmitting ? "Guardando..." : "Guardar cambios"}
         </Button>
       </form>
     </Form>

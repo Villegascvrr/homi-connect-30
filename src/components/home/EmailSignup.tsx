@@ -20,7 +20,8 @@ import {
   Sun, 
   Pencil, 
   AtSign,
-  BookOpen 
+  BookOpen,
+  Camera
 } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -41,6 +42,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
+import { FormImageUpload } from "@/components/ui/form-image-upload";
 
 const formSchema = z.object({
   firstName: z.string().min(2, { message: 'El nombre debe tener al menos 2 caracteres' }),
@@ -67,6 +69,8 @@ const formSchema = z.object({
   }).max(500, {
     message: "La bio no puede tener más de 500 caracteres.",
   }).optional(),
+  profileImage: z.string().optional(),
+  galleryImages: z.array(z.string()).optional(),
 });
 
 type Interest = {
@@ -96,6 +100,8 @@ const EmailSignup = () => {
       ocupacion: '',
       universidad: '',
       bio: '',
+      profileImage: '',
+      galleryImages: [],
     },
   });
 
@@ -414,6 +420,14 @@ const EmailSignup = () => {
               </TabsContent>
               
               <TabsContent value="perfil" className="space-y-6">
+                <div className="space-y-6">
+                  <h3 className="text-base font-medium mb-3">Foto de perfil</h3>
+                  <FormImageUpload
+                    name="profileImage"
+                    description="Sube una foto clara de tu rostro para que otros usuarios puedan identificarte"
+                  />
+                </div>
+                
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
@@ -682,6 +696,15 @@ const EmailSignup = () => {
                   </div>
                 </div>
                 
+                <div className="space-y-6">
+                  <h3 className="text-base font-medium mb-3">Fotos adicionales</h3>
+                  <FormImageUpload
+                    name="galleryImages"
+                    multiple={true}
+                    description="Comparte algunas fotos para que otros usuarios te conozcan mejor (máximo 5)"
+                  />
+                </div>
+                
                 <div className="flex justify-between">
                   <Button 
                     type="button" 
@@ -714,3 +737,4 @@ const EmailSignup = () => {
 };
 
 export default EmailSignup;
+
