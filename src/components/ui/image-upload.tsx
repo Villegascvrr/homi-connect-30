@@ -142,10 +142,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
                   <X className="h-6 w-6 text-white" />
                 </button>
               </div>)}
-            {images.length < 5 && <button type="button" onClick={handleClickUpload} className="flex flex-col items-center justify-center gap-2 aspect-square rounded-md border-2 border-dashed border-primary/20 hover:border-primary/50 transition-colors bg-muted" disabled={isUploading}>
-                <Plus className="h-8 w-8 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">Añadir foto</span>
-              </button>}
+            {images.length < 5}
           </div>
           <p className="text-xs text-muted-foreground">
             Puedes subir hasta 5 imágenes para tu perfil. La primera será tu foto principal.
