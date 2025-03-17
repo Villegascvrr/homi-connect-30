@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useState, useRef, ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
@@ -724,4 +725,153 @@ const ProfilePage = () => {
                           </div>
                           
                           <div className="space-y-2">
-                            <label className="text-xs md:text-sm text-muted
+                            <label className="text-xs md:text-sm text-muted-foreground">
+                              Presupuesto:
+                            </label>
+                            <div className="pt-5 px-3">
+                              <Slider
+                                defaultValue={profile.lookingFor.budgetRange}
+                                min={200}
+                                max={1500}
+                                step={50}
+                                onValueChange={(value) => handleLookingForChange('budgetRange', value)}
+                              />
+                              <div className="flex justify-between mt-2 text-xs text-muted-foreground">
+                                <span>€{profile.lookingFor.budgetRange[0]}</span>
+                                <span>€{profile.lookingFor.budgetRange[1]}</span>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <label className="text-xs md:text-sm text-muted-foreground">
+                              Precio exacto:
+                            </label>
+                            <Input 
+                              type="number"
+                              min={200}
+                              max={1500}
+                              value={profile.lookingFor.exactPrice}
+                              onChange={(e) => handleLookingForChange('exactPrice', Number(e.target.value))}
+                              className="w-full"
+                            />
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <label className="text-xs md:text-sm text-muted-foreground">
+                              Edad mínima:
+                            </label>
+                            <Input 
+                              type="number"
+                              min={18}
+                              max={99}
+                              value={profile.lookingFor.minAge}
+                              onChange={(e) => handleLookingForChange('minAge', e.target.value)}
+                              className="w-full"
+                            />
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <label className="text-xs md:text-sm text-muted-foreground">
+                              Edad máxima:
+                            </label>
+                            <Input 
+                              type="number"
+                              min={18}
+                              max={99}
+                              value={profile.lookingFor.maxAge}
+                              onChange={(e) => handleLookingForChange('maxAge', e.target.value)}
+                              className="w-full"
+                            />
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <label className="text-xs md:text-sm text-muted-foreground">
+                              Preferencia tabaco:
+                            </label>
+                            <select 
+                              className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm" 
+                              value={profile.lookingFor.smokingPreference} 
+                              onChange={e => handleLookingForChange('smokingPreference', e.target.value)}
+                            >
+                              <option value="no">No fumadores</option>
+                              <option value="ocasional">Fumador ocasional</option>
+                              <option value="si">Fumadores permitidos</option>
+                            </select>
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <label className="text-xs md:text-sm text-muted-foreground">
+                              Ocupación:
+                            </label>
+                            <select 
+                              className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm" 
+                              value={profile.lookingFor.occupationPreference} 
+                              onChange={e => handleLookingForChange('occupationPreference', e.target.value)}
+                            >
+                              <option value="estudiantes">Estudiantes</option>
+                              <option value="trabajadores">Trabajadores</option>
+                              <option value="cualquiera">Cualquier ocupación</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
+                  <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>Compartir Perfil</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      <div className="flex flex-col items-center gap-4">
+                        <div ref={qrCodeRef} className="bg-white p-5 rounded-lg">
+                          <QRCodeSVG value={getProfileUrl()} size={200} bgColor="#FFFFFF" fgColor="#6E59A5" />
+                        </div>
+                        <Button variant="outline" size="sm" onClick={handleDownloadQR}>
+                          <Download size={16} className="mr-2" />
+                          Descargar QR
+                        </Button>
+                      </div>
+                      
+                      <div className="flex items-center space-x-2">
+                        <Input value={getProfileUrl()} readOnly className="flex-1" />
+                        <Button size="sm" onClick={handleCopyLink}>
+                          Copiar
+                        </Button>
+                      </div>
+                      
+                      <div className="flex flex-col gap-4">
+                        <p className="text-center text-sm text-muted-foreground">Compartir en redes sociales</p>
+                        <div className="flex justify-center gap-4">
+                          <Button variant="outline" size="icon" className="rounded-full" onClick={() => shareToSocialMedia('whatsapp')}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm14 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-7 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" /></svg>
+                          </Button>
+                          <Button variant="outline" size="icon" className="rounded-full" onClick={() => shareToSocialMedia('telegram')}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z" /></svg>
+                          </Button>
+                          <Button variant="outline" size="icon" className="rounded-full" onClick={() => shareToSocialMedia('facebook')}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" /></svg>
+                          </Button>
+                          <Button variant="outline" size="icon" className="rounded-full" onClick={() => shareToSocialMedia('twitter')}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" /></svg>
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+      
+      <Footer />
+    </div>
+  );
+};
+
+export default ProfilePage;
