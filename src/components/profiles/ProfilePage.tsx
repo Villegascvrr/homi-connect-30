@@ -1,4 +1,5 @@
 
+import React from 'react';
 import { useState, useRef, ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
@@ -256,6 +257,7 @@ const ProfilePage = () => {
       <main className="flex-grow pt-16 md:pt-20 pb-8 md:pb-12">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
+            {/* Profile Header Card */}
             <div className="glass-card overflow-hidden">
               <div className="relative h-48 md:h-64 bg-homi-ultraLightPurple">
                 <img src={profile.imgUrl} alt={profile.name} className="w-full h-full object-cover" />
@@ -323,8 +325,10 @@ const ProfilePage = () => {
               </div>
             </div>
             
+            {/* Main Content Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mt-4 md:mt-6">
               <div className="md:col-span-2 space-y-4 md:space-y-6">
+                {/* About Me Section */}
                 <div className="glass-card p-4 md:p-6">
                   <h2 className="text-lg md:text-xl font-semibold mb-3 md:mb-4">Sobre mí</h2>
                   <p className="text-sm md:text-base">{profile.bio}</p>
@@ -355,6 +359,7 @@ const ProfilePage = () => {
                   </div>
                 </div>
                 
+                {/* Gallery Section */}
                 <div className="glass-card p-4 md:p-6">
                   <h2 className="text-lg md:text-xl font-semibold mb-3 md:mb-4">Galería</h2>
                   
@@ -412,6 +417,7 @@ const ProfilePage = () => {
                   )}
                 </div>
                 
+                {/* Profile Card (Desktop Only) */}
                 {!isMobile && (
                   <div className="glass-card p-6">
                     <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
@@ -527,6 +533,7 @@ const ProfilePage = () => {
                   </div>
                 )}
                 
+                {/* Preferences and Search Section */}
                 <div className="glass-card p-4 md:p-6">
                   <div className="flex justify-between items-center mb-3 md:mb-4">
                     <h2 className="text-lg md:text-xl font-semibold flex items-center gap-2">
