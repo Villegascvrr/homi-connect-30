@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -100,20 +99,22 @@ const EmailSignup = () => {
     },
   });
 
-  // Update the useEffect to ensure proper scrolling when tab changes
   useEffect(() => {
     if (formContainerRef.current) {
-      // First, ensure the form container itself is scrolled to the top
-      formContainerRef.current.scrollTop = 0;
+      window.scrollTo(0, 0);
       
-      // Then, smoothly scroll the window to show the top of the form
-      const yOffset = -80; // Add some offset to account for any headers
-      const y = formContainerRef.current.getBoundingClientRect().top + window.pageYOffset + yOffset;
-      
-      window.scrollTo({
-        top: y,
-        behavior: 'smooth'
-      });
+      setTimeout(() => {
+        if (formContainerRef.current) {
+          const headerOffset = 100;
+          const formTop = formContainerRef.current.getBoundingClientRect().top;
+          const offsetPosition = formTop + window.pageYOffset - headerOffset;
+          
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        }
+      }, 50);
     }
   }, [activeTab]);
 
