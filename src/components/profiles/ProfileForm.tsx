@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -15,6 +14,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { 
   Heart, 
   BookOpen, 
@@ -25,7 +32,9 @@ import {
   Globe, 
   Users, 
   Moon, 
-  Sun
+  Sun,
+  Home,
+  Search
 } from "lucide-react";
 
 const formSchema = z.object({
@@ -78,8 +87,17 @@ const ProfileForm = () => {
     cleanliness: "moderado",
     noise: "moderado",
   });
+  
+  const [lookingForPreferences, setLookingForPreferences] = React.useState({
+    hasApartment: true,
+    roommatesCount: "2",
+    genderPreference: "cualquiera",
+    smokingPreference: "no",
+    occupationPreference: "estudiantes",
+    minAge: "18",
+    maxAge: "35",
+  });
 
-  // Define interest categories with their respective interests
   const interestCategories: InterestCategory[] = [
     {
       id: "reading",
@@ -152,16 +170,22 @@ const ProfileForm = () => {
     }));
   };
 
+  const handleLookingForChange = (field: string, value: any) => {
+    setLookingForPreferences(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Combine form values with interests and lifestyle preferences
     const profileData = {
       ...values,
       interests: selectedInterests,
-      lifestyle: lifestylePreferences
+      lifestyle: lifestylePreferences,
+      lookingFor: lookingForPreferences
     };
     
     console.log(profileData);
-    // Here you would typically send this data to your backend
   }
 
   return (
@@ -272,7 +296,6 @@ const ProfileForm = () => {
         </Form>
       </div>
       
-      {/* Interests section */}
       <div className="glass-card p-6 mb-8">
         <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
           <Heart className="text-homi-purple" size={20} />
@@ -333,7 +356,6 @@ const ProfileForm = () => {
         )}
       </div>
       
-      {/* Lifestyle preferences */}
       <div className="glass-card p-6 mb-8">
         <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
           <Users className="text-homi-purple" size={20} />
@@ -433,6 +455,180 @@ const ProfileForm = () => {
                   {level === "alto" && "No me molesta"}
                 </button>
               ))}
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div className="glass-card p-6 mb-8">
+        <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+          <Search className="text-homi-purple" size={20} />
+          Lo que estoy buscando
+        </h2>
+        <p className="text-muted-foreground mb-6">
+          Indícanos qué tipo de compañeros de piso estás buscando para ayudarte a encontrar las mejores coincidencias.
+        </p>
+        
+        <div className="space-y-6">
+          <div>
+            <label className="text-base font-medium mb-3 block">¿Ya tienes piso o estás buscando uno?</label>
+            <div className="flex gap-4">
+              <button
+                type="button"
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg border ${
+                  lookingForPreferences.hasApartment
+                    ? 'bg-homi-purple text-white border-homi-purple'
+                    : 'bg-transparent border-input hover:bg-muted/50'
+                }`}
+                onClick={() => handleLookingForChange('hasApartment', true)}
+              >
+                <Home size={18} /> Ya tengo piso
+              </button>
+              <button
+                type="button"
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg border ${
+                  !lookingForPreferences.hasApartment
+                    ? 'bg-homi-purple text-white border-homi-purple'
+                    : 'bg-transparent border-input hover:bg-muted/50'
+                }`}
+                onClick={() => handleLookingForChange('hasApartment', false)}
+              >
+                <Search size={18} /> Estoy buscando piso
+              </button>
+            </div>
+          </div>
+          
+          <div>
+            <label className="text-base font-medium mb-3 block">¿Cuántos compañeros de piso buscas?</label>
+            <div className="grid grid-cols-4 gap-3">
+              {["1", "2", "3", "4+"].map((count) => (
+                <button
+                  key={count}
+                  type="button"
+                  className={`px-4 py-2 rounded-lg border ${
+                    lookingForPreferences.roommatesCount === count
+                      ? 'bg-homi-purple text-white border-homi-purple'
+                      : 'bg-transparent border-input hover:bg-muted/50'
+                  }`}
+                  onClick={() => handleLookingForChange('roommatesCount', count)}
+                >
+                  {count}
+                </button>
+              ))}
+            </div>
+          </div>
+          
+          <div>
+            <label className="text-base font-medium mb-3 block">Prefiero compartir con:</label>
+            <div className="grid grid-cols-3 gap-3">
+              {[
+                { value: "cualquiera", label: "Cualquier género" },
+                { value: "mujeres", label: "Solo mujeres" },
+                { value: "hombres", label: "Solo hombres" }
+              ].map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  className={`px-4 py-2 rounded-lg border ${
+                    lookingForPreferences.genderPreference === option.value
+                      ? 'bg-homi-purple text-white border-homi-purple'
+                      : 'bg-transparent border-input hover:bg-muted/50'
+                  }`}
+                  onClick={() => handleLookingForChange('genderPreference', option.value)}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          
+          <div>
+            <label className="text-base font-medium mb-3 block">Preferencia respecto a fumar:</label>
+            <div className="grid grid-cols-3 gap-3">
+              {[
+                { value: "no", label: "No fumadores" },
+                { value: "ocasional", label: "Fumador ocasional" },
+                { value: "si", label: "Fumadores ok" }
+              ].map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  className={`px-4 py-2 rounded-lg border ${
+                    lookingForPreferences.smokingPreference === option.value
+                      ? 'bg-homi-purple text-white border-homi-purple'
+                      : 'bg-transparent border-input hover:bg-muted/50'
+                  }`}
+                  onClick={() => handleLookingForChange('smokingPreference', option.value)}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          
+          <div>
+            <label className="text-base font-medium mb-3 block">Ocupación preferida:</label>
+            <div className="grid grid-cols-3 gap-3">
+              {[
+                { value: "estudiantes", label: "Estudiantes" },
+                { value: "trabajadores", label: "Trabajadores" },
+                { value: "cualquiera", label: "Cualquiera" }
+              ].map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  className={`px-4 py-2 rounded-lg border ${
+                    lookingForPreferences.occupationPreference === option.value
+                      ? 'bg-homi-purple text-white border-homi-purple'
+                      : 'bg-transparent border-input hover:bg-muted/50'
+                  }`}
+                  onClick={() => handleLookingForChange('occupationPreference', option.value)}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          
+          <div>
+            <label className="text-base font-medium mb-3 block">Rango de edad:</label>
+            <div className="grid grid-cols-2 gap-6">
+              <div>
+                <label className="text-sm text-muted-foreground mb-2 block">Edad mínima</label>
+                <Select
+                  value={lookingForPreferences.minAge}
+                  onValueChange={(value) => handleLookingForChange('minAge', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccionar edad mínima" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Array.from({ length: 23 }, (_, i) => i + 18).map((age) => (
+                      <SelectItem key={age} value={age.toString()}>
+                        {age} años
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <label className="text-sm text-muted-foreground mb-2 block">Edad máxima</label>
+                <Select
+                  value={lookingForPreferences.maxAge}
+                  onValueChange={(value) => handleLookingForChange('maxAge', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccionar edad máxima" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Array.from({ length: 45 }, (_, i) => i + 21).map((age) => (
+                      <SelectItem key={age} value={age.toString()}>
+                        {age} años
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
         </div>

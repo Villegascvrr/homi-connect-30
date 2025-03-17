@@ -1,5 +1,5 @@
-
 import { useState, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
@@ -18,7 +18,8 @@ import {
   QrCode, 
   Camera,
   ChevronLeft,
-  ChevronRight 
+  ChevronRight,
+  Search
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import html2canvas from 'html2canvas';
@@ -69,6 +70,16 @@ const ProfilePage = () => {
       smoking: 'No',
       pets: 'Me gustan, pero no tengo',
       schedule: 'Madrugadora'
+    },
+    // New property for roommate preferences
+    lookingFor: {
+      hasApartment: true,
+      roommatesCount: "2",
+      genderPreference: "mujeres",
+      smokingPreference: "no",
+      occupationPreference: "estudiantes",
+      minAge: "18",
+      maxAge: "25"
     }
   };
 
@@ -243,14 +254,15 @@ const ProfilePage = () => {
                   className="w-full h-full object-cover"
                 />
                 
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="absolute top-4 right-4 rounded-full bg-white/80 hover:bg-white"
-                  onClick={handleEditProfile}
-                >
-                  {isMobile ? <Pencil size={16} /> : <><Pencil size={16} className="mr-2" />Editar Perfil</>}
-                </Button>
+                <Link to="/profile/edit">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="absolute top-4 right-4 rounded-full bg-white/80 hover:bg-white"
+                  >
+                    {isMobile ? <Pencil size={16} /> : <><Pencil size={16} className="mr-2" />Editar Perfil</>}
+                  </Button>
+                </Link>
               </div>
               
               {/* Profile Info Section - Improved mobile spacing */}
@@ -525,6 +537,68 @@ const ProfilePage = () => {
                     </div>
                   </div>
                 )}
+                
+                {/* NEW - Looking For section */}
+                <div className="glass-card p-4 md:p-6">
+                  <h2 className="text-lg md:text-xl font-semibold mb-3 md:mb-4 flex items-center gap-2">
+                    <Search size={20} className="text-homi-purple" />
+                    Lo que estoy buscando
+                  </h2>
+                  
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2 text-sm md:text-base">
+                      <div className="bg-homi-ultraLightPurple text-homi-purple p-1.5 rounded-full">
+                        <Home size={16} />
+                      </div>
+                      <span>
+                        {profile.lookingFor.hasApartment 
+                          ? 'Ya tengo piso y busco compañeros' 
+                          : 'Busco piso compartido'}
+                      </span>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <span className="text-xs md:text-sm text-muted-foreground">Número de compañeros:</span>
+                        <p className="font-medium text-sm md:text-base">{profile.lookingFor.roommatesCount}</p>
+                      </div>
+                      
+                      <div>
+                        <span className="text-xs md:text-sm text-muted-foreground">Preferencia de género:</span>
+                        <p className="font-medium text-sm md:text-base">
+                          {profile.lookingFor.genderPreference === 'mujeres' && 'Solo mujeres'}
+                          {profile.lookingFor.genderPreference === 'hombres' && 'Solo hombres'}
+                          {profile.lookingFor.genderPreference === 'cualquiera' && 'Cualquier género'}
+                        </p>
+                      </div>
+                      
+                      <div>
+                        <span className="text-xs md:text-sm text-muted-foreground">Preferencia tabaco:</span>
+                        <p className="font-medium text-sm md:text-base">
+                          {profile.lookingFor.smokingPreference === 'no' && 'No fumadores'}
+                          {profile.lookingFor.smokingPreference === 'ocasional' && 'Fumador ocasional'}
+                          {profile.lookingFor.smokingPreference === 'si' && 'Fumadores permitidos'}
+                        </p>
+                      </div>
+                      
+                      <div>
+                        <span className="text-xs md:text-sm text-muted-foreground">Ocupación:</span>
+                        <p className="font-medium text-sm md:text-base">
+                          {profile.lookingFor.occupationPreference === 'estudiantes' && 'Estudiantes'}
+                          {profile.lookingFor.occupationPreference === 'trabajadores' && 'Trabajadores'}
+                          {profile.lookingFor.occupationPreference === 'cualquiera' && 'Cualquier ocupación'}
+                        </p>
+                      </div>
+                      
+                      <div>
+                        <span className="text-xs md:text-sm text-muted-foreground">Rango de edad:</span>
+                        <p className="font-medium text-sm md:text-base">
+                          {profile.lookingFor.minAge} - {profile.lookingFor.maxAge} años
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
               
               {/* Sidebar - Improved for mobile */}
@@ -663,61 +737,4 @@ const ProfilePage = () => {
               >
                 <div className="h-10 w-10 rounded-full bg-green-500 flex items-center justify-center mb-1">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M19.1131 4.96331C15.2938 1.07156 8.95542 1.07156 5.13615 4.96331C1.9246 8.23331 1.31688 13.2791 3.44764 17.1158L2.25605 22L7.2333 20.8084C8.91444 21.7458 10.7062 22.21 12.5062 22.21C17.8396 22.21 22.2119 17.7458 22.2119 12.3042C22.1208 9.61331 21.0219 7.0975 19.1131 4.96331ZM12.4242 20.4042C10.8065 20.4042 9.18915 19.94 7.7521 19.0937L7.42187 18.9116L4.54644 19.6284L5.2271 16.7033L5.04498 16.3302C2.32498 12.7684 3.35035 7.8253 7.00873 5.10586C10.6671 2.38642 15.4923 3.41165 18.2123 7.06998C20.9323 10.7283 19.9069 15.5534 16.2485 18.2733C14.8115 19.6284 13.6562 20.4042 12.4242 20.4042ZM16.8562 14.7233L16.221 14.3958C16.221 14.3958 15.2938 13.9772 14.6946 13.6402C14.6035 13.6402 14.5125 13.5491 14.4215 13.5491C14.2394 13.5491 14.1483 13.6402 14.0573 13.6402C14.0573 13.6402 14.0573 13.7312 13.5477 14.3958C13.4567 14.5778 13.2746 14.5778 13.1835 14.4958C13.0923 14.4958 12.0846 14.0772 11.0767 13.1538C10.2598 12.4369 9.71654 11.5588 9.53442 11.2958C9.53442 11.2047 9.44338 11.1136 9.44338 11.0228V10.85C9.44338 10.759 9.53442 10.6679 9.53442 10.6679C9.53442 10.6679 9.80209 10.3947 9.98421 10.2126C10.0752 10.1214 10.1663 9.93937 10.2573 9.84833C10.3483 9.6662 10.2573 9.48411 10.1663 9.39307C10.1663 9.39307 9.53442 8.01307 9.35231 7.74543C9.17019 7.47779 8.89795 7.47779 8.71584 7.47779C8.71584 7.47779 8.34348 7.47779 8.06246 7.47779C7.97142 7.47779 7.88038 7.56884 7.78934 7.56884L7.7521 7.60607C7.7521 7.60607 7.2427 7.74543 6.88372 8.19142C6.5248 8.57301 6.0696 9.39307 6.0696 10.6679C6.0696 11.8516 6.70773 12.9441 6.88372 13.2118C6.97476 13.3028 8.8 16.1298 11.5404 17.3136C13.0923 17.9872 13.7304 18.0782 14.55 17.8961C15.0685 17.805 15.8483 17.296 16.0304 16.618C16.2125 15.9491 16.2123 15.3689 16.1213 15.2869C16.221 15.296 16.7667 15.0598 16.8562 14.7233Z" fill="white"/>
-                  </svg>
-                </div>
-                <span className="text-xs">WhatsApp</span>
-              </Button>
-              
-              <Button 
-                variant="outline" 
-                className="flex flex-col h-auto p-2 items-center justify-center"
-                onClick={() => shareToSocialMedia('telegram')}
-              >
-                <div className="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center mb-1">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" fill="#229ED9"/>
-                    <path d="M17.28 8.32L15.3733 17.1067C15.3733 17.1067 15.1067 17.76 14.4133 17.4933L9.94667 13.7867L8.53334 13.12L5.81334 12.24C5.81334 12.24 5.41334 12.1067 5.38667 11.84C5.36 11.5733 5.84 11.4133 5.84 11.4133L16.56 7.45332C16.56 7.45332 17.28 7.12 17.28 7.68V8.32Z" fill="white"/>
-                    <path d="M9.76001 16.88C9.76001 16.88 9.57335 16.8533 9.41335 16.48C9.25335 16.1067 8.53335 13.7867 8.53335 13.7867L14.1467 10.16C14.1467 10.16 14.48 9.94666 14.4667 10.16C14.4667 10.16 14.5333 10.1867 14.32 10.3733C14.1067 10.56 9.97335 13.84 9.97335 13.84" fill="#D2E5F1"/>
-                    <path d="M11.7867 15.0133L9.89333 16.84C9.89333 16.84 9.78667 16.92 9.76 16.88L9.96 13.9067" fill="#B5CFE4"/>
-                  </svg>
-                </div>
-                <span className="text-xs">Telegram</span>
-              </Button>
-              
-              <Button 
-                variant="outline" 
-                className="flex flex-col h-auto p-2 items-center justify-center"
-                onClick={() => shareToSocialMedia('facebook')}
-              >
-                <div className="h-10 w-10 rounded-full bg-blue-600 flex items-center justify-center mb-1">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M13.397 20.997V12.801H16.162L16.573 9.59201H13.397V7.54801C13.397 6.62201 13.655 5.98801 14.984 5.98801H16.668V3.12701C16.3704 3.08774 15.1609 3.00001 13.7745 3.00001C10.8954 3.00001 8.9079 4.65701 8.9079 7.22301V9.59201H6.33203V12.801H8.9079V20.997H13.397Z" fill="white"/>
-                  </svg>
-                </div>
-                <span className="text-xs">Facebook</span>
-              </Button>
-              
-              <Button 
-                variant="outline" 
-                className="flex flex-col h-auto p-2 items-center justify-center"
-                onClick={() => shareToSocialMedia('twitter')}
-              >
-                <div className="h-10 w-10 rounded-full bg-black flex items-center justify-center mb-1">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M14.2832 10.7144L19.9395 4H18.5254L13.6543 9.71429L9.75977 4H4L10.0254 12.5714L4 19.7143H5.41406L10.6543 13.5714L14.8008 19.7143H20.5605L14.2832 10.7144ZM11.377 12.6857L10.7051 11.7286L6.0625 5.07143H8.95996L12.6152 10.4L13.2871 11.3571L18.1836 18.4286H15.2861L11.377 12.6857Z" fill="white"/>
-                  </svg>
-                </div>
-                <span className="text-xs">Twitter</span>
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-      
-      <Footer />
-    </div>
-  );
-};
-
-export default ProfilePage;
+                    <path d="M19.1131 4.96331C15.2938 1.07156 8.95542 1.07156 5.13615 4.96331C1.9246 8.23331 1.31688 13.2791 3.44764 17.1158L2.25605 22L7.2333 20.8084C8.91444 21.7458 10.7062 22.21 12.5062 22.21C17.8396 22.21 22.2119 17.7458 22.2119 12.3042C22.1208 9.61331 21.0219 7.0975 19.1131 4.96331ZM12.4242 20.4042C10.8065 20.4042 9.18915 19.94 7.7521 19.0937L7.42187 18.91
