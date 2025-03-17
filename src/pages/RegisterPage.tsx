@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -94,10 +95,23 @@ const RegisterPage = () => {
   const isMobile = useIsMobile();
   const formContainerRef = useRef<HTMLDivElement>(null);
 
+  // Update the useEffect to ensure proper scrolling when tab changes
   useEffect(() => {
     if (formContainerRef.current) {
-      formContainerRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      window.scrollTo(0, formContainerRef.current.offsetTop);
+      // First, ensure the form container itself is scrolled to the top
+      const tabsContent = formContainerRef.current.querySelector('[role="tabpanel"]');
+      if (tabsContent) {
+        tabsContent.scrollTop = 0;
+      }
+      
+      // Then, smoothly scroll the window to show the top of the form
+      const yOffset = -100; // Add some offset to account for the navbar
+      const y = formContainerRef.current.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      
+      window.scrollTo({
+        top: y,
+        behavior: 'smooth'
+      });
     }
   }, [activeTab]);
 
