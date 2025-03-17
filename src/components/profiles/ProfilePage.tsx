@@ -1,3 +1,4 @@
+
 import { useState, useRef, ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
@@ -796,4 +797,145 @@ const ProfilePage = () => {
                     </div>
                     <div>
                       <span className="text-xs md:text-sm text-muted-foreground">Compañeros:</span>
-                      <p className="font-medium text-sm md:text-base">{profile.preferences.
+                      <p className="font-medium text-sm md:text-base">{profile.preferences.roommates}</p>
+                    </div>
+                    <div>
+                      <span className="text-xs md:text-sm text-muted-foreground">Fecha de entrada:</span>
+                      <p className="font-medium text-sm md:text-base">{profile.preferences.moveInDate}</p>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Lifestyle */}
+                <div className="glass-card p-4 md:p-6">
+                  <h2 className="text-lg md:text-xl font-semibold mb-3 md:mb-4">Estilo de vida</h2>
+                  <div className="space-y-3">
+                    <div>
+                      <span className="text-xs md:text-sm text-muted-foreground">Limpieza:</span>
+                      <p className="font-medium text-sm md:text-base">{profile.lifestyle.cleanliness}</p>
+                    </div>
+                    <div>
+                      <span className="text-xs md:text-sm text-muted-foreground">Visitas:</span>
+                      <p className="font-medium text-sm md:text-base">{profile.lifestyle.guests}</p>
+                    </div>
+                    <div>
+                      <span className="text-xs md:text-sm text-muted-foreground">Tabaco:</span>
+                      <p className="font-medium text-sm md:text-base">{profile.lifestyle.smoking}</p>
+                    </div>
+                    <div>
+                      <span className="text-xs md:text-sm text-muted-foreground">Mascotas:</span>
+                      <p className="font-medium text-sm md:text-base">{profile.lifestyle.pets}</p>
+                    </div>
+                    <div>
+                      <span className="text-xs md:text-sm text-muted-foreground">Horario:</span>
+                      <p className="font-medium text-sm md:text-base">{profile.lifestyle.schedule}</p>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Mobile QR section */}
+                {isMobile && (
+                  <div className="glass-card p-4 md:p-6">
+                    <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                      <QrCode size={18} className="text-homi-purple" />
+                      Comparte tu perfil
+                    </h2>
+                    
+                    <div className="flex justify-center my-4" ref={qrCodeRef}>
+                      <div className="bg-white p-3 rounded-lg">
+                        <QRCodeSVG value={getProfileUrl()} size={180} bgColor="#FFFFFF" fgColor="#6E59A5" />
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-3">
+                      <Button 
+                        onClick={handleDownloadQR}
+                        className="w-full bg-homi-purple hover:bg-homi-purple/90"
+                      >
+                        <Download size={16} className="mr-2" />
+                        Descargar QR
+                      </Button>
+                      
+                      <Button 
+                        variant="outline"
+                        onClick={handleShare}
+                        className="w-full"
+                      >
+                        <Share size={16} className="mr-2" />
+                        Compartir perfil
+                      </Button>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Share Dialog */}
+                <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
+                  <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>Compartir perfil</DialogTitle>
+                    </DialogHeader>
+                    
+                    <div className="flex items-center space-x-2 mt-2">
+                      <div className="grid flex-1 gap-2">
+                        <Input
+                          id="link"
+                          readOnly
+                          value={getProfileUrl()}
+                        />
+                      </div>
+                      <Button size="sm" onClick={handleCopyLink}>
+                        Copiar
+                      </Button>
+                    </div>
+                    
+                    <div className="mt-6">
+                      <h4 className="text-sm font-medium mb-3">Compartir en redes sociales</h4>
+                      <div className="flex justify-around">
+                        <Button 
+                          variant="outline" 
+                          size="icon" 
+                          className="rounded-full h-12 w-12 flex items-center justify-center border-green-500 text-green-600"
+                          onClick={() => shareToSocialMedia('whatsapp')}
+                        >
+                          W
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="icon" 
+                          className="rounded-full h-12 w-12 flex items-center justify-center border-blue-500 text-blue-600"
+                          onClick={() => shareToSocialMedia('telegram')}
+                        >
+                          T
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="icon" 
+                          className="rounded-full h-12 w-12 flex items-center justify-center border-blue-700 text-blue-800"
+                          onClick={() => shareToSocialMedia('facebook')}
+                        >
+                          F
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="icon" 
+                          className="rounded-full h-12 w-12 flex items-center justify-center border-sky-500 text-sky-600"
+                          onClick={() => shareToSocialMedia('twitter')}
+                        >
+                          X
+                        </Button>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+      
+      <Footer />
+    </div>
+  );
+};
+
+export default ProfilePage;
