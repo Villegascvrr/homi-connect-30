@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -6,7 +7,22 @@ import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { CheckCircle2, ArrowRight, User, Mail, MapPin, ChevronDown, ChevronUp, Heart, Users, Moon, Sun, Pencil, AtSign } from 'lucide-react';
+import { 
+  CheckCircle2, 
+  ArrowRight, 
+  User, 
+  Mail, 
+  MapPin, 
+  ChevronDown, 
+  ChevronUp, 
+  Heart, 
+  Users, 
+  Moon, 
+  Sun, 
+  Pencil, 
+  AtSign,
+  BookOpen 
+} from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { 
