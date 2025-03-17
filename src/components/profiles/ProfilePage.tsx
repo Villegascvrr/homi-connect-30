@@ -429,10 +429,15 @@ const ProfilePage = () => {
                         ref={profileCardRef} 
                         className="w-[360px] h-[640px] bg-gradient-to-br from-purple-600 to-pink-500 rounded-xl shadow-xl overflow-hidden relative mx-auto mb-8"
                       >
+                        <div className="absolute top-4 left-0 w-full flex justify-center z-10">
+                          <div className="bg-white rounded-full px-6 py-2 shadow-lg">
+                            <span className="text-homi-purple font-bold text-xl">homi</span>
+                          </div>
+                        </div>
                         
                         <div className="absolute inset-0 bg-gradient-to-t from-purple-900/90 to-purple-600/60 p-6 flex flex-col justify-end">
-                          <div className="mb-5 flex items-center gap-3">
-                            <div className="w-16 h-16 rounded-full border-2 border-white overflow-hidden">
+                          <div className="mb-5 flex items-center gap-3 mt-8">
+                            <div className="w-20 h-20 rounded-full border-2 border-white overflow-hidden">
                               <img src={profile.imgUrl} alt={profile.name} className="w-full h-full object-cover" />
                             </div>
                             <div>

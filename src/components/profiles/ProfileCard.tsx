@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import CompatibilityBadge from '@/components/ui/CompatibilityBadge';
 import { Button } from '@/components/ui/button';
-import { MessageSquare, User, Heart } from 'lucide-react';
+import { MessageSquare, User, Heart, MapPin } from 'lucide-react';
 
 interface Tag {
   id: number;
@@ -45,39 +45,56 @@ const ProfileCard = ({
 
   return (
     <div className="glass-card overflow-hidden transition-all duration-300 hover:shadow-hover">
-      <div className="relative aspect-[3/4] overflow-hidden bg-gray-100">
-        <img
-          src={imgUrl}
-          alt={name}
-          className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-        />
-        <div className="absolute top-3 right-3">
-          <CompatibilityBadge percentage={compatibility} />
-        </div>
-      </div>
-      
-      <div className="p-6">
-        <div className="flex justify-between items-start">
-          <div>
-            <h3 className="text-xl font-semibold">{name}, {age}</h3>
-            <p className="text-sm text-muted-foreground">{location}</p>
+      <div className="relative">
+        {/* Logo en la parte superior */}
+        <div className="absolute top-0 left-0 w-full h-8 flex justify-center items-center z-10 pt-2">
+          <div className="bg-white/90 rounded-full px-4 py-1 shadow-sm">
+            <span className="text-homi-purple font-bold text-sm">homi</span>
           </div>
         </div>
         
-        <p className="my-4 text-sm line-clamp-3">{bio}</p>
+        <div className="aspect-[4/5] overflow-hidden bg-gradient-to-br from-purple-100 to-pink-50">
+          <img
+            src={imgUrl}
+            alt={name}
+            className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+          />
+          <div className="absolute top-3 right-3">
+            <CompatibilityBadge percentage={compatibility} />
+          </div>
+        </div>
+      </div>
+      
+      <div className="p-5">
+        <div className="flex justify-between items-start mb-2">
+          <div>
+            <h3 className="text-xl font-semibold">{name}, {age}</h3>
+            <p className="text-sm text-muted-foreground flex items-center gap-1">
+              <MapPin size={14} className="text-homi-purple" />
+              {location}
+            </p>
+          </div>
+        </div>
         
-        <div className="flex flex-wrap gap-2 my-4">
-          {tags.map((tag) => (
+        <p className="my-3 text-sm line-clamp-2">{bio}</p>
+        
+        <div className="flex flex-wrap gap-1.5 my-3">
+          {tags.slice(0, 4).map((tag) => (
             <span 
               key={tag.id} 
-              className="px-3 py-1 text-xs rounded-full bg-homi-ultraLightPurple text-homi-purple"
+              className="px-2.5 py-0.5 text-xs rounded-full bg-homi-ultraLightPurple text-homi-purple"
             >
               {tag.name}
             </span>
           ))}
+          {tags.length > 4 && (
+            <span className="px-2.5 py-0.5 text-xs rounded-full bg-homi-ultraLightPurple text-homi-purple">
+              +{tags.length - 4}
+            </span>
+          )}
         </div>
         
-        <div className="flex gap-2 mt-6">
+        <div className="flex gap-2 mt-4">
           <Button 
             variant="outline" 
             size="sm" 
