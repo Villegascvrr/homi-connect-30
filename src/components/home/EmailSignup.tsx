@@ -7,7 +7,7 @@ import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { CheckCircle2, ArrowRight, User, Mail, MapPin, ChevronDown, ChevronUp, BookOpen, Music, Heart, Users, Film, Utensils, Globe, Moon, Sun, Pencil } from 'lucide-react';
+import { CheckCircle2, ArrowRight, User, Mail, MapPin, ChevronDown, ChevronUp, BookOpen, Music, Heart, Users, Film, Utensils, Globe, Moon, Sun, Pencil, AtSign } from 'lucide-react';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -32,6 +32,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 const formSchema = z.object({
   // Account section
   nombre: z.string().min(2, { message: 'El nombre debe tener al menos 2 caracteres' }),
+  username: z.string()
+    .min(3, { message: 'El nombre de usuario debe tener al menos 3 caracteres' })
+    .max(20, { message: 'El nombre de usuario no puede tener más de 20 caracteres' })
+    .regex(/^[a-z0-9_]+$/, { message: 'El nombre de usuario solo puede contener letras minúsculas, números y guiones bajos' }),
   email: z.string().email({ message: 'Email inválido' }),
   
   // Profile section
@@ -72,6 +76,7 @@ const EmailSignup = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       nombre: '',
+      username: '',
       email: '',
       edad: '',
       ubicacion: '',
@@ -165,8 +170,10 @@ const EmailSignup = () => {
   // Validar primera pestaña para habilitar la segunda
   const isPersonalDataValid = 
     form.getValues('nombre')?.length > 0 && 
+    form.getValues('username')?.length > 0 &&
     form.getValues('email')?.length > 0 &&
     !form.formState.errors.nombre &&
+    !form.formState.errors.username &&
     !form.formState.errors.email;
 
   // Esta función maneja el envío final del formulario
@@ -292,6 +299,31 @@ const EmailSignup = () => {
                 
                 <FormField
                   control={form.control}
+                  name="username"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nombre de usuario *</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Input
+                            id="username"
+                            placeholder="tu_usuario"
+                            className="pl-10"
+                            {...field}
+                          />
+                          <AtSign className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                        </div>
+                      </FormControl>
+                      <FormDescription>
+                        Tu identificador único en la plataforma. Solo puede contener letras minúsculas, números y guiones bajos.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
                   name="email"
                   render={({ field }) => (
                     <FormItem>
@@ -320,7 +352,7 @@ const EmailSignup = () => {
                       if (isPersonalDataValid) {
                         setActiveTab("perfil");
                       } else {
-                        form.trigger(["nombre", "email"]);
+                        form.trigger(["nombre", "username", "email"]);
                       }
                     }}
                     className="rounded-full bg-homi-purple hover:bg-homi-purple/90 ml-auto"

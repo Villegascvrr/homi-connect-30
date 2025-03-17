@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import CompatibilityBadge from '@/components/ui/CompatibilityBadge';
 import { Button } from '@/components/ui/button';
-import { MessageSquare, User, Heart, MapPin, Search, QrCode } from 'lucide-react';
+import { MessageSquare, User, Heart, MapPin, Search, QrCode, AtSign } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { QRCodeSVG } from 'qrcode.react';
 import { Input } from '@/components/ui/input';
@@ -15,6 +15,7 @@ interface Tag {
 interface ProfileCardProps {
   id: string;
   name: string;
+  username?: string; // Added username as optional property
   age: number;
   location: string;
   bio: string;
@@ -29,6 +30,7 @@ interface ProfileCardProps {
 const ProfileCard = ({
   id,
   name,
+  username,
   age,
   location,
   bio,
@@ -93,6 +95,12 @@ const ProfileCard = ({
           <div className="flex justify-between items-start mb-2">
             <div>
               <h3 className="text-xl font-semibold">{name}, {age}</h3>
+              {username && (
+                <p className="text-sm text-muted-foreground flex items-center gap-1 mb-1">
+                  <AtSign size={14} className="text-homi-purple" />
+                  {username}
+                </p>
+              )}
               <p className="text-sm text-muted-foreground flex items-center gap-1">
                 <MapPin size={14} className="text-homi-purple" />
                 {location}

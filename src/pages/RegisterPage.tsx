@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -17,7 +18,8 @@ import {
   Utensils, 
   Globe, 
   Moon, 
-  Sun
+  Sun,
+  AtSign
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -42,6 +44,10 @@ import { useIsMobile } from '@/hooks/use-mobile';
 
 const formSchema = z.object({
   name: z.string().min(2, { message: 'El nombre debe tener al menos 2 caracteres' }),
+  username: z.string()
+    .min(3, { message: 'El nombre de usuario debe tener al menos 3 caracteres' })
+    .max(20, { message: 'El nombre de usuario no puede tener más de 20 caracteres' })
+    .regex(/^[a-z0-9_]+$/, { message: 'El nombre de usuario solo puede contener letras minúsculas, números y guiones bajos' }),
   email: z.string().email({ message: 'Email inválido' }),
   password: z.string().min(6, { message: 'La contraseña debe tener al menos 6 caracteres' }),
   confirmPassword: z.string(),
@@ -98,6 +104,7 @@ const RegisterPage = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
+      username: '',
       email: '',
       password: '',
       confirmPassword: '',
@@ -227,12 +234,14 @@ const RegisterPage = () => {
 
   const isAccountValid = () => {
     const name = form.getValues('name');
+    const username = form.getValues('username');
     const email = form.getValues('email');
     const password = form.getValues('password');
     const confirmPassword = form.getValues('confirmPassword');
     const terms = form.getValues('terms');
     
     return name && 
+           username && 
            email && 
            password && 
            confirmPassword && 
@@ -241,7 +250,7 @@ const RegisterPage = () => {
   };
 
   const handleContinueClick = async () => {
-    const result = await form.trigger(['name', 'email', 'password', 'confirmPassword', 'terms']);
+    const result = await form.trigger(['name', 'username', 'email', 'password', 'confirmPassword', 'terms']);
     
     if (result && isAccountValid()) {
       setActiveTab("perfil");
@@ -345,6 +354,30 @@ const RegisterPage = () => {
                                 <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                               </div>
                             </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={form.control}
+                        name="username"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Nombre de usuario</FormLabel>
+                            <FormControl>
+                              <div className="relative">
+                                <Input 
+                                  placeholder="tu_usuario" 
+                                  className="pl-10" 
+                                  {...field} 
+                                />
+                                <AtSign className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                              </div>
+                            </FormControl>
+                            <FormDescription>
+                              Tu identificador único en la plataforma. Solo puede contener letras minúsculas, números y guiones bajos.
+                            </FormDescription>
                             <FormMessage />
                           </FormItem>
                         )}

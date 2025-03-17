@@ -5,7 +5,7 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { MessageSquare, Share, Heart, Home, Briefcase, GraduationCap, UserCheck } from 'lucide-react';
+import { MessageSquare, Share, Heart, Home, Briefcase, GraduationCap, UserCheck, AtSign } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 // Mock data - in a real app, this would be fetched from an API
@@ -13,6 +13,7 @@ const profiles = [
   {
     id: '1',
     name: 'Elena García',
+    username: 'elena_g',
     age: 23,
     location: 'Madrid',
     university: 'Universidad Complutense de Madrid',
@@ -169,6 +170,12 @@ const ProfileViewPage = () => {
                       <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-2">
                         {profile.name}, {profile.age}
                       </h1>
+                      {profile.username && (
+                        <p className="text-muted-foreground flex items-center gap-1 mt-1">
+                          <AtSign size={16} className="text-homi-purple" />
+                          {profile.username}
+                        </p>
+                      )}
                       <p className="text-muted-foreground flex items-center gap-1 mt-1">
                         <Home size={16} />
                         {profile.location}
