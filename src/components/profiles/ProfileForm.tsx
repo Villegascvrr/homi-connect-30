@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -34,8 +33,11 @@ import {
 } from 'lucide-react';
 
 const formSchema = z.object({
-  name: z.string().min(2, {
+  firstName: z.string().min(2, {
     message: "El nombre debe tener al menos 2 caracteres.",
+  }),
+  lastName: z.string().min(2, {
+    message: "Los apellidos deben tener al menos 2 caracteres.",
   }),
   username: z.string()
     .min(3, { message: "El nombre de usuario debe tener al menos 3 caracteres" })
@@ -68,7 +70,8 @@ const ProfileForm = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
+      firstName: "",
+      lastName: "",
       username: "",
       age: "",
       location: "",
@@ -164,12 +167,26 @@ const ProfileForm = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
                 control={form.control}
-                name="name"
+                name="firstName"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Nombre</FormLabel>
                     <FormControl>
                       <Input placeholder="Tu nombre" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="lastName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Apellidos</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Tus apellidos" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -626,3 +643,4 @@ const ProfileForm = () => {
 };
 
 export default ProfileForm;
+

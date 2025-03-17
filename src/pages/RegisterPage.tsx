@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -37,7 +38,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const formSchema = z.object({
-  name: z.string().min(2, { message: 'El nombre debe tener al menos 2 caracteres' }),
+  firstName: z.string().min(2, { message: 'El nombre debe tener al menos 2 caracteres' }),
+  lastName: z.string().min(2, { message: 'Los apellidos deben tener al menos 2 caracteres' }),
   username: z.string()
     .min(3, { message: 'El nombre de usuario debe tener al menos 3 caracteres' })
     .max(20, { message: 'El nombre de usuario no puede tener más de 20 caracteres' })
@@ -95,7 +97,8 @@ const RegisterPage = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: '',
+      firstName: '',
+      lastName: '',
       username: '',
       email: '',
       password: '',
@@ -115,14 +118,16 @@ const RegisterPage = () => {
     
     setTimeout(() => {
       const mockGoogleData = {
-        name: "Usuario Google",
+        firstName: "Usuario",
+        lastName: "Google",
         email: "usuario@gmail.com",
       };
       
-      form.setValue("name", mockGoogleData.name);
+      form.setValue("firstName", mockGoogleData.firstName);
+      form.setValue("lastName", mockGoogleData.lastName);
       form.setValue("email", mockGoogleData.email);
       
-      form.trigger(["name", "email"]);
+      form.trigger(["firstName", "lastName", "email"]);
       
       setIsSigningWithGoogle(false);
       
@@ -187,14 +192,16 @@ const RegisterPage = () => {
   };
 
   const isAccountValid = () => {
-    const name = form.getValues('name');
+    const firstName = form.getValues('firstName');
+    const lastName = form.getValues('lastName');
     const username = form.getValues('username');
     const email = form.getValues('email');
     const password = form.getValues('password');
     const confirmPassword = form.getValues('confirmPassword');
     const terms = form.getValues('terms');
     
-    return name && 
+    return firstName && 
+           lastName && 
            username && 
            email && 
            password && 
@@ -204,7 +211,7 @@ const RegisterPage = () => {
   };
 
   const handleContinueClick = async () => {
-    const result = await form.trigger(['name', 'username', 'email', 'password', 'confirmPassword', 'terms']);
+    const result = await form.trigger(['firstName', 'lastName', 'username', 'email', 'password', 'confirmPassword', 'terms']);
     
     if (result && isAccountValid()) {
       setActiveTab("perfil");
@@ -292,26 +299,49 @@ const RegisterPage = () => {
                         <div className="flex-grow border-t"></div>
                       </div>
 
-                      <FormField
-                        control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Nombre completo</FormLabel>
-                            <FormControl>
-                              <div className="relative">
-                                <Input 
-                                  placeholder="Tu nombre" 
-                                  className="pl-10" 
-                                  {...field} 
-                                />
-                                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                              </div>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <FormField
+                          control={form.control}
+                          name="firstName"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Nombre</FormLabel>
+                              <FormControl>
+                                <div className="relative">
+                                  <Input 
+                                    placeholder="Tu nombre" 
+                                    className="pl-10" 
+                                    {...field} 
+                                  />
+                                  <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                                </div>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={form.control}
+                          name="lastName"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Apellidos</FormLabel>
+                              <FormControl>
+                                <div className="relative">
+                                  <Input 
+                                    placeholder="Tus apellidos" 
+                                    className="pl-10" 
+                                    {...field} 
+                                  />
+                                  <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                                </div>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
                       
                       <FormField
                         control={form.control}
