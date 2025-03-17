@@ -401,12 +401,12 @@ const ProfilePage = () => {
                                 </span>)}
                             </div>
                             
-                            <p className="text-white/90 text-sm line-clamp-3 mb-6">
+                            <p className="text-white/90 text-sm line-clamp-3">
                               {profile.bio}
                             </p>
                           </div>
                           
-                          <div className="flex justify-between items-center bg-white/10 p-3 rounded-lg backdrop-blur-sm mx-0 px-[12px] py-[12px] my-0">
+                          <div className="flex justify-between items-center bg-white/10 p-3 rounded-lg backdrop-blur-sm mx-0 px-[12px] py-[12px] mb-8">
                             <div>
                               <h4 className="text-xs text-white/60 mb-1">Escanea para conectar</h4>
                               <p className="text-sm font-medium text-white">homi-connect.app</p>
