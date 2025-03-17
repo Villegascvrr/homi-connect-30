@@ -6,7 +6,7 @@ import Footer from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { MessageSquare, Share, Heart, Home, Briefcase, GraduationCap, UserCheck, Pencil, Download, QrCode, Camera, ChevronLeft, ChevronRight, Search, Check, X, DollarSign, Calendar, MapPin, Users } from 'lucide-react';
+import { MessageSquare, Share, Heart, Home, Briefcase, GraduationCap, UserCheck, Pencil, Download, QrCode, Camera, ChevronLeft, ChevronRight, Search, Check, X, DollarSign, Calendar, MapPin, Users, AtSign } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import html2canvas from 'html2canvas';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -284,11 +284,16 @@ const ProfilePage = () => {
                       <h1 className="text-xl md:text-3xl font-bold flex items-center gap-2">
                         {profile.name}, {profile.age}
                       </h1>
+                      <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
+                        <AtSign size={16} className="text-homi-purple" />
+                        {profile.username || "usuario"}
+                      </p>
                       <p className="text-muted-foreground flex items-center gap-1 mt-1">
                         <Home size={16} />
                         {profile.location}
                       </p>
                     </div>
+                    
                     <div className={`flex ${isMobile ? 'justify-between' : 'gap-2'} mt-4 md:mt-0`}>
                       <Button 
                         variant={liked ? "default" : "outline"} 
