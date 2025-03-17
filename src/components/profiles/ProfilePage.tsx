@@ -436,7 +436,7 @@ const ProfilePage = () => {
                         </div>
                         
                         <div className="absolute inset-0 bg-gradient-to-t from-purple-900/90 to-purple-600/60 p-6 flex flex-col justify-end">
-                          <div className="mb-5 flex items-center gap-3 mt-8">
+                          <div className="mb-8 flex items-center gap-3 mt-8">
                             <div className="w-20 h-20 rounded-full border-2 border-white overflow-hidden">
                               <img src={profile.imgUrl} alt={profile.name} className="w-full h-full object-cover" />
                             </div>
@@ -449,12 +449,12 @@ const ProfilePage = () => {
                                   </div>
                                 )}
                               </h3>
-                              <p className="text-sm text-white/80">{profile.location} · {profile.occupation}</p>
+                              <p className="text-sm text-white/80 mt-1">{profile.location} · {profile.occupation}</p>
                             </div>
                           </div>
                           
-                          <div className="mb-4">
-                            <div className="flex flex-wrap gap-2 mb-3">
+                          <div className="mb-6">
+                            <div className="flex flex-wrap gap-2 mb-4">
                               {profile.tags.slice(0, 3).map(tag => (
                                 <span key={tag.id} className="px-3 py-1 text-xs rounded-full bg-white/20 text-white">
                                   {tag.name}
@@ -462,24 +462,24 @@ const ProfilePage = () => {
                               ))}
                             </div>
                             
-                            <p className="text-white/90 text-sm line-clamp-2">
+                            <p className="text-white/90 text-sm line-clamp-2 mb-2">
                               {profile.bio}
                             </p>
                           </div>
                           
-                          <div className="mb-4 text-white/90">
-                            <h4 className="text-xs font-medium text-white/70 mb-2 flex items-center gap-1">
+                          <div className="mb-6 text-white/90">
+                            <h4 className="text-xs font-medium text-white/70 mb-3 flex items-center gap-1">
                               <Search size={12} />
                               Lo que estoy buscando:
                             </h4>
-                            <div className="grid grid-cols-2 gap-x-2 gap-y-1 text-xs">
+                            <div className="grid grid-cols-2 gap-x-3 gap-y-2.5 text-xs">
                               <div>
                                 <span className="text-white/60">Presupuesto:</span>
-                                <p>€{profile.lookingFor.budgetRange[0]} - €{profile.lookingFor.budgetRange[1]}</p>
+                                <p className="mt-1">€{profile.lookingFor.budgetRange[0]} - €{profile.lookingFor.budgetRange[1]}</p>
                               </div>
                               <div>
                                 <span className="text-white/60">Género:</span>
-                                <p>
+                                <p className="mt-1">
                                   {profile.lookingFor.genderPreference === 'mujeres' 
                                     ? 'Solo mujeres' 
                                     : profile.lookingFor.genderPreference === 'hombres' 
@@ -489,18 +489,18 @@ const ProfilePage = () => {
                               </div>
                               <div>
                                 <span className="text-white/60">Edad:</span>
-                                <p>{profile.lookingFor.minAge} - {profile.lookingFor.maxAge} años</p>
+                                <p className="mt-1">{profile.lookingFor.minAge} - {profile.lookingFor.maxAge} años</p>
                               </div>
                               <div>
                                 <span className="text-white/60">Compañeros:</span>
-                                <p>{profile.lookingFor.roommatesCount}</p>
+                                <p className="mt-1">{profile.lookingFor.roommatesCount}</p>
                               </div>
                             </div>
                           </div>
                           
-                          <div className="flex justify-between items-center bg-white/10 p-3 rounded-lg backdrop-blur-sm mx-0 px-[12px] py-[12px] mb-10">
+                          <div className="flex justify-between items-center bg-white/10 p-3 rounded-lg backdrop-blur-sm mx-0 px-[12px] py-[12px] mb-12">
                             <div>
-                              <h4 className="text-xs text-white/60 mb-1">Escanea para conectar</h4>
+                              <h4 className="text-xs text-white/60 mb-1.5">Escanea para conectar</h4>
                               <p className="text-sm font-medium text-white">homi-connect.app</p>
                             </div>
                             <div className="bg-white p-2 rounded-lg">
