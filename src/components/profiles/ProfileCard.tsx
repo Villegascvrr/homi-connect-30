@@ -63,8 +63,8 @@ const ProfileCard = ({
             <CompatibilityBadge percentage={compatibility} />
           </div>
           
-          {/* Banner indicando búsqueda de compañero */}
-          <div className="absolute bottom-0 left-0 w-full bg-homi-purple/80 text-white py-1.5 px-3 text-center backdrop-blur-sm">
+          {/* Banner indicating roommate search - with stronger styling to ensure visibility */}
+          <div className="absolute bottom-0 left-0 w-full bg-homi-purple text-white py-2 px-3 text-center z-20">
             <div className="flex items-center justify-center gap-1.5 text-sm font-medium">
               <Search size={14} />
               <span>Buscando compañero de piso</span>
