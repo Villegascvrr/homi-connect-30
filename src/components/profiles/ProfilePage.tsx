@@ -437,12 +437,12 @@ const ProfilePage = () => {
                         </div>
                         
                         <div className="absolute inset-0 bg-gradient-to-t from-purple-900/90 to-purple-600/60 p-6 flex flex-col justify-end">
-                          {/* Eye-catching banner for roommate search */}
-                          <div className="absolute top-1/4 left-0 right-0 transform -rotate-6 z-20">
-                            <div className="bg-gradient-to-r from-orange-500 to-pink-500 text-white font-bold py-3 px-4 shadow-lg text-center mx-2">
-                              <div className="flex items-center justify-center gap-2 text-base md:text-lg transform rotate-6">
-                                <Search size={18} className="flex-shrink-0" strokeWidth={3} />
-                                <span className="uppercase tracking-wider">¡Buscando compañero de piso!</span>
+                          {/* Modified banner - more integrated with the design */}
+                          <div className="absolute top-16 right-0 max-w-[85%] z-20">
+                            <div className="bg-gradient-to-r from-orange-500/90 to-pink-500/90 text-white font-bold py-2 px-4 shadow-lg rounded-l-full backdrop-blur-sm border-l-4 border-white/30">
+                              <div className="flex items-center justify-end gap-2 text-sm">
+                                <Search size={16} className="flex-shrink-0" strokeWidth={2.5} />
+                                <span className="tracking-wide">¡Buscando compañero de piso!</span>
                               </div>
                             </div>
                           </div>
