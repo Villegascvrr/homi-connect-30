@@ -429,17 +429,6 @@ const ProfilePage = () => {
                         ref={profileCardRef} 
                         className="w-[360px] h-[640px] bg-gradient-to-br from-purple-600 to-pink-500 rounded-xl shadow-xl overflow-hidden relative mx-auto mb-8"
                       >
-                        <div className="absolute top-0 left-0 w-full flex justify-center pt-6 z-10">
-                          <div className="bg-white/90 rounded-full p-3 shadow-lg">
-                            <svg width="60" height="60" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M256 512C397.385 512 512 397.385 512 256C512 114.615 397.385 0 256 0C114.615 0 0 114.615 0 256C0 397.385 114.615 512 256 512Z" fill="#6E59A5"/>
-                              <path d="M173.63 283.988C158.723 283.988 146.63 271.895 146.63 256.988V182.84C146.63 167.934 158.723 155.84 173.63 155.84H204.63C219.536 155.84 231.63 167.934 231.63 182.84V256.988C231.63 271.895 219.536 283.988 204.63 283.988H173.63Z" fill="white"/>
-                              <path d="M307.37 356.16C322.277 356.16 334.37 344.066 334.37 329.16V255.012C334.37 240.105 322.277 228.012 307.37 228.012H276.37C261.464 228.012 249.37 240.105 249.37 255.012V329.16C249.37 344.066 261.464 356.16 276.37 356.16H307.37Z" fill="white"/>
-                              <path d="M237.63 203.84C245.914 203.84 252.63 197.124 252.63 188.84C252.63 180.556 245.914 173.84 237.63 173.84C229.346 173.84 222.63 180.556 222.63 188.84C222.63 197.124 229.346 203.84 237.63 203.84Z" fill="white"/>
-                              <path d="M243.37 308.16C235.086 308.16 228.37 314.876 228.37 323.16C228.37 331.444 235.086 338.16 243.37 338.16C251.654 338.16 258.37 331.444 258.37 323.16C258.37 314.876 251.654 308.16 243.37 308.16Z" fill="white"/>
-                            </svg>
-                          </div>
-                        </div>
                         
                         <div className="absolute inset-0 bg-gradient-to-t from-purple-900/90 to-purple-600/60 p-6 flex flex-col justify-end">
                           <div className="mb-5 flex items-center gap-3">
