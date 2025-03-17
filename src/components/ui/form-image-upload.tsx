@@ -17,6 +17,7 @@ interface FormImageUploadProps<TFieldValues extends FieldValues> {
   description?: string;
   multiple?: boolean;
   className?: string;
+  required?: boolean;
   onChange?: (field: ControllerRenderProps<TFieldValues, Path<TFieldValues>>, value: string | string[]) => void;
 }
 
@@ -26,6 +27,7 @@ export function FormImageUpload<TFieldValues extends FieldValues>({
   description,
   multiple = false,
   className,
+  required = false,
   onChange,
 }: FormImageUploadProps<TFieldValues>) {
   // Get form context to log state for debugging
@@ -44,7 +46,12 @@ export function FormImageUpload<TFieldValues extends FieldValues>({
         
         return (
           <FormItem className={className}>
-            {label && <FormLabel>{label}</FormLabel>}
+            {label && (
+              <FormLabel>
+                {label}
+                {required && <span className="text-destructive ml-1">*</span>}
+              </FormLabel>
+            )}
             <FormControl>
               <ImageUpload
                 multiple={multiple}
@@ -57,13 +64,9 @@ export function FormImageUpload<TFieldValues extends FieldValues>({
                     field.onChange(value);
                   }
                 }}
-                onRemove={() => {
-                  if (multiple) {
-                    field.onChange([]);
-                  } else {
-                    field.onChange('');
-                  }
-                }}
+                onBlur={field.onBlur}
+                disableCompression={!multiple}
+                enableCropping={!multiple}
               />
             </FormControl>
             {description && <FormDescription>{description}</FormDescription>}

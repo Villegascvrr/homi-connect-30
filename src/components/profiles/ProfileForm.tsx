@@ -15,7 +15,9 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { FormImageUpload } from "@/components/ui/form-image-upload";
+import { FormImageUpload } from "@/components/ui/form-image-upload"
+import ProfileStatusToggle from "@/components/profiles/ProfileStatusToggle"
+import { Separator } from "@/components/ui/separator"
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -26,6 +28,7 @@ const formSchema = z.object({
   }),
   profileImage: z.string().optional(),
   galleryImages: z.array(z.string()).optional(),
+  isProfileActive: z.boolean().default(true),
 })
 
 const ProfileForm = () => {
@@ -39,6 +42,7 @@ const ProfileForm = () => {
       email: "",
       profileImage: "",
       galleryImages: [] as string[],
+      isProfileActive: true,
     },
   });
 
@@ -56,11 +60,25 @@ const ProfileForm = () => {
     }, 1000);
   }
 
+  const handleProfileStatusToggle = (active: boolean) => {
+    form.setValue('isProfileActive', active);
+  };
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <div className="space-y-6">
           <h2 className="text-xl font-semibold">Información Personal</h2>
+          
+          {/* Add status toggle */}
+          <div className="mb-6">
+            <ProfileStatusToggle 
+              isActive={form.watch('isProfileActive')} 
+              onToggle={handleProfileStatusToggle}
+            />
+          </div>
+          
+          <Separator className="my-6" />
           
           {/* Add image upload section */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -68,7 +86,8 @@ const ProfileForm = () => {
               <FormImageUpload
                 name="profileImage"
                 label="Foto de perfil"
-                description="Esta será tu imagen principal en tu perfil"
+                description="Esta será tu imagen principal en tu perfil (opcional)"
+                required={false}
               />
             </div>
             
@@ -77,9 +96,9 @@ const ProfileForm = () => {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>Nombre</FormLabel>
                   <FormControl>
-                    <Input placeholder="Your name" {...field} />
+                    <Input placeholder="Tu nombre" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -92,7 +111,7 @@ const ProfileForm = () => {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="Your email" {...field} />
+                    <Input placeholder="Tu email" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

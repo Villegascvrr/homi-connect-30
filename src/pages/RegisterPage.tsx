@@ -525,11 +525,12 @@ const RegisterPage = () => {
                       <div className="space-y-4">
                         <h2 className="text-xl font-semibold flex items-center gap-2">
                           <Camera className="text-homi-purple" size={20} />
-                          Foto de perfil
+                          Foto de perfil (opcional)
                         </h2>
                         <FormImageUpload
                           name="profileImage"
                           description="Sube una foto clara de tu rostro para que otros usuarios puedan identificarte"
+                          required={false}
                         />
                       </div>
                       

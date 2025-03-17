@@ -71,6 +71,7 @@ const formSchema = z.object({
   }).optional(),
   profileImage: z.string().optional(),
   galleryImages: z.array(z.string()).optional(),
+  isProfileActive: z.boolean().default(true),
 });
 
 type Interest = {
@@ -102,6 +103,7 @@ const EmailSignup = () => {
       bio: '',
       profileImage: '',
       galleryImages: [],
+      isProfileActive: true,
     },
   });
 
@@ -433,10 +435,11 @@ const EmailSignup = () => {
               
               <TabsContent value="perfil" className="space-y-6">
                 <div className="space-y-6">
-                  <h3 className="text-base font-medium mb-3">Foto de perfil</h3>
+                  <h3 className="text-base font-medium mb-3">Foto de perfil (opcional)</h3>
                   <FormImageUpload
                     name="profileImage"
                     description="Sube una foto clara de tu rostro para que otros usuarios puedan identificarte"
+                    required={false}
                   />
                 </div>
                 
