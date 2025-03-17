@@ -170,12 +170,10 @@ const ProfileViewPage = () => {
                       <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-2">
                         {profile.name}, {profile.age}
                       </h1>
-                      {profile.username && (
-                        <p className="text-muted-foreground flex items-center gap-1 mt-1">
-                          <AtSign size={16} className="text-homi-purple" />
-                          {profile.username}
-                        </p>
-                      )}
+                      <p className="text-muted-foreground flex items-center gap-1 mt-1">
+                        <AtSign size={16} className="text-homi-purple" />
+                        <span className="font-medium">{profile.username}</span>
+                      </p>
                       <p className="text-muted-foreground flex items-center gap-1 mt-1">
                         <Home size={16} />
                         {profile.location}
