@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useState, useRef, ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
@@ -309,6 +308,9 @@ const ProfilePage = () => {
                       <Button variant="outline" size={isMobile ? "icon" : "sm"} className="rounded-full" onClick={handleShare}>
                         <Share size={18} />
                       </Button>
+                      <Button variant="outline" size={isMobile ? "icon" : "sm"} className="rounded-full" onClick={() => setShowShareDialog(true)}>
+                        <QrCode size={18} />
+                      </Button>
                       <Button size={isMobile ? "icon" : "sm"} className="rounded-full bg-homi-purple hover:bg-homi-purple/90" onClick={handleMessage}>
                         {isMobile ? (
                           <MessageSquare size={18} />
@@ -437,7 +439,6 @@ const ProfilePage = () => {
                         </div>
                         
                         <div className="absolute inset-0 bg-gradient-to-t from-purple-900/90 to-purple-600/60 p-6 flex flex-col justify-end">
-                          {/* Modified banner - more integrated with the design */}
                           <div className="absolute top-16 right-0 max-w-[85%] z-20">
                             <div className="bg-gradient-to-r from-orange-500/90 to-pink-500/90 text-white font-bold py-2 px-4 shadow-lg rounded-l-full backdrop-blur-sm border-l-4 border-white/30">
                               <div className="flex items-center justify-end gap-2 text-sm">
@@ -875,3 +876,4 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
+
