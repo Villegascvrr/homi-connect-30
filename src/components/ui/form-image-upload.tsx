@@ -48,13 +48,20 @@ export function FormImageUpload<TFieldValues extends FieldValues>({
             <FormControl>
               <ImageUpload
                 multiple={multiple}
-                value={field.value}
+                value={field.value || (multiple ? [] : '')}
                 onChange={(value) => {
                   console.log(`Image upload onChange for ${name}:`, value);
                   if (onChange) {
                     onChange(field as any, value);
                   } else {
                     field.onChange(value);
+                  }
+                }}
+                onRemove={() => {
+                  if (multiple) {
+                    field.onChange([]);
+                  } else {
+                    field.onChange('');
                   }
                 }}
               />

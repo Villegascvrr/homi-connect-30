@@ -202,31 +202,50 @@ const EmailSignup = () => {
     !form.formState.errors.username &&
     !form.formState.errors.email;
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    if (!isPersonalDataValid && activeTab === "datos") {
-      return;
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    console.log("Form submission started", { values, isPersonalDataValid, activeTab });
+    
+    if (activeTab === "datos" && isPersonalDataValid) {
+      console.log("Advancing to profile tab");
+      setActiveTab("perfil");
+      return; // Don't proceed with submission yet
     }
     
-    setIsLoading(true);
-    
-    const userData = {
-      ...values,
-      interests: selectedInterests,
-      lifestyle: lifestylePreferences
-    };
-    
-    console.log('Datos completos del usuario:', userData);
-    
-    setTimeout(() => {
-      setIsSubmitted(true);
-      toast({
-        title: "¡Registro exitoso!",
-        description: "Tu perfil se ha creado correctamente.",
-      });
-      setIsLoading(false);
+    if (activeTab === "perfil") {
+      console.log("Submitting full form");
+      setIsLoading(true);
       
-      navigate("/profile");
-    }, 1000);
+      const userData = {
+        ...values,
+        interests: selectedInterests,
+        lifestyle: lifestylePreferences
+      };
+      
+      console.log('Datos completos del usuario:', userData);
+      
+      try {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        setIsSubmitted(true);
+        toast({
+          title: "¡Registro exitoso!",
+          description: "Tu perfil se ha creado correctamente.",
+        });
+        
+        setTimeout(() => {
+          navigate("/profile");
+        }, 500);
+      } catch (error) {
+        console.error("Error submitting form:", error);
+        toast({
+          title: "Error",
+          description: "Ha ocurrido un error al crear tu perfil. Inténtalo de nuevo.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    }
   };
 
   if (isSubmitted) {
@@ -403,14 +422,7 @@ const EmailSignup = () => {
                 
                 <div className="flex justify-end mt-6">
                   <Button 
-                    type="button" 
-                    onClick={() => {
-                      if (isPersonalDataValid) {
-                        setActiveTab("perfil");
-                      } else {
-                        form.trigger(["firstName", "lastName", "username", "email"]);
-                      }
-                    }}
+                    type="submit" 
                     className="rounded-full bg-homi-purple hover:bg-homi-purple/90 ml-auto"
                   >
                     Siguiente 
@@ -737,4 +749,3 @@ const EmailSignup = () => {
 };
 
 export default EmailSignup;
-
