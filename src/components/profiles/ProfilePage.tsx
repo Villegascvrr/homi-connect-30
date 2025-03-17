@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useState, useRef, ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
@@ -254,7 +255,7 @@ const ProfilePage = () => {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       
-      <main className="flex-grow pt-20 md:pt-24 pb-12 md:pb-16">
+      <main className="flex-grow pt-24 md:pt-28 pb-16 md:pb-20">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="glass-card overflow-hidden">
@@ -268,7 +269,7 @@ const ProfilePage = () => {
                 </Link>
               </div>
               
-              <div className="relative px-4 md:px-6 py-8 md:py-10">
+              <div className="relative px-4 md:px-6 py-10 md:py-12">
                 <div className={`${isMobile ? 'absolute -top-14 left-4' : 'absolute -top-16 left-6'} ${isMobile ? 'w-24 h-24' : 'w-32 h-32'} rounded-full overflow-hidden border-4 border-white shadow-lg`}>
                   <img src={profile.imgUrl} alt={profile.name} className="w-full h-full object-cover" />
                   {profile.verified && (
@@ -664,127 +665,129 @@ const ProfilePage = () => {
                         </div>
                       </div>
                     ) : (
-                      <div className="flex items-center justify-between gap-2 p-3 border border-input rounded-md bg-background/50">
-                        <div className="flex items-center gap-2">
-                          <div className="bg-homi-ultraLightPurple text-homi-purple p-1.5 rounded-full">
-                            <Home size={16} />
+                      <div className="space-y-5">
+                        <div className="flex items-center justify-between gap-2 p-3 border border-input rounded-md bg-background/50">
+                          <div className="flex items-center gap-2">
+                            <div className="bg-homi-ultraLightPurple text-homi-purple p-1.5 rounded-full">
+                              <Home size={16} />
+                            </div>
+                            <span className="text-sm md:text-base">
+                              {profile.lookingFor.hasApartment ? 'Ya tengo piso y busco compañeros' : 'Busco piso compartido'}
+                            </span>
                           </div>
-                          <span className="text-sm md:text-base">
-                            {profile.lookingFor.hasApartment ? 'Ya tengo piso y busco compañeros' : 'Busco piso compartido'}
-                          </span>
-                        </div>
-                        <Switch 
-                          checked={profile.lookingFor.hasApartment} 
-                          onCheckedChange={checked => handleLookingForChange('hasApartment', checked)} 
-                        />
-                      </div>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <label className="text-xs md:text-sm text-muted-foreground">
-                            Número de compañeros:
-                          </label>
-                          <select 
-                            className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm" 
-                            value={profile.lookingFor.roommatesCount} 
-                            onChange={e => handleLookingForChange('roommatesCount', e.target.value)}
-                          >
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4+">4 o más</option>
-                          </select>
+                          <Switch 
+                            checked={profile.lookingFor.hasApartment} 
+                            onCheckedChange={checked => handleLookingForChange('hasApartment', checked)} 
+                          />
                         </div>
                         
-                        <div className="space-y-2">
-                          <label className="text-xs md:text-sm text-muted-foreground">
-                            Preferencia de género:
-                          </label>
-                          <select 
-                            className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm" 
-                            value={profile.lookingFor.genderPreference} 
-                            onChange={e => handleLookingForChange('genderPreference', e.target.value)}
-                          >
-                            <option value="mujeres">Solo mujeres</option>
-                            <option value="hombres">Solo hombres</option>
-                            <option value="cualquiera">Cualquier género</option>
-                          </select>
-                        </div>
-                        
-                        <div className="space-y-2">
-                          <label className="text-xs md:text-sm text-muted-foreground">
-                            Preferencia tabaco:
-                          </label>
-                          <select 
-                            className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm" 
-                            value={profile.lookingFor.smokingPreference} 
-                            onChange={e => handleLookingForChange('smokingPreference', e.target.value)}
-                          >
-                            <option value="no">No fumadores</option>
-                            <option value="ocasional">Fumador ocasional</option>
-                            <option value="si">Fumadores permitidos</option>
-                          </select>
-                        </div>
-                        
-                        <div className="space-y-2">
-                          <label className="text-xs md:text-sm text-muted-foreground">
-                            Ocupación:
-                          </label>
-                          <select 
-                            className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
-                            value={profile.lookingFor.occupationPreference} 
-                            onChange={e => handleLookingForChange('occupationPreference', e.target.value)}
-                          >
-                            <option value="estudiantes">Estudiantes</option>
-                            <option value="trabajadores">Trabajadores</option>
-                            <option value="cualquiera">Cualquier ocupación</option>
-                          </select>
-                        </div>
-                        
-                        <div className="space-y-2 md:col-span-2">
-                          <label className="text-xs md:text-sm text-muted-foreground">
-                            Rango de edad:
-                          </label>
-                          <div className="flex gap-2 items-center">
-                            <input 
-                              type="number" 
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <label className="text-xs md:text-sm text-muted-foreground">
+                              Número de compañeros:
+                            </label>
+                            <select 
                               className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm" 
-                              min="18" 
-                              max="99" 
-                              value={profile.lookingFor.minAge} 
-                              onChange={e => handleLookingForChange('minAge', e.target.value)} 
-                            />
-                            <span className="text-sm">-</span>
-                            <input 
-                              type="number" 
-                              className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm" 
-                              min="18" 
-                              max="99" 
-                              value={profile.lookingFor.maxAge} 
-                              onChange={e => handleLookingForChange('maxAge', e.target.value)} 
-                            />
+                              value={profile.lookingFor.roommatesCount} 
+                              onChange={e => handleLookingForChange('roommatesCount', e.target.value)}
+                            >
+                              <option value="1">1</option>
+                              <option value="2">2</option>
+                              <option value="3">3</option>
+                              <option value="4+">4 o más</option>
+                            </select>
                           </div>
-                        </div>
-                        
-                        <div className="space-y-2 md:col-span-2">
-                          <label className="text-xs md:text-sm text-muted-foreground">
-                            {profile.lookingFor.hasApartment ? 'Precio por habitación:' : 'Presupuesto:'}
-                          </label>
-                          <div className="flex gap-2 items-center">
-                            <input 
-                              type="number" 
+                          
+                          <div className="space-y-2">
+                            <label className="text-xs md:text-sm text-muted-foreground">
+                              Preferencia de género:
+                            </label>
+                            <select 
+                              className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm" 
+                              value={profile.lookingFor.genderPreference} 
+                              onChange={e => handleLookingForChange('genderPreference', e.target.value)}
+                            >
+                              <option value="mujeres">Solo mujeres</option>
+                              <option value="hombres">Solo hombres</option>
+                              <option value="cualquiera">Cualquier género</option>
+                            </select>
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <label className="text-xs md:text-sm text-muted-foreground">
+                              Preferencia tabaco:
+                            </label>
+                            <select 
+                              className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm" 
+                              value={profile.lookingFor.smokingPreference} 
+                              onChange={e => handleLookingForChange('smokingPreference', e.target.value)}
+                            >
+                              <option value="no">No fumadores</option>
+                              <option value="ocasional">Fumador ocasional</option>
+                              <option value="si">Fumadores permitidos</option>
+                            </select>
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <label className="text-xs md:text-sm text-muted-foreground">
+                              Ocupación:
+                            </label>
+                            <select 
                               className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
-                              min="0"
-                              value={profile.lookingFor.exactPrice} 
-                              onChange={e => handleLookingForChange('exactPrice', parseInt(e.target.value))} 
-                            />
-                            <span className="text-sm">€/mes</span>
+                              value={profile.lookingFor.occupationPreference} 
+                              onChange={e => handleLookingForChange('occupationPreference', e.target.value)}
+                            >
+                              <option value="estudiantes">Estudiantes</option>
+                              <option value="trabajadores">Trabajadores</option>
+                              <option value="cualquiera">Cualquier ocupación</option>
+                            </select>
                           </div>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            {profile.lookingFor.hasApartment 
-                              ? 'Precio mensual de cada habitación' 
-                              : 'Presupuesto mensual que estás dispuesto a pagar'}
-                          </p>
+                          
+                          <div className="space-y-2 md:col-span-2">
+                            <label className="text-xs md:text-sm text-muted-foreground">
+                              Rango de edad:
+                            </label>
+                            <div className="flex gap-2 items-center">
+                              <input 
+                                type="number" 
+                                className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm" 
+                                min="18" 
+                                max="99" 
+                                value={profile.lookingFor.minAge} 
+                                onChange={e => handleLookingForChange('minAge', e.target.value)} 
+                              />
+                              <span className="text-sm">-</span>
+                              <input 
+                                type="number" 
+                                className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm" 
+                                min="18" 
+                                max="99" 
+                                value={profile.lookingFor.maxAge} 
+                                onChange={e => handleLookingForChange('maxAge', e.target.value)} 
+                              />
+                            </div>
+                          </div>
+                          
+                          <div className="space-y-2 md:col-span-2">
+                            <label className="text-xs md:text-sm text-muted-foreground">
+                              {profile.lookingFor.hasApartment ? 'Precio por habitación:' : 'Presupuesto:'}
+                            </label>
+                            <div className="flex gap-2 items-center">
+                              <input 
+                                type="number" 
+                                className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
+                                min="0"
+                                value={profile.lookingFor.exactPrice} 
+                                onChange={e => handleLookingForChange('exactPrice', parseInt(e.target.value))} 
+                              />
+                              <span className="text-sm">€/mes</span>
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {profile.lookingFor.hasApartment 
+                                ? 'Precio mensual de cada habitación' 
+                                : 'Presupuesto mensual que estás dispuesto a pagar'}
+                            </p>
+                          </div>
                         </div>
                       </div>
                     )}
