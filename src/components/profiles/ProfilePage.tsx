@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useState, useRef, ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
@@ -327,6 +326,7 @@ const ProfilePage = () => {
             
             {/* Main Content Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mt-4 md:mt-6">
+              {/* Left Column - 2/3 width on desktop */}
               <div className="md:col-span-2 space-y-4 md:space-y-6">
                 {/* About Me Section */}
                 <div className="glass-card p-4 md:p-6">
@@ -532,8 +532,11 @@ const ProfilePage = () => {
                     </div>
                   </div>
                 )}
-                
-                {/* Preferences and Search Section */}
+              </div>
+              
+              {/* Right Column - 1/3 width on desktop */}
+              <div className="space-y-4 md:space-y-6">
+                {/* Preferences and Search Section - Moved to right column */}
                 <div className="glass-card p-4 md:p-6">
                   <div className="flex justify-between items-center mb-3 md:mb-4">
                     <h2 className="text-lg md:text-xl font-semibold flex items-center gap-2">
