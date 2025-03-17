@@ -254,7 +254,7 @@ const ProfilePage = () => {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       
-      <main className="flex-grow pt-16 md:pt-20 pb-8 md:pb-12">
+      <main className="flex-grow pt-20 md:pt-24 pb-12 md:pb-16">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="glass-card overflow-hidden">
@@ -268,7 +268,7 @@ const ProfilePage = () => {
                 </Link>
               </div>
               
-              <div className="relative px-4 md:px-6 py-6 md:py-8">
+              <div className="relative px-4 md:px-6 py-8 md:py-10">
                 <div className={`${isMobile ? 'absolute -top-14 left-4' : 'absolute -top-16 left-6'} ${isMobile ? 'w-24 h-24' : 'w-32 h-32'} rounded-full overflow-hidden border-4 border-white shadow-lg`}>
                   <img src={profile.imgUrl} alt={profile.name} className="w-full h-full object-cover" />
                   {profile.verified && (
@@ -278,7 +278,7 @@ const ProfilePage = () => {
                   )}
                 </div>
                 
-                <div className={isMobile ? 'mt-14' : 'ml-36'}>
+                <div className={isMobile ? 'mt-16' : 'ml-36'}>
                   <div className={`flex ${isMobile ? 'flex-col gap-3' : 'justify-between'}`}>
                     <div>
                       <h1 className="text-xl md:text-3xl font-bold flex items-center gap-2">
@@ -289,7 +289,7 @@ const ProfilePage = () => {
                         {profile.location}
                       </p>
                     </div>
-                    <div className={`flex ${isMobile ? 'justify-between' : 'gap-2'} mt-2 md:mt-0`}>
+                    <div className={`flex ${isMobile ? 'justify-between' : 'gap-2'} mt-4 md:mt-0`}>
                       <Button 
                         variant={liked ? "default" : "outline"} 
                         size={isMobile ? "icon" : "sm"} 
@@ -324,15 +324,15 @@ const ProfilePage = () => {
               </div>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mt-4 md:mt-6">
-              <div className="md:col-span-2 space-y-4 md:space-y-6">
-                <div className="glass-card p-4 md:p-6">
-                  <h2 className="text-lg md:text-xl font-semibold mb-3 md:mb-4">Sobre mí</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mt-6 md:mt-8">
+              <div className="md:col-span-2 space-y-6 md:space-y-8">
+                <div className="glass-card p-5 md:p-7">
+                  <h2 className="text-lg md:text-xl font-semibold mb-4 md:mb-5">Sobre mí</h2>
                   <p className="text-sm md:text-base">{profile.bio}</p>
                   
-                  <div className="mt-4 md:mt-6">
-                    <h3 className="font-medium mb-2">Datos personales</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-4">
+                  <div className="mt-5 md:mt-7">
+                    <h3 className="font-medium mb-3">Datos personales</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
                       <div className="flex items-center gap-2">
                         <GraduationCap size={18} className="text-homi-purple" />
                         <span className="text-sm md:text-base">{profile.university}</span>
@@ -344,8 +344,8 @@ const ProfilePage = () => {
                     </div>
                   </div>
                   
-                  <div className="mt-4 md:mt-6">
-                    <h3 className="font-medium mb-2">Intereses</h3>
+                  <div className="mt-5 md:mt-7">
+                    <h3 className="font-medium mb-3">Intereses</h3>
                     <div className="flex flex-wrap gap-2">
                       {profile.tags.map(tag => (
                         <span key={tag.id} className="px-2 md:px-3 py-1 text-xs md:text-sm rounded-full bg-homi-ultraLightPurple text-homi-purple">
@@ -356,8 +356,8 @@ const ProfilePage = () => {
                   </div>
                 </div>
                 
-                <div className="glass-card p-4 md:p-6">
-                  <h2 className="text-lg md:text-xl font-semibold mb-3 md:mb-4">Galería</h2>
+                <div className="glass-card p-5 md:p-7">
+                  <h2 className="text-lg md:text-xl font-semibold mb-4 md:mb-5">Galería</h2>
                   
                   {isMobile ? (
                     <div className="relative">
@@ -414,20 +414,20 @@ const ProfilePage = () => {
                 </div>
                 
                 {!isMobile && (
-                  <div className="glass-card p-6">
-                    <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                  <div className="glass-card p-7">
+                    <h2 className="text-xl font-semibold mb-5 flex items-center gap-2">
                       <QrCode size={20} className="text-homi-purple" />
                       Tarjeta de presentación
                     </h2>
-                    <p className="text-muted-foreground mb-4">
+                    <p className="text-muted-foreground mb-5">
                       Comparte tu perfil en redes sociales o descarga tu tarjeta de presentación con código QR.
                     </p>
                     
-                    <div className="mt-4 flex flex-col items-center">
+                    <div className="mt-6 flex flex-col items-center">
                       <div 
                         id="profile-card" 
                         ref={profileCardRef} 
-                        className="w-[360px] h-[640px] bg-gradient-to-br from-purple-600 to-pink-500 rounded-xl shadow-xl overflow-hidden relative mx-auto mb-6"
+                        className="w-[360px] h-[640px] bg-gradient-to-br from-purple-600 to-pink-500 rounded-xl shadow-xl overflow-hidden relative mx-auto mb-8"
                       >
                         <div className="absolute top-0 left-0 w-full h-1/3 overflow-hidden">
                           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-purple-800/70"></div>
@@ -435,7 +435,7 @@ const ProfilePage = () => {
                         </div>
                         
                         <div className="absolute bottom-0 left-0 w-full h-3/4 bg-gradient-to-t from-purple-900/90 to-transparent p-6 flex flex-col justify-end">
-                          <div className="mb-4 flex items-center gap-3">
+                          <div className="mb-5 flex items-center gap-3">
                             <div className="w-16 h-16 rounded-full border-2 border-white overflow-hidden">
                               <img src={profile.imgUrl} alt={profile.name} className="w-full h-full object-cover" />
                             </div>
@@ -452,8 +452,8 @@ const ProfilePage = () => {
                             </div>
                           </div>
                           
-                          <div className="mb-3">
-                            <div className="flex flex-wrap gap-2 mb-2">
+                          <div className="mb-4">
+                            <div className="flex flex-wrap gap-2 mb-3">
                               {profile.tags.slice(0, 3).map(tag => (
                                 <span key={tag.id} className="px-3 py-1 text-xs rounded-full bg-white/20 text-white">
                                   {tag.name}
@@ -466,8 +466,8 @@ const ProfilePage = () => {
                             </p>
                           </div>
                           
-                          <div className="mb-3 text-white/90">
-                            <h4 className="text-xs font-medium text-white/70 mb-1 flex items-center gap-1">
+                          <div className="mb-4 text-white/90">
+                            <h4 className="text-xs font-medium text-white/70 mb-2 flex items-center gap-1">
                               <Search size={12} />
                               Lo que estoy buscando:
                             </h4>
@@ -497,7 +497,7 @@ const ProfilePage = () => {
                             </div>
                           </div>
                           
-                          <div className="flex justify-between items-center bg-white/10 p-3 rounded-lg backdrop-blur-sm mx-0 px-[12px] py-[12px] mb-8">
+                          <div className="flex justify-between items-center bg-white/10 p-3 rounded-lg backdrop-blur-sm mx-0 px-[12px] py-[12px] mb-10">
                             <div>
                               <h4 className="text-xs text-white/60 mb-1">Escanea para conectar</h4>
                               <p className="text-sm font-medium text-white">homi-connect.app</p>
@@ -507,7 +507,7 @@ const ProfilePage = () => {
                             </div>
                           </div>
                           
-                          <div className="absolute bottom-2 left-0 w-full text-center text-white/80 text-xs px-6">
+                          <div className="absolute bottom-4 left-0 w-full text-center text-white/80 text-xs px-6">
                             <p>Descárgate Homi para encontrar tu compañero de piso ideal. Escanea mi código o búscame por mi nombre de usuario en Homi para conectar</p>
                           </div>
                         </div>
@@ -529,9 +529,9 @@ const ProfilePage = () => {
                 )}
               </div>
               
-              <div className="space-y-4 md:space-y-6">
-                <div className="glass-card p-4 md:p-6">
-                  <div className="flex justify-between items-center mb-3 md:mb-4">
+              <div className="space-y-6 md:space-y-8">
+                <div className="glass-card p-5 md:p-7">
+                  <div className="flex justify-between items-center mb-4 md:mb-5">
                     <h2 className="text-lg md:text-xl font-semibold flex items-center gap-2">
                       <Search size={20} className="text-homi-purple" />
                       Preferencias y búsqueda
@@ -553,7 +553,7 @@ const ProfilePage = () => {
                     )}
                   </div>
                   
-                  <div className="space-y-4">
+                  <div className="space-y-5">
                     {!isEditingLookingFor ? (
                       <div className="space-y-6">
                         <div className="flex items-center gap-2 text-sm md:text-base">
@@ -566,7 +566,7 @@ const ProfilePage = () => {
                         </div>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div>
+                          <div className="md:col-span-2">
                             <div className="flex items-center gap-2 mb-2">
                               <DollarSign size={16} className="text-homi-purple" />
                               <span className="font-medium">
@@ -574,10 +574,7 @@ const ProfilePage = () => {
                               </span>
                             </div>
                             <p className="text-sm md:text-base font-bold">
-                              {profile.lookingFor.hasApartment 
-                                ? `€${profile.lookingFor.exactPrice}/mes`
-                                : `€${profile.lookingFor.exactPrice}/mes`
-                              }
+                              €{profile.lookingFor.exactPrice}/mes
                             </p>
                           </div>
                           
@@ -607,7 +604,7 @@ const ProfilePage = () => {
                           
                           <div>
                             <span className="font-medium">Preferencia de género</span>
-                            <p className="text-sm md:text-base mt-1">
+                            <p className="text-sm md:text-base mt-2">
                               {profile.lookingFor.genderPreference === 'mujeres' && 'Solo mujeres'}
                               {profile.lookingFor.genderPreference === 'hombres' && 'Solo hombres'}
                               {profile.lookingFor.genderPreference === 'cualquiera' && 'Cualquier género'}
@@ -616,7 +613,7 @@ const ProfilePage = () => {
                           
                           <div>
                             <span className="font-medium">Preferencia tabaco</span>
-                            <p className="text-sm md:text-base mt-1">
+                            <p className="text-sm md:text-base mt-2">
                               {profile.lookingFor.smokingPreference === 'no' && 'No fumadores'}
                               {profile.lookingFor.smokingPreference === 'ocasional' && 'Fumador ocasional'}
                               {profile.lookingFor.smokingPreference === 'si' && 'Fumadores permitidos'}
@@ -625,7 +622,7 @@ const ProfilePage = () => {
                           
                           <div>
                             <span className="font-medium">Ocupación</span>
-                            <p className="text-sm md:text-base mt-1">
+                            <p className="text-sm md:text-base mt-2">
                               {profile.lookingFor.occupationPreference === 'estudiantes' && 'Estudiantes'}
                               {profile.lookingFor.occupationPreference === 'trabajadores' && 'Trabajadores'}
                               {profile.lookingFor.occupationPreference === 'cualquiera' && 'Cualquier ocupación'}
@@ -634,7 +631,7 @@ const ProfilePage = () => {
                           
                           <div>
                             <span className="font-medium">Rango de edad</span>
-                            <p className="text-sm md:text-base mt-1">
+                            <p className="text-sm md:text-base mt-2">
                               {profile.lookingFor.minAge} - {profile.lookingFor.maxAge} años
                             </p>
                           </div>
@@ -667,131 +664,129 @@ const ProfilePage = () => {
                         </div>
                       </div>
                     ) : (
-                      <>
-                        <div className="flex items-center justify-between gap-2 p-3 border border-input rounded-md bg-background/50">
-                          <div className="flex items-center gap-2">
-                            <div className="bg-homi-ultraLightPurple text-homi-purple p-1.5 rounded-full">
-                              <Home size={16} />
-                            </div>
-                            <span className="text-sm md:text-base">
-                              {profile.lookingFor.hasApartment ? 'Ya tengo piso y busco compañeros' : 'Busco piso compartido'}
-                            </span>
+                      <div className="flex items-center justify-between gap-2 p-3 border border-input rounded-md bg-background/50">
+                        <div className="flex items-center gap-2">
+                          <div className="bg-homi-ultraLightPurple text-homi-purple p-1.5 rounded-full">
+                            <Home size={16} />
                           </div>
-                          <Switch 
-                            checked={profile.lookingFor.hasApartment} 
-                            onCheckedChange={checked => handleLookingForChange('hasApartment', checked)} 
-                          />
+                          <span className="text-sm md:text-base">
+                            {profile.lookingFor.hasApartment ? 'Ya tengo piso y busco compañeros' : 'Busco piso compartido'}
+                          </span>
+                        </div>
+                        <Switch 
+                          checked={profile.lookingFor.hasApartment} 
+                          onCheckedChange={checked => handleLookingForChange('hasApartment', checked)} 
+                        />
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <label className="text-xs md:text-sm text-muted-foreground">
+                            Número de compañeros:
+                          </label>
+                          <select 
+                            className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm" 
+                            value={profile.lookingFor.roommatesCount} 
+                            onChange={e => handleLookingForChange('roommatesCount', e.target.value)}
+                          >
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4+">4 o más</option>
+                          </select>
                         </div>
                         
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <label className="text-xs md:text-sm text-muted-foreground">
-                              Número de compañeros:
-                            </label>
-                            <select 
+                        <div className="space-y-2">
+                          <label className="text-xs md:text-sm text-muted-foreground">
+                            Preferencia de género:
+                          </label>
+                          <select 
+                            className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm" 
+                            value={profile.lookingFor.genderPreference} 
+                            onChange={e => handleLookingForChange('genderPreference', e.target.value)}
+                          >
+                            <option value="mujeres">Solo mujeres</option>
+                            <option value="hombres">Solo hombres</option>
+                            <option value="cualquiera">Cualquier género</option>
+                          </select>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <label className="text-xs md:text-sm text-muted-foreground">
+                            Preferencia tabaco:
+                          </label>
+                          <select 
+                            className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm" 
+                            value={profile.lookingFor.smokingPreference} 
+                            onChange={e => handleLookingForChange('smokingPreference', e.target.value)}
+                          >
+                            <option value="no">No fumadores</option>
+                            <option value="ocasional">Fumador ocasional</option>
+                            <option value="si">Fumadores permitidos</option>
+                          </select>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <label className="text-xs md:text-sm text-muted-foreground">
+                            Ocupación:
+                          </label>
+                          <select 
+                            className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
+                            value={profile.lookingFor.occupationPreference} 
+                            onChange={e => handleLookingForChange('occupationPreference', e.target.value)}
+                          >
+                            <option value="estudiantes">Estudiantes</option>
+                            <option value="trabajadores">Trabajadores</option>
+                            <option value="cualquiera">Cualquier ocupación</option>
+                          </select>
+                        </div>
+                        
+                        <div className="space-y-2 md:col-span-2">
+                          <label className="text-xs md:text-sm text-muted-foreground">
+                            Rango de edad:
+                          </label>
+                          <div className="flex gap-2 items-center">
+                            <input 
+                              type="number" 
                               className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm" 
-                              value={profile.lookingFor.roommatesCount} 
-                              onChange={e => handleLookingForChange('roommatesCount', e.target.value)}
-                            >
-                              <option value="1">1</option>
-                              <option value="2">2</option>
-                              <option value="3">3</option>
-                              <option value="4+">4 o más</option>
-                            </select>
-                          </div>
-                          
-                          <div className="space-y-2">
-                            <label className="text-xs md:text-sm text-muted-foreground">
-                              Preferencia de género:
-                            </label>
-                            <select 
+                              min="18" 
+                              max="99" 
+                              value={profile.lookingFor.minAge} 
+                              onChange={e => handleLookingForChange('minAge', e.target.value)} 
+                            />
+                            <span className="text-sm">-</span>
+                            <input 
+                              type="number" 
                               className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm" 
-                              value={profile.lookingFor.genderPreference} 
-                              onChange={e => handleLookingForChange('genderPreference', e.target.value)}
-                            >
-                              <option value="mujeres">Solo mujeres</option>
-                              <option value="hombres">Solo hombres</option>
-                              <option value="cualquiera">Cualquier género</option>
-                            </select>
-                          </div>
-                          
-                          <div className="space-y-2">
-                            <label className="text-xs md:text-sm text-muted-foreground">
-                              Preferencia tabaco:
-                            </label>
-                            <select 
-                              className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm" 
-                              value={profile.lookingFor.smokingPreference} 
-                              onChange={e => handleLookingForChange('smokingPreference', e.target.value)}
-                            >
-                              <option value="no">No fumadores</option>
-                              <option value="ocasional">Fumador ocasional</option>
-                              <option value="si">Fumadores permitidos</option>
-                            </select>
-                          </div>
-                          
-                          <div className="space-y-2">
-                            <label className="text-xs md:text-sm text-muted-foreground">
-                              Ocupación:
-                            </label>
-                            <select 
-                              className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
-                              value={profile.lookingFor.occupationPreference} 
-                              onChange={e => handleLookingForChange('occupationPreference', e.target.value)}
-                            >
-                              <option value="estudiantes">Estudiantes</option>
-                              <option value="trabajadores">Trabajadores</option>
-                              <option value="cualquiera">Cualquier ocupación</option>
-                            </select>
-                          </div>
-                          
-                          <div className="space-y-2 md:col-span-2">
-                            <label className="text-xs md:text-sm text-muted-foreground">
-                              Rango de edad:
-                            </label>
-                            <div className="flex gap-2 items-center">
-                              <input 
-                                type="number" 
-                                className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm" 
-                                min="18" 
-                                max="99" 
-                                value={profile.lookingFor.minAge} 
-                                onChange={e => handleLookingForChange('minAge', e.target.value)} 
-                              />
-                              <span className="text-sm">-</span>
-                              <input 
-                                type="number" 
-                                className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm" 
-                                min="18" 
-                                max="99" 
-                                value={profile.lookingFor.maxAge} 
-                                onChange={e => handleLookingForChange('maxAge', e.target.value)} 
-                              />
-                            </div>
-                          </div>
-                          
-                          <div className="space-y-2 md:col-span-2">
-                            <label className="text-xs md:text-sm text-muted-foreground">
-                              {profile.lookingFor.hasApartment ? 'Precio por habitación:' : 'Presupuesto:'}
-                            </label>
-                            <div className="flex gap-2 items-center">
-                              <input 
-                                type="number" 
-                                className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
-                                min="0"
-                                value={profile.lookingFor.exactPrice} 
-                                onChange={e => handleLookingForChange('exactPrice', parseInt(e.target.value))} 
-                              />
-                              <span className="text-sm">€/mes</span>
-                            </div>
-                            <p className="text-xs text-muted-foreground mt-1">
-                              {profile.lookingFor.hasApartment 
-                                ? 'Precio mensual de cada habitación' 
-                                : 'Presupuesto mensual que estás dispuesto a pagar'}
-                            </p>
+                              min="18" 
+                              max="99" 
+                              value={profile.lookingFor.maxAge} 
+                              onChange={e => handleLookingForChange('maxAge', e.target.value)} 
+                            />
                           </div>
                         </div>
-                      </>
+                        
+                        <div className="space-y-2 md:col-span-2">
+                          <label className="text-xs md:text-sm text-muted-foreground">
+                            {profile.lookingFor.hasApartment ? 'Precio por habitación:' : 'Presupuesto:'}
+                          </label>
+                          <div className="flex gap-2 items-center">
+                            <input 
+                              type="number" 
+                              className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
+                              min="0"
+                              value={profile.lookingFor.exactPrice} 
+                              onChange={e => handleLookingForChange('exactPrice', parseInt(e.target.value))} 
+                            />
+                            <span className="text-sm">€/mes</span>
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {profile.lookingFor.hasApartment 
+                              ? 'Precio mensual de cada habitación' 
+                              : 'Presupuesto mensual que estás dispuesto a pagar'}
+                          </p>
+                        </div>
+                      </div>
                     )}
                   </div>
                 </div>
