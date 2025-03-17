@@ -1,4 +1,3 @@
-
 import { useState, useRef, ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
@@ -22,7 +21,8 @@ import {
   ChevronRight,
   Search,
   Check,
-  X
+  X,
+  DollarSign
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import html2canvas from 'html2canvas';
@@ -33,6 +33,7 @@ import { Switch } from '@/components/ui/switch';
 import { Select } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { Slider } from '@/components/ui/slider';
 
 const ProfilePage = () => {
   const [liked, setLiked] = useState(false);
@@ -87,7 +88,8 @@ const ProfilePage = () => {
       smokingPreference: "no",
       occupationPreference: "estudiantes",
       minAge: "18",
-      maxAge: "25"
+      maxAge: "25",
+      budgetRange: [400, 600]
     }
   });
 
@@ -142,7 +144,6 @@ const ProfilePage = () => {
         toast({
           title: 'Tarjeta descargada',
           description: 'Tu tarjeta se ha descargado con éxito',
-          // Fixed TypeScript error by using valid variant
           variant: 'default',
         });
       } catch (error) {
@@ -186,7 +187,6 @@ const ProfilePage = () => {
         toast({
           title: 'QR descargado',
           description: 'Tu código QR se ha descargado con éxito',
-          // Fixed TypeScript error by using valid variant
           variant: 'default',
         });
       } catch (error) {
@@ -262,7 +262,7 @@ const ProfilePage = () => {
     setIsEditingLookingFor(false);
   };
 
-  const handleLookingForChange = (field: string, value: string | boolean | number) => {
+  const handleLookingForChange = (field: string, value: string | boolean | number | number[]) => {
     setProfile(prev => ({
       ...prev,
       lookingFor: {
@@ -280,7 +280,6 @@ const ProfilePage = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="glass-card overflow-hidden">
-              {/* Profile Cover & Avatar Section */}
               <div className="relative h-48 md:h-64 bg-homi-ultraLightPurple">
                 <img
                   src={profile.imgUrl}
@@ -299,7 +298,6 @@ const ProfilePage = () => {
                 </Link>
               </div>
               
-              {/* Profile Info Section - Improved mobile spacing */}
               <div className="relative px-4 md:px-6 py-6 md:py-8">
                 <div className={`${isMobile ? 'absolute -top-14 left-4' : 'absolute -top-16 left-6'} ${isMobile ? 'w-24 h-24' : 'w-32 h-32'} rounded-full overflow-hidden border-4 border-white shadow-lg`}>
                   <img
@@ -369,10 +367,8 @@ const ProfilePage = () => {
               </div>
             </div>
             
-            {/* Main content grid - Improved mobile spacing */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mt-4 md:mt-6">
               <div className="md:col-span-2 space-y-4 md:space-y-6">
-                {/* Bio section */}
                 <div className="glass-card p-4 md:p-6">
                   <h2 className="text-lg md:text-xl font-semibold mb-3 md:mb-4">Sobre mí</h2>
                   <p className="text-sm md:text-base">{profile.bio}</p>
@@ -406,11 +402,9 @@ const ProfilePage = () => {
                   </div>
                 </div>
                 
-                {/* Gallery section - Improved mobile view */}
                 <div className="glass-card p-4 md:p-6">
                   <h2 className="text-lg md:text-xl font-semibold mb-3 md:mb-4">Galería</h2>
                   
-                  {/* Mobile carousel view */}
                   {isMobile ? (
                     <div className="relative">
                       <div className="aspect-square rounded-lg overflow-hidden bg-muted">
@@ -439,7 +433,6 @@ const ProfilePage = () => {
                         <ChevronRight size={16} />
                       </Button>
                       
-                      {/* Improved mobile indicators */}
                       <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-2">
                         {profile.galleryImgs.map((_, index) => (
                           <button 
@@ -452,7 +445,6 @@ const ProfilePage = () => {
                       </div>
                     </div>
                   ) : (
-                    // Desktop grid view
                     <div className="grid grid-cols-3 gap-4">
                       {profile.galleryImgs.map((img, index) => (
                         <div key={index} className="aspect-square rounded-lg overflow-hidden bg-muted">
@@ -466,8 +458,7 @@ const ProfilePage = () => {
                     </div>
                   )}
                 </div>
-
-                {/* QR Card section */}
+                
                 {!isMobile && (
                   <div className="glass-card p-6">
                     <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
@@ -479,13 +470,11 @@ const ProfilePage = () => {
                     </p>
                     
                     <div className="mt-4 flex flex-col items-center">
-                      {/* Instagram story-style profile card */}
                       <div 
                         id="profile-card" 
                         ref={profileCardRef}
                         className="w-[360px] h-[640px] bg-gradient-to-br from-purple-600 to-pink-500 rounded-xl shadow-xl overflow-hidden relative mx-auto mb-6"
                       >
-                        {/* Profile header */}
                         <div className="absolute top-0 left-0 w-full h-1/2 overflow-hidden">
                           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-purple-800/70"></div>
                           <img
@@ -495,7 +484,6 @@ const ProfilePage = () => {
                           />
                         </div>
                         
-                        {/* Profile content */}
                         <div className="absolute bottom-0 left-0 w-full h-2/3 bg-gradient-to-t from-purple-900/90 to-transparent p-6 flex flex-col justify-end">
                           <div className="mb-4 flex items-center gap-3">
                             <div className="w-16 h-16 rounded-full border-2 border-white overflow-hidden">
@@ -572,7 +560,6 @@ const ProfilePage = () => {
                   </div>
                 )}
                 
-                {/* NEW - Looking For section */}
                 <div className="glass-card p-4 md:p-6">
                   <div className="flex justify-between items-center mb-3 md:mb-4">
                     <h2 className="text-lg md:text-xl font-semibold flex items-center gap-2">
@@ -613,7 +600,6 @@ const ProfilePage = () => {
                   
                   <div className="space-y-4">
                     {!isEditingLookingFor ? (
-                      // View mode
                       <>
                         <div className="flex items-center gap-2 text-sm md:text-base">
                           <div className="bg-homi-ultraLightPurple text-homi-purple p-1.5 rounded-full">
@@ -665,10 +651,16 @@ const ProfilePage = () => {
                               {profile.lookingFor.minAge} - {profile.lookingFor.maxAge} años
                             </p>
                           </div>
+                          
+                          <div>
+                            <span className="text-xs md:text-sm text-muted-foreground">Rango de presupuesto:</span>
+                            <p className="font-medium text-sm md:text-base">
+                              €{profile.lookingFor.budgetRange[0]} - €{profile.lookingFor.budgetRange[1]}
+                            </p>
+                          </div>
                         </div>
                       </>
                     ) : (
-                      // Edit mode
                       <>
                         <div className="flex items-center justify-between gap-2 p-3 border border-input rounded-md bg-background/50">
                           <div className="flex items-center gap-2">
@@ -774,6 +766,22 @@ const ProfilePage = () => {
                               <span className="text-sm text-muted-foreground">años</span>
                             </div>
                           </div>
+                          
+                          <div className="space-y-2 md:col-span-2">
+                            <label className="text-xs md:text-sm text-muted-foreground flex items-center gap-1">
+                              <DollarSign size={14} /> Rango de presupuesto: €{profile.lookingFor.budgetRange[0]} - €{profile.lookingFor.budgetRange[1]}
+                            </label>
+                            <div className="px-2 pt-2">
+                              <Slider 
+                                value={profile.lookingFor.budgetRange as number[]} 
+                                min={200} 
+                                max={1500} 
+                                step={50} 
+                                onValueChange={(value) => handleLookingForChange('budgetRange', value)}
+                                className="mt-2"
+                              />
+                            </div>
+                          </div>
                         </div>
                       </>
                     )}
@@ -781,9 +789,7 @@ const ProfilePage = () => {
                 </div>
               </div>
               
-              {/* Sidebar - Improved for mobile */}
               <div className="space-y-4 md:space-y-6">
-                {/* Preferences */}
                 <div className="glass-card p-4 md:p-6">
                   <h2 className="text-lg md:text-xl font-semibold mb-3 md:mb-4">Preferencias de vivienda</h2>
                   <div className="space-y-3">
@@ -806,7 +812,6 @@ const ProfilePage = () => {
                   </div>
                 </div>
                 
-                {/* Lifestyle */}
                 <div className="glass-card p-4 md:p-6">
                   <h2 className="text-lg md:text-xl font-semibold mb-3 md:mb-4">Estilo de vida</h2>
                   <div className="space-y-3">
@@ -833,42 +838,38 @@ const ProfilePage = () => {
                   </div>
                 </div>
                 
-                {/* Mobile QR section */}
-                {isMobile && (
-                  <div className="glass-card p-4 md:p-6">
-                    <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                      <QrCode size={18} className="text-homi-purple" />
-                      Comparte tu perfil
-                    </h2>
-                    
-                    <div className="flex justify-center my-4" ref={qrCodeRef}>
-                      <div className="bg-white p-3 rounded-lg">
-                        <QRCodeSVG value={getProfileUrl()} size={180} bgColor="#FFFFFF" fgColor="#6E59A5" />
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-3">
-                      <Button 
-                        onClick={handleDownloadQR}
-                        className="w-full bg-homi-purple hover:bg-homi-purple/90"
-                      >
-                        <Download size={16} className="mr-2" />
-                        Descargar QR
-                      </Button>
-                      
-                      <Button 
-                        variant="outline"
-                        onClick={handleShare}
-                        className="w-full"
-                      >
-                        <Share size={16} className="mr-2" />
-                        Compartir perfil
-                      </Button>
+                <div className="glass-card p-4 md:p-6">
+                  <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                    <QrCode size={18} className="text-homi-purple" />
+                    Comparte tu perfil
+                  </h2>
+                  
+                  <div className="flex justify-center my-4" ref={qrCodeRef}>
+                    <div className="bg-white p-3 rounded-lg">
+                      <QRCodeSVG value={getProfileUrl()} size={180} bgColor="#FFFFFF" fgColor="#6E59A5" />
                     </div>
                   </div>
-                )}
+                  
+                  <div className="space-y-3">
+                    <Button 
+                      onClick={handleDownloadQR}
+                      className="w-full bg-homi-purple hover:bg-homi-purple/90"
+                    >
+                      <Download size={16} className="mr-2" />
+                      Descargar QR
+                    </Button>
+                    
+                    <Button 
+                      variant="outline"
+                      onClick={handleShare}
+                      className="w-full"
+                    >
+                      <Share size={16} className="mr-2" />
+                      Compartir perfil
+                    </Button>
+                  </div>
+                </div>
                 
-                {/* Share Dialog */}
                 <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
                   <DialogContent className="sm:max-w-md">
                     <DialogHeader>
@@ -939,3 +940,4 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
+
