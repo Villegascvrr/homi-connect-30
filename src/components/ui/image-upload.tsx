@@ -140,7 +140,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
             <div className="relative group">
               <Avatar className="w-24 h-24 md:w-32 md:h-32 mx-auto">
                 <AvatarImage src={images[0]} alt="Foto de perfil" />
-                <AvatarFallback className="bg-homi-purple text-white">
+                <AvatarFallback className="bg-primary text-white">
                   <Camera size={32} />
                 </AvatarFallback>
               </Avatar>
@@ -166,11 +166,14 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
             </div>
           ) : (
             <div className="flex flex-col items-center gap-3">
-              <Avatar className="w-24 h-24 md:w-32 md:h-32 mx-auto border-2 border-dashed border-primary/20 bg-muted">
-                <AvatarFallback className="text-muted-foreground">
-                  <Camera size={32} />
-                </AvatarFallback>
-              </Avatar>
+              <Button
+                type="button"
+                onClick={handleClickUpload}
+                disabled={isUploading}
+                className="w-24 h-24 md:w-32 md:h-32 rounded-full flex items-center justify-center border-2 border-dashed border-primary/20 bg-muted hover:border-primary/50 transition-colors"
+              >
+                <Camera size={32} className="text-muted-foreground" />
+              </Button>
               <Button 
                 type="button" 
                 variant="outline" 
