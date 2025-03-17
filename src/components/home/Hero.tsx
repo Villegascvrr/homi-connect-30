@@ -26,17 +26,27 @@ const Hero = () => {
       <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto text-center">
           <div className="inline-block px-4 py-1.5 mb-6 rounded-full bg-homi-ultraLightPurple text-homi-purple text-sm font-medium animate-pulse-soft">
-            ¡Encuentra al compañero de piso ideal!
+            ¡Ayúdanos a alcanzar los 1000 usuarios!
           </div>
           
           <h1 className="text-4xl md:text-6xl font-bold mb-6 animate-slide-up">
             Conecta con compañeros de piso <span className="homi-gradient-text">compatibles</span>
           </h1>
           
-          <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
+          <p className="text-lg md:text-xl text-muted-foreground mb-6 max-w-3xl mx-auto">
             Homi utiliza un sistema de matching inteligente para conectarte con compañeros 
             de piso que comparten tus intereses, hábitos y estilo de vida.
           </p>
+
+          <div className="bg-homi-ultraLightPurple/50 p-4 rounded-xl mb-8 max-w-3xl mx-auto">
+            <p className="text-base md:text-lg font-medium text-homi-purple">
+              🚀 Homi estará disponible próximamente - ¡Regístrate ahora para ser de los primeros en usarlo!
+              <br />
+              <span className="text-sm font-normal mt-1 inline-block">
+                Necesitamos alcanzar 1000 usuarios registrados para lanzar oficialmente la app.
+              </span>
+            </p>
+          </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
             <Button 
@@ -44,7 +54,7 @@ const Hero = () => {
               className="rounded-full bg-homi-purple hover:bg-homi-purple/90 px-8 w-full sm:w-auto"
               asChild
             >
-              <Link to="/matching">Comenzar Ahora</Link>
+              <Link to="/register">¡Regístrate ahora!</Link>
             </Button>
             <Button 
               size="lg" 
@@ -61,8 +71,6 @@ const Hero = () => {
             </Button>
           </div>
           
-          {/* "Crear perfil personalizado" button removed as requested */}
-
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto mb-16">
             <div className="flex items-center gap-2">
               <Check className="text-homi-purple" size={20} />

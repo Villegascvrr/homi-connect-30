@@ -10,7 +10,7 @@ const DevelopmentBanner = () => {
             <Info size={16} className="text-white" />
           </div>
           <p className="text-xs sm:text-sm font-medium">
-            <span className="font-bold">Homi está en desarrollo.</span> ¡Regístrate ahora para ser de los primeros en usarlo en Sevilla!
+            <span className="font-bold">Homi estará disponible pronto.</span> ¡Necesitamos llegar a 1000 usuarios registrados para lanzar la app!
           </p>
         </div>
       </div>
