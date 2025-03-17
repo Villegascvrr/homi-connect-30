@@ -78,7 +78,8 @@ const ProfilePage = () => {
       occupationPreference: "estudiantes",
       minAge: "18",
       maxAge: "25",
-      budgetRange: [400, 600]
+      budgetRange: [400, 600],
+      exactPrice: 450
     }
   });
 
@@ -256,7 +257,6 @@ const ProfilePage = () => {
       <main className="flex-grow pt-16 md:pt-20 pb-8 md:pb-12">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
-            {/* Profile Header Card */}
             <div className="glass-card overflow-hidden">
               <div className="relative h-48 md:h-64 bg-homi-ultraLightPurple">
                 <img src={profile.imgUrl} alt={profile.name} className="w-full h-full object-cover" />
@@ -324,11 +324,8 @@ const ProfilePage = () => {
               </div>
             </div>
             
-            {/* Main Content Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mt-4 md:mt-6">
-              {/* Left Column - 2/3 width on desktop */}
               <div className="md:col-span-2 space-y-4 md:space-y-6">
-                {/* About Me Section */}
                 <div className="glass-card p-4 md:p-6">
                   <h2 className="text-lg md:text-xl font-semibold mb-3 md:mb-4">Sobre mí</h2>
                   <p className="text-sm md:text-base">{profile.bio}</p>
@@ -359,7 +356,6 @@ const ProfilePage = () => {
                   </div>
                 </div>
                 
-                {/* Gallery Section */}
                 <div className="glass-card p-4 md:p-6">
                   <h2 className="text-lg md:text-xl font-semibold mb-3 md:mb-4">Galería</h2>
                   
@@ -417,7 +413,6 @@ const ProfilePage = () => {
                   )}
                 </div>
                 
-                {/* Profile Card (Desktop Only) */}
                 {!isMobile && (
                   <div className="glass-card p-6">
                     <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
@@ -534,9 +529,7 @@ const ProfilePage = () => {
                 )}
               </div>
               
-              {/* Right Column - 1/3 width on desktop */}
               <div className="space-y-4 md:space-y-6">
-                {/* Preferences and Search Section - Moved to right column */}
                 <div className="glass-card p-4 md:p-6">
                   <div className="flex justify-between items-center mb-3 md:mb-4">
                     <h2 className="text-lg md:text-xl font-semibold flex items-center gap-2">
@@ -577,13 +570,13 @@ const ProfilePage = () => {
                             <div className="flex items-center gap-2 mb-2">
                               <DollarSign size={16} className="text-homi-purple" />
                               <span className="font-medium">
-                                {profile.lookingFor.hasApartment ? 'Precio por persona' : 'Presupuesto'}
+                                {profile.lookingFor.hasApartment ? 'Precio por habitación' : 'Presupuesto'}
                               </span>
                             </div>
-                            <p className="text-sm md:text-base">
+                            <p className="text-sm md:text-base font-bold">
                               {profile.lookingFor.hasApartment 
-                                ? `€${profile.lookingFor.budgetRange[0]} - €${profile.lookingFor.budgetRange[1]}`
-                                : `€${profile.lookingFor.budgetRange[0]} - €${profile.lookingFor.budgetRange[1]}`
+                                ? `€${profile.lookingFor.exactPrice}/mes`
+                                : `€${profile.lookingFor.exactPrice}/mes`
                               }
                             </p>
                           </div>
@@ -779,29 +772,22 @@ const ProfilePage = () => {
                           
                           <div className="space-y-2 md:col-span-2">
                             <label className="text-xs md:text-sm text-muted-foreground">
-                              {profile.lookingFor.hasApartment ? 'Precio por persona:' : 'Presupuesto:'}
+                              {profile.lookingFor.hasApartment ? 'Precio por habitación:' : 'Presupuesto:'}
                             </label>
                             <div className="flex gap-2 items-center">
                               <input 
                                 type="number" 
                                 className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
                                 min="0"
-                                value={profile.lookingFor.budgetRange[0]} 
-                                onChange={e => handleLookingForChange('budgetRange', [parseInt(e.target.value), profile.lookingFor.budgetRange[1]])} 
+                                value={profile.lookingFor.exactPrice} 
+                                onChange={e => handleLookingForChange('exactPrice', parseInt(e.target.value))} 
                               />
-                              <span className="text-sm">-</span>
-                              <input 
-                                type="number" 
-                                className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
-                                min="0"
-                                value={profile.lookingFor.budgetRange[1]} 
-                                onChange={e => handleLookingForChange('budgetRange', [profile.lookingFor.budgetRange[0], parseInt(e.target.value)])} 
-                              />
+                              <span className="text-sm">€/mes</span>
                             </div>
                             <p className="text-xs text-muted-foreground mt-1">
                               {profile.lookingFor.hasApartment 
-                                ? 'Precio que pagaría cada compañero por el alquiler mensual' 
-                                : 'Rango de presupuesto que estás dispuesto a pagar mensualmente'}
+                                ? 'Precio mensual de cada habitación' 
+                                : 'Presupuesto mensual que estás dispuesto a pagar'}
                             </p>
                           </div>
                         </div>
