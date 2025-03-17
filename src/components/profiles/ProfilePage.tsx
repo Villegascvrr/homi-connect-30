@@ -1,3 +1,4 @@
+
 import { useState, useRef, ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
@@ -727,3 +728,145 @@ const ProfilePage = () => {
                             </label>
                             <select 
                               className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
+                              value={profile.lookingFor.occupationPreference} 
+                              onChange={e => handleLookingForChange('occupationPreference', e.target.value)}
+                            >
+                              <option value="estudiantes">Estudiantes</option>
+                              <option value="trabajadores">Trabajadores</option>
+                              <option value="cualquiera">Cualquier ocupación</option>
+                            </select>
+                          </div>
+                          
+                          <div className="space-y-2 md:col-span-2">
+                            <label className="text-xs md:text-sm text-muted-foreground">
+                              Rango de edad:
+                            </label>
+                            <div className="flex gap-2 items-center">
+                              <input 
+                                type="number" 
+                                className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm" 
+                                min="18" 
+                                max="99" 
+                                value={profile.lookingFor.minAge} 
+                                onChange={e => handleLookingForChange('minAge', e.target.value)} 
+                              />
+                              <span className="text-sm">-</span>
+                              <input 
+                                type="number" 
+                                className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm" 
+                                min="18" 
+                                max="99" 
+                                value={profile.lookingFor.maxAge} 
+                                onChange={e => handleLookingForChange('maxAge', e.target.value)} 
+                              />
+                            </div>
+                          </div>
+                          
+                          <div className="space-y-2 md:col-span-2">
+                            <label className="text-xs md:text-sm text-muted-foreground">
+                              Presupuesto:
+                            </label>
+                            <div className="flex gap-2 items-center">
+                              <input 
+                                type="number" 
+                                className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
+                                min="0"
+                                value={profile.lookingFor.budgetRange[0]} 
+                                onChange={e => handleLookingForChange('budgetRange', [parseInt(e.target.value), profile.lookingFor.budgetRange[1]])} 
+                              />
+                              <span className="text-sm">-</span>
+                              <input 
+                                type="number" 
+                                className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
+                                min="0"
+                                value={profile.lookingFor.budgetRange[1]} 
+                                onChange={e => handleLookingForChange('budgetRange', [profile.lookingFor.budgetRange[0], parseInt(e.target.value)])} 
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+      
+      <Footer />
+      
+      <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Compartir perfil</DialogTitle>
+          </DialogHeader>
+          <div className="flex flex-col space-y-4">
+            <div className="flex justify-center p-4" ref={qrCodeRef}>
+              <QRCodeSVG value={getProfileUrl()} size={200} bgColor="#FFFFFF" fgColor="#6E59A5" />
+            </div>
+            
+            <div className="flex flex-col space-y-2">
+              <p className="text-sm text-center text-muted-foreground mb-1">Enlace de tu perfil</p>
+              <div className="flex items-center space-x-2">
+                <Input value={getProfileUrl()} readOnly />
+                <Button size="sm" onClick={handleCopyLink}>
+                  Copiar
+                </Button>
+              </div>
+            </div>
+            
+            <div className="flex flex-col space-y-2">
+              <p className="text-sm text-center text-muted-foreground mb-1">Compartir en redes sociales</p>
+              <div className="flex justify-center space-x-4">
+                <Button 
+                  variant="outline" 
+                  size="icon" 
+                  className="h-10 w-10 rounded-full" 
+                  onClick={() => shareToSocialMedia('whatsapp')}
+                >
+                  <img src="/whatsapp-icon.png" alt="WhatsApp" className="h-5 w-5" />
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="icon" 
+                  className="h-10 w-10 rounded-full" 
+                  onClick={() => shareToSocialMedia('telegram')}
+                >
+                  <img src="/telegram-icon.png" alt="Telegram" className="h-5 w-5" />
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="icon" 
+                  className="h-10 w-10 rounded-full" 
+                  onClick={() => shareToSocialMedia('facebook')}
+                >
+                  <img src="/facebook-icon.png" alt="Facebook" className="h-5 w-5" />
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="icon" 
+                  className="h-10 w-10 rounded-full" 
+                  onClick={() => shareToSocialMedia('twitter')}
+                >
+                  <img src="/twitter-icon.png" alt="Twitter" className="h-5 w-5" />
+                </Button>
+              </div>
+            </div>
+            
+            <div className="flex flex-col space-y-2">
+              <p className="text-sm text-center text-muted-foreground mb-1">Descargar código QR</p>
+              <Button variant="outline" onClick={handleDownloadQR}>
+                <Download size={16} className="mr-2" />
+                Descargar QR
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+};
+
+export default ProfilePage;
