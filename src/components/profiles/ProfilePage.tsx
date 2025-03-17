@@ -257,80 +257,107 @@ const ProfilePage = () => {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       
-      <main className="flex-grow pt-24 md:pt-28 pb-16 md:pb-20">
+      <main className="flex-grow pt-20 md:pt-24 pb-16 md:pb-20">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="glass-card overflow-hidden">
-              <div className="relative p-6 pt-16 md:pt-20 pb-6 md:pb-8">
-                <div className="absolute top-6 left-6">
-                  <Avatar className={`${isMobile ? 'w-24 h-24' : 'w-32 h-32'} border-4 border-white shadow-lg`}>
-                    <AvatarImage src={profile.imgUrl} alt={profile.name} />
-                    <AvatarFallback>{profile.name.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                  {profile.verified && (
-                    <div className="absolute bottom-0 right-0 bg-homi-purple text-white p-1 rounded-full">
-                      <UserCheck size={isMobile ? 14 : 16} />
+              <div className="relative p-6 md:p-8">
+                {/* Profile Header with improved layout */}
+                <div className="flex flex-col md:flex-row md:items-center gap-6">
+                  {/* Avatar section */}
+                  <div className="relative">
+                    <Avatar className={`${isMobile ? 'w-24 h-24' : 'w-32 h-32'} border-4 border-white shadow-lg`}>
+                      <AvatarImage src={profile.imgUrl} alt={profile.name} />
+                      <AvatarFallback>{profile.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    {profile.verified && (
+                      <div className="absolute bottom-0 right-0 bg-homi-purple text-white p-1 rounded-full">
+                        <UserCheck size={isMobile ? 14 : 16} />
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Profile info section */}
+                  <div className="flex-grow space-y-2">
+                    <h1 className="text-xl md:text-3xl font-bold flex items-center gap-2">
+                      {profile.name}, {profile.age}
+                    </h1>
+                    <p className="text-sm text-muted-foreground flex items-center gap-1.5">
+                      <AtSign size={16} className="text-homi-purple flex-shrink-0" />
+                      {profile.username || "usuario"}
+                    </p>
+                    <p className="text-muted-foreground flex items-center gap-1.5">
+                      <Home size={16} className="flex-shrink-0" />
+                      {profile.location}
+                    </p>
+                    <div className="flex items-center gap-1.5 pt-1">
+                      <GraduationCap size={16} className="text-homi-purple flex-shrink-0" />
+                      <span className="text-sm">{profile.university}</span>
                     </div>
-                  )}
-                </div>
-                
-                <Link to="/profile/edit">
-                  <Button variant="outline" size="sm" className="absolute top-6 right-6 rounded-full bg-white/80 hover:bg-white">
-                    {isMobile ? <Pencil size={16} /> : <><Pencil size={16} className="mr-2" />Editar Perfil</>}
-                  </Button>
-                </Link>
-                
-                <div className={isMobile ? 'mt-28 ml-2' : 'ml-44'}>
-                  <div className={`flex ${isMobile ? 'flex-col gap-3' : 'justify-between'}`}>
-                    <div>
-                      <h1 className="text-xl md:text-3xl font-bold flex items-center gap-2">
-                        {profile.name}, {profile.age}
-                      </h1>
-                      <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
-                        <AtSign size={16} className="text-homi-purple" />
-                        {profile.username || "usuario"}
-                      </p>
-                      <p className="text-muted-foreground flex items-center gap-1 mt-1">
-                        <Home size={16} />
-                        {profile.location}
-                      </p>
-                    </div>
-                    
-                    <div className={`flex ${isMobile ? 'justify-between' : 'gap-2'} mt-4 md:mt-0`}>
-                      <Button 
-                        variant={liked ? "default" : "outline"} 
-                        size={isMobile ? "icon" : "sm"} 
-                        className={`rounded-full ${liked ? 'bg-homi-purple hover:bg-homi-purple/90' : ''}`} 
-                        onClick={handleLike}
-                      >
-                        {isMobile ? (
-                          <Heart size={18} className={liked ? 'fill-white' : ''} />
-                        ) : (
-                          <>
-                            <Heart size={18} className={liked ? 'mr-2 fill-white' : 'mr-2'} />
-                            {liked ? 'Te gusta' : 'Me gusta'}
-                          </>
-                        )}
-                      </Button>
-                      <Button variant="outline" size={isMobile ? "icon" : "sm"} className="rounded-full" onClick={handleShare}>
-                        <Share size={18} />
-                      </Button>
-                      <Button variant="outline" size={isMobile ? "icon" : "sm"} className="rounded-full" onClick={() => setShowShareDialog(true)}>
-                        <QrCode size={18} />
-                      </Button>
-                      <Button size={isMobile ? "icon" : "sm"} className="rounded-full bg-homi-purple hover:bg-homi-purple/90" onClick={handleMessage}>
-                        {isMobile ? (
-                          <MessageSquare size={18} />
-                        ) : (
-                          <>
-                            <MessageSquare size={18} className="mr-2" />
-                            Mensaje
-                          </>
-                        )}
-                      </Button>
+                    <div className="flex items-center gap-1.5">
+                      <Briefcase size={16} className="text-homi-purple flex-shrink-0" />
+                      <span className="text-sm">{profile.occupation}</span>
                     </div>
                   </div>
+                  
+                  {/* Action buttons section - top right */}
+                  <div className="absolute top-6 right-6 flex flex-col gap-3">
+                    <Link to="/profile/edit">
+                      <Button variant="outline" size="sm" className="rounded-full bg-white/80 hover:bg-white">
+                        {isMobile ? <Pencil size={16} /> : <><Pencil size={16} className="mr-2" />Editar Perfil</>}
+                      </Button>
+                    </Link>
+                    {/* Action buttons moved to bottom on mobile */}
+                    {!isMobile && (
+                      <div className="flex flex-col gap-2 mt-2">
+                        <Button 
+                          variant={liked ? "default" : "outline"} 
+                          size="sm" 
+                          className={`rounded-full ${liked ? 'bg-homi-purple hover:bg-homi-purple/90' : ''}`} 
+                          onClick={handleLike}
+                        >
+                          <Heart size={18} className={liked ? 'mr-2 fill-white' : 'mr-2'} />
+                          {liked ? 'Te gusta' : 'Me gusta'}
+                        </Button>
+                        <Button size="sm" className="rounded-full bg-homi-purple hover:bg-homi-purple/90" onClick={handleMessage}>
+                          <MessageSquare size={18} className="mr-2" />
+                          Mensaje
+                        </Button>
+                        <div className="flex gap-2">
+                          <Button variant="outline" size="sm" className="rounded-full flex-1" onClick={handleShare}>
+                            <Share size={18} />
+                          </Button>
+                          <Button variant="outline" size="sm" className="rounded-full flex-1" onClick={() => setShowShareDialog(true)}>
+                            <QrCode size={18} />
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
+                
+                {/* Mobile action buttons - below profile info */}
+                {isMobile && (
+                  <div className="flex justify-between mt-6 pt-4 border-t border-gray-100">
+                    <Button 
+                      variant={liked ? "default" : "outline"} 
+                      size="icon" 
+                      className={`rounded-full ${liked ? 'bg-homi-purple hover:bg-homi-purple/90' : ''}`} 
+                      onClick={handleLike}
+                    >
+                      <Heart size={18} className={liked ? 'fill-white' : ''} />
+                    </Button>
+                    <Button variant="outline" size="icon" className="rounded-full" onClick={handleShare}>
+                      <Share size={18} />
+                    </Button>
+                    <Button variant="outline" size="icon" className="rounded-full" onClick={() => setShowShareDialog(true)}>
+                      <QrCode size={18} />
+                    </Button>
+                    <Button size="icon" className="rounded-full bg-homi-purple hover:bg-homi-purple/90" onClick={handleMessage}>
+                      <MessageSquare size={18} />
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
             
