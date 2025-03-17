@@ -16,6 +16,7 @@ import { Select } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Slider } from '@/components/ui/slider';
+
 const ProfilePage = () => {
   const [liked, setLiked] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -79,6 +80,7 @@ const ProfilePage = () => {
       budgetRange: [400, 600]
     }
   });
+
   const handleLike = () => {
     setLiked(!liked);
     toast({
@@ -87,15 +89,18 @@ const ProfilePage = () => {
       variant: liked ? 'destructive' : 'default'
     });
   };
+
   const handleMessage = () => {
     toast({
       title: 'Enviando mensaje',
       description: `Iniciando chat con ${profile.name}`
     });
   };
+
   const handleShare = () => {
     setShowShareDialog(true);
   };
+
   const handleEditProfile = () => {
     setIsEditing(true);
     toast({
@@ -103,6 +108,7 @@ const ProfilePage = () => {
       description: 'Redirigiendo al editor de perfil'
     });
   };
+
   const handleDownloadCard = async () => {
     if (profileCardRef.current) {
       try {
@@ -135,13 +141,16 @@ const ProfilePage = () => {
       }
     }
   };
+
   const getCurrentUrl = () => {
     return window.location.href;
   };
+
   const getProfileUrl = () => {
     const baseUrl = window.location.origin;
     return `${baseUrl}/profile/${profile.id}`;
   };
+
   const handleDownloadQR = async () => {
     if (qrCodeRef.current) {
       try {
@@ -172,6 +181,7 @@ const ProfilePage = () => {
       }
     }
   };
+
   const handleCopyLink = () => {
     navigator.clipboard.writeText(getProfileUrl());
     toast({
@@ -180,12 +190,15 @@ const ProfilePage = () => {
     });
     setTimeout(() => setShowShareDialog(false), 1000);
   };
+
   const handleNextGalleryImage = () => {
     setActiveGalleryIndex(prevIndex => prevIndex === profile.galleryImgs.length - 1 ? 0 : prevIndex + 1);
   };
+
   const handlePrevGalleryImage = () => {
     setActiveGalleryIndex(prevIndex => prevIndex === 0 ? profile.galleryImgs.length - 1 : prevIndex - 1);
   };
+
   const shareToSocialMedia = (platform: string) => {
     const profileUrl = getProfileUrl();
     let shareUrl = '';
@@ -208,9 +221,11 @@ const ProfilePage = () => {
       setTimeout(() => setShowShareDialog(false), 500);
     }
   };
+
   const handleEditLookingFor = () => {
     setIsEditingLookingFor(true);
   };
+
   const handleSaveLookingFor = () => {
     setIsEditingLookingFor(false);
     toast({
@@ -218,9 +233,11 @@ const ProfilePage = () => {
       description: 'Tus preferencias de búsqueda han sido actualizadas'
     });
   };
+
   const handleCancelEditLookingFor = () => {
     setIsEditingLookingFor(false);
   };
+
   const handleLookingForChange = (field: string, value: string | boolean | number | number[]) => {
     setProfile(prev => ({
       ...prev,
@@ -230,6 +247,7 @@ const ProfilePage = () => {
       }
     }));
   };
+
   return <div className="min-h-screen flex flex-col">
       <Navbar />
       
@@ -697,4 +715,5 @@ const ProfilePage = () => {
       <Footer />
     </div>;
 };
+
 export default ProfilePage;
