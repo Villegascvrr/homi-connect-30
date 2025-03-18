@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import MatchCard from '@/components/matching/MatchCard';
@@ -152,11 +151,31 @@ const MatchingPage = () => {
   const handleApplyFilters = (filters: FilterValues) => {
     setActiveFilters(filters);
     applyFiltersAndSearch(searchQuery, filters);
+    
+    // Mostrar toast con resumen de filtros aplicados
+    const filterCount = Object.values(filters).filter(value => 
+      value !== undefined && 
+      (Array.isArray(value) ? value.length > 0 : true)
+    ).length;
+    
+    toast({
+      title: `Filtros aplicados (${filterCount})`,
+      description: filterCount > 0 ? 
+        "Se han aplicado los filtros seleccionados" : 
+        "No se han seleccionado filtros específicos",
+      variant: "default"
+    });
   };
 
   const handleClearFilters = () => {
     setActiveFilters(null);
     applyFiltersAndSearch(searchQuery, null);
+    
+    toast({
+      title: "Filtros eliminados",
+      description: "Se han eliminado todos los filtros",
+      variant: "default"
+    });
   };
 
   const applyFiltersAndSearch = (query: string, filters: FilterValues | null) => {
@@ -167,7 +186,10 @@ const MatchingPage = () => {
       const lowerCaseQuery = query.toLowerCase();
       results = results.filter(profile => 
         profile.name.toLowerCase().includes(lowerCaseQuery) || 
-        profile.username.toLowerCase().includes(lowerCaseQuery)
+        profile.username.toLowerCase().includes(lowerCaseQuery) ||
+        profile.bio.toLowerCase().includes(lowerCaseQuery) ||
+        profile.location.toLowerCase().includes(lowerCaseQuery) ||
+        profile.occupation.toLowerCase().includes(lowerCaseQuery)
       );
     }
     
@@ -221,13 +243,16 @@ const MatchingPage = () => {
     
     setFilteredProfiles(results);
     
-    toast({
-      title: `${results.length} perfiles encontrados`,
-      description: results.length > 0 
-        ? "Se han encontrado perfiles que coinciden con tus criterios" 
-        : "No se encontraron perfiles que coincidan con tus criterios",
-      variant: results.length > 0 ? "default" : "destructive"
-    });
+    // Solo mostrar el toast de resultados cuando cambian los filtros, no en la carga inicial
+    if (activeFilters !== null || query.trim()) {
+      toast({
+        title: `${results.length} perfiles encontrados`,
+        description: results.length > 0 
+          ? "Se han encontrado perfiles que coinciden con tus criterios" 
+          : "No se encontraron perfiles que coincidan con tus criterios",
+        variant: results.length > 0 ? "default" : "destructive"
+      });
+    }
   };
 
   const handleLike = (id: string) => {
