@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -130,11 +131,16 @@ const formatProfileForMatchCard = (profile: any) => {
 interface FilterValues {
   presupuesto?: [number, number];
   ubicacion?: string;
+  rangoEdad?: string;
+  fechaMudanza?: string;
+  estiloVida?: string[];
   intereses?: string[];
-  horario?: string;
-  ordenado?: boolean;
-  mascotas?: boolean;
-  fumador?: boolean;
+  nivelLimpieza?: string;
+  nivelRuido?: string;
+  horarioHabitual?: string;
+  invitados?: string;
+  fumar?: string;
+  mascotas?: string;
 }
 
 const MatchingPage = () => {
@@ -195,10 +201,12 @@ const MatchingPage = () => {
     
     // Then apply filters if any are active
     if (filters) {
+      // Ubicación
       if (filters.ubicacion) {
         results = results.filter(profile => profile.location === filters.ubicacion);
       }
       
+      // Presupuesto
       if (filters.presupuesto) {
         const [min, max] = filters.presupuesto;
         results = results.filter(profile => 
@@ -208,6 +216,39 @@ const MatchingPage = () => {
         );
       }
       
+      // Rango de edad
+      if (filters.rangoEdad) {
+        if (filters.rangoEdad === '18-25') {
+          results = results.filter(profile => profile.age >= 18 && profile.age <= 25);
+        } else if (filters.rangoEdad === '26-30') {
+          results = results.filter(profile => profile.age >= 26 && profile.age <= 30);
+        } else if (filters.rangoEdad === '31-40') {
+          results = results.filter(profile => profile.age >= 31 && profile.age <= 40);
+        } else if (filters.rangoEdad === '41+') {
+          results = results.filter(profile => profile.age >= 41);
+        }
+      }
+      
+      // Estilo de vida
+      if (filters.estiloVida && filters.estiloVida.length > 0) {
+        // Simulamos el filtrado de estilo de vida
+        // En datos reales, esto dependería de cómo están estructurados los datos
+        const estiloVidaTerms = filters.estiloVida.map(ev => ev.toLowerCase());
+        results = results.filter(profile => {
+          // Verificamos si alguna propiedad del perfil coincide con los estilos seleccionados
+          const profileLifestyle = profile.lifestyle || {};
+          const hasMatchingLifestyle = 
+            (estiloVidaTerms.includes('ordenado') && profileLifestyle.cleanliness === "Muy ordenada") ||
+            (estiloVidaTerms.includes('tranquilo') && profileLifestyle.noise === "Tranquila") ||
+            (estiloVidaTerms.includes('nocturno') && profileLifestyle.schedule === "nocturno") ||
+            (estiloVidaTerms.includes('madrugador') && profileLifestyle.schedule === "diurno") ||
+            (estiloVidaTerms.includes('no-fumador') && profileLifestyle.smoking === "No");
+          
+          return hasMatchingLifestyle;
+        });
+      }
+      
+      // Intereses
       if (filters.intereses && filters.intereses.length > 0) {
         results = results.filter(profile => 
           filters.intereses!.some(interest => 
@@ -216,29 +257,71 @@ const MatchingPage = () => {
         );
       }
       
-      if (filters.horario) {
-        results = results.filter(profile => 
-          profile.lifestyle && profile.lifestyle.schedule === filters.horario
-        );
+      // Nivel de limpieza
+      if (filters.nivelLimpieza) {
+        results = results.filter(profile => {
+          if (filters.nivelLimpieza === 'alta') {
+            return profile.lifestyle && profile.lifestyle.cleanliness === "Muy ordenada";
+          } else if (filters.nivelLimpieza === 'media') {
+            return profile.lifestyle && profile.lifestyle.cleanliness === "Normal";
+          } else {
+            return true; // Si es baja, aceptamos cualquier nivel
+          }
+        });
       }
       
-      if (filters.ordenado) {
-        results = results.filter(profile => 
-          profile.lifestyle && 
-          (profile.lifestyle.cleanliness === "Muy ordenada" || profile.lifestyle.cleanliness === "Ordenada")
-        );
+      // Nivel de ruido
+      if (filters.nivelRuido) {
+        results = results.filter(profile => {
+          if (filters.nivelRuido === 'bajo') {
+            return profile.lifestyle && profile.lifestyle.noise === "Tranquila";
+          } else if (filters.nivelRuido === 'moderado') {
+            return profile.lifestyle && profile.lifestyle.noise === "Normal";
+          } else {
+            return profile.lifestyle && profile.lifestyle.noise === "Sociable";
+          }
+        });
       }
       
-      if (filters.mascotas) {
-        // En este ejemplo, asumimos que todos aceptan mascotas (no tenemos ese dato)
-        // En un caso real, necesitaríamos filtrar por ese campo específico
+      // Horario habitual
+      if (filters.horarioHabitual) {
+        results = results.filter(profile => {
+          if (filters.horarioHabitual === 'madrugador') {
+            return profile.lifestyle && profile.lifestyle.schedule === "diurno";
+          } else if (filters.horarioHabitual === 'nocturno') {
+            return profile.lifestyle && profile.lifestyle.schedule === "nocturno";
+          } else {
+            return profile.lifestyle && profile.lifestyle.schedule === "flexible";
+          }
+        });
       }
       
-      if (filters.fumador) {
-        results = results.filter(profile => 
-          profile.lifestyle && profile.lifestyle.smoking === "Sí"
-        );
+      // Invitados
+      if (filters.invitados) {
+        results = results.filter(profile => {
+          if (filters.invitados === 'frecuente') {
+            return profile.lifestyle && profile.lifestyle.guests === "Frecuentemente";
+          } else if (filters.invitados === 'ocasional') {
+            return profile.lifestyle && profile.lifestyle.guests === "Ocasionalmente";
+          } else {
+            return profile.lifestyle && profile.lifestyle.guests === "Rara vez";
+          }
+        });
       }
+      
+      // Fumar
+      if (filters.fumar) {
+        results = results.filter(profile => {
+          if (filters.fumar === 'no') {
+            return profile.lifestyle && profile.lifestyle.smoking === "No";
+          } else {
+            return profile.lifestyle && profile.lifestyle.smoking === "Sí";
+          }
+        });
+      }
+      
+      // Mascotas (asumimos que todos aceptan mascotas en este ejemplo)
+      // En un caso real, necesitaríamos datos específicos sobre mascotas
     }
     
     setFilteredProfiles(results);
@@ -296,12 +379,15 @@ const MatchingPage = () => {
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-3">
               <ProfileSearchBar 
                 onSearch={handleSearch}
                 className="w-full" 
               />
             </div>
+          </div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             <div className="lg:col-span-1">
               <MatchingFilters 
                 onApplyFilters={handleApplyFilters}
@@ -309,32 +395,34 @@ const MatchingPage = () => {
                 className="w-full"
               />
             </div>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProfiles.length > 0 ? (
-              filteredProfiles.map(profile => {
-                const cardProps = formatProfileForMatchCard(profile);
-                return (
-                  <MatchCard 
-                    key={profile.id}
-                    {...cardProps}
-                    onLike={handleLike}
-                    onPass={handlePass}
-                    onView={handleView}
-                  />
-                );
-              })
-            ) : (
-              <div className="col-span-full text-center py-16">
-                <p className="text-xl text-muted-foreground">
-                  No se encontraron perfiles que coincidan con tu búsqueda
-                </p>
-                <p className="mt-2">
-                  Intenta con otros términos o menos filtros específicos
-                </p>
+            
+            <div className="lg:col-span-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredProfiles.length > 0 ? (
+                  filteredProfiles.map(profile => {
+                    const cardProps = formatProfileForMatchCard(profile);
+                    return (
+                      <MatchCard 
+                        key={profile.id}
+                        {...cardProps}
+                        onLike={handleLike}
+                        onPass={handlePass}
+                        onView={handleView}
+                      />
+                    );
+                  })
+                ) : (
+                  <div className="col-span-full text-center py-16">
+                    <p className="text-xl text-muted-foreground">
+                      No se encontraron perfiles que coincidan con tu búsqueda
+                    </p>
+                    <p className="mt-2">
+                      Intenta con otros términos o menos filtros específicos
+                    </p>
+                  </div>
+                )}
               </div>
-            )}
+            </div>
           </div>
         </div>
       </main>
