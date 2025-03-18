@@ -1,10 +1,18 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import MatchCard from '@/components/matching/MatchCard';
 import ProfileSearchBar from '@/components/profiles/ProfileSearchBar';
 import MatchingFilters from '@/components/matching/MatchingFilters';
 import { useToast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
+import { Filter, UserRound } from 'lucide-react';
+import { 
+  Popover, 
+  PopoverContent, 
+  PopoverTrigger 
+} from '@/components/ui/popover';
 
 // Mockup data for profile cards
 const mockProfiles = [
@@ -182,6 +190,8 @@ const MatchingPage = () => {
   const [activeFilters, setActiveFilters] = useState<FilterValues | null>(null);
   const [filteredProfiles, setFilteredProfiles] = useState(mockProfiles);
   const { toast } = useToast();
+  const [openSearchFilters, setOpenSearchFilters] = useState(false);
+  const [openPreferences, setOpenPreferences] = useState(false);
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -418,24 +428,69 @@ const MatchingPage = () => {
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-            <div className="lg:col-span-3">
+            <div className="lg:col-span-2">
               <ProfileSearchBar 
                 onSearch={handleSearch}
                 className="w-full" 
               />
             </div>
+            <div className="lg:col-span-1 flex justify-end gap-2">
+              <Popover open={openSearchFilters} onOpenChange={setOpenSearchFilters}>
+                <PopoverTrigger asChild>
+                  <Button 
+                    variant="outline" 
+                    className="flex items-center gap-2"
+                    onClick={() => setOpenSearchFilters(!openSearchFilters)}
+                  >
+                    <Filter className="h-4 w-4" />
+                    Filtros
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="end" sideOffset={5}>
+                  <div className="overflow-auto max-h-[90vh] max-w-[90vw] w-[800px]">
+                    <MatchingFilters 
+                      onApplyFilters={(filters) => {
+                        handleApplyFilters(filters);
+                        setOpenSearchFilters(false);
+                      }}
+                      onClearFilters={handleClearFilters}
+                      activeTab="filtros"
+                      className="w-full"
+                    />
+                  </div>
+                </PopoverContent>
+              </Popover>
+              
+              <Popover open={openPreferences} onOpenChange={setOpenPreferences}>
+                <PopoverTrigger asChild>
+                  <Button 
+                    variant="outline" 
+                    className="flex items-center gap-2"
+                    onClick={() => setOpenPreferences(!openPreferences)}
+                  >
+                    <UserRound className="h-4 w-4" />
+                    Preferencias
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="end" sideOffset={5}>
+                  <div className="overflow-auto max-h-[90vh] max-w-[90vw] w-[800px]">
+                    <MatchingFilters 
+                      onApplyFilters={(filters) => {
+                        handleApplyFilters(filters);
+                        setOpenPreferences(false);
+                      }}
+                      onClearFilters={handleClearFilters}
+                      activeTab="preferencias"
+                      className="w-full"
+                    />
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </div>
           </div>
           
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <div className="lg:col-span-1">
-              <MatchingFilters 
-                onApplyFilters={handleApplyFilters}
-                onClearFilters={handleClearFilters}
-                className="w-full"
-              />
-            </div>
-            
-            <div className="lg:col-span-3">
+          <div className="grid grid-cols-1 gap-6">
+            <div className="col-span-1">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredProfiles.length > 0 ? (
                   filteredProfiles.map(profile => {
