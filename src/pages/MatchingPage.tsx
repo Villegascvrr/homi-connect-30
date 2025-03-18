@@ -143,6 +143,33 @@ interface FilterValues {
   mascotas?: string;
 }
 
+// Define a more specific interface for lifestyle to avoid TypeScript errors
+interface Lifestyle {
+  cleanliness?: string;
+  noise?: string;
+  schedule?: string;
+  guests?: string;
+  smoking?: string;
+}
+
+interface Profile {
+  id: number;
+  name: string;
+  username: string;
+  age: number;
+  location: string;
+  occupation: string;
+  bio: string;
+  compatibility: number;
+  profileImage: string;
+  interests: string[];
+  lifestyle?: Lifestyle;
+  budget?: {
+    min: number;
+    max: number;
+  };
+}
+
 const MatchingPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilters, setActiveFilters] = useState<FilterValues | null>(null);
@@ -260,10 +287,11 @@ const MatchingPage = () => {
       // Nivel de limpieza
       if (filters.nivelLimpieza) {
         results = results.filter(profile => {
+          const lifestyle = profile.lifestyle || {};
           if (filters.nivelLimpieza === 'alta') {
-            return profile.lifestyle && profile.lifestyle.cleanliness === "Muy ordenada";
+            return lifestyle.cleanliness === "Muy ordenada";
           } else if (filters.nivelLimpieza === 'media') {
-            return profile.lifestyle && profile.lifestyle.cleanliness === "Normal";
+            return lifestyle.cleanliness === "Normal";
           } else {
             return true; // Si es baja, aceptamos cualquier nivel
           }
@@ -273,12 +301,13 @@ const MatchingPage = () => {
       // Nivel de ruido
       if (filters.nivelRuido) {
         results = results.filter(profile => {
+          const lifestyle = profile.lifestyle || {};
           if (filters.nivelRuido === 'bajo') {
-            return profile.lifestyle && profile.lifestyle.noise === "Tranquila";
+            return lifestyle.noise === "Tranquila";
           } else if (filters.nivelRuido === 'moderado') {
-            return profile.lifestyle && profile.lifestyle.noise === "Normal";
+            return lifestyle.noise === "Normal";
           } else {
-            return profile.lifestyle && profile.lifestyle.noise === "Sociable";
+            return lifestyle.noise === "Sociable";
           }
         });
       }
@@ -286,12 +315,13 @@ const MatchingPage = () => {
       // Horario habitual
       if (filters.horarioHabitual) {
         results = results.filter(profile => {
+          const lifestyle = profile.lifestyle || {};
           if (filters.horarioHabitual === 'madrugador') {
-            return profile.lifestyle && profile.lifestyle.schedule === "diurno";
+            return lifestyle.schedule === "diurno";
           } else if (filters.horarioHabitual === 'nocturno') {
-            return profile.lifestyle && profile.lifestyle.schedule === "nocturno";
+            return lifestyle.schedule === "nocturno";
           } else {
-            return profile.lifestyle && profile.lifestyle.schedule === "flexible";
+            return lifestyle.schedule === "flexible";
           }
         });
       }
@@ -299,12 +329,13 @@ const MatchingPage = () => {
       // Invitados
       if (filters.invitados) {
         results = results.filter(profile => {
+          const lifestyle = profile.lifestyle || {};
           if (filters.invitados === 'frecuente') {
-            return profile.lifestyle && profile.lifestyle.guests === "Frecuentemente";
+            return lifestyle.guests === "Frecuentemente";
           } else if (filters.invitados === 'ocasional') {
-            return profile.lifestyle && profile.lifestyle.guests === "Ocasionalmente";
+            return lifestyle.guests === "Ocasionalmente";
           } else {
-            return profile.lifestyle && profile.lifestyle.guests === "Rara vez";
+            return lifestyle.guests === "Rara vez";
           }
         });
       }
@@ -312,10 +343,11 @@ const MatchingPage = () => {
       // Fumar
       if (filters.fumar) {
         results = results.filter(profile => {
+          const lifestyle = profile.lifestyle || {};
           if (filters.fumar === 'no') {
-            return profile.lifestyle && profile.lifestyle.smoking === "No";
+            return lifestyle.smoking === "No";
           } else {
-            return profile.lifestyle && profile.lifestyle.smoking === "Sí";
+            return lifestyle.smoking === "Sí";
           }
         });
       }
