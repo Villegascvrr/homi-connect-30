@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -121,7 +120,6 @@ const formatProfileForMatchCard = (profile: any) => {
     compatibility: profile.compatibility,
     lifestyle: profile.lifestyle,
     budget: profile.budget,
-    // Add empty handler functions
     onLike: () => {},
     onPass: () => {},
     onView: () => {},
@@ -151,6 +149,15 @@ interface Lifestyle {
   guests?: string;
   smoking?: string;
 }
+
+// Default empty lifestyle object with all properties defined
+const emptyLifestyle: Lifestyle = {
+  cleanliness: "",
+  noise: "",
+  schedule: "",
+  guests: "",
+  smoking: ""
+};
 
 interface Profile {
   id: number;
@@ -262,8 +269,8 @@ const MatchingPage = () => {
         // En datos reales, esto dependería de cómo están estructurados los datos
         const estiloVidaTerms = filters.estiloVida.map(ev => ev.toLowerCase());
         results = results.filter(profile => {
-          // Verificamos si alguna propiedad del perfil coincide con los estilos seleccionados
-          const profileLifestyle = profile.lifestyle || {};
+          // Use the empty lifestyle object with proper typing
+          const profileLifestyle: Lifestyle = profile.lifestyle || emptyLifestyle;
           const hasMatchingLifestyle = 
             (estiloVidaTerms.includes('ordenado') && profileLifestyle.cleanliness === "Muy ordenada") ||
             (estiloVidaTerms.includes('tranquilo') && profileLifestyle.noise === "Tranquila") ||
@@ -287,7 +294,7 @@ const MatchingPage = () => {
       // Nivel de limpieza
       if (filters.nivelLimpieza) {
         results = results.filter(profile => {
-          const lifestyle = profile.lifestyle || {};
+          const lifestyle: Lifestyle = profile.lifestyle || emptyLifestyle;
           if (filters.nivelLimpieza === 'alta') {
             return lifestyle.cleanliness === "Muy ordenada";
           } else if (filters.nivelLimpieza === 'media') {
@@ -301,7 +308,7 @@ const MatchingPage = () => {
       // Nivel de ruido
       if (filters.nivelRuido) {
         results = results.filter(profile => {
-          const lifestyle = profile.lifestyle || {};
+          const lifestyle: Lifestyle = profile.lifestyle || emptyLifestyle;
           if (filters.nivelRuido === 'bajo') {
             return lifestyle.noise === "Tranquila";
           } else if (filters.nivelRuido === 'moderado') {
@@ -315,7 +322,7 @@ const MatchingPage = () => {
       // Horario habitual
       if (filters.horarioHabitual) {
         results = results.filter(profile => {
-          const lifestyle = profile.lifestyle || {};
+          const lifestyle: Lifestyle = profile.lifestyle || emptyLifestyle;
           if (filters.horarioHabitual === 'madrugador') {
             return lifestyle.schedule === "diurno";
           } else if (filters.horarioHabitual === 'nocturno') {
@@ -329,7 +336,7 @@ const MatchingPage = () => {
       // Invitados
       if (filters.invitados) {
         results = results.filter(profile => {
-          const lifestyle = profile.lifestyle || {};
+          const lifestyle: Lifestyle = profile.lifestyle || emptyLifestyle;
           if (filters.invitados === 'frecuente') {
             return lifestyle.guests === "Frecuentemente";
           } else if (filters.invitados === 'ocasional') {
@@ -343,7 +350,7 @@ const MatchingPage = () => {
       // Fumar
       if (filters.fumar) {
         results = results.filter(profile => {
-          const lifestyle = profile.lifestyle || {};
+          const lifestyle: Lifestyle = profile.lifestyle || emptyLifestyle;
           if (filters.fumar === 'no') {
             return lifestyle.smoking === "No";
           } else {
