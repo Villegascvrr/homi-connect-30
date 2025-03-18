@@ -42,9 +42,9 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
 }) => {
   const [showFilters, setShowFilters] = useState(false);
   const [presupuesto, setPresupuesto] = useState<[number, number]>([300, 900]);
-  const [ubicacion, setUbicacion] = useState<string>('');
+  const [ubicacion, setUbicacion] = useState<string>('cualquiera');
   const [intereses, setIntereses] = useState<string[]>([]);
-  const [horario, setHorario] = useState<string>('');
+  const [horario, setHorario] = useState<string>('cualquiera');
   const [ordenado, setOrdenado] = useState<boolean>(false);
   const [mascotas, setMascotas] = useState<boolean>(false);
   const [fumador, setFumador] = useState<boolean>(false);
@@ -56,9 +56,9 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
   const handleApplyFilters = () => {
     onApplyFilters({
       presupuesto,
-      ubicacion: ubicacion || undefined,
+      ubicacion: ubicacion !== 'cualquiera' ? ubicacion : undefined,
       intereses: intereses.length > 0 ? intereses : undefined,
-      horario: horario || undefined,
+      horario: horario !== 'cualquiera' ? horario : undefined,
       ordenado,
       mascotas,
       fumador
@@ -67,9 +67,9 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
   
   const handleClearFilters = () => {
     setPresupuesto([300, 900]);
-    setUbicacion('');
+    setUbicacion('cualquiera');
     setIntereses([]);
-    setHorario('');
+    setHorario('cualquiera');
     setOrdenado(false);
     setMascotas(false);
     setFumador(false);
@@ -126,7 +126,7 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                   <SelectValue placeholder="Cualquier ubicación" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Cualquier ubicación</SelectItem>
+                  <SelectItem value="cualquiera">Cualquier ubicación</SelectItem>
                   <SelectItem value="Madrid">Madrid</SelectItem>
                   <SelectItem value="Barcelona">Barcelona</SelectItem>
                   <SelectItem value="Valencia">Valencia</SelectItem>
@@ -147,7 +147,7 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                   <SelectValue placeholder="Cualquier horario" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Cualquier horario</SelectItem>
+                  <SelectItem value="cualquiera">Cualquier horario</SelectItem>
                   <SelectItem value="diurno">Diurno</SelectItem>
                   <SelectItem value="nocturno">Nocturno</SelectItem>
                   <SelectItem value="flexible">Flexible</SelectItem>
