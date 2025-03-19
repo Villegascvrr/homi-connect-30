@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -123,7 +124,10 @@ const EmailSignup = () => {
       form.setValue("firstName", mockGoogleData.firstName);
       form.setValue("lastName", mockGoogleData.lastName);
       form.setValue("email", mockGoogleData.email);
+      
+      // FIX: Pass the correct field names as an array of literals, not strings
       form.trigger(["firstName", "lastName", "email"]);
+      
       setIsSigningWithGoogle(false);
       toast({
         title: "Cuenta de Google conectada",
@@ -204,7 +208,8 @@ const EmailSignup = () => {
                            !form.formState.errors.email;
 
   const handleNextStep = async () => {
-    const fieldsToValidate = ['firstName', 'lastName', 'username', 'email'];
+    // FIX: Use explicit field names instead of string array
+    const fieldsToValidate = ["firstName", "lastName", "username", "email"] as const;
     const result = await form.trigger(fieldsToValidate);
     
     if (result && isPersonalDataValid) {
