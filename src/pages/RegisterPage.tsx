@@ -14,7 +14,9 @@ import {
   Moon, 
   Sun,
   AtSign,
-  Camera
+  Camera,
+  ArrowRight,
+  ArrowLeft
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Navbar from '@/components/layout/Navbar';
@@ -92,10 +94,15 @@ const RegisterPage = () => {
     noise: "moderado",
   });
   const [isSigningWithGoogle, setIsSigningWithGoogle] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const formContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   useEffect(() => {
     if (formContainerRef.current) {
@@ -197,8 +204,10 @@ const RegisterPage = () => {
     }));
   };
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log('Form submitted:', values);
+    setIsSubmitting(true);
+    
     const userData = {
       ...values,
       interests: selectedInterests,
@@ -207,13 +216,25 @@ const RegisterPage = () => {
     
     console.log('Datos completos del usuario:', userData);
     
-    toast({
-      title: "Registro exitoso",
-      description: "¡Tu perfil ha sido creado! Ahora puedes encontrar tu compañero de piso ideal.",
-      variant: "default",
-    });
-    
-    navigate('/profile');
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      toast({
+        title: "Registro exitoso",
+        description: "¡Tu perfil ha sido creado! Ahora puedes encontrar tu compañero de piso ideal.",
+        variant: "default",
+      });
+      
+      navigate('/profile');
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Ocurrió un error al procesar tu registro. Inténtalo de nuevo.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const isAccountValid = () => {
@@ -245,6 +266,19 @@ const RegisterPage = () => {
         description: "Completa tu perfil para finalizar el registro",
         variant: "default",
       });
+      
+      if (formContainerRef.current) {
+        setTimeout(() => {
+          const headerOffset = 120;
+          const formTop = formContainerRef.current.getBoundingClientRect().top;
+          const offsetPosition = formTop + window.pageYOffset - headerOffset;
+          
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        }, 50);
+      }
     } else {
       toast({
         title: "Error en el formulario",
@@ -261,7 +295,7 @@ const RegisterPage = () => {
       <main className="flex-grow pt-20 pb-12">
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-3xl mx-auto" ref={formContainerRef}>
-            <div className="glass-card p-6 md:p-8">
+            <div className="glass-card p-4 md:p-8 rounded-xl">
               <div className="text-center mb-8">
                 <h1 className="text-2xl md:text-3xl font-bold mb-2">
                   <span className="homi-gradient-text">Crear tu cuenta y perfil</span>
@@ -290,7 +324,7 @@ const RegisterPage = () => {
                 
                 <Form {...form}>
                   <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                    <TabsContent value="cuenta" className="space-y-6">
+                    <TabsContent value="cuenta" className="space-y-4 sm:space-y-6">
                       <div className="mb-6">
                         <Button
                           type="button"
@@ -504,10 +538,11 @@ const RegisterPage = () => {
                       <div className="flex justify-end">
                         <Button 
                           type="button" 
-                          className="rounded-full bg-homi-purple hover:bg-homi-purple/90"
+                          className="rounded-full bg-homi-purple hover:bg-homi-purple/90 flex items-center gap-1"
                           onClick={handleContinueClick}
                         >
                           Continuar
+                          <ArrowRight className="ml-1 h-4 w-4" />
                         </Button>
                       </div>
                       
@@ -521,7 +556,7 @@ const RegisterPage = () => {
                       </div>
                     </TabsContent>
                     
-                    <TabsContent value="perfil" className="space-y-8">
+                    <TabsContent value="perfil" className="space-y-6 sm:space-y-8">
                       <div className="space-y-4">
                         <h2 className="text-xl font-semibold flex items-center gap-2">
                           <Camera className="text-homi-purple" size={20} />
@@ -809,16 +844,18 @@ const RegisterPage = () => {
                         <Button 
                           type="button" 
                           variant="outline" 
-                          className="rounded-full"
+                          className="rounded-full flex items-center gap-1"
                           onClick={() => setActiveTab("cuenta")}
                         >
+                          <ArrowLeft className="mr-1 h-4 w-4" />
                           Atrás
                         </Button>
                         <Button 
                           type="submit" 
                           className="rounded-full bg-homi-purple hover:bg-homi-purple/90"
+                          disabled={isSubmitting}
                         >
-                          Completar registro
+                          {isSubmitting ? "Procesando..." : "Completar registro"}
                         </Button>
                       </div>
                     </TabsContent>

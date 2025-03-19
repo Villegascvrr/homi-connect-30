@@ -15,6 +15,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { FormImageUpload } from "@/components/ui/form-image-upload";
+
 const formSchema = z.object({
   firstName: z.string().min(2, {
     message: 'El nombre debe tener al menos 2 caracteres'
@@ -52,21 +53,22 @@ const formSchema = z.object({
   galleryImages: z.array(z.string()).optional(),
   isProfileActive: z.boolean().default(true)
 });
+
 type Interest = {
   id: string;
   name: string;
 };
+
 const EmailSignup = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSigningWithGoogle, setIsSigningWithGoogle] = useState(false);
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("datos");
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const navigate = useNavigate();
   const formContainerRef = useRef<HTMLDivElement>(null);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -84,6 +86,7 @@ const EmailSignup = () => {
       isProfileActive: true
     }
   });
+
   useEffect(() => {
     if (formContainerRef.current) {
       window.scrollTo(0, 0);
@@ -100,6 +103,7 @@ const EmailSignup = () => {
       }, 50);
     }
   }, [activeTab]);
+
   const [lifestylePreferences, setLifestylePreferences] = useState({
     morningPerson: false,
     nightPerson: false,
@@ -107,6 +111,7 @@ const EmailSignup = () => {
     cleanliness: "moderado",
     noise: "moderado"
   });
+
   const handleGoogleSignIn = () => {
     setIsSigningWithGoogle(true);
     setTimeout(() => {
@@ -127,6 +132,7 @@ const EmailSignup = () => {
       });
     }, 1000);
   };
+
   const interests: Interest[] = [{
     id: "deporte",
     name: "Deporte y actividades físicas"
@@ -176,36 +182,75 @@ const EmailSignup = () => {
     id: "fiestas",
     name: "Fiestas y vida nocturna"
   }];
+
   const toggleInterest = (interest: string) => {
     setSelectedInterests(prev => prev.includes(interest) ? prev.filter(i => i !== interest) : [...prev, interest]);
   };
+
   const handleLifestyleChange = (field: string, value: any) => {
     setLifestylePreferences(prev => ({
       ...prev,
       [field]: value
     }));
   };
-  const isPersonalDataValid = form.getValues('firstName')?.length > 0 && form.getValues('lastName')?.length > 0 && form.getValues('username')?.length > 0 && form.getValues('email')?.length > 0 && !form.formState.errors.firstName && !form.formState.errors.lastName && !form.formState.errors.username && !form.formState.errors.email;
+
+  const isPersonalDataValid = form.getValues('firstName')?.length > 0 && 
+                           form.getValues('lastName')?.length > 0 && 
+                           form.getValues('username')?.length > 0 && 
+                           form.getValues('email')?.length > 0 && 
+                           !form.formState.errors.firstName && 
+                           !form.formState.errors.lastName && 
+                           !form.formState.errors.username && 
+                           !form.formState.errors.email;
+
+  const handleNextStep = async () => {
+    const fieldsToValidate = ['firstName', 'lastName', 'username', 'email'];
+    const result = await form.trigger(fieldsToValidate);
+    
+    if (result && isPersonalDataValid) {
+      setActiveTab("perfil");
+      if (formContainerRef.current) {
+        setTimeout(() => {
+          window.scrollTo({
+            top: formContainerRef.current!.offsetTop - 100,
+            behavior: 'smooth'
+          });
+        }, 50);
+      }
+    } else {
+      toast({
+        title: "Por favor completa todos los campos",
+        description: "Debes completar correctamente todos los campos requeridos",
+        variant: "destructive",
+      });
+    }
+  };
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log("Form submission started", {
       values,
       isPersonalDataValid,
       activeTab
     });
-    if (activeTab === "datos" && isPersonalDataValid) {
+
+    if (activeTab === "datos") {
       console.log("Advancing to profile tab");
-      setActiveTab("perfil");
+      handleNextStep();
       return; // Don't proceed with submission yet
     }
+
     if (activeTab === "perfil") {
       console.log("Submitting full form");
       setIsLoading(true);
+      
       const userData = {
         ...values,
         interests: selectedInterests,
         lifestyle: lifestylePreferences
       };
+      
       console.log('Datos completos del usuario:', userData);
+      
       try {
         await new Promise(resolve => setTimeout(resolve, 1000));
         setIsSubmitted(true);
@@ -213,6 +258,7 @@ const EmailSignup = () => {
           title: "¡Registro exitoso!",
           description: "Tu perfil se ha creado correctamente."
         });
+        
         setTimeout(() => {
           navigate("/profile");
         }, 500);
@@ -228,8 +274,10 @@ const EmailSignup = () => {
       }
     }
   };
+
   if (isSubmitted) {
-    return <div className="flex flex-col items-center justify-center p-8 bg-gradient-to-br from-homi-ultraLightPurple to-white dark:from-homi-purple/20 dark:to-background rounded-xl border border-homi-purple/20 shadow-md animate-fade-in">
+    return (
+      <div className="flex flex-col items-center justify-center p-8 bg-gradient-to-br from-homi-ultraLightPurple to-white dark:from-homi-purple/20 dark:to-background rounded-xl border border-homi-purple/20 shadow-md animate-fade-in">
         <CheckCircle2 className="h-16 w-16 text-green-500 mb-4" />
         <h3 className="text-2xl font-bold mb-3">¡Gracias por registrarte!</h3>
         <p className="text-center text-lg mb-4">
@@ -238,9 +286,12 @@ const EmailSignup = () => {
         <div className="text-sm text-muted-foreground">
           <p>Hemos enviado un correo de confirmación a <span className="font-semibold">{form.getValues('email')}</span></p>
         </div>
-      </div>;
+      </div>
+    );
   }
-  return <div className="w-full max-w-3xl mx-auto" ref={formContainerRef}>
+
+  return (
+    <div className="w-full max-w-3xl mx-auto" ref={formContainerRef}>
       <div className="mb-6 text-center">
         <h3 className="text-xl font-semibold mb-2">Crea tu perfil personalizado en Homi</h3>
         <p className="text-muted-foreground">
@@ -252,7 +303,11 @@ const EmailSignup = () => {
         <Tabs defaultValue="datos" value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid grid-cols-2 mb-8">
             <TabsTrigger value="datos">Datos personales</TabsTrigger>
-            <TabsTrigger value="perfil" disabled={!isPersonalDataValid} className={!isPersonalDataValid ? "cursor-not-allowed" : ""}>
+            <TabsTrigger 
+              value="perfil" 
+              disabled={!isPersonalDataValid} 
+              className={!isPersonalDataValid ? "cursor-not-allowed" : ""}
+            >
               Perfil personal
             </TabsTrigger>
           </TabsList>
@@ -341,7 +396,11 @@ const EmailSignup = () => {
                     </FormItem>} />
                 
                 <div className="flex justify-end mt-6">
-                  <Button type="submit" className="rounded-full bg-homi-purple hover:bg-homi-purple/90 ml-auto">
+                  <Button 
+                    type="button" 
+                    onClick={handleNextStep} 
+                    className="rounded-full bg-homi-purple hover:bg-homi-purple/90 ml-auto"
+                  >
                     Siguiente 
                     <ArrowRight className="ml-1 h-4 w-4" />
                   </Button>
@@ -506,11 +565,20 @@ const EmailSignup = () => {
                 
                 
                 <div className="flex justify-between">
-                  <Button type="button" variant="outline" onClick={() => setActiveTab("datos")} className="rounded-full">
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={() => setActiveTab("datos")} 
+                    className="rounded-full"
+                  >
                     Atrás
                   </Button>
                   
-                  <Button type="submit" disabled={isLoading} className="rounded-full bg-homi-purple hover:bg-homi-purple/90">
+                  <Button 
+                    type="submit" 
+                    disabled={isLoading} 
+                    className="rounded-full bg-homi-purple hover:bg-homi-purple/90"
+                  >
                     {isLoading ? "Enviando..." : "Completar perfil"}
                   </Button>
                 </div>
@@ -523,6 +591,8 @@ const EmailSignup = () => {
       <div className="mt-4 text-center text-xs text-muted-foreground">
         Al crear tu perfil, aceptas nuestros términos y condiciones.
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default EmailSignup;

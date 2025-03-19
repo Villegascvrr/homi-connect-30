@@ -50,7 +50,7 @@ const Navbar = () => {
       } mt-[29px]`} // Added mt-[29px] to account for the development banner
     >
       <div className="container mx-auto px-4 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
+        <Link to="/" onClick={handleHomeClick} className="flex items-center gap-2">
           <span className="text-2xl font-bold text-homi-purple">Homi</span>
         </Link>
 
