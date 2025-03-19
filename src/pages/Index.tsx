@@ -85,6 +85,7 @@ const Index = () => {
       </div>
       
       <main className="flex-grow">
+        {/* Hero section is at the top of the page as the first main content */}
         <Hero />
         <Features />
         <div id="how-it-works">
