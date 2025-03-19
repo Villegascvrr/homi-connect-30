@@ -13,26 +13,29 @@ const ScrollToTop = () => {
 
   useEffect(() => {
     if (pathname === "/") {
-      // For home page, scroll to the form section after a small delay
-      // to ensure the page has fully loaded
+      // For home page, scroll to the form section with a longer delay
+      // to ensure the page has fully loaded and rendered
       setTimeout(() => {
         const formElement = document.getElementById("signup-form");
         if (formElement) {
           formElement.scrollIntoView({ behavior: 'smooth' });
+          console.log("Scrolled to signup form");
         } else {
           // If form element not found, scroll to a position that should reveal the form
+          console.log("Signup form element not found, scrolling to estimated position");
           window.scrollTo({
             top: window.innerHeight, // Scroll approximately one viewport height
             behavior: 'smooth'
           });
         }
-      }, 100);
+      }, 300); // Increased delay to ensure page is fully rendered
     } else {
       // For all other pages, scroll to top
       window.scrollTo({
         top: 0,
         behavior: 'smooth'
       });
+      console.log("Scrolled to top for path:", pathname);
     }
   }, [pathname]);
 
