@@ -11,8 +11,7 @@ const NotFound = () => {
       location.pathname
     );
     
-    // Ensure we're at the top of the page
-    window.scrollTo(0, 0);
+    // We don't need to manually scroll here anymore as ScrollToTop component handles it
   }, [location.pathname]);
 
   return (

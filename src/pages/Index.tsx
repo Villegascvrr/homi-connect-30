@@ -87,7 +87,12 @@ const Index = () => {
       <main className="flex-grow">
         {/* Hero section is at the top of the page as the first main content */}
         <Hero />
-        <Features />
+        
+        {/* Adding an ID to the Features section for scroll targeting */}
+        <div id="signup-form">
+          <Features />
+        </div>
+        
         <div id="how-it-works">
           <HowItWorks />
         </div>
