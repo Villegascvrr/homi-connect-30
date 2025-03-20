@@ -1,5 +1,5 @@
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import CompatibilityBadge from '@/components/ui/CompatibilityBadge';
 import { Heart, X, MessageSquare, User, DollarSign, Calendar, Home, ShieldCheck, Clock, Undo2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -59,9 +59,27 @@ const SwipeCard = ({
   const [startX, setStartX] = useState(0);
   const [offsetX, setOffsetX] = useState(0);
   const cardRef = useRef<HTMLDivElement>(null);
+  const [showLike, setShowLike] = useState(false);
+  const [showDislike, setShowDislike] = useState(false);
+  
+  // Reset indicators when swiping stops
+  useEffect(() => {
+    if (offsetX === 0) {
+      setShowLike(false);
+      setShowDislike(false);
+    }
+  }, [offsetX]);
   
   const handleSwipe = (direction: 'left' | 'right') => {
     setSwipeDirection(direction);
+    
+    if (direction === 'right') {
+      setShowLike(true);
+      setShowDislike(false);
+    } else {
+      setShowLike(false);
+      setShowDislike(true);
+    }
     
     setTimeout(() => {
       if (direction === 'right') {
@@ -73,7 +91,9 @@ const SwipeCard = ({
       // Reset for next card
       setSwipeDirection(null);
       setOffsetX(0);
-    }, 300);
+      setShowLike(false);
+      setShowDislike(false);
+    }, 500); // Match animation duration in CSS
   };
   
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -84,6 +104,18 @@ const SwipeCard = ({
     const currentX = e.touches[0].clientX;
     const diff = currentX - startX;
     setOffsetX(diff);
+    
+    // Show like/dislike indicators based on swipe direction
+    if (diff > 50) {
+      setShowLike(true);
+      setShowDislike(false);
+    } else if (diff < -50) {
+      setShowLike(false);
+      setShowDislike(true);
+    } else {
+      setShowLike(false);
+      setShowDislike(false);
+    }
   };
   
   const handleTouchEnd = () => {
@@ -97,6 +129,8 @@ const SwipeCard = ({
     } else {
       // Reset if swipe wasn't decisive
       setOffsetX(0);
+      setShowLike(false);
+      setShowDislike(false);
     }
   };
   
@@ -119,7 +153,8 @@ const SwipeCard = ({
           "relative w-full max-w-xs mx-auto glass-card overflow-hidden rounded-xl shadow-lg transition-all duration-300 border-2",
           borderColor,
           swipeDirection === 'right' ? 'animate-swipe-right' : 
-          swipeDirection === 'left' ? 'animate-swipe-left' : ''
+          swipeDirection === 'left' ? 'animate-swipe-left' : '',
+          offsetX === 0 && !swipeDirection ? 'card-pulse' : ''
         )}
         style={{
           transform: `translateX(${offsetX}px) rotate(${rotation}deg)`,
@@ -130,13 +165,13 @@ const SwipeCard = ({
         onTouchEnd={handleTouchEnd}
       >
         {/* Like/Dislike Indicators */}
-        {offsetX > 50 && (
-          <div className="absolute top-1/4 left-4 z-10 transform -rotate-12 border-4 border-homi-purple rounded-lg px-2 py-1">
+        {showLike && (
+          <div className={`absolute top-1/4 left-4 z-10 transform border-4 border-homi-purple rounded-lg px-2 py-1 animate-like`}>
             <span className="text-homi-purple text-2xl font-bold">LIKE</span>
           </div>
         )}
-        {offsetX < -50 && (
-          <div className="absolute top-1/4 right-4 z-10 transform rotate-12 border-4 border-red-500 rounded-lg px-2 py-1">
+        {showDislike && (
+          <div className={`absolute top-1/4 right-4 z-10 transform border-4 border-red-500 rounded-lg px-2 py-1 animate-dislike`}>
             <span className="text-red-500 text-2xl font-bold">NOPE</span>
           </div>
         )}
@@ -259,7 +294,7 @@ const SwipeCard = ({
         <Button 
           variant="outline"
           size="icon"
-          className="w-12 h-12 rounded-full border-2 border-red-500 text-red-500 flex items-center justify-center shadow-md transition-all hover:bg-red-500 hover:text-white"
+          className="w-12 h-12 rounded-full border-2 border-red-500 text-red-500 flex items-center justify-center shadow-md transition-all hover:bg-red-500 hover:text-white transform hover:scale-110 active:scale-95"
           onClick={() => handleSwipe('left')}
         >
           <X size={24} />
@@ -269,7 +304,7 @@ const SwipeCard = ({
           <Button 
             variant="outline"
             size="icon"
-            className="w-10 h-10 rounded-full border-2 border-gray-400 text-gray-500 flex items-center justify-center shadow-md transition-all hover:bg-gray-100"
+            className="w-10 h-10 rounded-full border-2 border-gray-400 text-gray-500 flex items-center justify-center shadow-md transition-all hover:bg-gray-100 active:scale-95"
             onClick={onUndo}
           >
             <Undo2 size={20} />
@@ -279,7 +314,7 @@ const SwipeCard = ({
         <Button 
           variant="outline"
           size="icon"
-          className="w-10 h-10 rounded-full border-2 border-gray-400 text-gray-500 flex items-center justify-center shadow-md transition-all hover:bg-gray-100"
+          className="w-10 h-10 rounded-full border-2 border-gray-400 text-gray-500 flex items-center justify-center shadow-md transition-all hover:bg-gray-100 active:scale-95"
           onClick={() => onView(id)}
         >
           <User size={20} />
@@ -288,7 +323,7 @@ const SwipeCard = ({
         <Button 
           variant="outline"
           size="icon"
-          className="w-12 h-12 rounded-full border-2 border-homi-purple text-homi-purple flex items-center justify-center shadow-md transition-all hover:bg-homi-purple hover:text-white"
+          className="w-12 h-12 rounded-full border-2 border-homi-purple text-homi-purple flex items-center justify-center shadow-md transition-all hover:bg-homi-purple hover:text-white transform hover:scale-110 active:scale-95"
           onClick={() => handleSwipe('right')}
         >
           <Heart size={24} />
