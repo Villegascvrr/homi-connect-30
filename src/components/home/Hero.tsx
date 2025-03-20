@@ -35,7 +35,7 @@ const Hero = () => {
       </div>
 
       <div className="container mx-auto px-4">
-        <div className="max-w-5xl mx-auto text-center">
+        <div className="max-w-5xl mx-auto text-center py-[31px]">
           <div className="inline-block px-4 py-1.5 mb-4 md:mb-6 rounded-full bg-homi-ultraLightPurple text-homi-purple text-xs md:text-sm font-medium animate-pulse-soft">
             ¡Ayúdanos a alcanzar los 1000 usuarios!
           </div>
