@@ -4,20 +4,16 @@ import { Check } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import EmailSignup from './EmailSignup';
 import { useIsMobile } from '@/hooks/use-mobile';
-
 const Hero = () => {
   const [email, setEmail] = useState('');
   const isMobile = useIsMobile();
-  
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle newsletter subscription
     console.log('Subscribed with email:', email);
     setEmail('');
   };
-  
-  return (
-    <section className="relative pt-20 md:pt-32 pb-16 md:pb-20 overflow-hidden py-[40px] md:py-[80px]">
+  return <section className="relative pt-20 md:pt-32 pb-16 md:pb-20 overflow-hidden md:py-[80px] py-[50px]">
       {/* Background elements */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-0 left-0 w-64 md:w-96 h-64 md:h-96 bg-homi-ultraLightPurple rounded-full opacity-50 blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
@@ -53,12 +49,7 @@ const Hero = () => {
             <Button size={isMobile ? "default" : "lg"} className="rounded-full bg-homi-purple hover:bg-homi-purple/90 w-full sm:w-auto" asChild>
               <Link to="/register">¡Regístrate ahora!</Link>
             </Button>
-            <Button 
-              size={isMobile ? "default" : "lg"} 
-              variant="outline" 
-              className="rounded-full w-full sm:w-auto mt-2 sm:mt-0" 
-              asChild
-            >
+            <Button size={isMobile ? "default" : "lg"} variant="outline" className="rounded-full w-full sm:w-auto mt-2 sm:mt-0" asChild>
               <a href="#how-it-works">Cómo Funciona</a>
             </Button>
           </div>
@@ -84,8 +75,6 @@ const Hero = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default Hero;
