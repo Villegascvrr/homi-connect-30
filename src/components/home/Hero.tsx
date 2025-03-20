@@ -1,37 +1,32 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Check } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import EmailSignup from './EmailSignup';
 import { useIsMobile } from '@/hooks/use-mobile';
-
 const Hero = () => {
   const [email, setEmail] = useState('');
   const isMobile = useIsMobile();
   const registerBtnRef = useRef<HTMLAnchorElement>(null);
-  
   useEffect(() => {
     // Focus on the register button when component mounts
     if (registerBtnRef.current) {
       registerBtnRef.current.focus();
-      
+
       // Scroll to the button to ensure it's visible
-      registerBtnRef.current.scrollIntoView({ 
-        behavior: 'smooth', 
+      registerBtnRef.current.scrollIntoView({
+        behavior: 'smooth',
         block: 'center'
       });
     }
   }, []);
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle newsletter subscription
     console.log('Subscribed with email:', email);
     setEmail('');
   };
-
-  return <section className="relative pt-20 md:pt-32 pb-16 md:pb-20 overflow-hidden py-[50px] md:py-[36px]">
+  return <section className="relative pt-20 md:pt-32 pb-16 md:pb-20 overflow-hidden py-[50px] md:py-[44px]">
       {/* Background elements */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-0 left-0 w-64 md:w-96 h-64 md:h-96 bg-homi-ultraLightPurple rounded-full opacity-50 blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
@@ -95,5 +90,4 @@ const Hero = () => {
       </div>
     </section>;
 };
-
 export default Hero;
