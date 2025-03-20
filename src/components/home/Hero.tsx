@@ -11,8 +11,6 @@ const Hero = () => {
   const isMobile = useIsMobile();
   const registerBtnRef = useRef<HTMLAnchorElement>(null);
   
-  // Se eliminó el useEffect que causaba el scroll automático
-  
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle newsletter subscription
@@ -57,7 +55,7 @@ const Hero = () => {
               <Link ref={registerBtnRef} to="/register">¡Regístrate ahora!</Link>
             </Button>
             <Button size={isMobile ? "default" : "lg"} variant="outline" className="rounded-full w-full sm:w-auto mt-2 sm:mt-0" asChild>
-              <a href="#how-it-works">Cómo Funciona</a>
+              <Link to="/#how-it-works">Cómo Funciona</Link>
             </Button>
           </div>
           

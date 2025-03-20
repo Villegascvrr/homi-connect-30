@@ -10,28 +10,47 @@ const ScrollToTop = () => {
   const { pathname, hash } = useLocation();
 
   useEffect(() => {
-    // Check if there's a hash in the URL
-    if (!hash) {
-      // If there's no hash, immediately scroll to top
-      window.scrollTo(0, 0);
-      console.log("Forced scroll to top for path:", pathname);
-    } else {
-      // If there is a hash, handle it after a small delay to ensure DOM is ready
-      setTimeout(() => {
-        const elementId = hash.replace('#', '');
-        const element = document.getElementById(elementId);
-        
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
-          console.log(`Scrolled to element with id: ${elementId}`);
-        } else {
-          // If element doesn't exist, scroll to top instead
-          window.scrollTo(0, 0);
-          console.log(`Element with id ${elementId} not found, scrolled to top`);
-        }
-      }, 300);
-    }
-  }, [pathname, hash]);
+    // This function handles the scrolling logic
+    const handleScroll = () => {
+      // If there's a hash in the URL, try to scroll to that element
+      if (hash) {
+        // Small delay to ensure DOM is ready
+        setTimeout(() => {
+          const elementId = hash.replace('#', '');
+          const element = document.getElementById(elementId);
+          
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+            console.log(`Scrolled to element with id: ${elementId}`);
+          } else {
+            // If element doesn't exist, scroll to top
+            window.scrollTo(0, 0);
+            console.log(`Element with id ${elementId} not found, scrolled to top`);
+          }
+        }, 300);
+      } else {
+        // No hash, scroll to top immediately
+        // Using setTimeout to ensure this runs after any browser's default scroll behavior
+        setTimeout(() => {
+          window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'auto' // Using 'auto' instead of 'smooth' for immediate effect
+          });
+          console.log("Forced scroll to top for path:", pathname);
+        }, 0);
+      }
+    };
+
+    // Execute scroll handling
+    handleScroll();
+
+    // Clean up any potential side effects
+    return () => {
+      // Cancel any pending timeouts if component unmounts during navigation
+      // This helps prevent scroll issues during quick navigation changes
+    };
+  }, [pathname, hash]); // Re-run when pathname or hash changes
 
   return null;
 };
