@@ -619,7 +619,7 @@ const MatchingPage = () => {
             <p className="text-muted-foreground max-w-2xl font-normal text-center">Explora los perfiles y conecta con potenciales compañeros de piso.</p>
           </div>
           
-          <Tabs defaultValue="discover" value={activeTab} onValueChange={value => setActiveTab(value as 'discover' | 'matches')} className="mb-8">
+          <Tabs defaultValue="discover" value={activeTab} onValueChange={value => setActiveTab(value as 'discover' | 'matches')} className="mb-4">
             <div className="flex justify-between items-center mb-6">
               <TabsList className="bg-muted/60">
                 <TabsTrigger value="discover" className="flex items-center gap-2">
@@ -682,7 +682,7 @@ const MatchingPage = () => {
             </div>
           
             <TabsContent value="discover" className="mt-0">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
                 <div className="lg:col-span-2">
                   <ProfileSearchBar onSearch={handleSearch} className="w-full" />
                 </div>
@@ -692,7 +692,7 @@ const MatchingPage = () => {
               </div>
               
               {filteredProfiles.length > 0 ? <>
-                  {viewMode === 'swipe' && <div className="mb-10">
+                  {viewMode === 'swipe' && <div className="mb-6">
                       <SwipeInterface profiles={filteredProfiles.map(profile => ({
                   id: profile.id.toString(),
                   name: profile.name,
