@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Check } from 'lucide-react';
@@ -42,7 +41,7 @@ const Hero = () => {
 
           <div className="bg-homi-ultraLightPurple/50 p-3 md:p-4 rounded-xl mb-6 md:mb-8 max-w-3xl mx-auto">
             <p className="text-sm md:text-lg font-medium text-homi-purple">
-              🚀 Homi estará disponible próximamente - ¡Regístrate ahora para ser de los primeros en usarlo!
+              Homi estará disponible próximamente - ¡Regístrate ahora para ser de los primeros en usarlo!
               <br />
               <span className="text-xs md:text-sm font-normal mt-1 inline-block">
                 Necesitamos alcanzar 1000 usuarios registrados para lanzar oficialmente la app.
