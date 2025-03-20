@@ -4,18 +4,17 @@ import { useLocation } from 'react-router-dom';
 
 /**
  * This component uses the useLocation hook to detect route changes,
- * and automatically scrolls to the page positions based on the route:
- * - For home page ("/"), it scrolls to the signup form section
- * - For all other pages, it scrolls to the top
+ * and automatically scrolls to the top of the page for all routes
+ * except for the home page ("/"), which scrolls to the signup form section
  */
 const ScrollToTop = () => {
   const { pathname } = useLocation();
 
   useEffect(() => {
+    // Force immediate execution of scroll after route change
     if (pathname === "/") {
-      // For home page, scroll to the form section with a longer delay
-      // to ensure the page has fully loaded and rendered
-      setTimeout(() => {
+      // For home page, scroll to the form section
+      const scrollToForm = () => {
         const formElement = document.getElementById("signup-form");
         if (formElement) {
           formElement.scrollIntoView({ behavior: 'smooth' });
@@ -28,12 +27,18 @@ const ScrollToTop = () => {
             behavior: 'smooth'
           });
         }
-      }, 300); // Increased delay to ensure page is fully rendered
+      };
+
+      // Ensure DOM is fully rendered before attempting to scroll
+      window.requestAnimationFrame(() => {
+        // Add a slight delay to ensure React has completed rendering
+        setTimeout(scrollToForm, 100);
+      });
     } else {
-      // For all other pages, scroll to top
+      // For all other pages, scroll to top immediately
       window.scrollTo({
         top: 0,
-        behavior: 'smooth'
+        behavior: 'auto' // Changed to 'auto' for immediate scrolling without animation
       });
       console.log("Scrolled to top for path:", pathname);
     }
