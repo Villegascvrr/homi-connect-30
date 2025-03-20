@@ -11,16 +11,12 @@ const ScrollToTop = () => {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    // Force immediate scroll to top for ALL pages including home page
-    window.scrollTo({
-      top: 0,
-      behavior: 'auto' // Using 'auto' for immediate scrolling without animation
-    });
+    // Force immediate scroll to top for ALL pages
+    window.scrollTo(0, 0);
     
-    console.log("Scrolled to top for path:", pathname);
+    console.log("Forced scroll to top for path:", pathname);
     
-    // Only for home page, after scrolling to top, check if we need to scroll to a specific section
-    // based on URL hash or other conditions
+    // Only for home page, check if we need to scroll to a specific section
     if (pathname === "/" && window.location.hash === "#signup-form") {
       // If there's a hash in the URL targeting the signup form, scroll to it
       setTimeout(() => {
@@ -29,7 +25,7 @@ const ScrollToTop = () => {
           formElement.scrollIntoView({ behavior: 'smooth' });
           console.log("Scrolled to signup form due to hash");
         }
-      }, 100);
+      }, 300); // Increased timeout to ensure DOM is fully rendered
     }
   }, [pathname]);
 

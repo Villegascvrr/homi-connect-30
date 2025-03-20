@@ -11,6 +11,12 @@ import { Button } from '@/components/ui/button';
 import ProfileCard from '@/components/profiles/ProfileCard';
 
 const Index = () => {
+  // Explicitly scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    console.log("Index component mounted - forced scroll to top");
+  }, []);
+  
   // Sample data for demonstration
   const featuredProfiles = [
     {
