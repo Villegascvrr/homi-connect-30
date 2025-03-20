@@ -1,4 +1,3 @@
-
 #root {
   margin: 0 auto;
   text-align: center;
@@ -48,5 +47,42 @@
   .container {
     padding-left: 1rem !important;
     padding-right: 1rem !important;
+  }
+}
+
+/* Animations for swiping interface */
+@keyframes swipe-left {
+  to {
+    transform: translateX(-150%) rotate(-30deg);
+    opacity: 0;
+  }
+}
+
+@keyframes swipe-right {
+  to {
+    transform: translateX(150%) rotate(30deg);
+    opacity: 0;
+  }
+}
+
+.animate-swipe-left {
+  animation: swipe-left 0.5s ease-out forwards;
+}
+
+.animate-swipe-right {
+  animation: swipe-right 0.5s ease-out forwards;
+}
+
+/* Pulse animation with softer effect */
+.animate-pulse-soft {
+  animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
   }
 }

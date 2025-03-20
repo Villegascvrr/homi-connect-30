@@ -1,20 +1,20 @@
-
 import React, { useState } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import MatchCard from '@/components/matching/MatchCard';
 import ProfileSearchBar from '@/components/profiles/ProfileSearchBar';
 import MatchingFilters from '@/components/matching/MatchingFilters';
+import SwipeInterface from '@/components/matching/SwipeInterface';
 import { useToast } from '@/hooks/use-toast';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
-import { Filter, UserRound } from 'lucide-react';
+import { Filter, UserRound, LayoutGrid, SwatchBook } from 'lucide-react';
 import { 
   Popover, 
   PopoverContent, 
   PopoverTrigger 
 } from '@/components/ui/popover';
 
-// Mockup data for profile cards
 const mockProfiles = [
   {
     id: 1,
@@ -110,7 +110,6 @@ const mockProfiles = [
   }
 ];
 
-// Convert mock profiles to expected format for MatchCard
 const formatProfileForMatchCard = (profile: any) => {
   const tags = profile.interests.map((interest: string, index: number) => ({
     id: index + 1,
@@ -149,7 +148,6 @@ interface FilterValues {
   mascotas?: string;
 }
 
-// Define a more specific interface for lifestyle to avoid TypeScript errors
 interface Lifestyle {
   cleanliness?: string;
   noise?: string;
@@ -158,7 +156,6 @@ interface Lifestyle {
   smoking?: string;
 }
 
-// Default empty lifestyle object with all properties defined
 const emptyLifestyle: Lifestyle = {
   cleanliness: "",
   noise: "",
@@ -189,9 +186,19 @@ const MatchingPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilters, setActiveFilters] = useState<FilterValues | null>(null);
   const [filteredProfiles, setFilteredProfiles] = useState(mockProfiles);
+  const [viewMode, setViewMode] = useState<'grid' | 'swipe'>('grid');
   const { toast } = useToast();
   const [openSearchFilters, setOpenSearchFilters] = useState(false);
   const [openPreferences, setOpenPreferences] = useState(false);
+  const isMobile = useIsMobile();
+  
+  React.useEffect(() => {
+    if (isMobile) {
+      setViewMode('swipe');
+    } else {
+      setViewMode('grid');
+    }
+  }, [isMobile]);
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -202,7 +209,6 @@ const MatchingPage = () => {
     setActiveFilters(filters);
     applyFiltersAndSearch(searchQuery, filters);
     
-    // Mostrar toast con resumen de filtros aplicados
     const filterCount = Object.values(filters).filter(value => 
       value !== undefined && 
       (Array.isArray(value) ? value.length > 0 : true)
@@ -231,7 +237,6 @@ const MatchingPage = () => {
   const applyFiltersAndSearch = (query: string, filters: FilterValues | null) => {
     let results = [...mockProfiles];
     
-    // Apply text search first
     if (query.trim()) {
       const lowerCaseQuery = query.toLowerCase();
       results = results.filter(profile => 
@@ -243,14 +248,11 @@ const MatchingPage = () => {
       );
     }
     
-    // Then apply filters if any are active
     if (filters) {
-      // Ubicación
       if (filters.ubicacion) {
         results = results.filter(profile => profile.location === filters.ubicacion);
       }
       
-      // Presupuesto
       if (filters.presupuesto) {
         const [min, max] = filters.presupuesto;
         results = results.filter(profile => 
@@ -260,7 +262,6 @@ const MatchingPage = () => {
         );
       }
       
-      // Rango de edad
       if (filters.rangoEdad) {
         if (filters.rangoEdad === '18-25') {
           results = results.filter(profile => profile.age >= 18 && profile.age <= 25);
@@ -273,13 +274,9 @@ const MatchingPage = () => {
         }
       }
       
-      // Estilo de vida
       if (filters.estiloVida && filters.estiloVida.length > 0) {
-        // Simulamos el filtrado de estilo de vida
-        // En datos reales, esto dependería de cómo están estructurados los datos
         const estiloVidaTerms = filters.estiloVida.map(ev => ev.toLowerCase());
         results = results.filter(profile => {
-          // Use the empty lifestyle object with proper typing
           const profileLifestyle: Lifestyle = profile.lifestyle || emptyLifestyle;
           const hasMatchingLifestyle = 
             (estiloVidaTerms.includes('ordenado') && profileLifestyle.cleanliness === "Muy ordenada") ||
@@ -292,7 +289,6 @@ const MatchingPage = () => {
         });
       }
       
-      // Intereses
       if (filters.intereses && filters.intereses.length > 0) {
         results = results.filter(profile => 
           filters.intereses!.some(interest => 
@@ -301,7 +297,6 @@ const MatchingPage = () => {
         );
       }
       
-      // Nivel de limpieza
       if (filters.nivelLimpieza) {
         results = results.filter(profile => {
           const lifestyle: Lifestyle = profile.lifestyle || emptyLifestyle;
@@ -310,12 +305,11 @@ const MatchingPage = () => {
           } else if (filters.nivelLimpieza === 'media') {
             return lifestyle.cleanliness === "Normal";
           } else {
-            return true; // Si es baja, aceptamos cualquier nivel
+            return true;
           }
         });
       }
       
-      // Nivel de ruido
       if (filters.nivelRuido) {
         results = results.filter(profile => {
           const lifestyle: Lifestyle = profile.lifestyle || emptyLifestyle;
@@ -329,7 +323,6 @@ const MatchingPage = () => {
         });
       }
       
-      // Horario habitual
       if (filters.horarioHabitual) {
         results = results.filter(profile => {
           const lifestyle: Lifestyle = profile.lifestyle || emptyLifestyle;
@@ -343,7 +336,6 @@ const MatchingPage = () => {
         });
       }
       
-      // Invitados
       if (filters.invitados) {
         results = results.filter(profile => {
           const lifestyle: Lifestyle = profile.lifestyle || emptyLifestyle;
@@ -357,7 +349,6 @@ const MatchingPage = () => {
         });
       }
       
-      // Fumar
       if (filters.fumar) {
         results = results.filter(profile => {
           const lifestyle: Lifestyle = profile.lifestyle || emptyLifestyle;
@@ -368,14 +359,10 @@ const MatchingPage = () => {
           }
         });
       }
-      
-      // Mascotas (asumimos que todos aceptan mascotas en este ejemplo)
-      // En un caso real, necesitaríamos datos específicos sobre mascotas
     }
     
     setFilteredProfiles(results);
     
-    // Solo mostrar el toast de resultados cuando cambian los filtros, no en la carga inicial
     if (activeFilters !== null || query.trim()) {
       toast({
         title: `${results.length} perfiles encontrados`,
@@ -435,6 +422,27 @@ const MatchingPage = () => {
               />
             </div>
             <div className="lg:col-span-1 flex justify-end gap-2">
+              {isMobile && (
+                <div className="flex items-center mr-auto">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className={`rounded-l-full ${viewMode === 'grid' ? 'bg-muted' : ''}`}
+                    onClick={() => setViewMode('grid')}
+                  >
+                    <LayoutGrid size={18} />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className={`rounded-r-full ${viewMode === 'swipe' ? 'bg-muted' : ''}`}
+                    onClick={() => setViewMode('swipe')}
+                  >
+                    <SwatchBook size={18} />
+                  </Button>
+                </div>
+              )}
+              
               <Popover open={openSearchFilters} onOpenChange={setOpenSearchFilters}>
                 <PopoverTrigger asChild>
                   <Button 
@@ -489,11 +497,33 @@ const MatchingPage = () => {
             </div>
           </div>
           
-          <div className="grid grid-cols-1 gap-6">
-            <div className="col-span-1">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredProfiles.length > 0 ? (
-                  filteredProfiles.map(profile => {
+          {filteredProfiles.length > 0 ? (
+            <>
+              {viewMode === 'swipe' && (
+                <div className="mb-10">
+                  <SwipeInterface 
+                    profiles={filteredProfiles.map(profile => ({
+                      id: profile.id.toString(),
+                      name: profile.name,
+                      age: profile.age,
+                      location: profile.location,
+                      bio: profile.bio,
+                      imgUrl: profile.profileImage,
+                      tags: profile.interests.map((interest, idx) => ({ id: idx + 1, name: interest })),
+                      compatibility: profile.compatibility,
+                      lifestyle: profile.lifestyle,
+                      budget: profile.budget,
+                    }))}
+                    onLike={handleLike}
+                    onPass={handlePass}
+                    onView={handleView}
+                  />
+                </div>
+              )}
+              
+              {viewMode === 'grid' && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredProfiles.map(profile => {
                     const cardProps = formatProfileForMatchCard(profile);
                     return (
                       <MatchCard 
@@ -502,22 +532,23 @@ const MatchingPage = () => {
                         onLike={handleLike}
                         onPass={handlePass}
                         onView={handleView}
+                        compact={isMobile}
                       />
                     );
-                  })
-                ) : (
-                  <div className="col-span-full text-center py-16">
-                    <p className="text-xl text-muted-foreground">
-                      No se encontraron perfiles que coincidan con tu búsqueda
-                    </p>
-                    <p className="mt-2">
-                      Intenta con otros términos o menos filtros específicos
-                    </p>
-                  </div>
-                )}
-              </div>
+                  })}
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="text-center py-16">
+              <p className="text-xl text-muted-foreground">
+                No se encontraron perfiles que coincidan con tu búsqueda
+              </p>
+              <p className="mt-2">
+                Intenta con otros términos o menos filtros específicos
+              </p>
             </div>
-          </div>
+          )}
         </div>
       </main>
       
