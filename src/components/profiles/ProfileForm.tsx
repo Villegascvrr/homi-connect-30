@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { useToast } from "@/hooks/use-toast"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 import {
   Form,
@@ -34,6 +35,7 @@ const formSchema = z.object({
 const ProfileForm = () => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const isMobile = useIsMobile();
   
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -66,23 +68,23 @@ const ProfileForm = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <div className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <div className="space-y-4">
           <h2 className="text-xl font-semibold">Información Personal</h2>
           
-          {/* Add status toggle */}
-          <div className="mb-6">
+          {/* Status toggle - improved mobile layout */}
+          <div className="mb-4">
             <ProfileStatusToggle 
               isActive={form.watch('isProfileActive')} 
               onToggle={handleProfileStatusToggle}
             />
           </div>
           
-          <Separator className="my-6" />
+          <Separator className="my-4" />
           
-          {/* Add image upload section */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="md:col-span-2">
+          {/* Image upload section - improved mobile layout */}
+          <div className="space-y-4">
+            <div className="w-full">
               <FormImageUpload
                 name="profileImage"
                 label="Foto de perfil"
@@ -91,37 +93,39 @@ const ProfileForm = () => {
               />
             </div>
             
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nombre</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Tu nombre" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Tu email" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-2 gap-6'}`}>
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nombre</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Tu nombre" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Tu email" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
         </div>
 
-        {/* Gallery section */}
-        <div className="space-y-6">
+        {/* Gallery section - improved mobile layout */}
+        <div className="space-y-4">
           <h2 className="text-xl font-semibold">Galería de fotos</h2>
           <FormImageUpload
             name="galleryImages"
@@ -130,7 +134,7 @@ const ProfileForm = () => {
           />
         </div>
 
-        <Button type="submit" className="w-full" disabled={isSubmitting}>
+        <Button type="submit" className="w-full mt-6" disabled={isSubmitting}>
           {isSubmitting ? "Guardando..." : "Guardar cambios"}
         </Button>
       </form>
