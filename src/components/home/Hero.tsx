@@ -1,5 +1,5 @@
 
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Check } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -9,7 +9,6 @@ import { useIsMobile } from '@/hooks/use-mobile';
 const Hero = () => {
   const [email, setEmail] = useState('');
   const isMobile = useIsMobile();
-  const registerBtnRef = useRef<HTMLAnchorElement>(null);
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,10 +51,10 @@ const Hero = () => {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 mb-6">
             <Button size={isMobile ? "default" : "lg"} className="rounded-full bg-homi-purple hover:bg-homi-purple/90 w-full sm:w-auto" asChild>
-              <Link ref={registerBtnRef} to="/register">¡Regístrate ahora!</Link>
+              <Link to="/register">¡Regístrate ahora!</Link>
             </Button>
             <Button size={isMobile ? "default" : "lg"} variant="outline" className="rounded-full w-full sm:w-auto mt-2 sm:mt-0" asChild>
-              <Link to="/#how-it-works">Cómo Funciona</Link>
+              <Link to="/how-it-works">Cómo Funciona</Link>
             </Button>
           </div>
           
