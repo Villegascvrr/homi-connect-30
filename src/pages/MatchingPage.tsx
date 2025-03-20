@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -10,7 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Filter, UserRound, LayoutGrid, SwatchBook, Heart, Users } from 'lucide-react';
+import { Filter, UserRound, LayoutGrid, SwatchBook, Heart, Users, Settings } from 'lucide-react';
 import { 
   Popover, 
   PopoverContent, 
@@ -188,6 +189,7 @@ const MatchingPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilters, setActiveFilters] = useState<FilterValues | null>(null);
   const [filteredProfiles, setFilteredProfiles] = useState(mockProfiles);
+  const [originalFilteredProfiles, setOriginalFilteredProfiles] = useState<Profile[]>([]);
   const [viewMode, setViewMode] = useState<'grid' | 'swipe'>('grid');
   const [activeTab, setActiveTab] = useState<'discover' | 'matches'>('discover');
   const { toast } = useToast();
@@ -284,7 +286,124 @@ const MatchingPage = () => {
     });
   };
 
+  // Calculate similarity score between a profile and filters
+  const calculateSimilarityScore = (profile: Profile, filters: FilterValues) => {
+    let score = 0;
+    let possiblePoints = 0;
+    
+    if (filters.ubicacion) {
+      possiblePoints += 10;
+      if (profile.location === filters.ubicacion) {
+        score += 10;
+      }
+    }
+    
+    if (filters.presupuesto && profile.budget) {
+      possiblePoints += 10;
+      const [minFilter, maxFilter] = filters.presupuesto;
+      const { min: minProfile, max: maxProfile } = profile.budget;
+      
+      // Check for budget overlap
+      if (maxProfile >= minFilter && minProfile <= maxFilter) {
+        // Calculate overlap percentage
+        const overlapStart = Math.max(minFilter, minProfile);
+        const overlapEnd = Math.min(maxFilter, maxProfile);
+        const overlapSize = overlapEnd - overlapStart;
+        const filterSize = maxFilter - minFilter;
+        const overlapPercentage = overlapSize / filterSize;
+        
+        score += Math.round(10 * overlapPercentage);
+      }
+    }
+    
+    if (filters.rangoEdad) {
+      possiblePoints += 10;
+      let matches = false;
+      
+      if (filters.rangoEdad === '18-25' && profile.age >= 18 && profile.age <= 25) {
+        matches = true;
+      } else if (filters.rangoEdad === '26-30' && profile.age >= 26 && profile.age <= 30) {
+        matches = true;
+      } else if (filters.rangoEdad === '31-40' && profile.age >= 31 && profile.age <= 40) {
+        matches = true;
+      } else if (filters.rangoEdad === '41+' && profile.age >= 41) {
+        matches = true;
+      }
+      
+      if (matches) {
+        score += 10;
+      }
+    }
+    
+    if (filters.estiloVida && filters.estiloVida.length > 0 && profile.lifestyle) {
+      possiblePoints += 15;
+      const estiloVidaTerms = filters.estiloVida.map(ev => ev.toLowerCase());
+      let matchCount = 0;
+      
+      if (estiloVidaTerms.includes('ordenado') && profile.lifestyle.cleanliness === "Muy ordenada") {
+        matchCount++;
+      }
+      if (estiloVidaTerms.includes('tranquilo') && profile.lifestyle.noise === "Tranquila") {
+        matchCount++;
+      }
+      if (estiloVidaTerms.includes('nocturno') && profile.lifestyle.schedule === "nocturno") {
+        matchCount++;
+      }
+      if (estiloVidaTerms.includes('madrugador') && profile.lifestyle.schedule === "diurno") {
+        matchCount++;
+      }
+      if (estiloVidaTerms.includes('no-fumador') && profile.lifestyle.smoking === "No") {
+        matchCount++;
+      }
+      
+      const matchPercentage = matchCount / estiloVidaTerms.length;
+      score += Math.round(15 * matchPercentage);
+    }
+    
+    if (filters.intereses && filters.intereses.length > 0) {
+      possiblePoints += 15;
+      const matchCount = filters.intereses.filter(interest => 
+        profile.interests.includes(interest)
+      ).length;
+      
+      const matchPercentage = matchCount / filters.intereses.length;
+      score += Math.round(15 * matchPercentage);
+    }
+    
+    // More specific filters
+    if (filters.nivelLimpieza && profile.lifestyle) {
+      possiblePoints += 5;
+      if ((filters.nivelLimpieza === 'alta' && profile.lifestyle.cleanliness === "Muy ordenada") ||
+          (filters.nivelLimpieza === 'media' && profile.lifestyle.cleanliness === "Normal")) {
+        score += 5;
+      }
+    }
+    
+    if (filters.nivelRuido && profile.lifestyle) {
+      possiblePoints += 5;
+      if ((filters.nivelRuido === 'bajo' && profile.lifestyle.noise === "Tranquila") ||
+          (filters.nivelRuido === 'moderado' && profile.lifestyle.noise === "Normal") ||
+          (filters.nivelRuido === 'alto' && profile.lifestyle.noise === "Sociable")) {
+        score += 5;
+      }
+    }
+    
+    if (filters.horarioHabitual && profile.lifestyle) {
+      possiblePoints += 5;
+      if ((filters.horarioHabitual === 'madrugador' && profile.lifestyle.schedule === "diurno") ||
+          (filters.horarioHabitual === 'nocturno' && profile.lifestyle.schedule === "nocturno") ||
+          (filters.horarioHabitual === 'flexible' && profile.lifestyle.schedule === "flexible")) {
+        score += 5;
+      }
+    }
+    
+    // Calculate final percentage (avoid division by zero)
+    return possiblePoints > 0 ? (score / possiblePoints) * 100 : 0;
+  };
+
   const applyFiltersAndSearch = (query: string, filters: FilterValues | null) => {
+    let exactMatches: Profile[] = [];
+    let similarProfiles: {profile: Profile, score: number}[] = [];
     let results = [...mockProfiles];
     
     if (query.trim()) {
@@ -299,13 +418,22 @@ const MatchingPage = () => {
     }
     
     if (filters) {
+      // Store all profiles with similarity scores
+      similarProfiles = results.map(profile => ({
+        profile,
+        score: calculateSimilarityScore(profile, filters)
+      }));
+      
+      // Apply exact filters to find exact matches
+      let filteredResults = [...results];
+      
       if (filters.ubicacion) {
-        results = results.filter(profile => profile.location === filters.ubicacion);
+        filteredResults = filteredResults.filter(profile => profile.location === filters.ubicacion);
       }
       
       if (filters.presupuesto) {
         const [min, max] = filters.presupuesto;
-        results = results.filter(profile => 
+        filteredResults = filteredResults.filter(profile => 
           profile.budget && 
           profile.budget.min <= max && 
           profile.budget.max >= min
@@ -314,19 +442,19 @@ const MatchingPage = () => {
       
       if (filters.rangoEdad) {
         if (filters.rangoEdad === '18-25') {
-          results = results.filter(profile => profile.age >= 18 && profile.age <= 25);
+          filteredResults = filteredResults.filter(profile => profile.age >= 18 && profile.age <= 25);
         } else if (filters.rangoEdad === '26-30') {
-          results = results.filter(profile => profile.age >= 26 && profile.age <= 30);
+          filteredResults = filteredResults.filter(profile => profile.age >= 26 && profile.age <= 30);
         } else if (filters.rangoEdad === '31-40') {
-          results = results.filter(profile => profile.age >= 31 && profile.age <= 40);
+          filteredResults = filteredResults.filter(profile => profile.age >= 31 && profile.age <= 40);
         } else if (filters.rangoEdad === '41+') {
-          results = results.filter(profile => profile.age >= 41);
+          filteredResults = filteredResults.filter(profile => profile.age >= 41);
         }
       }
       
       if (filters.estiloVida && filters.estiloVida.length > 0) {
         const estiloVidaTerms = filters.estiloVida.map(ev => ev.toLowerCase());
-        results = results.filter(profile => {
+        filteredResults = filteredResults.filter(profile => {
           const profileLifestyle: Lifestyle = profile.lifestyle || emptyLifestyle;
           const hasMatchingLifestyle = 
             (estiloVidaTerms.includes('ordenado') && profileLifestyle.cleanliness === "Muy ordenada") ||
@@ -340,7 +468,7 @@ const MatchingPage = () => {
       }
       
       if (filters.intereses && filters.intereses.length > 0) {
-        results = results.filter(profile => 
+        filteredResults = filteredResults.filter(profile => 
           filters.intereses!.some(interest => 
             profile.interests.includes(interest)
           )
@@ -348,7 +476,7 @@ const MatchingPage = () => {
       }
       
       if (filters.nivelLimpieza) {
-        results = results.filter(profile => {
+        filteredResults = filteredResults.filter(profile => {
           const lifestyle: Lifestyle = profile.lifestyle || emptyLifestyle;
           if (filters.nivelLimpieza === 'alta') {
             return lifestyle.cleanliness === "Muy ordenada";
@@ -361,7 +489,7 @@ const MatchingPage = () => {
       }
       
       if (filters.nivelRuido) {
-        results = results.filter(profile => {
+        filteredResults = filteredResults.filter(profile => {
           const lifestyle: Lifestyle = profile.lifestyle || emptyLifestyle;
           if (filters.nivelRuido === 'bajo') {
             return lifestyle.noise === "Tranquila";
@@ -374,7 +502,7 @@ const MatchingPage = () => {
       }
       
       if (filters.horarioHabitual) {
-        results = results.filter(profile => {
+        filteredResults = filteredResults.filter(profile => {
           const lifestyle: Lifestyle = profile.lifestyle || emptyLifestyle;
           if (filters.horarioHabitual === 'madrugador') {
             return lifestyle.schedule === "diurno";
@@ -387,7 +515,7 @@ const MatchingPage = () => {
       }
       
       if (filters.invitados) {
-        results = results.filter(profile => {
+        filteredResults = filteredResults.filter(profile => {
           const lifestyle: Lifestyle = profile.lifestyle || emptyLifestyle;
           if (filters.invitados === 'frecuente') {
             return lifestyle.guests === "Frecuentemente";
@@ -400,7 +528,7 @@ const MatchingPage = () => {
       }
       
       if (filters.fumar) {
-        results = results.filter(profile => {
+        filteredResults = filteredResults.filter(profile => {
           const lifestyle: Lifestyle = profile.lifestyle || emptyLifestyle;
           if (filters.fumar === 'no') {
             return lifestyle.smoking === "No";
@@ -409,8 +537,36 @@ const MatchingPage = () => {
           }
         });
       }
+      
+      exactMatches = filteredResults;
+      
+      // If no exact matches, use similar profiles
+      if (exactMatches.length === 0 && similarProfiles.length > 0) {
+        // Sort by similarity score (highest first)
+        similarProfiles.sort((a, b) => b.score - a.score);
+        
+        // Filter profiles with at least 30% similarity
+        const similarEnough = similarProfiles.filter(item => item.score >= 30);
+        
+        if (similarEnough.length > 0) {
+          // Extract just the profiles
+          results = similarEnough.map(item => item.profile);
+          
+          toast({
+            title: "No hay coincidencias exactas",
+            description: `Mostrando ${results.length} perfiles similares a tus criterios`,
+            variant: "default"
+          });
+        } else {
+          results = [];
+        }
+      } else {
+        // Use exact matches
+        results = exactMatches;
+      }
     }
     
+    setOriginalFilteredProfiles(results);
     setFilteredProfiles(results);
     
     if (activeFilters !== null || query.trim()) {
@@ -572,7 +728,7 @@ const MatchingPage = () => {
                         onClick={() => setOpenSearchFilters(!openSearchFilters)}
                       >
                         <Filter className="h-4 w-4" />
-                        Filtros
+                        <span className="hidden sm:inline">Filtros</span>
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="end" sideOffset={5}>
@@ -597,8 +753,8 @@ const MatchingPage = () => {
                         className="flex items-center gap-2"
                         onClick={() => setOpenPreferences(!openPreferences)}
                       >
-                        <UserRound className="h-4 w-4" />
-                        Preferencias
+                        <Settings className="h-4 w-4" />
+                        <span className="hidden sm:inline">Preferencias</span>
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="end" sideOffset={5}>
@@ -677,11 +833,17 @@ const MatchingPage = () => {
               ) : (
                 <div className="text-center py-16">
                   <p className="text-xl text-muted-foreground">
-                    No se encontraron perfiles que coincidan con tu búsqueda
+                    No se encontraron perfiles que coincidan exactamente con tu búsqueda
                   </p>
-                  <p className="mt-2">
+                  <p className="mt-2 mb-6">
                     Intenta con otros términos o menos filtros específicos
                   </p>
+                  <Button 
+                    onClick={handleClearFilters}
+                    className="bg-homi-purple hover:bg-homi-purple/90"
+                  >
+                    Borrar filtros
+                  </Button>
                 </div>
               )}
             </TabsContent>
