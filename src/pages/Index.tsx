@@ -1,5 +1,5 @@
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -11,10 +11,20 @@ import { Button } from '@/components/ui/button';
 import ProfileCard from '@/components/profiles/ProfileCard';
 
 const Index = () => {
-  // Explicitly scroll to top when component mounts
+  // Use a ref to track if this is the first render
+  const initialRender = useRef(true);
+
+  // Hard force scroll to top using multiple methods on component mount
   useEffect(() => {
-    window.scrollTo(0, 0);
-    console.log("Index component mounted - forced scroll to top");
+    if (initialRender.current) {
+      // Try different scroll methods to ensure it works cross-browser
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0; // For Safari
+      
+      console.log("Index component mounted - forced scroll to top with multiple methods");
+      initialRender.current = false;
+    }
   }, []);
   
   // Sample data for demonstration

@@ -11,8 +11,9 @@ const NotFound = () => {
       location.pathname
     );
     
-    // Explicitly force scroll to top
-    window.scrollTo(0, 0);
+    // Explicitly force scroll to top with a different method
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0; // For Safari
   }, [location.pathname]);
 
   return (

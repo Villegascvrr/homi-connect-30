@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -23,10 +24,20 @@ const Navbar = () => {
 
   useEffect(() => {
     setIsMenuOpen(false);
+    
+    // Force scroll to top when changing routes
+    window.scrollTo(0, 0);
+    console.log("Navbar detected route change, scrolled to top");
   }, [location.pathname]);
 
   const isActive = (path: string) => {
     return location.pathname === path;
+  };
+
+  // Create a click handler for nav links to force scroll
+  const handleNavLinkClick = () => {
+    window.scrollTo(0, 0);
+    console.log("Nav link clicked, forced scroll to top");
   };
 
   return (
@@ -38,13 +49,14 @@ const Navbar = () => {
       } mt-[29px]`}
     >
       <div className="container mx-auto px-4 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
+        <Link to="/" onClick={handleNavLinkClick} className="flex items-center gap-2">
           <span className="text-2xl font-bold text-homi-purple">Homi</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-8">
           <Link 
             to="/" 
+            onClick={handleNavLinkClick}
             className={`transition-colors ${
               isActive('/') 
                 ? 'text-homi-purple font-medium' 
@@ -55,6 +67,7 @@ const Navbar = () => {
           </Link>
           <Link 
             to="/matching" 
+            onClick={handleNavLinkClick}
             className={`transition-colors ${
               isActive('/matching') 
                 ? 'text-homi-purple font-medium' 
@@ -65,6 +78,7 @@ const Navbar = () => {
           </Link>
           <Link 
             to="/chat" 
+            onClick={handleNavLinkClick}
             className={`transition-colors ${
               isActive('/chat') 
                 ? 'text-homi-purple font-medium' 
@@ -75,6 +89,7 @@ const Navbar = () => {
           </Link>
           <Link 
             to="/profile" 
+            onClick={handleNavLinkClick}
             className={`transition-colors ${
               isActive('/profile') 
                 ? 'text-homi-purple font-medium' 
@@ -87,10 +102,10 @@ const Navbar = () => {
 
         <div className="hidden md:flex items-center gap-4">
           <Button asChild variant="outline" className="rounded-full">
-            <Link to="/signin">Iniciar Sesión</Link>
+            <Link to="/signin" onClick={handleNavLinkClick}>Iniciar Sesión</Link>
           </Button>
           <Button asChild className="rounded-full bg-homi-purple hover:bg-homi-purple/90">
-            <Link to="/register">Registrarse</Link>
+            <Link to="/register" onClick={handleNavLinkClick}>Registrarse</Link>
           </Button>
         </div>
 
@@ -107,7 +122,10 @@ const Navbar = () => {
           <div className="container mx-auto px-4 py-4 flex flex-col">
             <Link 
               to="/" 
-              onClick={() => setIsMenuOpen(false)}
+              onClick={() => {
+                setIsMenuOpen(false);
+                handleNavLinkClick();
+              }}
               className={`flex items-center gap-2 py-3 transition-colors ${
                 isActive('/') 
                   ? 'text-homi-purple font-medium' 
@@ -119,6 +137,10 @@ const Navbar = () => {
             </Link>
             <Link 
               to="/matching" 
+              onClick={() => {
+                setIsMenuOpen(false);
+                handleNavLinkClick();
+              }}
               className={`flex items-center gap-2 py-3 transition-colors ${
                 isActive('/matching') 
                   ? 'text-homi-purple font-medium' 
@@ -130,6 +152,10 @@ const Navbar = () => {
             </Link>
             <Link 
               to="/chat" 
+              onClick={() => {
+                setIsMenuOpen(false);
+                handleNavLinkClick();
+              }}
               className={`flex items-center gap-2 py-3 transition-colors ${
                 isActive('/chat') 
                   ? 'text-homi-purple font-medium' 
@@ -141,6 +167,10 @@ const Navbar = () => {
             </Link>
             <Link 
               to="/profile" 
+              onClick={() => {
+                setIsMenuOpen(false);
+                handleNavLinkClick();
+              }}
               className={`flex items-center gap-2 py-3 transition-colors ${
                 isActive('/profile') 
                   ? 'text-homi-purple font-medium' 
@@ -153,13 +183,27 @@ const Navbar = () => {
             
             <div className="flex flex-col gap-3 mt-4 pt-4 border-t border-border">
               <Button asChild variant="outline" className="rounded-full w-full justify-center">
-                <Link to="/signin">
+                <Link 
+                  to="/signin"
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    handleNavLinkClick();
+                  }}
+                >
                   <LogIn className="mr-2 h-4 w-4" />
                   Iniciar Sesión
                 </Link>
               </Button>
               <Button asChild className="rounded-full w-full justify-center bg-homi-purple hover:bg-homi-purple/90">
-                <Link to="/register">Registrarse</Link>
+                <Link 
+                  to="/register"
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    handleNavLinkClick();
+                  }}
+                >
+                  Registrarse
+                </Link>
               </Button>
             </div>
           </div>
