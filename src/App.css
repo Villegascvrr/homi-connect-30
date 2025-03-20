@@ -51,61 +51,133 @@
   }
 }
 
-/* Animations for swiping interface */
+/* Enhanced animations for swiping interface */
 @keyframes swipe-left {
+  from {
+    transform: translateX(0) rotate(0deg);
+    opacity: 1;
+  }
   to {
-    transform: translateX(-150%) rotate(-30deg);
+    transform: translateX(-200%) rotate(-45deg);
     opacity: 0;
   }
 }
 
 @keyframes swipe-right {
+  from {
+    transform: translateX(0) rotate(0deg);
+    opacity: 1;
+  }
   to {
-    transform: translateX(150%) rotate(30deg);
+    transform: translateX(200%) rotate(45deg);
     opacity: 0;
   }
 }
 
 .animate-swipe-left {
-  animation: swipe-left 0.5s ease-out forwards;
+  animation: swipe-left 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
 .animate-swipe-right {
-  animation: swipe-right 0.5s ease-out forwards;
+  animation: swipe-right 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
-/* Enhanced like/dislike indicators with animations */
+/* Enhanced like/dislike indicators with bouncy animations */
 @keyframes like-indicator {
-  0% { opacity: 0; transform: scale(0.5) rotate(-12deg); }
-  50% { opacity: 1; transform: scale(1.2) rotate(-12deg); }
-  100% { opacity: 1; transform: scale(1) rotate(-12deg); }
+  0% { opacity: 0; transform: scale(0.5) rotate(-15deg); }
+  40% { opacity: 1; transform: scale(1.4) rotate(-15deg); }
+  60% { transform: scale(0.95) rotate(-15deg); }
+  80% { transform: scale(1.1) rotate(-15deg); }
+  100% { opacity: 1; transform: scale(1) rotate(-15deg); }
 }
 
 @keyframes dislike-indicator {
-  0% { opacity: 0; transform: scale(0.5) rotate(12deg); }
-  50% { opacity: 1; transform: scale(1.2) rotate(12deg); }
-  100% { opacity: 1; transform: scale(1) rotate(12deg); }
+  0% { opacity: 0; transform: scale(0.5) rotate(15deg); }
+  40% { opacity: 1; transform: scale(1.4) rotate(15deg); }
+  60% { transform: scale(0.95) rotate(15deg); }
+  80% { transform: scale(1.1) rotate(15deg); }
+  100% { opacity: 1; transform: scale(1) rotate(15deg); }
 }
 
 .animate-like {
-  animation: like-indicator 0.4s ease-out forwards;
+  animation: like-indicator 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
   transform-origin: center;
 }
 
 .animate-dislike {
-  animation: dislike-indicator 0.4s ease-out forwards;
+  animation: dislike-indicator 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
   transform-origin: center;
 }
 
-/* Card hover and active effects */
+/* Expanded card glow and hover effects */
 @keyframes card-pulse {
   0% { transform: scale(1); box-shadow: 0 0 0 rgba(110, 89, 165, 0); }
-  50% { transform: scale(1.02); box-shadow: 0 0 15px rgba(110, 89, 165, 0.3); }
+  50% { transform: scale(1.03); box-shadow: 0 0 25px rgba(110, 89, 165, 0.4); }
   100% { transform: scale(1); box-shadow: 0 0 0 rgba(110, 89, 165, 0); }
 }
 
 .card-pulse {
-  animation: card-pulse 1.5s ease-in-out infinite;
+  animation: card-pulse 2s ease-in-out infinite;
+}
+
+/* Background highlight effect for matches */
+@keyframes bg-highlight {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.bg-highlight {
+  background: linear-gradient(90deg, rgba(155, 135, 245, 0.1) 0%, rgba(217, 70, 239, 0.1) 50%, rgba(155, 135, 245, 0.1) 100%);
+  background-size: 200% 200%;
+  animation: bg-highlight 3s ease infinite;
+}
+
+/* Button hover animations */
+@keyframes button-glow {
+  0% { box-shadow: 0 0 5px rgba(110, 89, 165, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(110, 89, 165, 0.8); }
+  100% { box-shadow: 0 0 5px rgba(110, 89, 165, 0.3); }
+}
+
+.button-glow {
+  animation: button-glow 2s infinite;
+}
+
+/* Enhanced button effects */
+@keyframes like-button-pulse {
+  0% { transform: scale(1); background-color: transparent; }
+  50% { transform: scale(1.1); background-color: rgba(110, 89, 165, 0.1); }
+  100% { transform: scale(1); background-color: transparent; }
+}
+
+@keyframes dislike-button-pulse {
+  0% { transform: scale(1); background-color: transparent; }
+  50% { transform: scale(1.1); background-color: rgba(239, 68, 68, 0.1); }
+  100% { transform: scale(1); background-color: transparent; }
+}
+
+.like-button-pulse {
+  animation: like-button-pulse 2s infinite;
+}
+
+.dislike-button-pulse {
+  animation: dislike-button-pulse 2s infinite;
+}
+
+/* Confetti animation for matches */
+@keyframes confetti-fall {
+  from { transform: translateY(-100vh); }
+  to { transform: translateY(100vh); }
+}
+
+.confetti {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  background-color: #9b87f5;
+  opacity: 0.8;
+  animation: confetti-fall 2s linear forwards;
 }
 
 /* Pulse animation with softer effect */
@@ -122,14 +194,37 @@
   }
 }
 
-/* Button hover effect */
-@keyframes button-glow {
-  0% { box-shadow: 0 0 5px rgba(110, 89, 165, 0.3); }
-  50% { box-shadow: 0 0 15px rgba(110, 89, 165, 0.6); }
-  100% { box-shadow: 0 0 5px rgba(110, 89, 165, 0.3); }
+/* Card Flip Animation */
+@keyframes card-flip {
+  0% { transform: perspective(1000px) rotateY(0deg); }
+  100% { transform: perspective(1000px) rotateY(180deg); }
 }
 
-.button-glow {
-  animation: button-glow 2s infinite;
+.card-flip {
+  animation: card-flip 0.5s ease-out forwards;
 }
 
+/* 3D Tilt Effect */
+.tilt-effect {
+  transition: transform 0.2s ease-out;
+}
+
+.tilt-effect:hover {
+  transform: perspective(1000px) rotateX(5deg) rotateY(5deg);
+}
+
+/* Background Shimmer Effect */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer-bg {
+  background: linear-gradient(90deg, 
+    rgba(155, 135, 245, 0) 0%, 
+    rgba(155, 135, 245, 0.2) 25%, 
+    rgba(155, 135, 245, 0.2) 50%, 
+    rgba(155, 135, 245, 0) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 3s infinite linear;
+}
