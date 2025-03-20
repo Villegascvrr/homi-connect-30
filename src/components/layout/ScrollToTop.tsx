@@ -5,42 +5,31 @@ import { useLocation } from 'react-router-dom';
 /**
  * This component uses the useLocation hook to detect route changes,
  * and automatically scrolls to the top of the page for all routes
- * except for the home page ("/"), which scrolls to the signup form section
+ * including the home page
  */
 const ScrollToTop = () => {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    // Force immediate execution of scroll after route change
-    if (pathname === "/") {
-      // For home page, scroll to the form section
-      const scrollToForm = () => {
+    // Force immediate scroll to top for ALL pages including home page
+    window.scrollTo({
+      top: 0,
+      behavior: 'auto' // Using 'auto' for immediate scrolling without animation
+    });
+    
+    console.log("Scrolled to top for path:", pathname);
+    
+    // Only for home page, after scrolling to top, check if we need to scroll to a specific section
+    // based on URL hash or other conditions
+    if (pathname === "/" && window.location.hash === "#signup-form") {
+      // If there's a hash in the URL targeting the signup form, scroll to it
+      setTimeout(() => {
         const formElement = document.getElementById("signup-form");
         if (formElement) {
           formElement.scrollIntoView({ behavior: 'smooth' });
-          console.log("Scrolled to signup form");
-        } else {
-          // If form element not found, scroll to a position that should reveal the form
-          console.log("Signup form element not found, scrolling to estimated position");
-          window.scrollTo({
-            top: window.innerHeight, // Scroll approximately one viewport height
-            behavior: 'smooth'
-          });
+          console.log("Scrolled to signup form due to hash");
         }
-      };
-
-      // Ensure DOM is fully rendered before attempting to scroll
-      window.requestAnimationFrame(() => {
-        // Add a slight delay to ensure React has completed rendering
-        setTimeout(scrollToForm, 100);
-      });
-    } else {
-      // For all other pages, scroll to top immediately
-      window.scrollTo({
-        top: 0,
-        behavior: 'auto' // Changed to 'auto' for immediate scrolling without animation
-      });
-      console.log("Scrolled to top for path:", pathname);
+      }, 100);
     }
   }, [pathname]);
 
