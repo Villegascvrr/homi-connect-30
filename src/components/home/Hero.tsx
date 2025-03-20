@@ -1,22 +1,17 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Check } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import EmailSignup from './EmailSignup';
-
 const Hero = () => {
   const [email, setEmail] = useState('');
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle newsletter subscription
     console.log('Subscribed with email:', email);
     setEmail('');
   };
-
-  return (
-    <section className="relative pt-32 pb-20 overflow-hidden">
+  return <section className="relative pt-32 pb-20 overflow-hidden py-[80px]">
       {/* Background elements */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-0 left-0 w-96 h-96 bg-homi-ultraLightPurple rounded-full opacity-50 blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
@@ -49,24 +44,17 @@ const Hero = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
-            <Button 
-              size="lg" 
-              className="rounded-full bg-homi-purple hover:bg-homi-purple/90 px-8 w-full sm:w-auto"
-              asChild
-            >
+            <Button size="lg" className="rounded-full bg-homi-purple hover:bg-homi-purple/90 px-8 w-full sm:w-auto" asChild>
               <Link to="/register">¡Regístrate ahora!</Link>
             </Button>
-            <Button 
-              size="lg" 
-              variant="outline" 
-              className="rounded-full w-full sm:w-auto"
-              onClick={() => {
-                const howItWorksSection = document.getElementById('how-it-works');
-                if (howItWorksSection) {
-                  howItWorksSection.scrollIntoView({ behavior: 'smooth' });
-                }
-              }}
-            >
+            <Button size="lg" variant="outline" className="rounded-full w-full sm:w-auto" onClick={() => {
+            const howItWorksSection = document.getElementById('how-it-works');
+            if (howItWorksSection) {
+              howItWorksSection.scrollIntoView({
+                behavior: 'smooth'
+              });
+            }
+          }}>
               Cómo Funciona
             </Button>
           </div>
@@ -92,8 +80,6 @@ const Hero = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default Hero;
