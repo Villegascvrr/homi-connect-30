@@ -17,7 +17,8 @@ const Hero = () => {
     setEmail('');
   };
 
-  return <section className="relative pt-20 md:pt-32 pb-16 md:pb-20 overflow-hidden py-[50px] md:py-[44px]">
+  return (
+    <section className="relative pt-20 md:pt-32 pb-16 md:pb-20 overflow-hidden py-[50px] md:py-[44px]">
       {/* Background elements */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-0 left-0 w-64 md:w-96 h-64 md:h-96 bg-homi-ultraLightPurple rounded-full opacity-50 blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
@@ -79,7 +80,8 @@ const Hero = () => {
           </div>
         </div>
       </div>
-    </section>;
+    </section>
+  );
 };
 
 export default Hero;

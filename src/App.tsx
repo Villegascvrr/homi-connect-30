@@ -26,10 +26,8 @@ const App = () => (
       <BrowserRouter>
         <ScrollToTop /> {/* ScrollToTop component will handle all scrolling behavior */}
         <Routes>
-          {/* Redirect root path to index */}
+          {/* Route paths */}
           <Route path="/" element={<Index />} />
-          {/* Redirect any unspecified path to index */}
-          <Route path="" element={<Navigate to="/" replace />} />
           <Route path="/matching" element={<MatchingPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/profile/:id" element={<ProfileViewPage />} />
@@ -38,7 +36,11 @@ const App = () => (
           <Route path="/signin" element={<SignInPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/how-it-works" element={<HowItWorksPage />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          
+          {/* Redirects */}
+          <Route path="" element={<Navigate to="/" replace />} />
+          
+          {/* Catch-all route */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
