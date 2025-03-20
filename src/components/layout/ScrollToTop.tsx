@@ -10,38 +10,30 @@ const ScrollToTop = () => {
   const { pathname, hash } = useLocation();
 
   useEffect(() => {
-    // For all navigations, ALWAYS scroll to top first no matter what
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: 'auto' // Use auto instead of smooth for immediate effect
-    });
-    console.log("ALWAYS force scrolled to top for path:", pathname);
+    // Force immediate scroll to top
+    window.scrollTo(0, 0);
     
-    // Only scroll to hash elements if specifically requested with a hash in URL
+    // Log for debugging
+    console.log("Forced scroll to top for path:", pathname);
+    
+    // Handle hash navigation separately, with enough delay to ensure the initial scroll completed
     if (hash) {
-      const handleHashScroll = () => {
+      // Wait for DOM to be ready
+      setTimeout(() => {
         const elementId = hash.replace('#', '');
         const element = document.getElementById(elementId);
         
         if (element) {
-          // Only scroll to element if it exists
-          setTimeout(() => {
-            element.scrollIntoView({ behavior: 'smooth' });
-            console.log(`Scrolled to ${elementId} element due to hash`);
-          }, 200);
+          element.scrollIntoView({ behavior: 'smooth' });
+          console.log(`Scrolled to element with id: ${elementId}`);
         } else {
-          console.log("Hash target not found, already scrolled to top");
+          console.log(`Element with id ${elementId} not found`);
         }
-      };
-
-      // Execute hash scrolling after a delay to ensure initial scroll to top completes
-      const timeoutId = setTimeout(handleHashScroll, 100);
-      return () => clearTimeout(timeoutId);
+      }, 300); // Longer timeout to ensure initial scroll completes
     }
-  }, [pathname, hash]); // Only react to pathname and hash changes
+  }, [pathname, hash]);
 
-  return null; // This component doesn't render anything
+  return null;
 };
 
 export default ScrollToTop;

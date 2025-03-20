@@ -58,12 +58,9 @@ const Hero = () => {
               size={isMobile ? "default" : "lg"} 
               variant="outline" 
               className="rounded-full w-full sm:w-auto mt-2 sm:mt-0" 
-              onClick={() => {
-                // Use an explicit hash in the URL instead of direct scrolling
-                window.location.href = '/#how-it-works';
-              }}
+              asChild
             >
-              Cómo Funciona
+              <a href="#how-it-works">Cómo Funciona</a>
             </Button>
           </div>
           
