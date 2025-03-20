@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -872,3 +873,41 @@ const MatchingPage = () => {
                     Borrar filtros
                   </Button>
                 </div>
+              )}
+            </TabsContent>
+            
+            <TabsContent value="matches" className="mt-0">
+              {matches.length > 0 ? (
+                <MatchesList 
+                  matches={matches}
+                  onUnmatch={handleUnmatch}
+                  onMessage={handleMessage}
+                  onViewProfile={handleViewProfile}
+                />
+              ) : (
+                <div className="text-center py-16">
+                  <p className="text-xl text-muted-foreground">
+                    Aún no tienes matches
+                  </p>
+                  <p className="mt-2 mb-6">
+                    Explora perfiles y conecta con personas compatibles
+                  </p>
+                  <Button 
+                    onClick={() => setActiveTab('discover')}
+                    className="bg-homi-purple hover:bg-homi-purple/90"
+                  >
+                    Descubrir perfiles
+                  </Button>
+                </div>
+              )}
+            </TabsContent>
+          </Tabs>
+        </div>
+      </main>
+      
+      <Footer />
+    </div>
+  );
+};
+
+export default MatchingPage;
