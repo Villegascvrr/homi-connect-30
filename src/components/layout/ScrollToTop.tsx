@@ -7,36 +7,49 @@ import { useLocation } from 'react-router-dom';
  * and handles special cases like scrolling to specific elements
  */
 const ScrollToTop = () => {
-  const { pathname, hash } = useLocation();
+  const { pathname, hash, search } = useLocation();
 
   useEffect(() => {
-    // Define a function to handle scrolling
-    const handleScroll = () => {
-      // Check if we need to scroll to a specific element
-      if (pathname === "/" && hash === "#signup-form") {
-        // If there's a hash in the URL targeting the signup form, try to scroll to it
-        const element = document.getElementById("signup-form");
+    // If there's no hash, always scroll to top immediately
+    if (!hash) {
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'auto' // Use auto instead of smooth for immediate effect
+      });
+      console.log("Force scrolled to top for path:", pathname);
+      return;
+    }
+
+    // Only handle hash-based scrolling if explicitly requested
+    // with a valid element ID
+    const handleHashScroll = () => {
+      if (hash) {
+        const elementId = hash.replace('#', '');
+        const element = document.getElementById(elementId);
+        
         if (element) {
+          // Only scroll to element if it exists
           element.scrollIntoView({ behavior: 'smooth' });
-          console.log("Scrolled to signup form element due to hash");
+          console.log(`Scrolled to ${elementId} element due to hash`);
+        } else {
+          // If element doesn't exist, default to top
+          window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'auto'
+          });
+          console.log("Hash target not found, scrolled to top");
         }
-      } else {
-        // Force scroll to top for all other cases
-        window.scrollTo({
-          top: 0,
-          left: 0,
-          behavior: 'auto' // Use auto instead of smooth for immediate effect
-        });
-        console.log("Force scrolled to top for path:", pathname);
       }
     };
 
-    // Execute scroll after a short delay to ensure DOM is ready
-    const timeoutId = setTimeout(handleScroll, 10);
+    // Execute hash scrolling after a short delay to ensure DOM is ready
+    const timeoutId = setTimeout(handleHashScroll, 100);
     
     // Clean up the timeout
     return () => clearTimeout(timeoutId);
-  }, [pathname, hash]); // React to both pathname and hash changes
+  }, [pathname, hash, search]); // React to pathname, hash, and search changes
 
   return null; // This component doesn't render anything
 };
