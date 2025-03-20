@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -16,7 +17,8 @@ import {
   Clock, 
   X, 
   Calendar,
-  User
+  User,
+  HeartHandshake
 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -262,7 +264,10 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
         {activeTab === 'preferencias' && (
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-xl">Mis preferencias de convivencia</CardTitle>
+              <CardTitle className="text-xl flex items-center gap-2">
+                <HeartHandshake className="h-5 w-5 text-homi-purple" />
+                Mis preferencias de convivencia
+              </CardTitle>
               <CardDescription>
                 Configura tus preferencias para mejorar tus coincidencias. Cuanta más información añadas, más precisas serán las recomendaciones.
               </CardDescription>

@@ -31,11 +31,11 @@ const ProfileSearchBar: React.FC<ProfileSearchBarProps> = ({
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder={placeholder}
-          className="pl-9 pr-16 w-full rounded-full"
+          className="pl-9 pr-20 w-full rounded-full"
         />
         <Button 
           type="submit" 
-          className="absolute right-0 rounded-full px-4"
+          className="absolute right-0.5 top-1/2 -translate-y-1/2 rounded-full px-4 h-8"
           size="sm"
         >
           Buscar
