@@ -15,6 +15,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { FormImageUpload } from "@/components/ui/form-image-upload";
+
 const formSchema = z.object({
   firstName: z.string().min(2, {
     message: 'El nombre debe tener al menos 2 caracteres'
@@ -52,10 +53,12 @@ const formSchema = z.object({
   galleryImages: z.array(z.string()).optional(),
   isProfileActive: z.boolean().default(true)
 });
+
 type Interest = {
   id: string;
   name: string;
 };
+
 const EmailSignup = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -84,6 +87,7 @@ const EmailSignup = () => {
       isProfileActive: true
     }
   });
+
   useEffect(() => {
     if (formContainerRef.current) {
       window.scrollTo(0, 0);
@@ -100,6 +104,7 @@ const EmailSignup = () => {
       }, 50);
     }
   }, [activeTab]);
+
   const [lifestylePreferences, setLifestylePreferences] = useState({
     morningPerson: false,
     nightPerson: false,
@@ -107,6 +112,7 @@ const EmailSignup = () => {
     cleanliness: "moderado",
     noise: "moderado"
   });
+
   const handleGoogleSignIn = () => {
     setIsSigningWithGoogle(true);
     setTimeout(() => {
@@ -119,7 +125,6 @@ const EmailSignup = () => {
       form.setValue("lastName", mockGoogleData.lastName);
       form.setValue("email", mockGoogleData.email);
 
-      // FIX: Pass the correct field names as an array of literals, not strings
       form.trigger(["firstName", "lastName", "email"]);
       setIsSigningWithGoogle(false);
       toast({
@@ -129,6 +134,7 @@ const EmailSignup = () => {
       });
     }, 1000);
   };
+
   const interests: Interest[] = [{
     id: "deporte",
     name: "Deporte y actividades físicas"
@@ -178,18 +184,21 @@ const EmailSignup = () => {
     id: "fiestas",
     name: "Fiestas y vida nocturna"
   }];
+
   const toggleInterest = (interest: string) => {
     setSelectedInterests(prev => prev.includes(interest) ? prev.filter(i => i !== interest) : [...prev, interest]);
   };
+
   const handleLifestyleChange = (field: string, value: any) => {
     setLifestylePreferences(prev => ({
       ...prev,
       [field]: value
     }));
   };
+
   const isPersonalDataValid = form.getValues('firstName')?.length > 0 && form.getValues('lastName')?.length > 0 && form.getValues('username')?.length > 0 && form.getValues('email')?.length > 0 && !form.formState.errors.firstName && !form.formState.errors.lastName && !form.formState.errors.username && !form.formState.errors.email;
+
   const handleNextStep = async () => {
-    // FIX: Use explicit field names instead of string array
     const fieldsToValidate = ["firstName", "lastName", "username", "email"] as const;
     const result = await form.trigger(fieldsToValidate);
     if (result && isPersonalDataValid) {
@@ -210,6 +219,7 @@ const EmailSignup = () => {
       });
     }
   };
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log("Form submission started", {
       values,
@@ -252,6 +262,7 @@ const EmailSignup = () => {
       }
     }
   };
+
   if (isSubmitted) {
     return <div className="flex flex-col items-center justify-center p-8 bg-gradient-to-br from-homi-ultraLightPurple to-white dark:from-homi-purple/20 dark:to-background rounded-xl border border-homi-purple/20 shadow-md animate-fade-in">
         <CheckCircle2 className="h-16 w-16 text-green-500 mb-4" />
@@ -264,6 +275,7 @@ const EmailSignup = () => {
         </div>
       </div>;
   }
+
   return <div className="w-full max-w-3xl mx-auto" ref={formContainerRef}>
       <div className="mb-6 text-center">
         <h3 className="text-xl font-semibold mb-2">Crea tu perfil personalizado en Homi</h3>
@@ -482,44 +494,75 @@ const EmailSignup = () => {
                   <div className="space-y-6">
                     <div>
                       <label className="text-sm font-medium mb-2 block">¿Eres más de mañanas o de noches?</label>
-                      <div className="flex gap-4">
-                        <button type="button" className={`flex items-center gap-2 px-4 py-2 rounded-lg border ${lifestylePreferences.morningPerson ? 'bg-homi-purple text-white border-homi-purple' : 'bg-transparent border-input hover:bg-muted/50'}`} onClick={() => handleLifestyleChange('morningPerson', !lifestylePreferences.morningPerson)}>
-                          <Sun size={18} /> Madrugador/a
+                      <div className="lifestyle-option-row">
+                        <button 
+                          type="button" 
+                          className={`lifestyle-option-button ${lifestylePreferences.morningPerson ? 'bg-homi-purple text-white border-homi-purple' : 'bg-transparent border-input hover:bg-muted/50'}`} 
+                          onClick={() => handleLifestyleChange('morningPerson', !lifestylePreferences.morningPerson)}
+                        >
+                          <Sun size={18} />
+                          <span>Madrugador/a</span>
                         </button>
-                        <button type="button" className={`flex items-center gap-2 px-4 py-2 rounded-lg border ${lifestylePreferences.nightPerson ? 'bg-homi-purple text-white border-homi-purple' : 'bg-transparent border-input hover:bg-muted/50'}`} onClick={() => handleLifestyleChange('nightPerson', !lifestylePreferences.nightPerson)}>
-                          <Moon size={18} /> Noctámbulo/a
+                        <button 
+                          type="button" 
+                          className={`lifestyle-option-button ${lifestylePreferences.nightPerson ? 'bg-homi-purple text-white border-homi-purple' : 'bg-transparent border-input hover:bg-muted/50'}`} 
+                          onClick={() => handleLifestyleChange('nightPerson', !lifestylePreferences.nightPerson)}
+                        >
+                          <Moon size={18} />
+                          <span>Noctámbulo/a</span>
                         </button>
                       </div>
                     </div>
                     
                     <div>
                       <label className="text-sm font-medium mb-2 block">Socialización en casa</label>
-                      <div className="grid grid-cols-3 gap-3">
-                        {["poco", "moderado", "mucho"].map(level => <button key={level} type="button" className={`px-4 py-2 rounded-lg border ${lifestylePreferences.socializing === level ? 'bg-homi-purple text-white border-homi-purple' : 'bg-transparent border-input hover:bg-muted/50'}`} onClick={() => handleLifestyleChange('socializing', level)}>
+                      <div className="lifestyle-option-row">
+                        {["poco", "moderado", "mucho"].map(level => (
+                          <button 
+                            key={level} 
+                            type="button" 
+                            className={`lifestyle-option-button ${lifestylePreferences.socializing === level ? 'bg-homi-purple text-white border-homi-purple' : 'bg-transparent border-input hover:bg-muted/50'}`} 
+                            onClick={() => handleLifestyleChange('socializing', level)}
+                          >
                             {level === "poco" && "Prefiero tranquilidad"}
                             {level === "moderado" && "Balance"}
                             {level === "mucho" && "Me gusta socializar"}
-                          </button>)}
+                          </button>
+                        ))}
                       </div>
                     </div>
                     
                     <div>
                       <label className="text-sm font-medium mb-2 block">Limpieza y orden</label>
-                      <div className="grid grid-cols-3 gap-3">
-                        {["básico", "moderado", "muy ordenado"].map(level => <button key={level} type="button" className={`px-4 py-2 rounded-lg border ${lifestylePreferences.cleanliness === level ? 'bg-homi-purple text-white border-homi-purple' : 'bg-transparent border-input hover:bg-muted/50'}`} onClick={() => handleLifestyleChange('cleanliness', level)}>
+                      <div className="lifestyle-option-row">
+                        {["básico", "moderado", "muy ordenado"].map(level => (
+                          <button 
+                            key={level} 
+                            type="button" 
+                            className={`lifestyle-option-button ${lifestylePreferences.cleanliness === level ? 'bg-homi-purple text-white border-homi-purple' : 'bg-transparent border-input hover:bg-muted/50'}`} 
+                            onClick={() => handleLifestyleChange('cleanliness', level)}
+                          >
                             {level}
-                          </button>)}
+                          </button>
+                        ))}
                       </div>
                     </div>
                     
                     <div>
                       <label className="text-sm font-medium mb-2 block">Tolerancia al ruido</label>
-                      <div className="grid grid-cols-3 gap-3">
-                        {["bajo", "moderado", "alto"].map(level => <button key={level} type="button" className={`px-4 py-2 rounded-lg border ${lifestylePreferences.noise === level ? 'bg-homi-purple text-white border-homi-purple' : 'bg-transparent border-input hover:bg-muted/50'}`} onClick={() => handleLifestyleChange('noise', level)}>
+                      <div className="lifestyle-option-row">
+                        {["bajo", "moderado", "alto"].map(level => (
+                          <button 
+                            key={level} 
+                            type="button" 
+                            className={`lifestyle-option-button ${lifestylePreferences.noise === level ? 'bg-homi-purple text-white border-homi-purple' : 'bg-transparent border-input hover:bg-muted/50'}`} 
+                            onClick={() => handleLifestyleChange('noise', level)}
+                          >
                             {level === "bajo" && "Prefiero silencio"}
                             {level === "moderado" && "Nivel medio"}
                             {level === "alto" && "No me molesta"}
-                          </button>)}
+                          </button>
+                        ))}
                       </div>
                     </div>
                   </div>
@@ -547,4 +590,5 @@ const EmailSignup = () => {
       </div>
     </div>;
 };
+
 export default EmailSignup;

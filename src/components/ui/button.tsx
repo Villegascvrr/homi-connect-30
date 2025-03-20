@@ -25,7 +25,8 @@ const buttonVariants = cva(
         sm: "h-9 rounded-md px-3",
         lg: "h-11 rounded-md px-8",
         icon: "h-10 w-10",
-        auto: "h-auto py-2 px-4 min-h-[2.5rem]",
+        auto: "h-auto min-h-[2.5rem] px-4 py-2",
+        flexible: "h-auto px-3 py-2.5",
       },
       wrap: {
         default: "whitespace-nowrap",

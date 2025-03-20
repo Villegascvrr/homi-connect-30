@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
@@ -118,6 +119,14 @@
   .button-text-container {
     @apply whitespace-normal break-words overflow-hidden text-center;
   }
+  
+  .lifestyle-option-button {
+    @apply flex flex-col justify-center items-center gap-1 px-3 py-2 rounded-lg border text-center min-h-[70px];
+  }
+  
+  .lifestyle-option-row {
+    @apply flex flex-wrap gap-2 justify-center;
+  }
 }
 
 /* Custom scroll bar */
@@ -140,7 +149,7 @@
 /* Mobile text adjustments */
 @media (max-width: 640px) {
   button, a.button {
-    @apply text-sm leading-tight whitespace-normal break-words;
+    @apply text-sm leading-tight;
   }
   
   .form-button {
@@ -149,5 +158,9 @@
   
   .button-long-text {
     @apply text-sm;
+  }
+  
+  .lifestyle-option-button {
+    @apply min-w-[110px] flex-1;
   }
 }

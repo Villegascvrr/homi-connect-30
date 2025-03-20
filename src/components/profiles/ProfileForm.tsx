@@ -136,7 +136,7 @@ const ProfileForm = () => {
 
         <Button 
           type="submit" 
-          className="w-full mt-6 py-2.5 px-4" 
+          className="w-full mt-6" 
           size="auto" 
           wrap="normal" 
           disabled={isSubmitting}
