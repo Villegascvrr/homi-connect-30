@@ -616,10 +616,7 @@ const MatchingPage = () => {
             <h1 className="text-2xl md:text-3xl font-bold mb-2">
               <span className="homi-gradient-text">Encuentra compañeros</span>
             </h1>
-            <p className="text-muted-foreground max-w-2xl font-normal text-center">
-              Hemos seleccionado perfiles compatibles con tus preferencias y estilo de vida. 
-              Explora los perfiles y conecta con potenciales compañeros de piso.
-            </p>
+            <p className="text-muted-foreground max-w-2xl font-normal text-center">Explora los perfiles y conecta con potenciales compañeros de piso.</p>
           </div>
           
           <Tabs defaultValue="discover" value={activeTab} onValueChange={value => setActiveTab(value as 'discover' | 'matches')} className="mb-8">
