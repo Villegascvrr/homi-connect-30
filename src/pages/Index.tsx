@@ -8,59 +8,69 @@ import HowItWorks from '@/components/home/HowItWorks';
 import DevelopmentBanner from '@/components/layout/DevelopmentBanner';
 import { Button } from '@/components/ui/button';
 import ProfileCard from '@/components/profiles/ProfileCard';
-
 const Index = () => {
   // Sample data for demonstration
-  const featuredProfiles = [
-    {
-      id: '1',
-      name: 'Elena',
-      age: 23,
-      location: 'Madrid',
-      bio: 'Estudiante de Arquitectura. Me gusta leer, el arte y las noches tranquilas. Busco piso cerca de la universidad.',
-      imgUrl: 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7',
-      tags: [
-        { id: 1, name: 'Ordenada' },
-        { id: 2, name: 'Tranquila' },
-        { id: 3, name: 'Estudiante' }
-      ],
-      compatibility: 87
-    },
-    {
-      id: '2',
-      name: 'Carlos',
-      age: 25,
-      location: 'Barcelona',
-      bio: 'Desarrollador web, amante de la tecnología y los videojuegos. Busco un ambiente relajado donde pueda trabajar y descansar.',
-      imgUrl: 'https://images.unsplash.com/photo-1581092795360-fd1ca04f0952',
-      tags: [
-        { id: 1, name: 'Tecnología' },
-        { id: 4, name: 'Deportista' },
-        { id: 5, name: 'Profesional' }
-      ],
-      compatibility: 75
-    },
-    {
-      id: '3',
-      name: 'Laura',
-      age: 22,
-      location: 'Valencia',
-      bio: 'Estudiante de Medicina. Me encanta cocinar y compartir momentos con amigos. Busco compañeros con intereses similares.',
-      imgUrl: 'https://images.unsplash.com/photo-1472396961693-142e6e269027',
-      tags: [
-        { id: 6, name: 'Sociable' },
-        { id: 7, name: 'Cocinera' },
-        { id: 3, name: 'Estudiante' }
-      ],
-      compatibility: 92
-    }
-  ];
+  const featuredProfiles = [{
+    id: '1',
+    name: 'Elena',
+    age: 23,
+    location: 'Madrid',
+    bio: 'Estudiante de Arquitectura. Me gusta leer, el arte y las noches tranquilas. Busco piso cerca de la universidad.',
+    imgUrl: 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7',
+    tags: [{
+      id: 1,
+      name: 'Ordenada'
+    }, {
+      id: 2,
+      name: 'Tranquila'
+    }, {
+      id: 3,
+      name: 'Estudiante'
+    }],
+    compatibility: 87
+  }, {
+    id: '2',
+    name: 'Carlos',
+    age: 25,
+    location: 'Barcelona',
+    bio: 'Desarrollador web, amante de la tecnología y los videojuegos. Busco un ambiente relajado donde pueda trabajar y descansar.',
+    imgUrl: 'https://images.unsplash.com/photo-1581092795360-fd1ca04f0952',
+    tags: [{
+      id: 1,
+      name: 'Tecnología'
+    }, {
+      id: 4,
+      name: 'Deportista'
+    }, {
+      id: 5,
+      name: 'Profesional'
+    }],
+    compatibility: 75
+  }, {
+    id: '3',
+    name: 'Laura',
+    age: 22,
+    location: 'Valencia',
+    bio: 'Estudiante de Medicina. Me encanta cocinar y compartir momentos con amigos. Busco compañeros con intereses similares.',
+    imgUrl: 'https://images.unsplash.com/photo-1472396961693-142e6e269027',
+    tags: [{
+      id: 6,
+      name: 'Sociable'
+    }, {
+      id: 7,
+      name: 'Cocinera'
+    }, {
+      id: 3,
+      name: 'Estudiante'
+    }],
+    compatibility: 92
+  }];
 
   // Animation on scroll
   useEffect(() => {
     const handleScroll = () => {
       const elements = document.querySelectorAll('.animate-on-scroll');
-      elements.forEach((el) => {
+      elements.forEach(el => {
         const rect = el.getBoundingClientRect();
         const isVisible = rect.top < window.innerHeight * 0.8;
         if (isVisible) {
@@ -68,18 +78,14 @@ const Index = () => {
         }
       });
     };
-
     window.addEventListener('scroll', handleScroll);
     // Trigger once on load
     handleScroll();
-    
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  return (
-    <div className="min-h-screen flex flex-col">
+  return <div className="min-h-screen flex flex-col">
       <DevelopmentBanner />
-      <div className="pt-[29px]"> {/* Added padding to account for the fixed banner */}
+      <div className="pt-[29px] py-[2px]"> {/* Added padding to account for the fixed banner */}
         <Navbar />
       </div>
       
@@ -110,24 +116,14 @@ const Index = () => {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-              {featuredProfiles.map((profile) => (
-                <div key={profile.id} className="animate-on-scroll">
-                  <ProfileCard 
-                    {...profile}
-                    onLike={(id) => console.log('Liked:', id)}
-                    onMessage={(id) => window.location.href = '/chat'}
-                    onView={(id) => window.location.href = '/profile'}
-                  />
-                </div>
-              ))}
+              {featuredProfiles.map(profile => <div key={profile.id} className="animate-on-scroll">
+                  <ProfileCard {...profile} onLike={id => console.log('Liked:', id)} onMessage={id => window.location.href = '/chat'} onView={id => window.location.href = '/profile'} />
+                </div>)}
             </div>
             
             <div className="text-center">
               <Link to="/matching">
-                <Button 
-                  size="lg" 
-                  className="rounded-full bg-homi-purple hover:bg-homi-purple/90 px-8"
-                >
+                <Button size="lg" className="rounded-full bg-homi-purple hover:bg-homi-purple/90 px-8">
                   Ver más perfiles
                 </Button>
               </Link>
@@ -201,11 +197,7 @@ const Index = () => {
                 Únete a Homi y comienza a conectar con personas compatibles con tu estilo de vida.
               </p>
               <Link to="/matching">
-                <Button 
-                  size="lg" 
-                  variant="secondary" 
-                  className="rounded-full bg-white text-homi-purple hover:bg-white/90 px-8"
-                >
+                <Button size="lg" variant="secondary" className="rounded-full bg-white text-homi-purple hover:bg-white/90 px-8">
                   Comenzar Ahora
                 </Button>
               </Link>
@@ -215,8 +207,6 @@ const Index = () => {
       </main>
       
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
