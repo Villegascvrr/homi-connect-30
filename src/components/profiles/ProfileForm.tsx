@@ -134,8 +134,16 @@ const ProfileForm = () => {
           />
         </div>
 
-        <Button type="submit" className="w-full mt-6 h-auto min-h-[2.5rem] py-2 px-4 whitespace-normal" disabled={isSubmitting}>
-          {isSubmitting ? "Guardando..." : "Guardar cambios"}
+        <Button 
+          type="submit" 
+          className="w-full mt-6 py-2.5 px-4" 
+          size="auto" 
+          wrap="normal" 
+          disabled={isSubmitting}
+        >
+          <span className="button-text-container">
+            {isSubmitting ? "Guardando..." : "Guardar cambios"}
+          </span>
         </Button>
       </form>
     </Form>

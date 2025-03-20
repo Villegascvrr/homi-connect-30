@@ -30,7 +30,7 @@ const buttonVariants = cva(
       wrap: {
         default: "whitespace-nowrap",
         normal: "whitespace-normal",
-        break: "whitespace-break-spaces",
+        pre: "whitespace-pre",
       },
     },
     defaultVariants: {

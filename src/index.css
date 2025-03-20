@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
@@ -116,9 +115,8 @@
     @apply opacity-100 translate-y-0;
   }
   
-  /* Responsive button text styles */
-  .button-responsive-text {
-    @apply whitespace-normal break-words hyphens-auto;
+  .button-text-container {
+    @apply whitespace-normal break-words overflow-hidden text-center;
   }
 }
 
@@ -142,10 +140,14 @@
 /* Mobile text adjustments */
 @media (max-width: 640px) {
   button, a.button {
-    @apply text-sm leading-tight whitespace-normal hyphens-auto break-words;
+    @apply text-sm leading-tight whitespace-normal break-words;
   }
   
-  .button-text-wrap {
-    @apply whitespace-normal break-words hyphens-auto max-w-full;
+  .form-button {
+    @apply whitespace-normal break-words max-w-full text-center py-2.5 px-4;
+  }
+  
+  .button-long-text {
+    @apply text-sm;
   }
 }
