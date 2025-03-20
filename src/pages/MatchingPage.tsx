@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import MatchCard from '@/components/matching/MatchCard';
+import MatchesList from '@/components/matching/MatchesList';
 import ProfileSearchBar from '@/components/profiles/ProfileSearchBar';
 import MatchingFilters from '@/components/matching/MatchingFilters';
 import SwipeInterface from '@/components/matching/SwipeInterface';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
-import { Filter, UserRound, LayoutGrid, SwatchBook } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Filter, UserRound, LayoutGrid, SwatchBook, Heart, Users } from 'lucide-react';
 import { 
   Popover, 
   PopoverContent, 
@@ -187,10 +189,58 @@ const MatchingPage = () => {
   const [activeFilters, setActiveFilters] = useState<FilterValues | null>(null);
   const [filteredProfiles, setFilteredProfiles] = useState(mockProfiles);
   const [viewMode, setViewMode] = useState<'grid' | 'swipe'>('grid');
+  const [activeTab, setActiveTab] = useState<'discover' | 'matches'>('discover');
   const { toast } = useToast();
   const [openSearchFilters, setOpenSearchFilters] = useState(false);
   const [openPreferences, setOpenPreferences] = useState(false);
   const isMobile = useIsMobile();
+  
+  const [matches, setMatches] = useState([
+    {
+      id: "5",
+      name: "Elena Fernández",
+      age: 25,
+      location: "Madrid",
+      imgUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=1976&auto=format&fit=crop&ixlib=rb-4.0.3",
+      compatibility: 91,
+      matchDate: "2025-03-18T14:30:00Z",
+      messageCount: 5,
+      tags: [
+        { id: 1, name: "música" },
+        { id: 2, name: "yoga" },
+        { id: 3, name: "cocina" }
+      ]
+    },
+    {
+      id: "6",
+      name: "Diego Morales",
+      age: 27,
+      location: "Barcelona",
+      imgUrl: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3",
+      compatibility: 87,
+      matchDate: "2025-03-15T10:15:00Z",
+      tags: [
+        { id: 1, name: "gaming" },
+        { id: 2, name: "tecnología" },
+        { id: 3, name: "cine" }
+      ]
+    },
+    {
+      id: "7",
+      name: "Lucía Martínez",
+      age: 24,
+      location: "Valencia",
+      imgUrl: "https://images.unsplash.com/photo-1519699047748-de8e457a634e?q=80&w=1980&auto=format&fit=crop&ixlib=rb-4.0.3",
+      compatibility: 82,
+      matchDate: "2025-03-10T18:45:00Z",
+      messageCount: 2,
+      tags: [
+        { id: 1, name: "deporte" },
+        { id: 2, name: "viajes" },
+        { id: 3, name: "fotografía" }
+      ]
+    }
+  ]);
   
   React.useEffect(() => {
     if (isMobile) {
@@ -375,11 +425,45 @@ const MatchingPage = () => {
   };
 
   const handleLike = (id: string) => {
-    toast({
-      title: "¡Te interesa!",
-      description: "Has mostrado interés en este perfil",
-      variant: "default"
-    });
+    if (!matches.some(match => match.id === id)) {
+      const profileToMatch = mockProfiles.find(p => p.id.toString() === id);
+      
+      if (profileToMatch) {
+        const newMatch = {
+          id: profileToMatch.id.toString(),
+          name: profileToMatch.name,
+          age: profileToMatch.age,
+          location: profileToMatch.location,
+          imgUrl: profileToMatch.profileImage,
+          compatibility: profileToMatch.compatibility,
+          matchDate: new Date().toISOString(),
+          tags: profileToMatch.interests.map((interest, idx) => ({ 
+            id: idx + 1, 
+            name: interest 
+          }))
+        };
+        
+        setMatches(prev => [newMatch, ...prev]);
+        
+        toast({
+          title: "¡Nuevo match!",
+          description: `Has hecho match con ${profileToMatch.name}`,
+          variant: "default"
+        });
+      } else {
+        toast({
+          title: "¡Te interesa!",
+          description: "Has mostrado interés en este perfil",
+          variant: "default"
+        });
+      }
+    } else {
+      toast({
+        title: "Ya hiciste match",
+        description: "Ya has hecho match con este perfil anteriormente",
+        variant: "default"
+      });
+    }
   };
 
   const handlePass = (id: string) => {
@@ -394,6 +478,26 @@ const MatchingPage = () => {
     toast({
       title: "Ver perfil",
       description: "Viendo el perfil completo",
+      variant: "default"
+    });
+  };
+
+  const handleUnmatch = (id: string) => {
+    setMatches(prev => prev.filter(match => match.id !== id));
+  };
+
+  const handleMessage = (id: string) => {
+    toast({
+      title: "Abrir chat",
+      description: "Redirigiendo al chat con este usuario",
+      variant: "default"
+    });
+  };
+
+  const handleViewProfile = (id: string) => {
+    toast({
+      title: "Ver perfil completo",
+      description: "Viendo el perfil completo del usuario",
       variant: "default"
     });
   };
@@ -414,141 +518,190 @@ const MatchingPage = () => {
             </p>
           </div>
           
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-            <div className="lg:col-span-2">
-              <ProfileSearchBar 
-                onSearch={handleSearch}
-                className="w-full" 
-              />
-            </div>
-            <div className="lg:col-span-1 flex justify-end gap-2">
-              {isMobile && (
-                <div className="flex items-center mr-auto">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className={`rounded-l-full ${viewMode === 'grid' ? 'bg-muted' : ''}`}
-                    onClick={() => setViewMode('grid')}
-                  >
-                    <LayoutGrid size={18} />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className={`rounded-r-full ${viewMode === 'swipe' ? 'bg-muted' : ''}`}
-                    onClick={() => setViewMode('swipe')}
-                  >
-                    <SwatchBook size={18} />
-                  </Button>
+          <Tabs 
+            defaultValue="discover" 
+            value={activeTab} 
+            onValueChange={(value) => setActiveTab(value as 'discover' | 'matches')}
+            className="mb-8"
+          >
+            <div className="flex justify-between items-center mb-6">
+              <TabsList className="bg-muted/60">
+                <TabsTrigger value="discover" className="flex items-center gap-2">
+                  <Users size={16} />
+                  <span className="hidden sm:inline">Descubrir</span>
+                </TabsTrigger>
+                <TabsTrigger value="matches" className="flex items-center gap-2">
+                  <Heart size={16} />
+                  <span className="hidden sm:inline">Mis Matches</span>
+                  {matches.length > 0 && (
+                    <span className="ml-1 px-1.5 py-0.5 text-xs rounded-full bg-homi-purple/20">
+                      {matches.length}
+                    </span>
+                  )}
+                </TabsTrigger>
+              </TabsList>
+              
+              {activeTab === 'discover' && (
+                <div className="flex gap-2">
+                  {isMobile && (
+                    <div className="flex items-center mr-auto">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className={`rounded-l-full ${viewMode === 'grid' ? 'bg-muted' : ''}`}
+                        onClick={() => setViewMode('grid')}
+                      >
+                        <LayoutGrid size={18} />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className={`rounded-r-full ${viewMode === 'swipe' ? 'bg-muted' : ''}`}
+                        onClick={() => setViewMode('swipe')}
+                      >
+                        <SwatchBook size={18} />
+                      </Button>
+                    </div>
+                  )}
+                  
+                  <Popover open={openSearchFilters} onOpenChange={setOpenSearchFilters}>
+                    <PopoverTrigger asChild>
+                      <Button 
+                        variant="outline" 
+                        className="flex items-center gap-2"
+                        onClick={() => setOpenSearchFilters(!openSearchFilters)}
+                      >
+                        <Filter className="h-4 w-4" />
+                        Filtros
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="end" sideOffset={5}>
+                      <div className="overflow-auto max-h-[90vh] max-w-[90vw] w-[800px]">
+                        <MatchingFilters 
+                          onApplyFilters={(filters) => {
+                            handleApplyFilters(filters);
+                            setOpenSearchFilters(false);
+                          }}
+                          onClearFilters={handleClearFilters}
+                          activeTab="filtros"
+                          className="w-full"
+                        />
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                  
+                  <Popover open={openPreferences} onOpenChange={setOpenPreferences}>
+                    <PopoverTrigger asChild>
+                      <Button 
+                        variant="outline" 
+                        className="flex items-center gap-2"
+                        onClick={() => setOpenPreferences(!openPreferences)}
+                      >
+                        <UserRound className="h-4 w-4" />
+                        Preferencias
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="end" sideOffset={5}>
+                      <div className="overflow-auto max-h-[90vh] max-w-[90vw] w-[800px]">
+                        <MatchingFilters 
+                          onApplyFilters={(filters) => {
+                            handleApplyFilters(filters);
+                            setOpenPreferences(false);
+                          }}
+                          onClearFilters={handleClearFilters}
+                          activeTab="preferencias"
+                          className="w-full"
+                        />
+                      </div>
+                    </PopoverContent>
+                  </Popover>
                 </div>
               )}
-              
-              <Popover open={openSearchFilters} onOpenChange={setOpenSearchFilters}>
-                <PopoverTrigger asChild>
-                  <Button 
-                    variant="outline" 
-                    className="flex items-center gap-2"
-                    onClick={() => setOpenSearchFilters(!openSearchFilters)}
-                  >
-                    <Filter className="h-4 w-4" />
-                    Filtros
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="end" sideOffset={5}>
-                  <div className="overflow-auto max-h-[90vh] max-w-[90vw] w-[800px]">
-                    <MatchingFilters 
-                      onApplyFilters={(filters) => {
-                        handleApplyFilters(filters);
-                        setOpenSearchFilters(false);
-                      }}
-                      onClearFilters={handleClearFilters}
-                      activeTab="filtros"
-                      className="w-full"
-                    />
-                  </div>
-                </PopoverContent>
-              </Popover>
-              
-              <Popover open={openPreferences} onOpenChange={setOpenPreferences}>
-                <PopoverTrigger asChild>
-                  <Button 
-                    variant="outline" 
-                    className="flex items-center gap-2"
-                    onClick={() => setOpenPreferences(!openPreferences)}
-                  >
-                    <UserRound className="h-4 w-4" />
-                    Preferencias
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="end" sideOffset={5}>
-                  <div className="overflow-auto max-h-[90vh] max-w-[90vw] w-[800px]">
-                    <MatchingFilters 
-                      onApplyFilters={(filters) => {
-                        handleApplyFilters(filters);
-                        setOpenPreferences(false);
-                      }}
-                      onClearFilters={handleClearFilters}
-                      activeTab="preferencias"
-                      className="w-full"
-                    />
-                  </div>
-                </PopoverContent>
-              </Popover>
             </div>
-          </div>
           
-          {filteredProfiles.length > 0 ? (
-            <>
-              {viewMode === 'swipe' && (
-                <div className="mb-10">
-                  <SwipeInterface 
-                    profiles={filteredProfiles.map(profile => ({
-                      id: profile.id.toString(),
-                      name: profile.name,
-                      age: profile.age,
-                      location: profile.location,
-                      bio: profile.bio,
-                      imgUrl: profile.profileImage,
-                      tags: profile.interests.map((interest, idx) => ({ id: idx + 1, name: interest })),
-                      compatibility: profile.compatibility,
-                      lifestyle: profile.lifestyle,
-                      budget: profile.budget,
-                    }))}
-                    onLike={handleLike}
-                    onPass={handlePass}
-                    onView={handleView}
+            <TabsContent value="discover" className="mt-0">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                <div className="lg:col-span-2">
+                  <ProfileSearchBar 
+                    onSearch={handleSearch}
+                    className="w-full" 
                   />
                 </div>
-              )}
+                <div className="lg:col-span-1">
+                  {/* Empty space for filters alignment */}
+                </div>
+              </div>
               
-              {viewMode === 'grid' && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredProfiles.map(profile => {
-                    const cardProps = formatProfileForMatchCard(profile);
-                    return (
-                      <MatchCard 
-                        key={profile.id}
-                        {...cardProps}
+              {filteredProfiles.length > 0 ? (
+                <>
+                  {viewMode === 'swipe' && (
+                    <div className="mb-10">
+                      <SwipeInterface 
+                        profiles={filteredProfiles.map(profile => ({
+                          id: profile.id.toString(),
+                          name: profile.name,
+                          age: profile.age,
+                          location: profile.location,
+                          bio: profile.bio,
+                          imgUrl: profile.profileImage,
+                          tags: profile.interests.map((interest, idx) => ({ id: idx + 1, name: interest })),
+                          compatibility: profile.compatibility,
+                          lifestyle: profile.lifestyle,
+                          budget: profile.budget,
+                        }))}
                         onLike={handleLike}
                         onPass={handlePass}
                         onView={handleView}
-                        compact={isMobile}
                       />
-                    );
-                  })}
+                    </div>
+                  )}
+                  
+                  {viewMode === 'grid' && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {filteredProfiles.map(profile => {
+                        const cardProps = formatProfileForMatchCard(profile);
+                        return (
+                          <MatchCard 
+                            key={profile.id}
+                            {...cardProps}
+                            onLike={handleLike}
+                            onPass={handlePass}
+                            onView={handleView}
+                            compact={isMobile}
+                          />
+                        );
+                      })}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="text-center py-16">
+                  <p className="text-xl text-muted-foreground">
+                    No se encontraron perfiles que coincidan con tu búsqueda
+                  </p>
+                  <p className="mt-2">
+                    Intenta con otros términos o menos filtros específicos
+                  </p>
                 </div>
               )}
-            </>
-          ) : (
-            <div className="text-center py-16">
-              <p className="text-xl text-muted-foreground">
-                No se encontraron perfiles que coincidan con tu búsqueda
-              </p>
-              <p className="mt-2">
-                Intenta con otros términos o menos filtros específicos
-              </p>
-            </div>
-          )}
+            </TabsContent>
+            
+            <TabsContent value="matches" className="mt-0">
+              <div className="mb-6">
+                <h2 className="text-xl font-semibold mb-2">Mis Matches</h2>
+                <p className="text-muted-foreground">
+                  Estos son tus matches actuales. ¡Chatea con ellos para encontrar tu compañero de piso ideal!
+                </p>
+              </div>
+              
+              <MatchesList 
+                matches={matches}
+                onMessage={handleMessage}
+                onUnmatch={handleUnmatch}
+                onViewProfile={handleViewProfile}
+              />
+            </TabsContent>
+          </Tabs>
         </div>
       </main>
       

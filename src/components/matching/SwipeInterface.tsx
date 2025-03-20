@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import SwipeCard from './SwipeCard';
 import { Button } from '@/components/ui/button';
-import { RefreshCw } from 'lucide-react';
+import { RefreshCw, Heart } from 'lucide-react';
 
 interface Tag {
   id: number;
@@ -44,6 +44,7 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
   const [history, setHistory] = useState<string[]>([]);
   const [direction, setDirection] = useState<'left' | 'right' | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [showMatch, setShowMatch] = useState<SwipeProfile | null>(null);
   
   const currentProfile = profiles[currentIndex];
   const hasMoreProfiles = currentIndex < profiles.length;
@@ -65,6 +66,17 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
     // Move to next profile
     setTimeout(() => {
       if (action === 'like') {
+        // If it's a high compatibility match (over 85%), show match animation
+        const matchedProfile = profiles.find(p => p.id === id);
+        if (matchedProfile && matchedProfile.compatibility > 85) {
+          setShowMatch(matchedProfile);
+          
+          // Hide match animation after 2.5 seconds
+          setTimeout(() => {
+            setShowMatch(null);
+          }, 2500);
+        }
+        
         onLike(id);
       } else {
         onPass(id);
@@ -119,7 +131,52 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
   }
   
   return (
-    <div className="h-full">
+    <div className="h-full relative">
+      {/* Match animation overlay */}
+      {showMatch && (
+        <div className="fixed inset-0 bg-black/70 flex flex-col items-center justify-center z-50 animate-fade-in">
+          <div className="text-center p-6 max-w-sm">
+            <div className="mb-6 relative">
+              <div className="w-24 h-24 mx-auto rounded-full overflow-hidden border-4 border-white">
+                <img 
+                  src={showMatch.imgUrl} 
+                  alt={showMatch.name} 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center">
+                <Heart className="h-32 w-32 text-homi-purple fill-homi-purple animate-pulse opacity-70" />
+              </div>
+            </div>
+            
+            <h2 className="text-2xl font-bold text-white mb-2">¡Es un match!</h2>
+            <p className="text-white/90 mb-6">
+              ¡Tú y {showMatch.name} han demostrado interés mutuo! 
+              ¿Por qué no iniciar una conversación?
+            </p>
+            
+            <div className="space-y-3">
+              <Button 
+                className="w-full bg-homi-purple hover:bg-homi-purple/90"
+                onClick={() => {
+                  // In a real app, this would navigate to chat
+                  setShowMatch(null);
+                }}
+              >
+                Enviar mensaje
+              </Button>
+              <Button 
+                variant="outline" 
+                className="w-full text-white border-white hover:bg-white/20"
+                onClick={() => setShowMatch(null)}
+              >
+                Seguir buscando
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <SwipeCard
         {...currentProfile}
         onLike={(id) => handleSwipeAction('like', id)}
