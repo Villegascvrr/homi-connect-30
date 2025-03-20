@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -18,7 +17,32 @@ import {
   PopoverTrigger 
 } from '@/components/ui/popover';
 
-const mockProfiles = [
+// Make the mock profile type explicit so we can match it
+type MockProfile = {
+  id: number;
+  name: string;
+  username: string;
+  age: number;
+  location: string;
+  occupation: string;
+  bio: string;
+  compatibility: number;
+  profileImage: string;
+  interests: string[];
+  lifestyle: {
+    cleanliness: string;
+    noise: string;
+    schedule: string;
+    guests: string;
+    smoking: string;
+  };
+  budget: {
+    min: number;
+    max: number;
+  };
+};
+
+const mockProfiles: MockProfile[] = [
   {
     id: 1,
     name: "Laura García",
@@ -151,14 +175,16 @@ interface FilterValues {
   mascotas?: string;
 }
 
+// Updated interface to explicitly make all properties required
 interface Lifestyle {
-  cleanliness?: string;
-  noise?: string;
-  schedule?: string;
-  guests?: string;
-  smoking?: string;
+  cleanliness: string;
+  noise: string;
+  schedule: string;
+  guests: string;
+  smoking: string;
 }
 
+// Empty lifestyle with default values
 const emptyLifestyle: Lifestyle = {
   cleanliness: "",
   noise: "",
@@ -167,6 +193,7 @@ const emptyLifestyle: Lifestyle = {
   smoking: ""
 };
 
+// Make Profile interface compatible with MockProfile
 interface Profile {
   id: number;
   name: string;
@@ -178,8 +205,8 @@ interface Profile {
   compatibility: number;
   profileImage: string;
   interests: string[];
-  lifestyle?: Lifestyle;
-  budget?: {
+  lifestyle: Lifestyle;
+  budget: {
     min: number;
     max: number;
   };
@@ -188,8 +215,8 @@ interface Profile {
 const MatchingPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilters, setActiveFilters] = useState<FilterValues | null>(null);
-  const [filteredProfiles, setFilteredProfiles] = useState(mockProfiles);
-  const [originalFilteredProfiles, setOriginalFilteredProfiles] = useState<Profile[]>([]);
+  const [filteredProfiles, setFilteredProfiles] = useState<MockProfile[]>(mockProfiles);
+  const [originalFilteredProfiles, setOriginalFilteredProfiles] = useState<MockProfile[]>([]);
   const [viewMode, setViewMode] = useState<'grid' | 'swipe'>('grid');
   const [activeTab, setActiveTab] = useState<'discover' | 'matches'>('discover');
   const { toast } = useToast();
@@ -287,7 +314,7 @@ const MatchingPage = () => {
   };
 
   // Calculate similarity score between a profile and filters
-  const calculateSimilarityScore = (profile: Profile, filters: FilterValues) => {
+  const calculateSimilarityScore = (profile: MockProfile, filters: FilterValues) => {
     let score = 0;
     let possiblePoints = 0;
     
@@ -402,8 +429,8 @@ const MatchingPage = () => {
   };
 
   const applyFiltersAndSearch = (query: string, filters: FilterValues | null) => {
-    let exactMatches: Profile[] = [];
-    let similarProfiles: {profile: Profile, score: number}[] = [];
+    let exactMatches: MockProfile[] = [];
+    let similarProfiles: {profile: MockProfile, score: number}[] = [];
     let results = [...mockProfiles];
     
     if (query.trim()) {
@@ -455,7 +482,7 @@ const MatchingPage = () => {
       if (filters.estiloVida && filters.estiloVida.length > 0) {
         const estiloVidaTerms = filters.estiloVida.map(ev => ev.toLowerCase());
         filteredResults = filteredResults.filter(profile => {
-          const profileLifestyle: Lifestyle = profile.lifestyle || emptyLifestyle;
+          const profileLifestyle = profile.lifestyle;
           const hasMatchingLifestyle = 
             (estiloVidaTerms.includes('ordenado') && profileLifestyle.cleanliness === "Muy ordenada") ||
             (estiloVidaTerms.includes('tranquilo') && profileLifestyle.noise === "Tranquila") ||
@@ -477,7 +504,7 @@ const MatchingPage = () => {
       
       if (filters.nivelLimpieza) {
         filteredResults = filteredResults.filter(profile => {
-          const lifestyle: Lifestyle = profile.lifestyle || emptyLifestyle;
+          const lifestyle = profile.lifestyle;
           if (filters.nivelLimpieza === 'alta') {
             return lifestyle.cleanliness === "Muy ordenada";
           } else if (filters.nivelLimpieza === 'media') {
@@ -490,7 +517,7 @@ const MatchingPage = () => {
       
       if (filters.nivelRuido) {
         filteredResults = filteredResults.filter(profile => {
-          const lifestyle: Lifestyle = profile.lifestyle || emptyLifestyle;
+          const lifestyle = profile.lifestyle;
           if (filters.nivelRuido === 'bajo') {
             return lifestyle.noise === "Tranquila";
           } else if (filters.nivelRuido === 'moderado') {
@@ -503,7 +530,7 @@ const MatchingPage = () => {
       
       if (filters.horarioHabitual) {
         filteredResults = filteredResults.filter(profile => {
-          const lifestyle: Lifestyle = profile.lifestyle || emptyLifestyle;
+          const lifestyle = profile.lifestyle;
           if (filters.horarioHabitual === 'madrugador') {
             return lifestyle.schedule === "diurno";
           } else if (filters.horarioHabitual === 'nocturno') {
@@ -516,7 +543,7 @@ const MatchingPage = () => {
       
       if (filters.invitados) {
         filteredResults = filteredResults.filter(profile => {
-          const lifestyle: Lifestyle = profile.lifestyle || emptyLifestyle;
+          const lifestyle = profile.lifestyle;
           if (filters.invitados === 'frecuente') {
             return lifestyle.guests === "Frecuentemente";
           } else if (filters.invitados === 'ocasional') {
@@ -529,7 +556,7 @@ const MatchingPage = () => {
       
       if (filters.fumar) {
         filteredResults = filteredResults.filter(profile => {
-          const lifestyle: Lifestyle = profile.lifestyle || emptyLifestyle;
+          const lifestyle = profile.lifestyle;
           if (filters.fumar === 'no') {
             return lifestyle.smoking === "No";
           } else {
@@ -845,31 +872,3 @@ const MatchingPage = () => {
                     Borrar filtros
                   </Button>
                 </div>
-              )}
-            </TabsContent>
-            
-            <TabsContent value="matches" className="mt-0">
-              <div className="mb-6">
-                <h2 className="text-xl font-semibold mb-2">Mis Matches</h2>
-                <p className="text-muted-foreground">
-                  Estos son tus matches actuales. ¡Chatea con ellos para encontrar tu compañero de piso ideal!
-                </p>
-              </div>
-              
-              <MatchesList 
-                matches={matches}
-                onMessage={handleMessage}
-                onUnmatch={handleUnmatch}
-                onViewProfile={handleViewProfile}
-              />
-            </TabsContent>
-          </Tabs>
-        </div>
-      </main>
-      
-      <Footer />
-    </div>
-  );
-};
-
-export default MatchingPage;
