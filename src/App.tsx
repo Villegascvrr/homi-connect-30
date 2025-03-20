@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import ScrollToTop from "./components/layout/ScrollToTop";
 import Index from "./pages/Index";
 import MatchingPage from "./pages/MatchingPage";
@@ -25,7 +25,10 @@ const App = () => (
       <BrowserRouter>
         <ScrollToTop /> {/* ScrollToTop component will handle all scrolling behavior */}
         <Routes>
+          {/* Redirect root path to index */}
           <Route path="/" element={<Index />} />
+          {/* Redirect any unspecified path to index */}
+          <Route path="" element={<Navigate to="/" replace />} />
           <Route path="/matching" element={<MatchingPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/profile/:id" element={<ProfileViewPage />} />
