@@ -85,7 +85,7 @@ const Index = () => {
   }, []);
   return <div className="min-h-screen flex flex-col">
       <DevelopmentBanner />
-      <div className="pt-[29px] py-[2px]"> {/* Added padding to account for the fixed banner */}
+      <div className="pt-[29px] py-[3px]"> {/* Added padding to account for the fixed banner */}
         <Navbar />
       </div>
       
