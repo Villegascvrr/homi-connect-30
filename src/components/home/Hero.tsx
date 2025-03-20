@@ -8,6 +8,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 
 const Hero = () => {
   const [email, setEmail] = useState('');
+  const [showSignupForm, setShowSignupForm] = useState(false);
   const isMobile = useIsMobile();
   
   const handleSubmit = (e: React.FormEvent) => {
@@ -15,6 +16,17 @@ const Hero = () => {
     // Handle newsletter subscription
     console.log('Subscribed with email:', email);
     setEmail('');
+  };
+
+  const handleRegisterClick = () => {
+    setShowSignupForm(true);
+    // Scroll to the form after it's shown
+    setTimeout(() => {
+      const formElement = document.getElementById('signup-form');
+      if (formElement) {
+        formElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 100);
   };
 
   return (
@@ -51,8 +63,12 @@ const Hero = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 mb-6">
-            <Button size={isMobile ? "default" : "lg"} className="rounded-full bg-homi-purple hover:bg-homi-purple/90 w-full sm:w-auto" asChild>
-              <Link to="/register">¡Regístrate ahora!</Link>
+            <Button 
+              size={isMobile ? "default" : "lg"} 
+              className="rounded-full bg-homi-purple hover:bg-homi-purple/90 w-full sm:w-auto" 
+              onClick={handleRegisterClick}
+            >
+              ¡Regístrate ahora!
             </Button>
             <Button size={isMobile ? "default" : "lg"} variant="outline" className="rounded-full w-full sm:w-auto mt-2 sm:mt-0" asChild>
               <Link to="/how-it-works">Cómo Funciona</Link>
@@ -74,10 +90,12 @@ const Hero = () => {
             </div>
           </div>
           
-          {/* Email Signup Component */}
-          <div className="mt-6 md:mt-8 bg-white dark:bg-background border border-border rounded-xl p-4 md:p-6 shadow-sm my-[15px]">
-            <EmailSignup />
-          </div>
+          {/* Email Signup Component - conditionally rendered */}
+          {showSignupForm && (
+            <div id="signup-form" className="mt-6 md:mt-8 bg-white dark:bg-background border border-border rounded-xl p-4 md:p-6 shadow-sm my-[15px]">
+              <EmailSignup />
+            </div>
+          )}
         </div>
       </div>
     </section>
