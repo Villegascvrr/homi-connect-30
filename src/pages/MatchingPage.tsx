@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -11,14 +10,13 @@ import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Filter, UserRound, LayoutGrid, SwatchBook, Heart, Users, Settings } from 'lucide-react';
+import { Filter, UserRound, LayoutGrid, SwatchBook, Heart, Users, Settings, HeartHandshake } from 'lucide-react';
 import { 
   Popover, 
   PopoverContent, 
   PopoverTrigger 
 } from '@/components/ui/popover';
 
-// Make the mock profile type explicit so we can match it
 type MockProfile = {
   id: number;
   name: string;
@@ -176,7 +174,6 @@ interface FilterValues {
   mascotas?: string;
 }
 
-// Updated interface to explicitly make all properties required
 interface Lifestyle {
   cleanliness: string;
   noise: string;
@@ -185,7 +182,6 @@ interface Lifestyle {
   smoking: string;
 }
 
-// Empty lifestyle with default values
 const emptyLifestyle: Lifestyle = {
   cleanliness: "",
   noise: "",
@@ -194,7 +190,6 @@ const emptyLifestyle: Lifestyle = {
   smoking: ""
 };
 
-// Make Profile interface compatible with MockProfile
 interface Profile {
   id: number;
   name: string;
@@ -314,7 +309,6 @@ const MatchingPage = () => {
     });
   };
 
-  // Calculate similarity score between a profile and filters
   const calculateSimilarityScore = (profile: MockProfile, filters: FilterValues) => {
     let score = 0;
     let possiblePoints = 0;
@@ -331,9 +325,7 @@ const MatchingPage = () => {
       const [minFilter, maxFilter] = filters.presupuesto;
       const { min: minProfile, max: maxProfile } = profile.budget;
       
-      // Check for budget overlap
       if (maxProfile >= minFilter && minProfile <= maxFilter) {
-        // Calculate overlap percentage
         const overlapStart = Math.max(minFilter, minProfile);
         const overlapEnd = Math.min(maxFilter, maxProfile);
         const overlapSize = overlapEnd - overlapStart;
@@ -398,7 +390,6 @@ const MatchingPage = () => {
       score += Math.round(15 * matchPercentage);
     }
     
-    // More specific filters
     if (filters.nivelLimpieza && profile.lifestyle) {
       possiblePoints += 5;
       if ((filters.nivelLimpieza === 'alta' && profile.lifestyle.cleanliness === "Muy ordenada") ||
@@ -425,7 +416,6 @@ const MatchingPage = () => {
       }
     }
     
-    // Calculate final percentage (avoid division by zero)
     return possiblePoints > 0 ? (score / possiblePoints) * 100 : 0;
   };
 
@@ -446,13 +436,11 @@ const MatchingPage = () => {
     }
     
     if (filters) {
-      // Store all profiles with similarity scores
       similarProfiles = results.map(profile => ({
         profile,
         score: calculateSimilarityScore(profile, filters)
       }));
       
-      // Apply exact filters to find exact matches
       let filteredResults = [...results];
       
       if (filters.ubicacion) {
@@ -568,18 +556,12 @@ const MatchingPage = () => {
       
       exactMatches = filteredResults;
       
-      // If no exact matches, use similar profiles
       if (exactMatches.length === 0 && similarProfiles.length > 0) {
-        // Sort by similarity score (highest first)
         similarProfiles.sort((a, b) => b.score - a.score);
-        
-        // Filter profiles with at least 30% similarity
         const similarEnough = similarProfiles.filter(item => item.score >= 30);
         
         if (similarEnough.length > 0) {
-          // Extract just the profiles
           results = similarEnough.map(item => item.profile);
-          
           toast({
             title: "No hay coincidencias exactas",
             description: `Mostrando ${results.length} perfiles similares a tus criterios`,
@@ -589,7 +571,6 @@ const MatchingPage = () => {
           results = [];
         }
       } else {
-        // Use exact matches
         results = exactMatches;
       }
     }
@@ -755,7 +736,7 @@ const MatchingPage = () => {
                         className="flex items-center gap-2"
                         onClick={() => setOpenSearchFilters(!openSearchFilters)}
                       >
-                        <Filter className="h-4 w-4" />
+                        <HeartHandshake className="h-4 w-4" />
                         <span className="hidden sm:inline">Filtros</span>
                       </Button>
                     </PopoverTrigger>
