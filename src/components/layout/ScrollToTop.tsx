@@ -7,7 +7,7 @@ import { useLocation } from 'react-router-dom';
  * and handles special cases like scrolling to specific elements
  */
 const ScrollToTop = () => {
-  const { pathname, hash, search } = useLocation();
+  const { pathname, hash } = useLocation();
 
   useEffect(() => {
     // For all navigations, ALWAYS scroll to top first no matter what
@@ -18,19 +18,18 @@ const ScrollToTop = () => {
     });
     console.log("ALWAYS force scrolled to top for path:", pathname);
     
-    // If there's a hash, only then attempt to scroll to the element
-    // after the initial scroll to top
+    // Only scroll to hash elements if specifically requested with a hash in URL
     if (hash) {
       const handleHashScroll = () => {
         const elementId = hash.replace('#', '');
         const element = document.getElementById(elementId);
         
         if (element) {
-          // Only scroll to element if it exists, with a longer delay
+          // Only scroll to element if it exists
           setTimeout(() => {
             element.scrollIntoView({ behavior: 'smooth' });
             console.log(`Scrolled to ${elementId} element due to hash`);
-          }, 200); // Longer delay to ensure initial scroll to top completes
+          }, 200);
         } else {
           console.log("Hash target not found, already scrolled to top");
         }
@@ -40,7 +39,7 @@ const ScrollToTop = () => {
       const timeoutId = setTimeout(handleHashScroll, 100);
       return () => clearTimeout(timeoutId);
     }
-  }, [pathname, hash, search]); // React to pathname, hash, and search changes
+  }, [pathname, hash]); // Only react to pathname and hash changes
 
   return null; // This component doesn't render anything
 };

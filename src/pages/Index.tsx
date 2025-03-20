@@ -87,8 +87,8 @@ const Index = () => {
         {/* Hero section is at the top of the page as the first main content */}
         <Hero />
         
-        {/* Adding an ID to the Features section for scroll targeting */}
-        <div id="signup-form">
+        {/* Features section with ID but no automatic scrolling */}
+        <div id="features">
           <Features />
         </div>
         
