@@ -10,15 +10,13 @@ const ScrollToTop = () => {
   const { pathname, hash } = useLocation();
 
   useEffect(() => {
-    // Force immediate scroll to top
-    window.scrollTo(0, 0);
-    
-    // Log for debugging
-    console.log("Forced scroll to top for path:", pathname);
-    
-    // Handle hash navigation separately, with enough delay to ensure the initial scroll completed
-    if (hash) {
-      // Wait for DOM to be ready
+    // Check if there's a hash in the URL
+    if (!hash) {
+      // If there's no hash, immediately scroll to top
+      window.scrollTo(0, 0);
+      console.log("Forced scroll to top for path:", pathname);
+    } else {
+      // If there is a hash, handle it after a small delay to ensure DOM is ready
       setTimeout(() => {
         const elementId = hash.replace('#', '');
         const element = document.getElementById(elementId);
@@ -27,9 +25,11 @@ const ScrollToTop = () => {
           element.scrollIntoView({ behavior: 'smooth' });
           console.log(`Scrolled to element with id: ${elementId}`);
         } else {
-          console.log(`Element with id ${elementId} not found`);
+          // If element doesn't exist, scroll to top instead
+          window.scrollTo(0, 0);
+          console.log(`Element with id ${elementId} not found, scrolled to top`);
         }
-      }, 300); // Longer timeout to ensure initial scroll completes
+      }, 300);
     }
   }, [pathname, hash]);
 
