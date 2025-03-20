@@ -1,18 +1,36 @@
-import { useState } from 'react';
+
+import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Check } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import EmailSignup from './EmailSignup';
 import { useIsMobile } from '@/hooks/use-mobile';
+
 const Hero = () => {
   const [email, setEmail] = useState('');
   const isMobile = useIsMobile();
+  const registerBtnRef = useRef<HTMLAnchorElement>(null);
+  
+  useEffect(() => {
+    // Focus on the register button when component mounts
+    if (registerBtnRef.current) {
+      registerBtnRef.current.focus();
+      
+      // Scroll to the button to ensure it's visible
+      registerBtnRef.current.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'center'
+      });
+    }
+  }, []);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle newsletter subscription
     console.log('Subscribed with email:', email);
     setEmail('');
   };
+
   return <section className="relative pt-20 md:pt-32 pb-16 md:pb-20 overflow-hidden py-[50px] md:py-[36px]">
       {/* Background elements */}
       <div className="absolute inset-0 -z-10">
@@ -47,7 +65,7 @@ const Hero = () => {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 mb-6">
             <Button size={isMobile ? "default" : "lg"} className="rounded-full bg-homi-purple hover:bg-homi-purple/90 w-full sm:w-auto" asChild>
-              <Link to="/register">¡Regístrate ahora!</Link>
+              <Link ref={registerBtnRef} to="/register">¡Regístrate ahora!</Link>
             </Button>
             <Button size={isMobile ? "default" : "lg"} variant="outline" className="rounded-full w-full sm:w-auto mt-2 sm:mt-0" asChild>
               <a href="#how-it-works">Cómo Funciona</a>
@@ -77,4 +95,5 @@ const Hero = () => {
       </div>
     </section>;
 };
+
 export default Hero;
