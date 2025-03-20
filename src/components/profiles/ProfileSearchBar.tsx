@@ -35,7 +35,7 @@ const ProfileSearchBar: React.FC<ProfileSearchBarProps> = ({
         />
         <Button 
           type="submit" 
-          className="absolute right-0 rounded-full px-4"
+          className="absolute right-1 rounded-full px-4"
           size="sm"
         >
           Buscar
