@@ -115,6 +115,11 @@
   .animate-on-scroll.active {
     @apply opacity-100 translate-y-0;
   }
+  
+  /* Responsive button text styles */
+  .button-responsive-text {
+    @apply whitespace-normal break-words hyphens-auto;
+  }
 }
 
 /* Custom scroll bar */
@@ -132,4 +137,15 @@
 
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-homi-lightPurple/50;
+}
+
+/* Mobile text adjustments */
+@media (max-width: 640px) {
+  button, a.button {
+    @apply text-sm leading-tight whitespace-normal hyphens-auto break-words;
+  }
+  
+  .button-text-wrap {
+    @apply whitespace-normal break-words hyphens-auto max-w-full;
+  }
 }
