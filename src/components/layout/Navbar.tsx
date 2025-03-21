@@ -30,7 +30,12 @@ const Navbar = () => {
   };
 
   return (
-    <header className="rounded-none" style={{ padding: '7px 0 !important' }}>
+    <header 
+      className="navbar-header rounded-none"
+      style={{
+        padding: "7px 0 !important"
+      }}
+    >
       <div className="container mx-auto px-4 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2" onClick={() => window.scrollTo(0, 0)}>
           <span className="text-2xl font-bold text-homi-purple">Homi</span>

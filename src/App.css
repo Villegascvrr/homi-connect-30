@@ -1,3 +1,4 @@
+
 #root {
   margin: 0 auto;
   text-align: center;
@@ -11,12 +12,30 @@
 }
 
 /* Force specific padding for problematic components */
-header.rounded-none {
+.navbar-header {
   padding: 7px 0 !important;
 }
 
-section.bg-muted {
+.features-section {
   padding: 10px 0 !important;
+}
+
+header.rounded-none,
+header[class*="rounded-none"],
+.navbar-header {
+  padding: 7px 0 !important;
+}
+
+section.bg-muted,
+section[class*="bg-muted"],
+.features-section {
+  padding: 10px 0 !important;
+}
+
+/* Override py-[31px] class that might be causing conflicts */
+.bg-muted.py-\[31px\] {
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
 }
 
 @keyframes logo-spin {
@@ -197,16 +216,21 @@ section.bg-muted {
   transform: translateY(-2px);
 }
 
-/* Stronger override for specific components */
-header[class*="rounded-none"] {
+/* Extra specificity for style attribute overrides */
+[style*="padding"] {
+  padding: inherit !important;
+}
+
+/* Adding additional CSS reset for these specific elements */
+header, section {
+  all: unset;
+  display: block;
+}
+
+header.navbar-header {
   padding: 7px 0 !important;
 }
 
-section[class*="bg-muted"] {
+section.features-section {
   padding: 10px 0 !important;
-}
-
-/* Inline style enhancements */
-[style*="padding"] {
-  padding: inherit !important;
 }
