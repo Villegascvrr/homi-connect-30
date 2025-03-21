@@ -33,7 +33,7 @@ const Hero = () => {
   };
 
   return (
-    <section className="relative pt-20 md:pt-32 pb-16 md:pb-20 py-[17px] md:py-[17px] overflow-hidden">
+    <section className="relative overflow-hidden" style={{ paddingTop: '17px', paddingBottom: '17px' }}>
       {/* Background elements */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-0 left-0 w-64 md:w-96 h-64 md:h-96 bg-homi-ultraLightPurple rounded-full opacity-50 blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
@@ -41,7 +41,7 @@ const Hero = () => {
       </div>
 
       <div className="container mx-auto px-4">
-        <div className="max-w-5xl mx-auto text-center py-[17px]">
+        <div className="max-w-5xl mx-auto text-center" style={{ paddingTop: '17px', paddingBottom: '17px' }}>
           <div className="inline-block px-4 py-1.5 mb-4 md:mb-6 rounded-full bg-homi-ultraLightPurple text-homi-purple text-xs md:text-sm font-medium animate-pulse-soft">
             ¡Ayúdanos a alcanzar los 1000 usuarios!
           </div>
