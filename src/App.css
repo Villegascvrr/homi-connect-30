@@ -16,8 +16,8 @@
 }
 
 .features-section {
-  padding-top: 15px !important;
-  padding-bottom: 15px !important;
+  padding-top: 27px !important;
+  padding-bottom: 27px !important;
 }
 
 /* Main content padding */
@@ -39,16 +39,15 @@ header[class*="rounded-none"],
 section.bg-muted,
 section[class*="bg-muted"],
 .features-section {
-  padding-top: 15px !important;
-  padding-bottom: 15px !important;
+  padding-top: 27px !important;
+  padding-bottom: 27px !important;
 }
 
 /* Override py-[31px] class that might be causing conflicts */
 .bg-muted.py-\[31px\], 
-.bg-muted.py-\[27px\],
-.bg-muted.py-\[15px\] {
-  padding-top: 15px !important;
-  padding-bottom: 15px !important;
+.bg-muted.py-\[27px\] {
+  padding-top: 27px !important;
+  padding-bottom: 27px !important;
 }
 
 @keyframes logo-spin {
