@@ -22,11 +22,11 @@ const Features = () => {
   
   return (
     <section 
-      className="bg-muted features-section py-[27px]"
+      className="bg-muted features-section py-[15px]"
     >
       <div className="container mx-auto px-4">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+        <div className="text-center max-w-3xl mx-auto mb-10">
+          <h2 className="text-3xl md:text-4xl font-bold mb-3">
             Todo lo que necesitas para encontrar 
             <span className="homi-gradient-text"> al compañero ideal</span>
           </h2>
@@ -36,13 +36,13 @@ const Features = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {features.map((feature, index) => (
-            <div key={index} className="glass-card p-6 transition-all duration-300 hover:shadow-hover">
-              <div className="w-16 h-16 rounded-full bg-purple-gradient flex items-center justify-center mb-5">
+            <div key={index} className="glass-card p-5 transition-all duration-300 hover:shadow-hover">
+              <div className="w-14 h-14 rounded-full bg-purple-gradient flex items-center justify-center mb-4">
                 {feature.icon}
               </div>
-              <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
+              <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
               <p className="text-muted-foreground">{feature.description}</p>
             </div>
           ))}
