@@ -610,7 +610,7 @@ const MatchingPage = () => {
   return <div className="min-h-screen flex flex-col">
       <Navbar />
       
-      <main className="flex-grow pt-24 pb-12 py-[14px]">
+      <main className="flex-grow pt-24 pb-12 bg-transparent py-[11px]">
         <div className="container mx-auto px-4">
           <div className="mb-8">
             <h1 className="text-2xl md:text-3xl font-bold mb-2">
