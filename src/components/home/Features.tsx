@@ -22,11 +22,7 @@ const Features = () => {
   
   return (
     <section 
-      className="bg-muted features-section"
-      style={{
-        paddingTop: "27px !important",
-        paddingBottom: "27px !important"
-      }}
+      className="bg-muted features-section py-[27px]"
     >
       <div className="container mx-auto px-4">
         <div className="text-center max-w-3xl mx-auto mb-16">

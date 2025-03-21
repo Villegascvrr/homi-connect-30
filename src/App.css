@@ -1,3 +1,4 @@
+
 #root {
   margin: 0 auto;
   text-align: center;
@@ -16,7 +17,8 @@
 }
 
 .features-section {
-  padding: 27px 0 !important;
+  padding-top: 27px !important;
+  padding-bottom: 27px !important;
 }
 
 /* Main content padding */
@@ -38,11 +40,13 @@ header[class*="rounded-none"],
 section.bg-muted,
 section[class*="bg-muted"],
 .features-section {
-  padding: 27px 0 !important;
+  padding-top: 27px !important;
+  padding-bottom: 27px !important;
 }
 
 /* Override py-[31px] class that might be causing conflicts */
-.bg-muted.py-\[31px\] {
+.bg-muted.py-\[31px\], 
+.bg-muted.py-\[27px\] {
   padding-top: 27px !important;
   padding-bottom: 27px !important;
 }
@@ -240,6 +244,10 @@ header.navbar-header {
   padding: 7px 0 !important;
 }
 
-section.features-section {
-  padding: 27px 0 !important;
+section.features-section,
+.features-section,
+section.py-\[27px\] {
+  padding-top: 27px !important;
+  padding-bottom: 27px !important;
 }
+
