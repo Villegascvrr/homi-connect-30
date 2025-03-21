@@ -1,3 +1,4 @@
+
 #root {
   margin: 0 auto;
   text-align: center;
@@ -8,6 +9,15 @@
   #root {
     padding: 0;
   }
+}
+
+/* Force specific padding for problematic components */
+header.rounded-none {
+  padding: 7px 0 !important;
+}
+
+section.bg-muted {
+  padding: 10px 0 !important;
 }
 
 @keyframes logo-spin {
