@@ -110,7 +110,7 @@ const RegisterPage = () => {
       
       setTimeout(() => {
         if (formContainerRef.current) {
-          const headerOffset = 120;
+          const headerOffset = 80;
           const formTop = formContainerRef.current.getBoundingClientRect().top;
           const offsetPosition = formTop + window.pageYOffset - headerOffset;
           
@@ -119,7 +119,7 @@ const RegisterPage = () => {
             behavior: 'smooth'
           });
         }
-      }, 50);
+      }, 100);
     }
   }, [activeTab]);
 
@@ -295,7 +295,7 @@ const RegisterPage = () => {
       <main className="flex-grow pt-20 pb-12">
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-3xl mx-auto" ref={formContainerRef}>
-            <div className="glass-card p-4 md:p-8 rounded-xl">
+            <div className="glass-card p-4 md:p-8 rounded-xl mb-20">
               <div className="text-center mb-8">
                 <h1 className="text-2xl md:text-3xl font-bold mb-2">
                   <span className="homi-gradient-text">Crear tu cuenta y perfil</span>
@@ -556,7 +556,7 @@ const RegisterPage = () => {
                       </div>
                     </TabsContent>
                     
-                    <TabsContent value="perfil" className="space-y-6 sm:space-y-8">
+                    <TabsContent value="perfil" className="space-y-6 sm:space-y-8 relative z-10">
                       <div className="space-y-4">
                         <h2 className="text-xl font-semibold flex items-center gap-2">
                           <Camera className="text-homi-purple" size={20} />

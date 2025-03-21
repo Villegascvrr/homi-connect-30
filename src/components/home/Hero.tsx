@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Check } from 'lucide-react';
@@ -108,7 +109,7 @@ const Hero = () => {
           </div>
           
           {/* Email Signup Component - conditionally rendered */}
-          {showSignupForm && <div id="signup-form" className="mt-6 md:mt-8 bg-white dark:bg-background border border-border rounded-xl p-4 md:p-6 shadow-sm my-[15px]">
+          {showSignupForm && <div id="signup-form" className="mt-6 md:mt-8 bg-white dark:bg-background border border-border rounded-xl p-4 md:p-6 shadow-sm my-[15px] relative z-10">
               <EmailSignup />
             </div>}
         </div>
