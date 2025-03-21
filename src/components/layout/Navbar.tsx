@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -29,7 +30,7 @@ const Navbar = () => {
   };
 
   return (
-    <header className="rounded-none py-[7px]">
+    <header className="rounded-none" style={{ paddingTop: '7px', paddingBottom: '7px' }}>
       <div className="container mx-auto px-4 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2" onClick={() => window.scrollTo(0, 0)}>
           <span className="text-2xl font-bold text-homi-purple">Homi</span>
