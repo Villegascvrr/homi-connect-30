@@ -56,7 +56,7 @@ const Hero = () => {
             de piso que comparten tus intereses, hábitos y estilo de vida.
           </p>
 
-          <div className="bg-homi-ultraLightPurple/50 p-3 md:p-4 rounded-xl mb-4 md:mb-6 max-w-3xl mx-auto">
+          <div className="bg-homi-ultraLightPurple/50 p-3 md:p-4 rounded-xl mb-4 md:mb-6 max-w-3xl mx-auto my-[34px]">
             <p className="text-sm md:text-lg font-medium text-homi-purple">
               Homi estará disponible próximamente - ¡Regístrate ahora para ser de los primeros en usarlo!
               <br />
