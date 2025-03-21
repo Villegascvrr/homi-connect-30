@@ -37,8 +37,8 @@ const Hero = () => {
       className="relative overflow-visible" 
       style={{ 
         paddingTop: '17px', 
-        paddingBottom: '35px',
-        minHeight: showSignupForm ? 'auto' : 'calc(100vh - 14px)'  // Adjust height based on form visibility
+        paddingBottom: '25px',
+        minHeight: showSignupForm ? 'auto' : '90vh'  // Reduced from 100vh to 90vh
       }}
     >
       {/* Background elements */}
@@ -93,7 +93,7 @@ const Hero = () => {
             </Button>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 md:gap-6 max-w-3xl mx-auto mb-10 md:mb-16">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 md:gap-6 max-w-3xl mx-auto mb-10 md:mb-12">
             <div className="flex items-center justify-center sm:justify-start gap-2">
               <Check className="text-homi-purple" size={16} />
               <span className="text-sm md:text-base">Matching inteligente</span>
@@ -112,8 +112,7 @@ const Hero = () => {
           {showSignupForm && 
             <div 
               id="signup-form" 
-              className="mt-6 md:mt-8 bg-white dark:bg-background border border-border rounded-xl p-4 md:p-6 shadow-sm mb-20 relative z-10"
-              style={{ marginBottom: '50px' }}
+              className="mt-6 md:mt-8 bg-white dark:bg-background border border-border rounded-xl p-4 md:p-6 shadow-sm mb-10 relative z-10"
             >
               <EmailSignup />
             </div>
