@@ -1,3 +1,4 @@
+
 import { MessageSquare, Users, Search, Filter } from 'lucide-react';
 const Features = () => {
   const features = [{
@@ -18,7 +19,9 @@ const Features = () => {
     description: "Garantizamos la seguridad con verificación opcional de identidad para crear un entorno de confianza."
   }];
   return <section style={{
-    padding: '10px 0'
+    padding: '10px 0 !important',
+    paddingTop: '10px !important',
+    paddingBottom: '10px !important'
   }} className="bg-muted py-[31px]">
       <div className="container mx-auto px-4">
         <div className="text-center max-w-3xl mx-auto mb-16">
