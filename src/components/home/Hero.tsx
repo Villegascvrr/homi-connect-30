@@ -34,11 +34,11 @@ const Hero = () => {
 
   return (
     <section 
-      className="relative overflow-hidden" 
+      className="relative overflow-visible" 
       style={{ 
         paddingTop: '17px', 
-        paddingBottom: '17px',
-        maxHeight: 'calc(100vh - 14px)'  // Account for navbar height
+        paddingBottom: '35px',
+        minHeight: showSignupForm ? 'auto' : 'calc(100vh - 14px)'  // Adjust height based on form visibility
       }}
     >
       {/* Background elements */}
@@ -109,9 +109,15 @@ const Hero = () => {
           </div>
           
           {/* Email Signup Component - conditionally rendered */}
-          {showSignupForm && <div id="signup-form" className="mt-6 md:mt-8 bg-white dark:bg-background border border-border rounded-xl p-4 md:p-6 shadow-sm my-[15px] relative z-10">
+          {showSignupForm && 
+            <div 
+              id="signup-form" 
+              className="mt-6 md:mt-8 bg-white dark:bg-background border border-border rounded-xl p-4 md:p-6 shadow-sm mb-20 relative z-10"
+              style={{ marginBottom: '50px' }}
+            >
               <EmailSignup />
-            </div>}
+            </div>
+          }
         </div>
       </div>
     </section>
