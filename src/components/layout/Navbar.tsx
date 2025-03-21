@@ -51,21 +51,21 @@ const Navbar = () => {
           </Link>
           <Link 
             to="/matching" 
-            className={`transition-colors ${isActive('/matching') ? 'text-homi-purple font-medium' : 'text-foreground/80 hover:text-homi-purple'}`}
+            className={`transition-colors text-[1.05rem] font-medium ${isActive('/matching') ? 'text-homi-purple font-semibold' : 'text-foreground/90 hover:text-homi-purple'}`}
             onClick={() => window.scrollTo(0, 0)}
           >
             Encuentra Compañeros
           </Link>
           <Link 
             to="/chat" 
-            className={`transition-colors ${isActive('/chat') ? 'text-homi-purple font-medium' : 'text-foreground/80 hover:text-homi-purple'}`}
+            className={`transition-colors text-[1.05rem] font-medium ${isActive('/chat') ? 'text-homi-purple font-semibold' : 'text-foreground/90 hover:text-homi-purple'}`}
             onClick={() => window.scrollTo(0, 0)}
           >
             Mensajes
           </Link>
           <Link 
             to="/profile" 
-            className={`transition-colors ${isActive('/profile') ? 'text-homi-purple font-medium' : 'text-foreground/80 hover:text-homi-purple'}`}
+            className={`transition-colors text-[1.05rem] font-medium ${isActive('/profile') ? 'text-homi-purple font-semibold' : 'text-foreground/90 hover:text-homi-purple'}`}
             onClick={() => window.scrollTo(0, 0)}
           >
             Mi Perfil
@@ -105,9 +105,9 @@ const Navbar = () => {
                 setIsMenuOpen(false);
                 window.scrollTo(0, 0);
               }} 
-              className={`flex items-center gap-2 py-3 transition-colors ${isActive('/matching') ? 'text-homi-purple font-medium' : 'text-foreground/80 hover:text-homi-purple'}`}
+              className={`flex items-center gap-2 py-3.5 transition-colors text-[1.1rem] ${isActive('/matching') ? 'text-homi-purple font-semibold' : 'text-foreground/90 hover:text-homi-purple font-medium'}`}
             >
-              <Users size={20} />
+              <Users size={22} />
               <span>Encuentra Compañeros</span>
             </Link>
             <Link 
@@ -116,9 +116,9 @@ const Navbar = () => {
                 setIsMenuOpen(false);
                 window.scrollTo(0, 0);
               }} 
-              className={`flex items-center gap-2 py-3 transition-colors ${isActive('/chat') ? 'text-homi-purple font-medium' : 'text-foreground/80 hover:text-homi-purple'}`}
+              className={`flex items-center gap-2 py-3.5 transition-colors text-[1.1rem] ${isActive('/chat') ? 'text-homi-purple font-semibold' : 'text-foreground/90 hover:text-homi-purple font-medium'}`}
             >
-              <MessageSquare size={20} />
+              <MessageSquare size={22} />
               <span>Mensajes</span>
             </Link>
             <Link 
@@ -127,9 +127,9 @@ const Navbar = () => {
                 setIsMenuOpen(false);
                 window.scrollTo(0, 0);
               }} 
-              className={`flex items-center gap-2 py-3 transition-colors ${isActive('/profile') ? 'text-homi-purple font-medium' : 'text-foreground/80 hover:text-homi-purple'}`}
+              className={`flex items-center gap-2 py-3.5 transition-colors text-[1.1rem] ${isActive('/profile') ? 'text-homi-purple font-semibold' : 'text-foreground/90 hover:text-homi-purple font-medium'}`}
             >
-              <User size={20} />
+              <User size={22} />
               <span>Mi Perfil</span>
             </Link>
             
