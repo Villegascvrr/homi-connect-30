@@ -1,4 +1,3 @@
-
 #root {
   margin: 0 auto;
   text-align: center;
@@ -23,6 +22,11 @@
 /* Main content padding */
 main.pt-10 {
   padding-top: 10px !important;
+}
+
+/* Index page specific padding for navbar container */
+.pt-\[7px\] {
+  padding-top: 7px !important;
 }
 
 header.rounded-none,

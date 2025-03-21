@@ -8,6 +8,7 @@ import HowItWorks from '@/components/home/HowItWorks';
 import DevelopmentBanner from '@/components/layout/DevelopmentBanner';
 import { Button } from '@/components/ui/button';
 import ProfileCard from '@/components/profiles/ProfileCard';
+
 const Index = () => {
   // Sample data for demonstration
   const featuredProfiles = [{
@@ -85,7 +86,7 @@ const Index = () => {
   }, []);
   return <div className="min-h-screen flex flex-col">
       <DevelopmentBanner />
-      <div className="pt-[29px] py-0"> {/* Added padding to account for the fixed banner */}
+      <div className="pt-[7px] py-0"> {/* Reduced padding from 29px to 7px */}
         <Navbar />
       </div>
       
@@ -209,4 +210,5 @@ const Index = () => {
       <Footer />
     </div>;
 };
+
 export default Index;
