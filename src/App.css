@@ -20,6 +20,11 @@
   padding: 10px 0 !important;
 }
 
+/* Main content padding */
+main.pt-10 {
+  padding-top: 10px !important;
+}
+
 header.rounded-none,
 header[class*="rounded-none"],
 .navbar-header {
