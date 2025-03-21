@@ -31,16 +31,14 @@ const Navbar = () => {
 
   return (
     <header 
-      className={`sticky top-0 z-50 w-full border-b transition-all duration-300 backdrop-blur-sm ${
-        isScrolled ? 'bg-background/95 shadow-sm' : 'bg-background/70'
-      }`}
+      className="navbar-header rounded-none"
       style={{
-        padding: "10px 0 !important"
+        padding: "7px 0 !important"
       }}
     >
       <div className="container mx-auto px-4 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2" onClick={() => window.scrollTo(0, 0)}>
-          <span className="text-2xl font-bold bg-gradient-to-r from-homi-purple to-homi-lightPurple bg-clip-text text-transparent">Homi</span>
+          <span className="text-2xl font-bold text-homi-purple">Homi</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-8">
@@ -53,21 +51,21 @@ const Navbar = () => {
           </Link>
           <Link 
             to="/matching" 
-            className={`transition-colors text-[1.1rem] font-medium ${isActive('/matching') ? 'text-homi-purple font-semibold' : 'text-foreground/90 hover:text-homi-purple'}`}
+            className={`transition-colors text-[1.05rem] font-medium ${isActive('/matching') ? 'text-homi-purple font-semibold' : 'text-foreground/90 hover:text-homi-purple'}`}
             onClick={() => window.scrollTo(0, 0)}
           >
             Encuentra Compañeros
           </Link>
           <Link 
             to="/chat" 
-            className={`transition-colors text-[1.1rem] font-medium ${isActive('/chat') ? 'text-homi-purple font-semibold' : 'text-foreground/90 hover:text-homi-purple'}`}
+            className={`transition-colors text-[1.05rem] font-medium ${isActive('/chat') ? 'text-homi-purple font-semibold' : 'text-foreground/90 hover:text-homi-purple'}`}
             onClick={() => window.scrollTo(0, 0)}
           >
             Mensajes
           </Link>
           <Link 
             to="/profile" 
-            className={`transition-colors text-[1.1rem] font-medium ${isActive('/profile') ? 'text-homi-purple font-semibold' : 'text-foreground/90 hover:text-homi-purple'}`}
+            className={`transition-colors text-[1.05rem] font-medium ${isActive('/profile') ? 'text-homi-purple font-semibold' : 'text-foreground/90 hover:text-homi-purple'}`}
             onClick={() => window.scrollTo(0, 0)}
           >
             Mi Perfil
@@ -75,10 +73,10 @@ const Navbar = () => {
         </nav>
 
         <div className="hidden md:flex items-center gap-4">
-          <Button asChild variant="outline" className="rounded-full border-homi-purple/20 hover:border-homi-purple/50 hover:bg-homi-ultraLightPurple/20">
+          <Button asChild variant="outline" className="rounded-full">
             <Link to="/signin" onClick={() => window.scrollTo(0, 0)}>Iniciar Sesión</Link>
           </Button>
-          <Button asChild className="rounded-full bg-homi-purple hover:bg-homi-purple/90 shadow-sm">
+          <Button asChild className="rounded-full bg-homi-purple hover:bg-homi-purple/90">
             <Link to="/register" onClick={() => window.scrollTo(0, 0)}>Registrarse</Link>
           </Button>
         </div>
@@ -88,8 +86,7 @@ const Navbar = () => {
         </button>
       </div>
 
-      {isMenuOpen && (
-        <div className="md:hidden bg-background/95 backdrop-blur-sm border-t border-border animate-fade-in">
+      {isMenuOpen && <div className="md:hidden bg-background border-t border-border animate-fade-in">
           <div className="container mx-auto px-4 py-4 flex flex-col">
             <Link 
               to="/" 
@@ -108,7 +105,7 @@ const Navbar = () => {
                 setIsMenuOpen(false);
                 window.scrollTo(0, 0);
               }} 
-              className={`flex items-center gap-2 py-3.5 transition-colors text-[1.15rem] ${isActive('/matching') ? 'text-homi-purple font-semibold' : 'text-foreground/90 hover:text-homi-purple font-medium'}`}
+              className={`flex items-center gap-2 py-3.5 transition-colors text-[1.1rem] ${isActive('/matching') ? 'text-homi-purple font-semibold' : 'text-foreground/90 hover:text-homi-purple font-medium'}`}
             >
               <Users size={22} />
               <span>Encuentra Compañeros</span>
@@ -119,7 +116,7 @@ const Navbar = () => {
                 setIsMenuOpen(false);
                 window.scrollTo(0, 0);
               }} 
-              className={`flex items-center gap-2 py-3.5 transition-colors text-[1.15rem] ${isActive('/chat') ? 'text-homi-purple font-semibold' : 'text-foreground/90 hover:text-homi-purple font-medium'}`}
+              className={`flex items-center gap-2 py-3.5 transition-colors text-[1.1rem] ${isActive('/chat') ? 'text-homi-purple font-semibold' : 'text-foreground/90 hover:text-homi-purple font-medium'}`}
             >
               <MessageSquare size={22} />
               <span>Mensajes</span>
@@ -130,14 +127,14 @@ const Navbar = () => {
                 setIsMenuOpen(false);
                 window.scrollTo(0, 0);
               }} 
-              className={`flex items-center gap-2 py-3.5 transition-colors text-[1.15rem] ${isActive('/profile') ? 'text-homi-purple font-semibold' : 'text-foreground/90 hover:text-homi-purple font-medium'}`}
+              className={`flex items-center gap-2 py-3.5 transition-colors text-[1.1rem] ${isActive('/profile') ? 'text-homi-purple font-semibold' : 'text-foreground/90 hover:text-homi-purple font-medium'}`}
             >
               <User size={22} />
               <span>Mi Perfil</span>
             </Link>
             
             <div className="flex flex-col gap-3 mt-4 pt-4 border-t border-border">
-              <Button asChild variant="outline" className="rounded-full w-full justify-center border-homi-purple/20">
+              <Button asChild variant="outline" className="rounded-full w-full justify-center">
                 <Link 
                   to="/signin"
                   onClick={() => {
@@ -149,7 +146,7 @@ const Navbar = () => {
                   Iniciar Sesión
                 </Link>
               </Button>
-              <Button asChild className="rounded-full w-full justify-center bg-homi-purple hover:bg-homi-purple/90 shadow-sm">
+              <Button asChild className="rounded-full w-full justify-center bg-homi-purple hover:bg-homi-purple/90">
                 <Link 
                   to="/register"
                   onClick={() => {
@@ -162,8 +159,7 @@ const Navbar = () => {
               </Button>
             </div>
           </div>
-        </div>
-      )}
+        </div>}
     </header>
   );
 };
