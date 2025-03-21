@@ -77,20 +77,7 @@ const Hero = () => {
             </Button>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 md:gap-4 max-w-3xl mx-auto mb-6 md:mb-8">
-            <div className="flex items-center justify-center sm:justify-start gap-2">
-              <Check className="text-homi-purple" size={16} />
-              <span className="text-sm md:text-base">Matching inteligente</span>
-            </div>
-            <div className="flex items-center justify-center sm:justify-start gap-2">
-              <Check className="text-homi-purple" size={16} />
-              <span className="text-sm md:text-base">Chat integrado</span>
-            </div>
-            <div className="flex items-center justify-center sm:justify-start gap-2">
-              <Check className="text-homi-purple" size={16} />
-              <span className="text-sm md:text-base">Perfiles verificados</span>
-            </div>
-          </div>
+          
           
           {/* Email Signup Component - conditionally rendered */}
           {showSignupForm && <div id="signup-form" className="mt-4 md:mt-6 bg-white dark:bg-background border border-border rounded-xl p-4 md:p-6 shadow-sm mb-6 relative z-10">
