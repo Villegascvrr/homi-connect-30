@@ -37,8 +37,8 @@ const Hero = () => {
       className="relative overflow-visible" 
       style={{ 
         paddingTop: '17px', 
-        paddingBottom: '25px',
-        minHeight: showSignupForm ? 'auto' : '90vh'  // Reduced from 100vh to 90vh
+        paddingBottom: '15px',
+        minHeight: showSignupForm ? 'auto' : '70vh'  // Reduced from 90vh to 70vh
       }}
     >
       {/* Background elements */}
@@ -52,23 +52,23 @@ const Hero = () => {
           className="max-w-5xl mx-auto text-center" 
           style={{ 
             paddingTop: '17px', 
-            paddingBottom: '17px' 
+            paddingBottom: '10px' // Reduced from 17px to 10px
           }}
         >
-          <div className="inline-block px-4 py-1.5 mb-4 md:mb-6 rounded-full bg-homi-ultraLightPurple text-homi-purple text-xs md:text-sm font-medium animate-pulse-soft">
+          <div className="inline-block px-4 py-1.5 mb-3 md:mb-4 rounded-full bg-homi-ultraLightPurple text-homi-purple text-xs md:text-sm font-medium animate-pulse-soft">
             ¡Ayúdanos a alcanzar los 1000 usuarios!
           </div>
           
-          <h1 className="text-3xl md:text-6xl font-bold mb-4 md:mb-6 animate-slide-up leading-tight">
+          <h1 className="text-3xl md:text-6xl font-bold mb-3 md:mb-4 animate-slide-up leading-tight">
             Conecta con compañeros de piso <span className="homi-gradient-text">compatibles</span>
           </h1>
           
-          <p className="text-base md:text-xl text-muted-foreground mb-4 md:mb-6 max-w-3xl mx-auto">
+          <p className="text-base md:text-xl text-muted-foreground mb-3 md:mb-4 max-w-3xl mx-auto">
             Homi utiliza un sistema de matching inteligente para conectarte con compañeros 
             de piso que comparten tus intereses, hábitos y estilo de vida.
           </p>
 
-          <div className="bg-homi-ultraLightPurple/50 p-3 md:p-4 rounded-xl mb-6 md:mb-8 max-w-3xl mx-auto">
+          <div className="bg-homi-ultraLightPurple/50 p-3 md:p-4 rounded-xl mb-4 md:mb-6 max-w-3xl mx-auto">
             <p className="text-sm md:text-lg font-medium text-homi-purple">
               Homi estará disponible próximamente - ¡Regístrate ahora para ser de los primeros en usarlo!
               <br />
@@ -78,7 +78,7 @@ const Hero = () => {
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 mb-6">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 mb-4">
             <div className="relative w-full sm:w-auto moving-border-container">
               <Button 
                 size={isMobile ? "default" : "lg"} 
@@ -93,7 +93,7 @@ const Hero = () => {
             </Button>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 md:gap-6 max-w-3xl mx-auto mb-10 md:mb-12">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 md:gap-4 max-w-3xl mx-auto mb-6 md:mb-8">
             <div className="flex items-center justify-center sm:justify-start gap-2">
               <Check className="text-homi-purple" size={16} />
               <span className="text-sm md:text-base">Matching inteligente</span>
@@ -112,7 +112,7 @@ const Hero = () => {
           {showSignupForm && 
             <div 
               id="signup-form" 
-              className="mt-6 md:mt-8 bg-white dark:bg-background border border-border rounded-xl p-4 md:p-6 shadow-sm mb-10 relative z-10"
+              className="mt-4 md:mt-6 bg-white dark:bg-background border border-border rounded-xl p-4 md:p-6 shadow-sm mb-6 relative z-10"
             >
               <EmailSignup />
             </div>
