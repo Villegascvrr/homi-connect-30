@@ -149,7 +149,7 @@ section[class*="bg-muted"],
 
 /* Pulse animation with softer effect */
 .animate-pulse-soft {
-  animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  animation: none;
 }
 
 @keyframes pulse {
@@ -169,7 +169,7 @@ section[class*="bg-muted"],
 }
 
 .button-glow {
-  animation: button-glow 2s infinite;
+  animation: none;
 }
 
 /* Button pulsating effect for registration */
@@ -268,4 +268,34 @@ section.features-section,
 section.py-\[27px\] {
   padding-top: 27px !important;
   padding-bottom: 27px !important;
+}
+
+.moving-border-container {
+  position: relative;
+  display: inline-block;
+  border-radius: 9999px; /* Full rounded */
+  overflow: hidden;
+}
+
+.moving-border-container::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 9999px;
+  background: linear-gradient(
+    90deg,
+    #9B6BFE, #D946EF, #F97316, #9B6BFE
+  );
+  background-size: 300% 100%;
+  z-index: 0;
+  animation: moving-border 3s linear infinite;
+}
+
+@keyframes moving-border {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 300% 50%;
+  }
 }

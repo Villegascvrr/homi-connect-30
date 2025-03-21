@@ -79,13 +79,15 @@ const Hero = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 mb-6">
-            <Button 
-              size={isMobile ? "default" : "lg"} 
-              className="rounded-full bg-gradient-to-r from-homi-purple to-homi-lightPurple hover:from-homi-lightPurple hover:to-homi-purple text-white font-bold shadow-lg shadow-purple-500/30 transform hover:scale-105 transition-all duration-300 w-full sm:w-auto animate-pulse-soft button-glow"
-              onClick={handleRegisterClick}
-            >
-              ¡Regístrate ahora!
-            </Button>
+            <div className="relative w-full sm:w-auto moving-border-container">
+              <Button 
+                size={isMobile ? "default" : "lg"} 
+                className="rounded-full bg-gradient-to-r from-homi-purple to-homi-lightPurple hover:from-homi-lightPurple hover:to-homi-purple text-white font-bold shadow-lg shadow-purple-500/30 transform hover:scale-105 transition-all duration-300 w-full z-10 relative"
+                onClick={handleRegisterClick}
+              >
+                ¡Regístrate ahora!
+              </Button>
+            </div>
             <Button size={isMobile ? "default" : "lg"} variant="outline" className="rounded-full w-full sm:w-auto mt-2 sm:mt-0" asChild>
               <Link to="/how-it-works">Cómo Funciona</Link>
             </Button>
