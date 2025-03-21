@@ -24,9 +24,8 @@ const Features = () => {
     <section 
       className="bg-muted features-section"
       style={{
-        padding: "10px 0 !important",
-        paddingTop: "10px !important",
-        paddingBottom: "10px !important"
+        paddingTop: "27px !important",
+        paddingBottom: "27px !important"
       }}
     >
       <div className="container mx-auto px-4">
