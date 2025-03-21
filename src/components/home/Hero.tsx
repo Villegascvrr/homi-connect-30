@@ -1,19 +1,23 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Check } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import EmailSignup from './EmailSignup';
 import { useIsMobile } from '@/hooks/use-mobile';
+
 const Hero = () => {
   const [email, setEmail] = useState('');
   const [showSignupForm, setShowSignupForm] = useState(false);
   const isMobile = useIsMobile();
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle newsletter subscription
     console.log('Subscribed with email:', email);
     setEmail('');
   };
+
   const handleRegisterClick = () => {
     setShowSignupForm(true);
     // Scroll to the form after it's shown
@@ -27,9 +31,10 @@ const Hero = () => {
       }
     }, 100);
   };
+
   return <section style={{
     paddingTop: '17px',
-    paddingBottom: '5px',
+    paddingBottom: '25px', // Increased from 5px to 25px for more consistent spacing
     minHeight: showSignupForm ? 'auto' : '60vh'
   }} className="relative overflow-visible py-[20px] my-0">
       <div className="absolute inset-0 -z-10">
@@ -40,7 +45,7 @@ const Hero = () => {
       <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto text-center" style={{
         paddingTop: '17px',
-        paddingBottom: '5px'
+        paddingBottom: '15px' // Increased from 5px to 15px for more consistent spacing
       }}>
           <div className="inline-block px-4 py-1.5 mb-3 md:mb-4 rounded-full bg-homi-ultraLightPurple text-homi-purple text-xs md:text-sm font-medium animate-pulse-soft">
             ¡Ayúdanos a alcanzar los 1000 usuarios!
@@ -65,7 +70,8 @@ const Hero = () => {
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 mb-0">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 mb-6">
+            {/* Changed mb-0 to mb-6 to add consistent bottom margin */}
             <div className="relative w-full sm:w-auto moving-border-container">
               <Button size={isMobile ? "default" : "lg"} className="rounded-full bg-gradient-to-r from-homi-purple to-homi-lightPurple hover:from-homi-lightPurple hover:to-homi-purple text-white font-bold shadow-lg shadow-purple-500/30 transform hover:scale-105 transition-all duration-300 w-full z-10 relative" onClick={handleRegisterClick}>
                 ¡Regístrate ahora!
@@ -83,4 +89,5 @@ const Hero = () => {
       </div>
     </section>;
 };
+
 export default Hero;
