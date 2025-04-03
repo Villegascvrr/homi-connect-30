@@ -55,12 +55,10 @@ const Navbar = () => {
     { name: 'Perfil', path: '/profile' },
   ];
 
-  // All links are now visible regardless of authentication status
-
   return (
     <header className={cn(
-      "relative z-40 transition-all duration-300",
-      isScrolled ? "bg-white/80 dark:bg-background/80 backdrop-blur-md shadow-sm" : "bg-transparent"
+      "w-full bg-white transition-all duration-300",
+      isScrolled ? "bg-white/90 dark:bg-background/90 backdrop-blur-md shadow-sm" : "bg-white"
     )}>
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 md:h-20">
