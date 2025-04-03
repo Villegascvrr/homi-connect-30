@@ -69,8 +69,6 @@ const ChatPage = ({ isPreview = false }: ChatPageProps) => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar />
-      
       {isPreview && (
         <DemoBanner 
           customMessage={user 
@@ -80,8 +78,10 @@ const ChatPage = ({ isPreview = false }: ChatPageProps) => {
         />
       )}
       
-      <main className="flex-grow flex flex-col">
-        <div className="flex w-full h-[calc(100vh-9rem)]">
+      <Navbar />
+      
+      <main className="flex-grow flex flex-col pt-1">
+        <div className="flex w-full h-[calc(100vh-11rem)]">
           <div className="w-full sm:w-1/3 md:w-1/4 border-r">
             <ChatList 
               matches={mockChatMatches} 
