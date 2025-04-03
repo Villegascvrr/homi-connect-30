@@ -1,3 +1,4 @@
+
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
@@ -86,11 +87,13 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col pb-10">
+    <div className="min-h-screen flex flex-col">
       <DevelopmentBanner />
       <div className="pt-16">
         <Navbar />
       </div>
+      
+      {!user && <DemoBanner />}
       
       <main className="flex-grow">
         <Hero />
@@ -205,7 +208,6 @@ const Index = () => {
       </main>
       
       <Footer />
-      {!user && <DemoBanner />}
     </div>
   );
 };
