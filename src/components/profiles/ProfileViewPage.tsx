@@ -1,5 +1,5 @@
 
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -7,48 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { MessageSquare, Share, Heart, Home, Briefcase, GraduationCap, UserCheck, AtSign } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-
-// Mock data - in a real app, this would be fetched from an API
-const profiles = [
-  {
-    id: '1',
-    name: 'Elena García',
-    username: 'elena_g',
-    age: 23,
-    location: 'Madrid',
-    university: 'Universidad Complutense de Madrid',
-    occupation: 'Estudiante de Arquitectura',
-    bio: 'Soy una estudiante apasionada por el diseño y la arquitectura. Me gusta leer, visitar museos y disfrutar de noches tranquilas en casa. Soy ordenada y respetuosa con los espacios compartidos. Busco un piso cerca de la universidad con personas afines a mi estilo de vida.',
-    imgUrl: 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7',
-    galleryImgs: [
-      'https://images.unsplash.com/photo-1649972904349-6e44c42644a7',
-      'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158',
-      'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158'
-    ],
-    tags: [
-      { id: 1, name: 'Ordenada' },
-      { id: 2, name: 'Tranquila' },
-      { id: 3, name: 'Estudiante' },
-      { id: 4, name: 'Lectora' },
-      { id: 5, name: 'Madrugadora' }
-    ],
-    verified: true,
-    preferences: {
-      budget: '€400-€600',
-      location: 'Cerca de Universidad Complutense',
-      roommates: '2-3 personas',
-      moveInDate: 'Septiembre 2023'
-    },
-    lifestyle: {
-      cleanliness: 'Alta',
-      guests: 'Ocasionalmente',
-      smoking: 'No',
-      pets: 'Me gustan, pero no tengo',
-      schedule: 'Madrugadora'
-    }
-  },
-  // Add more mock profiles if needed
-];
+import { supabase } from '@/integrations/supabase/client';
 
 const ProfileViewPage = () => {
   const { id } = useParams();
@@ -56,19 +15,75 @@ const ProfileViewPage = () => {
   const [liked, setLiked] = useState(false);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const navigate = useNavigate();
   
   useEffect(() => {
-    // In a real app, we would fetch the profile from an API
-    // For now, we'll use mock data
-    const foundProfile = profiles.find(p => p.id === id);
-    
-    // Simulate API call with a short timeout
-    setTimeout(() => {
-      if (foundProfile) {
-        setProfile(foundProfile);
+    const fetchProfile = async () => {
+      try {
+        setLoading(true);
+        
+        if (!id) {
+          setLoading(false);
+          return;
+        }
+        
+        // Fetch the profile data from Supabase
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', id)
+          .single();
+        
+        if (error) {
+          console.error('Error fetching profile:', error);
+          setLoading(false);
+          return;
+        }
+        
+        // Transform the data to match the expected structure
+        if (data) {
+          const formattedProfile = {
+            id: data.id,
+            name: `${data.first_name} ${data.last_name}`.trim(),
+            username: data.username,
+            age: data.edad,
+            location: data.ubicacion,
+            university: data.universidad,
+            occupation: data.ocupacion,
+            bio: data.bio || 'Sin descripción disponible',
+            imgUrl: data.profile_image || 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7',
+            galleryImgs: data.gallery_images || [],
+            tags: data.interests ? data.interests.map((interest: string, index: number) => ({
+              id: index + 1,
+              name: interest
+            })) : [],
+            verified: true,
+            preferences: data.lifestyle?.preferences || {
+              budget: 'No especificado',
+              location: data.sevilla_zona || 'No especificado',
+              roommates: data.companeros_count || 'No especificado',
+              moveInDate: 'No especificado'
+            },
+            lifestyle: data.lifestyle?.details || {
+              cleanliness: 'No especificado',
+              guests: 'No especificado',
+              smoking: 'No especificado',
+              pets: 'No especificado',
+              schedule: 'No especificado'
+            }
+          };
+          
+          setProfile(formattedProfile);
+        }
+        
+        setLoading(false);
+      } catch (error) {
+        console.error('Error in fetchProfile:', error);
+        setLoading(false);
       }
-      setLoading(false);
-    }, 500);
+    };
+    
+    fetchProfile();
   }, [id]);
 
   const handleLike = () => {
@@ -126,13 +141,18 @@ const ProfileViewPage = () => {
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-4">Perfil no encontrado</h1>
             <p className="text-muted-foreground mb-6">No hemos podido encontrar el perfil que buscas.</p>
-            <Button onClick={() => window.history.back()}>Volver atrás</Button>
+            <Button onClick={() => navigate(-1)}>Volver atrás</Button>
           </div>
         </main>
         <Footer />
       </div>
     );
   }
+
+  // Aseguramos que galleryImgs siempre tenga al menos una imagen
+  const galleryImages = profile.galleryImgs && profile.galleryImgs.length > 0
+    ? profile.galleryImgs
+    : profile.imgUrl ? [profile.imgUrl] : ['https://images.unsplash.com/photo-1649972904349-6e44c42644a7'];
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -168,16 +188,20 @@ const ProfileViewPage = () => {
                   <div className="flex justify-between">
                     <div>
                       <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-2">
-                        {profile.name}, {profile.age}
+                        {profile.name}{profile.age ? `, ${profile.age}` : ''}
                       </h1>
-                      <p className="text-muted-foreground flex items-center gap-1 mt-1">
-                        <AtSign size={16} className="text-homi-purple" />
-                        <span className="font-medium">{profile.username}</span>
-                      </p>
-                      <p className="text-muted-foreground flex items-center gap-1 mt-1">
-                        <Home size={16} />
-                        {profile.location}
-                      </p>
+                      {profile.username && (
+                        <p className="text-muted-foreground flex items-center gap-1 mt-1">
+                          <AtSign size={16} className="text-homi-purple" />
+                          <span className="font-medium">{profile.username}</span>
+                        </p>
+                      )}
+                      {profile.location && (
+                        <p className="text-muted-foreground flex items-center gap-1 mt-1">
+                          <Home size={16} />
+                          {profile.location}
+                        </p>
+                      )}
                     </div>
                     <div className="flex gap-2">
                       <Button 
@@ -220,46 +244,54 @@ const ProfileViewPage = () => {
                   <div className="mt-6">
                     <h3 className="font-medium mb-2">Datos personales</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="flex items-center gap-2">
-                        <GraduationCap size={18} className="text-homi-purple" />
-                        <span>{profile.university}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Briefcase size={18} className="text-homi-purple" />
-                        <span>{profile.occupation}</span>
-                      </div>
+                      {profile.university && (
+                        <div className="flex items-center gap-2">
+                          <GraduationCap size={18} className="text-homi-purple" />
+                          <span>{profile.university}</span>
+                        </div>
+                      )}
+                      {profile.occupation && (
+                        <div className="flex items-center gap-2">
+                          <Briefcase size={18} className="text-homi-purple" />
+                          <span>{profile.occupation}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
                   
-                  <div className="mt-6">
-                    <h3 className="font-medium mb-2">Intereses</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {profile.tags.map((tag: any) => (
-                        <span 
-                          key={tag.id} 
-                          className="px-3 py-1 text-sm rounded-full bg-homi-ultraLightPurple text-homi-purple"
-                        >
-                          {tag.name}
-                        </span>
+                  {profile.tags && profile.tags.length > 0 && (
+                    <div className="mt-6">
+                      <h3 className="font-medium mb-2">Intereses</h3>
+                      <div className="flex flex-wrap gap-2">
+                        {profile.tags.map((tag: any) => (
+                          <span 
+                            key={tag.id} 
+                            className="px-3 py-1 text-sm rounded-full bg-homi-ultraLightPurple text-homi-purple"
+                          >
+                            {tag.name}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+                
+                {galleryImages && galleryImages.length > 0 && (
+                  <div className="glass-card p-6">
+                    <h2 className="text-xl font-semibold mb-4">Galería</h2>
+                    <div className="grid grid-cols-3 gap-4">
+                      {galleryImages.map((img: string, index: number) => (
+                        <div key={index} className="aspect-square rounded-lg overflow-hidden bg-muted">
+                          <img
+                            src={img}
+                            alt={`Imagen ${index + 1}`}
+                            className="w-full h-full object-cover transition-transform hover:scale-105"
+                          />
+                        </div>
                       ))}
                     </div>
                   </div>
-                </div>
-                
-                <div className="glass-card p-6">
-                  <h2 className="text-xl font-semibold mb-4">Galería</h2>
-                  <div className="grid grid-cols-3 gap-4">
-                    {profile.galleryImgs.map((img: string, index: number) => (
-                      <div key={index} className="aspect-square rounded-lg overflow-hidden bg-muted">
-                        <img
-                          src={img}
-                          alt={`Imagen ${index + 1}`}
-                          className="w-full h-full object-cover transition-transform hover:scale-105"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                )}
               </div>
               
               <div className="space-y-6">

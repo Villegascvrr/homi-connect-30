@@ -16,6 +16,7 @@ import SignInPage from "./pages/SignInPage";
 import RegisterPage from "./pages/RegisterPage";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import AdminPage from "./pages/AdminPage";
 
 const queryClient = new QueryClient();
 
@@ -66,6 +67,13 @@ const App = () => (
                 <ChatPage isPreview={!queryClient.getQueryCache().findAll().some(
                   query => query.queryKey[0] === 'user'
                 )} />
+              </ProtectedRoute>
+            } />
+            
+            {/* Admin route */}
+            <Route path="/admin/profiles" element={
+              <ProtectedRoute>
+                <AdminPage />
               </ProtectedRoute>
             } />
             
