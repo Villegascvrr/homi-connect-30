@@ -56,6 +56,11 @@ const App = () => (
                 <ProfileForm />
               </ProtectedRoute>
             } />
+            <Route path="/profile/edit" element={
+              <ProtectedRoute>
+                <ProfileForm />
+              </ProtectedRoute>
+            } />
             <Route path="/chat" element={
               <ProtectedRoute allowPreview={true}>
                 <ChatPage isPreview={!queryClient.getQueryCache().findAll().some(
