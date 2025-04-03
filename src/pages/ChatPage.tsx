@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import ChatList from '@/components/chat/ChatList';
 import ChatWindow from '@/components/chat/ChatWindow';
@@ -68,9 +67,7 @@ const ChatPage = ({ isPreview = false }: ChatPageProps) => {
   const selectedChat = mockChatMatches.find(match => match.id === selectedChatId) || mockChatMatches[0];
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-      
+    <>
       {isPreview && (
         <DemoBanner 
           customMessage={user 
@@ -80,8 +77,8 @@ const ChatPage = ({ isPreview = false }: ChatPageProps) => {
         />
       )}
       
-      <main className="flex-grow flex flex-col">
-        <div className="flex w-full h-[calc(100vh-9rem)]">
+      <main className="flex-grow">
+        <div className="flex w-full h-[calc(100vh-9.5rem)]">
           <div className="w-full sm:w-1/3 md:w-1/4 border-r">
             <ChatList 
               matches={mockChatMatches} 
@@ -104,7 +101,7 @@ const ChatPage = ({ isPreview = false }: ChatPageProps) => {
       </main>
       
       <Footer />
-    </div>
+    </>
   );
 };
 
