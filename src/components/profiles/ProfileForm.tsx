@@ -29,6 +29,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { Card, CardContent } from "@/components/ui/card"
+import { MapPin, Users } from "lucide-react"
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -347,66 +349,86 @@ const ProfileForm = () => {
           </div>
         </div>
 
-        {/* New section for Seville apartment search */}
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Búsqueda de piso en Sevilla</h2>
-          <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-2 gap-6'}`}>
-            <FormField
-              control={form.control}
-              name="sevilleZone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>¿En qué zona de Sevilla buscas piso?</FormLabel>
-                  <Select 
-                    onValueChange={field.onChange} 
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecciona una zona" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="">No estoy buscando piso</SelectItem>
-                      {sevilleZones.map(zone => (
-                        <SelectItem key={zone} value={zone}>{zone}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            {form.watch('sevilleZone') && (
-              <FormField
-                control={form.control}
-                name="roommatesCount"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>¿Cuántos compañeros de piso buscas?</FormLabel>
-                    <Select 
-                      onValueChange={field.onChange} 
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecciona número" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {roommateOptions.map(option => (
-                          <SelectItem key={option} value={option}>{option}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
+        {/* New section for Seville apartment search - Enhanced and more visible */}
+        <Card className="border-2 border-primary/20 shadow-md">
+          <CardContent className="pt-6">
+            <div className="space-y-6">
+              <div className="flex items-center gap-2">
+                <MapPin className="h-5 w-5 text-primary" />
+                <h2 className="text-xl font-semibold">Búsqueda de piso en Sevilla</h2>
+              </div>
+              
+              <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-2 gap-6'}`}>
+                <FormField
+                  control={form.control}
+                  name="sevilleZone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>¿En qué zona de Sevilla buscas piso?</FormLabel>
+                      <Select 
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                          setIsLookingForApartment(!!value);
+                        }}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="bg-white">
+                            <SelectValue placeholder="Selecciona una zona" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="">No estoy buscando piso</SelectItem>
+                          {sevilleZones.map(zone => (
+                            <SelectItem key={zone} value={zone}>{zone}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                {form.watch('sevilleZone') && (
+                  <FormField
+                    control={form.control}
+                    name="roommatesCount"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>¿Cuántos compañeros de piso buscas?</FormLabel>
+                        <Select 
+                          onValueChange={field.onChange} 
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="bg-white">
+                              <SelectValue placeholder="Selecciona número" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {roommateOptions.map(option => (
+                              <SelectItem key={option} value={option}>{option}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 )}
-              />
-            )}
-          </div>
-        </div>
+              </div>
+              
+              {isLookingForApartment && (
+                <div className="bg-primary/5 p-4 rounded-md flex items-center gap-3">
+                  <Users className="h-5 w-5 text-primary flex-shrink-0" />
+                  <p className="text-sm">
+                    Al activar la búsqueda de piso, otros usuarios podrán ver tu perfil como posible compañero/a de piso.
+                  </p>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
         <Button 
           type="submit" 
