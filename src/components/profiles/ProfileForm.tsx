@@ -22,6 +22,13 @@ import { FormImageUpload } from "@/components/ui/form-image-upload"
 import ProfileStatusToggle from "@/components/profiles/ProfileStatusToggle"
 import { Separator } from "@/components/ui/separator"
 import { Textarea } from "@/components/ui/textarea"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -36,7 +43,8 @@ const formSchema = z.object({
   university: z.string().optional(),
   occupation: z.string().optional(),
   profileImage: z.string().optional(),
-  galleryImages: z.array(z.string()).optional(),
+  sevilleZone: z.string().optional(),
+  roommatesCount: z.string().optional(),
   isProfileActive: z.boolean().default(true),
 })
 
@@ -44,6 +52,7 @@ const ProfileForm = () => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLookingForApartment, setIsLookingForApartment] = useState(false);
   const isMobile = useIsMobile();
   const { user } = useAuth();
   
@@ -58,7 +67,8 @@ const ProfileForm = () => {
       university: "",
       occupation: "",
       profileImage: "",
-      galleryImages: [] as string[],
+      sevilleZone: "",
+      roommatesCount: "",
       isProfileActive: true,
     },
   });
@@ -92,10 +102,12 @@ const ProfileForm = () => {
             university: profileData.universidad || "",
             occupation: profileData.ocupacion || "",
             profileImage: profileData.profile_image || user.user_metadata?.avatar_url || "",
-            galleryImages: profileData.gallery_images || [],
+            sevilleZone: profileData.sevilla_zona || "",
+            roommatesCount: profileData.companeros_count || "",
             isProfileActive: profileData.is_profile_active !== false,
           });
           
+          setIsLookingForApartment(!!profileData.sevilla_zona);
           console.log("Profile data loaded:", profileData);
         } catch (err) {
           console.error("Error loading profile data:", err);
@@ -109,7 +121,8 @@ const ProfileForm = () => {
             university: "",
             occupation: "",
             profileImage: user.user_metadata?.avatar_url || "",
-            galleryImages: [],
+            sevilleZone: "",
+            roommatesCount: "",
             isProfileActive: true,
           });
         } finally {
@@ -145,7 +158,8 @@ const ProfileForm = () => {
           universidad: values.university,
           ocupacion: values.occupation,
           profile_image: values.profileImage,
-          gallery_images: values.galleryImages,
+          sevilla_zona: values.sevilleZone,
+          companeros_count: values.roommatesCount,
           is_profile_active: values.isProfileActive,
           updated_at: new Date().toISOString()
         })
@@ -172,6 +186,23 @@ const ProfileForm = () => {
   const handleProfileStatusToggle = (active: boolean) => {
     form.setValue('isProfileActive', active);
   };
+
+  const sevilleZones = [
+    "Nervión",
+    "Triana",
+    "Centro",
+    "Los Remedios",
+    "Alameda",
+    "Macarena",
+    "Santa Justa",
+    "Sevilla Este",
+    "Aljarafe",
+    "San Pablo",
+    "La Cartuja",
+    "Otro"
+  ];
+
+  const roommateOptions = ["1", "2", "3", "4+"];
 
   if (isLoading) {
     return (
@@ -316,14 +347,65 @@ const ProfileForm = () => {
           </div>
         </div>
 
-        {/* Gallery section - improved mobile layout */}
+        {/* New section for Seville apartment search */}
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Galería de fotos</h2>
-          <FormImageUpload
-            name="galleryImages"
-            multiple={true}
-            description="Comparte fotos de ti o de tus espacios para que otros usuarios te conozcan mejor"
-          />
+          <h2 className="text-xl font-semibold">Búsqueda de piso en Sevilla</h2>
+          <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-2 gap-6'}`}>
+            <FormField
+              control={form.control}
+              name="sevilleZone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>¿En qué zona de Sevilla buscas piso?</FormLabel>
+                  <Select 
+                    onValueChange={field.onChange} 
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecciona una zona" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="">No estoy buscando piso</SelectItem>
+                      {sevilleZones.map(zone => (
+                        <SelectItem key={zone} value={zone}>{zone}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            {form.watch('sevilleZone') && (
+              <FormField
+                control={form.control}
+                name="roommatesCount"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>¿Cuántos compañeros de piso buscas?</FormLabel>
+                    <Select 
+                      onValueChange={field.onChange} 
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecciona número" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {roommateOptions.map(option => (
+                          <SelectItem key={option} value={option}>{option}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+          </div>
         </div>
 
         <Button 
