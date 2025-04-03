@@ -80,8 +80,8 @@ const ChatPage = ({ isPreview = false }: ChatPageProps) => {
         />
       )}
       
-      <main className="flex-grow flex flex-col pt-16 mt-8">
-        <div className="flex w-full h-[calc(100vh-9rem)]">
+      <main className="flex-grow flex flex-col pt-16">
+        <div className="flex w-full h-[calc(100vh-5rem)]">
           <div className="w-full sm:w-1/3 md:w-1/4 border-r">
             <ChatList 
               matches={mockChatMatches} 

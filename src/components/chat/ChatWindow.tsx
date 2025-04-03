@@ -98,12 +98,12 @@ const ChatWindow = ({ chat }: ChatWindowProps) => {
   };
 
   return (
-    <div className="flex flex-col h-[600px]">
-      {/* Chat header */}
-      <div className="p-4 border-b border-border flex items-center justify-between">
-        <div className="flex items-center gap-3">
+    <div className="flex flex-col h-full">
+      {/* Chat header - reduced padding */}
+      <div className="py-2 px-3 border-b border-border flex items-center justify-between">
+        <div className="flex items-center gap-2">
           <div className="relative">
-            <div className="w-10 h-10 rounded-full overflow-hidden">
+            <div className="w-8 h-8 rounded-full overflow-hidden">
               <img 
                 src={chat.imgUrl} 
                 alt={chat.name}
@@ -115,7 +115,7 @@ const ChatWindow = ({ chat }: ChatWindowProps) => {
             )}
           </div>
           <div>
-            <h3 className="font-semibold">{chat.name}</h3>
+            <h3 className="font-semibold text-sm">{chat.name}</h3>
             <p className="text-xs text-muted-foreground">
               {chat.online ? (
                 chat.typing ? 'Escribiendo...' : 'En línea'
@@ -126,32 +126,32 @@ const ChatWindow = ({ chat }: ChatWindowProps) => {
           </div>
         </div>
         
-        <div className="flex gap-2">
-          <Button variant="ghost" size="icon" className="rounded-full">
-            <Paperclip size={18} />
+        <div className="flex gap-1">
+          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+            <Paperclip size={16} />
           </Button>
-          <Button variant="ghost" size="icon" className="rounded-full">
-            <Image size={18} />
+          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+            <Image size={16} />
           </Button>
         </div>
       </div>
       
-      {/* Messages area */}
-      <div className="flex-1 p-4 overflow-y-auto">
-        <div className="space-y-4">
+      {/* Messages area - increased height */}
+      <div className="flex-1 py-2 px-3 overflow-y-auto">
+        <div className="space-y-2">
           {messages.map((message) => (
             <div 
               key={message.id} 
               className={`flex ${message.senderId === 'me' ? 'justify-end' : 'justify-start'}`}
             >
               <div 
-                className={`max-w-[70%] rounded-xl p-3 ${
+                className={`max-w-[80%] rounded-xl p-2 ${
                   message.senderId === 'me' 
                     ? 'bg-homi-purple text-white rounded-tr-none' 
                     : 'bg-gray-100 dark:bg-gray-800 rounded-tl-none'
                 }`}
               >
-                <p>{message.text}</p>
+                <p className="text-sm">{message.text}</p>
                 <div className={`text-xs mt-1 flex items-center ${
                   message.senderId === 'me' ? 'justify-end text-white/70' : 'text-muted-foreground'
                 }`}>
@@ -169,21 +169,21 @@ const ChatWindow = ({ chat }: ChatWindowProps) => {
         </div>
       </div>
       
-      {/* Message input */}
-      <div className="p-4 border-t border-border">
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" className="rounded-full">
-            <Smile size={20} />
+      {/* Message input - reduced padding and height */}
+      <div className="py-2 px-3 border-t border-border">
+        <div className="flex items-center gap-1">
+          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+            <Smile size={16} />
           </Button>
-          <Button variant="ghost" size="icon" className="rounded-full">
-            <Paperclip size={20} />
+          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+            <Paperclip size={16} />
           </Button>
           
           <div className="flex-1 relative">
             <input
               type="text"
               placeholder="Escribe un mensaje..."
-              className="w-full p-3 pr-12 rounded-full border border-border bg-background focus:outline-none focus:ring-2 focus:ring-homi-purple"
+              className="w-full p-2 pr-10 rounded-full border border-border bg-background focus:outline-none focus:ring-2 focus:ring-homi-purple text-sm"
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               onKeyDown={(e) => {
@@ -194,18 +194,18 @@ const ChatWindow = ({ chat }: ChatWindowProps) => {
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 rounded-full"
+                className="absolute right-1 top-1/2 transform -translate-y-1/2 rounded-full h-6 w-6"
               >
-                <Mic size={20} className="text-muted-foreground" />
+                <Mic size={16} className="text-muted-foreground" />
               </Button>
             ) : (
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 rounded-full text-homi-purple hover:text-homi-purple hover:bg-homi-ultraLightPurple"
+                className="absolute right-1 top-1/2 transform -translate-y-1/2 rounded-full text-homi-purple hover:text-homi-purple hover:bg-homi-ultraLightPurple h-6 w-6"
                 onClick={handleSendMessage}
               >
-                <Send size={20} />
+                <Send size={16} />
               </Button>
             )}
           </div>
