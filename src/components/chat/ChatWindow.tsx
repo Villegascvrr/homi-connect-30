@@ -169,14 +169,14 @@ const ChatWindow = ({ chat }: ChatWindowProps) => {
         </div>
       </div>
       
-      {/* Message input - increased padding for keyboard space */}
+      {/* Message input - improved button distribution */}
       <div className="py-4 px-3 border-t border-border mt-auto">
-        <div className="flex items-center gap-1">
-          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
-            <Smile size={16} />
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
+            <Smile size={18} />
           </Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
-            <Paperclip size={16} />
+          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
+            <Paperclip size={18} />
           </Button>
           
           <div className="flex-1 relative">
@@ -190,24 +190,26 @@ const ChatWindow = ({ chat }: ChatWindowProps) => {
                 if (e.key === 'Enter') handleSendMessage();
               }}
             />
-            {newMessage.trim() === '' ? (
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="absolute right-1 top-1/2 transform -translate-y-1/2 rounded-full h-6 w-6"
-              >
-                <Mic size={16} className="text-muted-foreground" />
-              </Button>
-            ) : (
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="absolute right-1 top-1/2 transform -translate-y-1/2 rounded-full text-homi-purple hover:text-homi-purple hover:bg-homi-ultraLightPurple h-6 w-6"
-                onClick={handleSendMessage}
-              >
-                <Send size={16} />
-              </Button>
-            )}
+            <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
+              {newMessage.trim() === '' ? (
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="rounded-full h-8 w-8"
+                >
+                  <Mic size={18} className="text-muted-foreground" />
+                </Button>
+              ) : (
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="rounded-full text-homi-purple hover:text-homi-purple hover:bg-homi-ultraLightPurple h-8 w-8"
+                  onClick={handleSendMessage}
+                >
+                  <Send size={18} />
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       </div>
