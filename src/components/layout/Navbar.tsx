@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ChevronDown, ChevronUp } from 'lucide-react';
@@ -58,13 +59,11 @@ const Navbar = () => {
         { name: 'Compatibilidad', path: '/compatibility' },
       ]
     },
-    { name: 'Perfil', path: '/profile', requiresAuth: true },
-    { name: 'Chat', path: '/chat', requiresAuth: true },
+    { name: 'Perfil', path: '/profile' },
+    { name: 'Chat', path: '/chat' },
   ];
 
-  const filteredNavLinks = navLinks.filter(link => 
-    !link.requiresAuth || (link.requiresAuth && user)
-  );
+  // All links are now visible regardless of authentication status
 
   return (
     <header className={cn(
@@ -80,7 +79,7 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-1">
-            {filteredNavLinks.map((link) => (
+            {navLinks.map((link) => (
               !link.dropdown ? (
                 <Link
                   key={link.name}
@@ -160,7 +159,7 @@ const Navbar = () => {
       {isMenuOpen && (
         <div className="md:hidden bg-white dark:bg-card shadow-lg">
           <div className="px-2 pt-2 pb-3 space-y-1">
-            {filteredNavLinks.map((link) => (
+            {navLinks.map((link) => (
               !link.dropdown ? (
                 <Link
                   key={link.name}

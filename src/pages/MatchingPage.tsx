@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Filter, UserRound, LayoutGrid, SwatchBook, Heart, Users, Settings } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Link } from 'react-router-dom';
 
 // Make the mock profile type explicit so we can match it
 type MockProfile = {
@@ -198,16 +199,19 @@ interface Profile {
     max: number;
   };
 }
-const MatchingPage = () => {
+
+interface MatchingPageProps {
+  isPreview?: boolean;
+}
+
+const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilters, setActiveFilters] = useState<FilterValues | null>(null);
   const [filteredProfiles, setFilteredProfiles] = useState<MockProfile[]>(mockProfiles);
   const [originalFilteredProfiles, setOriginalFilteredProfiles] = useState<MockProfile[]>([]);
   const [viewMode, setViewMode] = useState<'grid' | 'swipe'>('grid');
   const [activeTab, setActiveTab] = useState<'discover' | 'matches'>('discover');
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
   const [openSearchFilters, setOpenSearchFilters] = useState(false);
   const [openPreferences, setOpenPreferences] = useState(false);
   const isMobile = useIsMobile();
@@ -275,28 +279,57 @@ const MatchingPage = () => {
       setViewMode('grid');
     }
   }, [isMobile]);
+
+  // Handle actions based on whether we're in preview mode
+  const handleAction = (action: () => void, message: string) => {
+    if (isPreview) {
+      toast({
+        title: "Demostración",
+        description: "Esta es una vista previa. Regístrate para utilizar esta función.",
+        variant: "default"
+      });
+    } else {
+      action();
+    }
+  };
+
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-    applyFiltersAndSearch(query, activeFilters);
+    handleAction(
+      () => applyFiltersAndSearch(query, activeFilters),
+      "Función de búsqueda"
+    );
   };
+
   const handleApplyFilters = (filters: FilterValues) => {
     setActiveFilters(filters);
-    applyFiltersAndSearch(searchQuery, filters);
-    const filterCount = Object.values(filters).filter(value => value !== undefined && (Array.isArray(value) ? value.length > 0 : true)).length;
-    toast({
-      title: `Filtros aplicados (${filterCount})`,
-      description: filterCount > 0 ? "Se han aplicado los filtros seleccionados" : "No se han seleccionado filtros específicos",
-      variant: "default"
-    });
+    handleAction(
+      () => {
+        applyFiltersAndSearch(searchQuery, filters);
+        const filterCount = Object.values(filters).filter(value => value !== undefined && (Array.isArray(value) ? value.length > 0 : true)).length;
+        toast({
+          title: `Filtros aplicados (${filterCount})`,
+          description: filterCount > 0 ? "Se han aplicado los filtros seleccionados" : "No se han seleccionado filtros específicos",
+          variant: "default"
+        });
+      },
+      "Función de filtros"
+    );
   };
+
   const handleClearFilters = () => {
     setActiveFilters(null);
-    applyFiltersAndSearch(searchQuery, null);
-    toast({
-      title: "Filtros eliminados",
-      description: "Se han eliminado todos los filtros",
-      variant: "default"
-    });
+    handleAction(
+      () => {
+        applyFiltersAndSearch(searchQuery, null);
+        toast({
+          title: "Filtros eliminados",
+          description: "Se han eliminado todos los filtros",
+          variant: "default"
+        });
+      },
+      "Función de limpiar filtros"
+    );
   };
 
   // Calculate similarity score between a profile and filters
@@ -539,76 +572,121 @@ const MatchingPage = () => {
     }
   };
   const handleLike = (id: string) => {
-    if (!matches.some(match => match.id === id)) {
-      const profileToMatch = mockProfiles.find(p => p.id.toString() === id);
-      if (profileToMatch) {
-        const newMatch = {
-          id: profileToMatch.id.toString(),
-          name: profileToMatch.name,
-          age: profileToMatch.age,
-          location: profileToMatch.location,
-          imgUrl: profileToMatch.profileImage,
-          compatibility: profileToMatch.compatibility,
-          matchDate: new Date().toISOString(),
-          tags: profileToMatch.interests.map((interest, idx) => ({
-            id: idx + 1,
-            name: interest
-          }))
-        };
-        setMatches(prev => [newMatch, ...prev]);
-        toast({
-          title: "¡Nuevo match!",
-          description: `Has hecho match con ${profileToMatch.name}`,
-          variant: "default"
-        });
-      } else {
-        toast({
-          title: "¡Te interesa!",
-          description: "Has mostrado interés en este perfil",
-          variant: "default"
-        });
-      }
-    } else {
-      toast({
-        title: "Ya hiciste match",
-        description: "Ya has hecho match con este perfil anteriormente",
-        variant: "default"
-      });
-    }
+    handleAction(
+      () => {
+        if (!matches.some(match => match.id === id)) {
+          const profileToMatch = mockProfiles.find(p => p.id.toString() === id);
+          if (profileToMatch) {
+            const newMatch = {
+              id: profileToMatch.id.toString(),
+              name: profileToMatch.name,
+              age: profileToMatch.age,
+              location: profileToMatch.location,
+              imgUrl: profileToMatch.profileImage,
+              compatibility: profileToMatch.compatibility,
+              matchDate: new Date().toISOString(),
+              tags: profileToMatch.interests.map((interest, idx) => ({
+                id: idx + 1,
+                name: interest
+              }))
+            };
+            setMatches(prev => [newMatch, ...prev]);
+            toast({
+              title: "¡Nuevo match!",
+              description: `Has hecho match con ${profileToMatch.name}`,
+              variant: "default"
+            });
+          } else {
+            toast({
+              title: "¡Te interesa!",
+              description: "Has mostrado interés en este perfil",
+              variant: "default"
+            });
+          }
+        } else {
+          toast({
+            title: "Ya hiciste match",
+            description: "Ya has hecho match con este perfil anteriormente",
+            variant: "default"
+          });
+        }
+      },
+      "Función de like"
+    );
   };
+
   const handlePass = (id: string) => {
-    toast({
-      title: "Pasas",
-      description: "Has pasado de este perfil",
-      variant: "default"
-    });
+    handleAction(
+      () => {
+        toast({
+          title: "Pasas",
+          description: "Has pasado de este perfil",
+          variant: "default"
+        });
+      },
+      "Función de pasar"
+    );
   };
+
   const handleView = (id: string) => {
-    toast({
-      title: "Ver perfil",
-      description: "Viendo el perfil completo",
-      variant: "default"
-    });
+    handleAction(
+      () => {
+        toast({
+          title: "Ver perfil",
+          description: "Viendo el perfil completo",
+          variant: "default"
+        });
+      },
+      "Función de ver perfil"
+    );
   };
+
   const handleUnmatch = (id: string) => {
-    setMatches(prev => prev.filter(match => match.id !== id));
+    handleAction(
+      () => {
+        setMatches(prev => prev.filter(match => match.id !== id));
+      },
+      "Función de deshacer match"
+    );
   };
+
   const handleMessage = (id: string) => {
-    toast({
-      title: "Abrir chat",
-      description: "Redirigiendo al chat con este usuario",
-      variant: "default"
-    });
+    handleAction(
+      () => {
+        toast({
+          title: "Abrir chat",
+          description: "Redirigiendo al chat con este usuario",
+          variant: "default"
+        });
+      },
+      "Función de mensaje"
+    );
   };
+
   const handleViewProfile = (id: string) => {
-    toast({
-      title: "Ver perfil completo",
-      description: "Viendo el perfil completo del usuario",
-      variant: "default"
-    });
+    handleAction(
+      () => {
+        toast({
+          title: "Ver perfil completo",
+          description: "Viendo el perfil completo del usuario",
+          variant: "default"
+        });
+      },
+      "Función de ver perfil completo"
+    );
   };
-  return <div className="min-h-screen flex flex-col">
+
+  return (
+    <div className="min-h-screen flex flex-col">
       <Navbar />
+      
+      {isPreview && (
+        <div className="bg-homi-purple/80 text-white py-2 px-4 text-center sticky top-16 z-40">
+          <p className="text-sm">
+            Estás viendo una demostración de cómo funciona Homi. <Link to="/register" className="underline font-bold">Regístrate</Link> para acceder a todas las funciones.
+          </p>
+        </div>
+      )}
       
       <main className="flex-grow pt-10 pb-12 bg-transparent">
         <div className="container mx-auto px-4">
@@ -718,35 +796,4 @@ const MatchingPage = () => {
                     </div>}
                 </> : <div className="text-center py-16">
                   <p className="text-xl text-muted-foreground">
-                    No se encontraron perfiles que coincidan exactamente con tu búsqueda
-                  </p>
-                  <p className="mt-2 mb-6">
-                    Intenta con otros términos o menos filtros específicos
-                  </p>
-                  <Button onClick={handleClearFilters} className="bg-homi-purple hover:bg-homi-purple/90">
-                    Borrar filtros
-                  </Button>
-                </div>}
-            </TabsContent>
-            
-            <TabsContent value="matches" className="mt-0">
-              {matches.length > 0 ? <MatchesList matches={matches} onUnmatch={handleUnmatch} onMessage={handleMessage} onViewProfile={handleViewProfile} /> : <div className="text-center py-16">
-                  <p className="text-xl text-muted-foreground">
-                    Aún no tienes matches
-                  </p>
-                  <p className="mt-2 mb-6">
-                    Explora perfiles y conecta con personas compatibles
-                  </p>
-                  <Button onClick={() => setActiveTab('discover')} className="bg-homi-purple hover:bg-homi-purple/90">
-                    Descubrir perfiles
-                  </Button>
-                </div>}
-            </TabsContent>
-          </Tabs>
-        </div>
-      </main>
-      
-      <Footer />
-    </div>;
-};
-export default MatchingPage;
+                    No se encontraron per

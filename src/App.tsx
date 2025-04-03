@@ -35,10 +35,12 @@ const App = () => (
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/how-it-works" element={<HowItWorksPage />} />
             
-            {/* Protected routes */}
+            {/* Routes with preview for non-authenticated users */}
             <Route path="/matching" element={
-              <ProtectedRoute>
-                <MatchingPage />
+              <ProtectedRoute allowPreview={true}>
+                <MatchingPage isPreview={!queryClient.getQueryCache().findAll().some(
+                  query => query.queryKey[0] === 'user'
+                )} />
               </ProtectedRoute>
             } />
             <Route path="/profile" element={
@@ -57,8 +59,10 @@ const App = () => (
               </ProtectedRoute>
             } />
             <Route path="/chat" element={
-              <ProtectedRoute>
-                <ChatPage />
+              <ProtectedRoute allowPreview={true}>
+                <ChatPage isPreview={!queryClient.getQueryCache().findAll().some(
+                  query => query.queryKey[0] === 'user'
+                )} />
               </ProtectedRoute>
             } />
             
