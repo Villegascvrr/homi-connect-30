@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { Eye, Search, AlertCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
 
 const ProfilesTable = () => {
   const [profiles, setProfiles] = useState<any[]>([]);
@@ -26,6 +27,7 @@ const ProfilesTable = () => {
     incomplete: 0
   });
   const navigate = useNavigate();
+  const { toast } = useToast();
   
   // Fetch all profiles from Supabase
   useEffect(() => {
@@ -43,11 +45,32 @@ const ProfilesTable = () => {
         }
         
         if (data) {
-          setProfiles(data);
+          console.log("Profiles fetched:", data);
+          
+          // Clean and sanitize profile data
+          const cleanedData = data.map(profile => {
+            // Make sure all string fields have valid values
+            return {
+              ...profile,
+              first_name: profile.first_name || '',
+              last_name: profile.last_name || '',
+              username: profile.username || '',
+              email: profile.email || '',
+              bio: profile.bio || '',
+              edad: profile.edad || '',
+              ubicacion: profile.ubicacion || '',
+              universidad: profile.universidad || '',
+              ocupacion: profile.ocupacion || '',
+              sevilla_zona: profile.sevilla_zona || '',
+              companeros_count: profile.companeros_count || ''
+            };
+          });
+          
+          setProfiles(cleanedData);
           
           // Calculate stats
-          const total = data.length;
-          const complete = data.filter(profile => 
+          const total = cleanedData.length;
+          const complete = cleanedData.filter(profile => 
             profile.first_name && 
             profile.last_name && 
             profile.bio && 
@@ -63,13 +86,18 @@ const ProfilesTable = () => {
         }
       } catch (error) {
         console.error('Error fetching profiles:', error);
+        toast({
+          title: "Error al cargar perfiles",
+          description: "No se pudieron cargar los perfiles. Inténtalo de nuevo más tarde.",
+          variant: "destructive"
+        });
       } finally {
         setLoading(false);
       }
     };
     
     fetchProfiles();
-  }, []);
+  }, [toast]);
 
   // Filter profiles based on search term
   const filteredProfiles = profiles.filter(profile => {

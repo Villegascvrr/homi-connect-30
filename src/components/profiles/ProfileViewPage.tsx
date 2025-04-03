@@ -1,4 +1,3 @@
-
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/layout/Navbar';
@@ -61,6 +60,9 @@ const ProfileViewPage = () => {
           return;
         }
         
+        // Log the raw data from the database
+        console.log("Raw profile data from Supabase:", data);
+        
         // Transform the data to match the expected structure
         if (data) {
           // Parse lifestyle JSON if it exists
@@ -80,14 +82,16 @@ const ProfileViewPage = () => {
             }
           }
           
+          console.log("Parsed lifestyle object:", lifestyleObj);
+          
           const formattedProfile = {
             id: data.id,
-            name: `${data.first_name} ${data.last_name}`.trim(),
-            username: data.username,
-            age: data.edad,
-            location: data.ubicacion,
-            university: data.universidad,
-            occupation: data.ocupacion,
+            name: `${data.first_name || ''} ${data.last_name || ''}`.trim(),
+            username: data.username || '',
+            age: data.edad || 'No especificado',
+            location: data.ubicacion || 'No especificado',
+            university: data.universidad || 'No especificado',
+            occupation: data.ocupacion || 'No especificado',
             bio: data.bio || 'Sin descripción disponible',
             imgUrl: data.profile_image || 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7',
             galleryImgs: data.gallery_images || [],
@@ -97,20 +101,21 @@ const ProfileViewPage = () => {
             })) : [],
             verified: true,
             preferences: {
-              budget: lifestyleObj.preferences?.budget || 'No especificado',
+              budget: lifestyleObj?.preferences?.budget || 'No especificado',
               location: data.sevilla_zona || 'No especificado',
               roommates: data.companeros_count || 'No especificado',
-              moveInDate: lifestyleObj.preferences?.moveInDate || 'No especificado'
+              moveInDate: lifestyleObj?.preferences?.moveInDate || 'No especificado'
             },
             lifestyle: {
-              cleanliness: lifestyleObj.details?.cleanliness || 'No especificado',
-              guests: lifestyleObj.details?.guests || 'No especificado',
-              smoking: lifestyleObj.details?.smoking || 'No especificado',
-              pets: lifestyleObj.details?.pets || 'No especificado',
-              schedule: lifestyleObj.details?.schedule || 'No especificado'
+              cleanliness: lifestyleObj?.details?.cleanliness || 'No especificado',
+              guests: lifestyleObj?.details?.guests || 'No especificado',
+              smoking: lifestyleObj?.details?.smoking || 'No especificado',
+              pets: lifestyleObj?.details?.pets || 'No especificado',
+              schedule: lifestyleObj?.details?.schedule || 'No especificado'
             }
           };
           
+          console.log("Formatted profile:", formattedProfile);
           setProfile(formattedProfile);
         }
         
@@ -226,7 +231,7 @@ const ProfileViewPage = () => {
                   <div className="flex justify-between">
                     <div>
                       <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-2">
-                        {profile.name}{profile.age ? `, ${profile.age}` : ''}
+                        {profile.name}{profile.age && profile.age !== 'No especificado' ? `, ${profile.age}` : ''}
                       </h1>
                       {profile.username && (
                         <p className="text-muted-foreground flex items-center gap-1 mt-1">
@@ -234,7 +239,7 @@ const ProfileViewPage = () => {
                           <span className="font-medium">{profile.username}</span>
                         </p>
                       )}
-                      {profile.location && (
+                      {profile.location && profile.location !== 'No especificado' && (
                         <p className="text-muted-foreground flex items-center gap-1 mt-1">
                           <Home size={16} />
                           {profile.location}
@@ -282,13 +287,13 @@ const ProfileViewPage = () => {
                   <div className="mt-6">
                     <h3 className="font-medium mb-2">Datos personales</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {profile.university && (
+                      {profile.university && profile.university !== 'No especificado' && (
                         <div className="flex items-center gap-2">
                           <GraduationCap size={18} className="text-homi-purple" />
                           <span>{profile.university}</span>
                         </div>
                       )}
-                      {profile.occupation && (
+                      {profile.occupation && profile.occupation !== 'No especificado' && (
                         <div className="flex items-center gap-2">
                           <Briefcase size={18} className="text-homi-purple" />
                           <span>{profile.occupation}</span>

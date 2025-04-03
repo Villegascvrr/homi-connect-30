@@ -23,6 +23,11 @@ const AdminPage = () => {
                 Aquí puedes ver todos los perfiles de usuarios, incluyendo los que tienen campos incompletos.
                 Los perfiles marcados en amarillo tienen información faltante.
               </p>
+              <div className="p-2 mt-2 bg-yellow-50 border border-yellow-200 rounded-md">
+                <p className="text-xs text-yellow-700">
+                  <strong>Nota:</strong> Si ves valores "nulos" o "No especificado", significa que el usuario no ha completado ese campo en su perfil.
+                </p>
+              </div>
             </CardContent>
           </Card>
         </div>
