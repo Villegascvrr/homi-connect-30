@@ -1,3 +1,4 @@
+
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 
@@ -21,23 +22,22 @@ const ProtectedRoute = ({
     </div>;
   }
 
-  // If the user is authenticated, show the actual content
+  // Si el usuario está autenticado, mostrar el contenido real
   if (user) {
     return <>{children}</>;
   }
 
-  // If preview is allowed and a preview component is provided, show the preview
+  // Si se permite vista previa y hay un componente de vista previa, mostrar la vista previa
   if (allowPreview && previewComponent) {
     return <>{previewComponent}</>;
   }
 
-  // If preview is allowed but no preview component is provided, 
-  // show the actual content
+  // Si se permite vista previa pero no hay componente de vista previa, mostrar el contenido real
   if (allowPreview) {
     return <>{children}</>;
   }
 
-  // Otherwise redirect to the login page
+  // De lo contrario redirigir a la página de login
   return <Navigate to="/signin" state={{ from: location.pathname }} replace />;
 };
 

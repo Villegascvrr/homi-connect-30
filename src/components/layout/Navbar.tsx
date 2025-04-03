@@ -7,7 +7,6 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/context/AuthContext';
 import AuthButton from '@/components/auth/AuthButton';
-import DemoBanner from './DemoBanner';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -36,7 +35,7 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    // Close mobile menu when route changes
+    // Cerrar menu móvil cuando cambia la ruta
     setIsMenuOpen(false);
   }, [location.pathname]);
 

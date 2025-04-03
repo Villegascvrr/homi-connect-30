@@ -13,7 +13,7 @@ const DemoBanner = ({
 }: DemoBannerProps) => {
   const { user } = useAuth();
   
-  // Only show for authenticated users
+  // Solo mostrar para usuarios autenticados
   if (!user) return null;
   
   return (
