@@ -3,12 +3,29 @@ import React from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import ProfilesTable from '@/components/admin/ProfilesTable';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 const AdminPage = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
       <main className="flex-grow pt-20 pb-12">
+        <div className="container mx-auto px-4 mb-6">
+          <Card className="border-homi-purple/20 bg-gradient-to-r from-purple-50 to-white">
+            <CardHeader>
+              <CardTitle className="text-2xl text-homi-purple">Panel de Administración</CardTitle>
+              <CardDescription>
+                Gestiona y visualiza todos los perfiles registrados en la plataforma
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                Aquí puedes ver todos los perfiles de usuarios, incluyendo los que tienen campos incompletos.
+                Los perfiles marcados en amarillo tienen información faltante.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
         <ProfilesTable />
       </main>
       <Footer />

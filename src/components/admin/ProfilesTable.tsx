@@ -9,16 +9,22 @@ import {
   TableBody, 
   TableCell 
 } from "@/components/ui/table";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
-import { Eye, Search } from "lucide-react";
+import { Eye, Search, AlertCircle } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 const ProfilesTable = () => {
   const [profiles, setProfiles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [profileStats, setProfileStats] = useState({
+    total: 0,
+    complete: 0,
+    incomplete: 0
+  });
   const navigate = useNavigate();
   
   // Fetch all profiles from Supabase
@@ -38,6 +44,22 @@ const ProfilesTable = () => {
         
         if (data) {
           setProfiles(data);
+          
+          // Calculate stats
+          const total = data.length;
+          const complete = data.filter(profile => 
+            profile.first_name && 
+            profile.last_name && 
+            profile.bio && 
+            profile.sevilla_zona && 
+            profile.companeros_count
+          ).length;
+          
+          setProfileStats({
+            total,
+            complete,
+            incomplete: total - complete
+          });
         }
       } catch (error) {
         console.error('Error fetching profiles:', error);
@@ -51,7 +73,7 @@ const ProfilesTable = () => {
 
   // Filter profiles based on search term
   const filteredProfiles = profiles.filter(profile => {
-    const fullName = `${profile.first_name} ${profile.last_name}`.toLowerCase();
+    const fullName = `${profile.first_name || ''} ${profile.last_name || ''}`.toLowerCase();
     const searchLower = searchTerm.toLowerCase();
     
     return (
@@ -61,6 +83,19 @@ const ProfilesTable = () => {
       (profile.sevilla_zona && profile.sevilla_zona.toLowerCase().includes(searchLower))
     );
   });
+
+  // Format empty or null values
+  const formatValue = (value: any, defaultText = 'No especificado') => {
+    if (value === null || value === undefined || value === '') {
+      return <span className="text-muted-foreground italic text-xs">{defaultText}</span>;
+    }
+    
+    if (value === 'no_busco') {
+      return <Badge variant="outline">No busca</Badge>;
+    }
+    
+    return value;
+  };
 
   const handleViewProfile = (id: string) => {
     navigate(`/profile/${id}`);
@@ -92,6 +127,9 @@ const ProfilesTable = () => {
       <Card>
         <CardHeader>
           <CardTitle>Perfiles registrados</CardTitle>
+          <CardDescription>
+            Total: {profileStats.total} perfiles ({profileStats.complete} completos, {profileStats.incomplete} incompletos)
+          </CardDescription>
           <div className="flex items-center mt-4">
             <div className="relative flex-1">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -113,6 +151,7 @@ const ProfilesTable = () => {
                   <TableHead>Nombre</TableHead>
                   <TableHead>Usuario</TableHead>
                   <TableHead>Email</TableHead>
+                  <TableHead>Bio</TableHead>
                   <TableHead>Zona de Sevilla</TableHead>
                   <TableHead>Compañeros</TableHead>
                   <TableHead>Acciones</TableHead>
@@ -121,36 +160,49 @@ const ProfilesTable = () => {
               <TableBody>
                 {filteredProfiles.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-6">
+                    <TableCell colSpan={7} className="text-center py-6">
                       No se encontraron perfiles
                     </TableCell>
                   </TableRow>
                 ) : (
-                  filteredProfiles.map((profile) => (
-                    <TableRow key={profile.id}>
-                      <TableCell className="font-medium">
-                        {profile.first_name} {profile.last_name}
-                      </TableCell>
-                      <TableCell>{profile.username}</TableCell>
-                      <TableCell>{profile.email}</TableCell>
-                      <TableCell>
-                        {profile.sevilla_zona === 'no_busco' 
-                          ? 'No busca' 
-                          : profile.sevilla_zona || 'No especificado'}
-                      </TableCell>
-                      <TableCell>{profile.companeros_count || 'No especificado'}</TableCell>
-                      <TableCell>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleViewProfile(profile.id)}
-                        >
-                          <Eye size={16} className="mr-2" />
-                          Ver
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))
+                  filteredProfiles.map((profile) => {
+                    const isIncomplete = !profile.bio || !profile.sevilla_zona || !profile.companeros_count;
+                    
+                    return (
+                      <TableRow key={profile.id} className={isIncomplete ? "bg-amber-50" : ""}>
+                        <TableCell className="font-medium">
+                          {formatValue(`${profile.first_name || ''} ${profile.last_name || ''}`.trim(), 'Sin nombre')}
+                          {isIncomplete && (
+                            <div className="flex items-center gap-1 mt-1">
+                              <AlertCircle size={14} className="text-amber-500" />
+                              <span className="text-amber-500 text-xs">Perfil incompleto</span>
+                            </div>
+                          )}
+                        </TableCell>
+                        <TableCell>{formatValue(profile.username)}</TableCell>
+                        <TableCell>{formatValue(profile.email)}</TableCell>
+                        <TableCell>
+                          {formatValue(profile.bio ? 
+                            profile.bio.length > 30 ? profile.bio.substring(0, 30) + '...' : profile.bio 
+                            : null)}
+                        </TableCell>
+                        <TableCell>
+                          {formatValue(profile.sevilla_zona)}
+                        </TableCell>
+                        <TableCell>{formatValue(profile.companeros_count)}</TableCell>
+                        <TableCell>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleViewProfile(profile.id)}
+                          >
+                            <Eye size={16} className="mr-2" />
+                            Ver
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
                 )}
               </TableBody>
             </Table>
