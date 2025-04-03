@@ -22,15 +22,6 @@ import { FormImageUpload } from "@/components/ui/form-image-upload"
 import ProfileStatusToggle from "@/components/profiles/ProfileStatusToggle"
 import { Separator } from "@/components/ui/separator"
 import { Textarea } from "@/components/ui/textarea"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { Card, CardContent } from "@/components/ui/card"
-import { MapPin, Users } from "lucide-react"
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -45,8 +36,7 @@ const formSchema = z.object({
   university: z.string().optional(),
   occupation: z.string().optional(),
   profileImage: z.string().optional(),
-  sevilleZone: z.string().optional(),
-  roommatesCount: z.string().optional(),
+  galleryImages: z.array(z.string()).optional(),
   isProfileActive: z.boolean().default(true),
 })
 
@@ -54,7 +44,6 @@ const ProfileForm = () => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [isLookingForApartment, setIsLookingForApartment] = useState(false);
   const isMobile = useIsMobile();
   const { user } = useAuth();
   
@@ -69,8 +58,7 @@ const ProfileForm = () => {
       university: "",
       occupation: "",
       profileImage: "",
-      sevilleZone: "",
-      roommatesCount: "",
+      galleryImages: [] as string[],
       isProfileActive: true,
     },
   });
@@ -104,12 +92,10 @@ const ProfileForm = () => {
             university: profileData.universidad || "",
             occupation: profileData.ocupacion || "",
             profileImage: profileData.profile_image || user.user_metadata?.avatar_url || "",
-            sevilleZone: profileData.sevilla_zona || "",
-            roommatesCount: profileData.companeros_count || "",
+            galleryImages: profileData.gallery_images || [],
             isProfileActive: profileData.is_profile_active !== false,
           });
           
-          setIsLookingForApartment(!!profileData.sevilla_zona);
           console.log("Profile data loaded:", profileData);
         } catch (err) {
           console.error("Error loading profile data:", err);
@@ -123,8 +109,7 @@ const ProfileForm = () => {
             university: "",
             occupation: "",
             profileImage: user.user_metadata?.avatar_url || "",
-            sevilleZone: "",
-            roommatesCount: "",
+            galleryImages: [],
             isProfileActive: true,
           });
         } finally {
@@ -160,8 +145,7 @@ const ProfileForm = () => {
           universidad: values.university,
           ocupacion: values.occupation,
           profile_image: values.profileImage,
-          sevilla_zona: values.sevilleZone,
-          companeros_count: values.roommatesCount,
+          gallery_images: values.galleryImages,
           is_profile_active: values.isProfileActive,
           updated_at: new Date().toISOString()
         })
@@ -188,23 +172,6 @@ const ProfileForm = () => {
   const handleProfileStatusToggle = (active: boolean) => {
     form.setValue('isProfileActive', active);
   };
-
-  const sevilleZones = [
-    "Nervión",
-    "Triana",
-    "Centro",
-    "Los Remedios",
-    "Alameda",
-    "Macarena",
-    "Santa Justa",
-    "Sevilla Este",
-    "Aljarafe",
-    "San Pablo",
-    "La Cartuja",
-    "Otro"
-  ];
-
-  const roommateOptions = ["1", "2", "3", "4+"];
 
   if (isLoading) {
     return (
@@ -349,86 +316,15 @@ const ProfileForm = () => {
           </div>
         </div>
 
-        {/* New section for Seville apartment search - Enhanced and more visible */}
-        <Card className="border-2 border-primary/20 shadow-md">
-          <CardContent className="pt-6">
-            <div className="space-y-6">
-              <div className="flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-primary" />
-                <h2 className="text-xl font-semibold">Búsqueda de piso en Sevilla</h2>
-              </div>
-              
-              <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-2 gap-6'}`}>
-                <FormField
-                  control={form.control}
-                  name="sevilleZone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>¿En qué zona de Sevilla buscas piso?</FormLabel>
-                      <Select 
-                        onValueChange={(value) => {
-                          field.onChange(value);
-                          setIsLookingForApartment(!!value);
-                        }}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger className="bg-white">
-                            <SelectValue placeholder="Selecciona una zona" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="">No estoy buscando piso</SelectItem>
-                          {sevilleZones.map(zone => (
-                            <SelectItem key={zone} value={zone}>{zone}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                {form.watch('sevilleZone') && (
-                  <FormField
-                    control={form.control}
-                    name="roommatesCount"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>¿Cuántos compañeros de piso buscas?</FormLabel>
-                        <Select 
-                          onValueChange={field.onChange} 
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger className="bg-white">
-                              <SelectValue placeholder="Selecciona número" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {roommateOptions.map(option => (
-                              <SelectItem key={option} value={option}>{option}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                )}
-              </div>
-              
-              {isLookingForApartment && (
-                <div className="bg-primary/5 p-4 rounded-md flex items-center gap-3">
-                  <Users className="h-5 w-5 text-primary flex-shrink-0" />
-                  <p className="text-sm">
-                    Al activar la búsqueda de piso, otros usuarios podrán ver tu perfil como posible compañero/a de piso.
-                  </p>
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+        {/* Gallery section - improved mobile layout */}
+        <div className="space-y-4">
+          <h2 className="text-xl font-semibold">Galería de fotos</h2>
+          <FormImageUpload
+            name="galleryImages"
+            multiple={true}
+            description="Comparte fotos de ti o de tus espacios para que otros usuarios te conozcan mejor"
+          />
+        </div>
 
         <Button 
           type="submit" 
