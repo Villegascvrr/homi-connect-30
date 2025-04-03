@@ -9,6 +9,27 @@ import { MessageSquare, Share, Heart, Home, Briefcase, GraduationCap, UserCheck,
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
+// Define interfaces for our lifestyle data to help with TypeScript
+interface LifestylePreferences {
+  budget?: string;
+  location?: string;
+  roommates?: string;
+  moveInDate?: string;
+}
+
+interface LifestyleDetails {
+  cleanliness?: string;
+  guests?: string;
+  smoking?: string;
+  pets?: string;
+  schedule?: string;
+}
+
+interface ProfileLifestyle {
+  preferences?: LifestylePreferences;
+  details?: LifestyleDetails;
+}
+
 const ProfileViewPage = () => {
   const { id } = useParams();
   const [profile, setProfile] = useState<any>(null);
@@ -42,6 +63,23 @@ const ProfileViewPage = () => {
         
         // Transform the data to match the expected structure
         if (data) {
+          // Parse lifestyle JSON if it exists
+          let lifestyleObj: ProfileLifestyle = {};
+          
+          if (data.lifestyle) {
+            // Handle the case when lifestyle is a string or JSON object
+            if (typeof data.lifestyle === 'string') {
+              try {
+                lifestyleObj = JSON.parse(data.lifestyle);
+              } catch (e) {
+                console.error('Error parsing lifestyle JSON:', e);
+              }
+            } else {
+              // If it's already an object, use it directly
+              lifestyleObj = data.lifestyle as ProfileLifestyle;
+            }
+          }
+          
           const formattedProfile = {
             id: data.id,
             name: `${data.first_name} ${data.last_name}`.trim(),
@@ -58,18 +96,18 @@ const ProfileViewPage = () => {
               name: interest
             })) : [],
             verified: true,
-            preferences: data.lifestyle?.preferences || {
-              budget: 'No especificado',
+            preferences: {
+              budget: lifestyleObj.preferences?.budget || 'No especificado',
               location: data.sevilla_zona || 'No especificado',
               roommates: data.companeros_count || 'No especificado',
-              moveInDate: 'No especificado'
+              moveInDate: lifestyleObj.preferences?.moveInDate || 'No especificado'
             },
-            lifestyle: data.lifestyle?.details || {
-              cleanliness: 'No especificado',
-              guests: 'No especificado',
-              smoking: 'No especificado',
-              pets: 'No especificado',
-              schedule: 'No especificado'
+            lifestyle: {
+              cleanliness: lifestyleObj.details?.cleanliness || 'No especificado',
+              guests: lifestyleObj.details?.guests || 'No especificado',
+              smoking: lifestyleObj.details?.smoking || 'No especificado',
+              pets: lifestyleObj.details?.pets || 'No especificado',
+              schedule: lifestyleObj.details?.schedule || 'No especificado'
             }
           };
           
