@@ -1,4 +1,3 @@
-
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
@@ -6,7 +5,6 @@ import Footer from '@/components/layout/Footer';
 import Hero from '@/components/home/Hero';
 import Features from '@/components/home/Features';
 import HowItWorks from '@/components/home/HowItWorks';
-import DevelopmentBanner from '@/components/layout/DevelopmentBanner';
 import { Button } from '@/components/ui/button';
 import ProfileCard from '@/components/profiles/ProfileCard';
 import { useAuth } from '@/context/AuthContext';
@@ -89,7 +87,6 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <DevelopmentBanner />
       <div className="pt-16">
         <Navbar />
       </div>
