@@ -28,7 +28,7 @@ const ChatList = ({ matches, selectedChatId, onSelectChat }: ChatListProps) => {
   });
 
   return (
-    <div className="max-h-[calc(100vh-5rem)] overflow-y-auto">
+    <div className="max-h-[calc(100vh-7rem)] overflow-y-auto">
       {sortedMatches.map((match) => (
         <div
           key={match.id}

@@ -136,8 +136,8 @@ const ChatWindow = ({ chat }: ChatWindowProps) => {
         </div>
       </div>
       
-      {/* Messages area - adjusted height to be smaller */}
-      <div className="flex-1 py-2 px-3 overflow-y-auto max-h-[calc(100vh-14rem)]">
+      {/* Messages area - further reduced height */}
+      <div className="flex-1 py-2 px-3 overflow-y-auto max-h-[calc(100vh-16rem)]">
         <div className="space-y-2">
           {messages.map((message) => (
             <div 
@@ -169,8 +169,8 @@ const ChatWindow = ({ chat }: ChatWindowProps) => {
         </div>
       </div>
       
-      {/* Message input - increased padding to make it more prominent */}
-      <div className="py-3 px-3 border-t border-border mt-auto">
+      {/* Message input - increased padding for keyboard space */}
+      <div className="py-4 px-3 border-t border-border mt-auto">
         <div className="flex items-center gap-1">
           <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
             <Smile size={16} />
