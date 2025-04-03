@@ -33,15 +33,17 @@ const AdminPage = () => {
                 <div className="p-3 bg-blue-50 border border-blue-200 rounded-md">
                   <p className="text-sm text-blue-700">
                     <strong>Estructura de los datos:</strong> Algunos datos como preferencias de búsqueda se almacenan 
-                    como columnas individuales (companeros_count, hasApartment, etc.), mientras que el estilo de vida (lifestyle) 
+                    como columnas individuales (companeros_count, hasApartment, genderPreference, smokingPreference, 
+                    occupationPreference, minAge, maxAge, exactPrice), mientras que el estilo de vida (lifestyle) 
                     se almacena como un objeto JSON que contiene cleanliness, guests, smoking, pets y schedule.
                   </p>
                 </div>
                 <div className="p-3 bg-green-50 border border-green-200 rounded-md">
                   <p className="text-sm text-green-700">
-                    <strong>Sobre las preferencias:</strong> Las preferencias de búsqueda como hasApartment, genderPreference, 
-                    smokingPreference y occupationPreference se añaden al perfil cuando el usuario las configura. Hasta entonces, 
-                    no aparecerán en la base de datos.
+                    <strong>Sobre las preferencias:</strong> Las preferencias de búsqueda 
+                    se añaden al perfil cuando el usuario las configura. No todos los perfiles 
+                    tendrán todas las preferencias configuradas, por lo que estos campos pueden 
+                    aparecer vacíos en la base de datos hasta que el usuario las configure.
                   </p>
                 </div>
               </div>

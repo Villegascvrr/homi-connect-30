@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
@@ -68,6 +67,35 @@ interface ProfileData {
   lookingFor: LookingForPreferences;
 }
 
+interface SupabaseProfileData {
+  id: string;
+  bio: string | null;
+  companeros_count: string | null;
+  created_at: string;
+  edad: string | null;
+  email: string;
+  first_name: string;
+  gallery_images: string[] | null;
+  interests: string[] | null;
+  is_profile_active: boolean | null;
+  last_name: string;
+  lifestyle: Json | null;
+  ocupacion: string | null;
+  profile_image: string | null;
+  sevilla_zona: string | null;
+  ubicacion: string | null;
+  universidad: string | null;
+  updated_at: string;
+  username: string;
+  hasApartment?: boolean;
+  genderPreference?: string;
+  smokingPreference?: string;
+  occupationPreference?: string;
+  minAge?: string;
+  maxAge?: string;
+  exactPrice?: number;
+}
+
 const ProfilePage = () => {
   const [liked, setLiked] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -81,7 +109,6 @@ const ProfilePage = () => {
   const profileCardRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
   
-  // Default profile with placeholder values
   const defaultProfile: ProfileData = {
     id: '1',
     name: 'Usuario',
@@ -145,7 +172,8 @@ const ProfilePage = () => {
         
         console.log("Raw profile data from Supabase:", data);
         
-        // Parse lifestyle object if it exists
+        const profileData = data as SupabaseProfileData;
+        
         let lifestyleObj: LifestyleDetail = {
           cleanliness: '-',
           guests: '-',
@@ -154,16 +182,15 @@ const ProfilePage = () => {
           schedule: '-'
         };
         
-        if (data.lifestyle) {
-          if (typeof data.lifestyle === 'string') {
+        if (profileData.lifestyle) {
+          if (typeof profileData.lifestyle === 'string') {
             try {
-              lifestyleObj = JSON.parse(data.lifestyle);
+              lifestyleObj = JSON.parse(profileData.lifestyle);
             } catch (e) {
               console.error('Error parsing lifestyle JSON:', e);
             }
-          } else if (typeof data.lifestyle === 'object' && data.lifestyle !== null) {
-            // Handle the case where lifestyle is an object (not an array)
-            const parsedLifestyle = data.lifestyle as Record<string, any>;
+          } else if (typeof profileData.lifestyle === 'object' && profileData.lifestyle !== null) {
+            const parsedLifestyle = profileData.lifestyle as Record<string, any>;
             
             lifestyleObj = {
               cleanliness: typeof parsedLifestyle.cleanliness === 'string' ? parsedLifestyle.cleanliness : '-',
@@ -177,37 +204,35 @@ const ProfilePage = () => {
         
         console.log("Parsed lifestyle object:", lifestyleObj);
         
-        // Use actual values from database or defaults for missing values
         const lookingForObj: LookingForPreferences = {
-          hasApartment: data.hasApartment === true, // Explicitly check for true
-          roommatesCount: data.companeros_count || "-",
-          genderPreference: data.genderPreference || "-",
-          smokingPreference: data.smokingPreference || "-",
-          occupationPreference: data.occupationPreference || "-",
-          minAge: data.minAge || "-",
-          maxAge: data.maxAge || "-",
-          budgetRange: [400, 600], // Default budget range
-          exactPrice: data.exactPrice || 0
+          hasApartment: profileData.hasApartment === true,
+          roommatesCount: profileData.companeros_count || "-",
+          genderPreference: profileData.genderPreference || "-",
+          smokingPreference: profileData.smokingPreference || "-",
+          occupationPreference: profileData.occupationPreference || "-",
+          minAge: profileData.minAge || "-",
+          maxAge: profileData.maxAge || "-",
+          budgetRange: [400, 600],
+          exactPrice: profileData.exactPrice || 0
         };
         
         const userProfile: ProfileData = {
           id: user.id,
-          name: `${data.first_name || ''} ${data.last_name || ''}`.trim() || 'Usuario',
-          username: data.username || 'usuario',
-          age: data.edad ? parseInt(data.edad) : 0,
-          location: data.ubicacion || '-',
-          university: data.universidad || '-',
-          occupation: data.ocupacion || '-',
-          bio: data.bio || '-',
-          imgUrl: data.profile_image || defaultProfile.imgUrl,
-          galleryImgs: data.gallery_images?.length ? data.gallery_images : [defaultProfile.imgUrl],
-          tags: Array.isArray(data.interests) ? data.interests.map((tag: string, index: number) => ({ id: index + 1, name: tag })) : [],
+          name: `${profileData.first_name || ''} ${profileData.last_name || ''}`.trim() || 'Usuario',
+          username: profileData.username || 'usuario',
+          age: profileData.edad ? parseInt(profileData.edad) : 0,
+          location: profileData.ubicacion || '-',
+          university: profileData.universidad || '-',
+          occupation: profileData.ocupacion || '-',
+          bio: profileData.bio || '-',
+          imgUrl: profileData.profile_image || defaultProfile.imgUrl,
+          galleryImgs: profileData.gallery_images?.length ? profileData.gallery_images : [defaultProfile.imgUrl],
+          tags: Array.isArray(profileData.interests) ? profileData.interests.map((tag: string, index: number) => ({ id: index + 1, name: tag })) : [],
           verified: true,
           preferences: {
-            // Use actual data or placeholders if data is missing
             budget: lookingForObj.exactPrice ? `€${lookingForObj.exactPrice}` : '-',
-            location: data.sevilla_zona || '-',
-            roommates: data.companeros_count || '-',
+            location: profileData.sevilla_zona || '-',
+            roommates: profileData.companeros_count || '-',
             moveInDate: '-'
           },
           lifestyle: lifestyleObj,
@@ -380,7 +405,6 @@ const ProfilePage = () => {
     if (!user) return;
     
     try {
-      // Create a properly structured lifestyle object
       const lifestyleObject: Record<string, string> = {
         cleanliness: profile.lifestyle.cleanliness || '-',
         guests: profile.lifestyle.guests || '-',
@@ -389,13 +413,15 @@ const ProfilePage = () => {
         schedule: profile.lifestyle.schedule || '-'
       };
       
-      // Prepare the data for update
       const updateData: Record<string, any> = {
         companeros_count: profile.lookingFor.roommatesCount,
         hasApartment: profile.lookingFor.hasApartment,
         genderPreference: profile.lookingFor.genderPreference,
         smokingPreference: profile.lookingFor.smokingPreference,
         occupationPreference: profile.lookingFor.occupationPreference,
+        minAge: profile.lookingFor.minAge,
+        maxAge: profile.lookingFor.maxAge,
+        exactPrice: profile.lookingFor.budgetRange[1],
         lifestyle: lifestyleObject
       };
       
