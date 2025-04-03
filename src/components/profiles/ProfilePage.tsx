@@ -20,6 +20,52 @@ import { Slider } from '@/components/ui/slider';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { type Json } from '@/integrations/supabase/types';
+
+interface LifestyleDetail {
+  cleanliness?: string;
+  guests?: string;
+  smoking?: string;
+  pets?: string;
+  schedule?: string;
+}
+
+interface LookingForPreferences {
+  hasApartment: boolean;
+  roommatesCount: string;
+  genderPreference: string;
+  smokingPreference: string;
+  occupationPreference: string;
+  minAge: string;
+  maxAge: string;
+  budgetRange: number[];
+  exactPrice: number;
+}
+
+interface ProfilePreferences {
+  budget: string;
+  location: string;
+  roommates: string;
+  moveInDate: string;
+}
+
+interface ProfileData {
+  id: string;
+  name: string;
+  username: string;
+  age: number;
+  location: string;
+  university: string;
+  occupation: string;
+  bio: string;
+  imgUrl: string;
+  galleryImgs: string[];
+  tags: { id: number; name: string }[];
+  verified: boolean;
+  preferences: ProfilePreferences;
+  lifestyle: LifestyleDetail;
+  lookingFor: LookingForPreferences;
+}
 
 const ProfilePage = () => {
   const [liked, setLiked] = useState(false);
@@ -34,7 +80,7 @@ const ProfilePage = () => {
   const profileCardRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
   
-  const defaultProfile = {
+  const defaultProfile: ProfileData = {
     id: '1',
     name: 'Usuario',
     username: 'usuario',
@@ -73,7 +119,7 @@ const ProfilePage = () => {
     }
   };
   
-  const [profile, setProfile] = useState(defaultProfile);
+  const [profile, setProfile] = useState<ProfileData>(defaultProfile);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -89,15 +135,58 @@ const ProfilePage = () => {
           .select('*')
           .eq('id', user.id)
           .single();
-          
+        
         if (error) {
           console.error("Error fetching profile:", error);
           throw error;
         }
         
-        console.log("Raw profile data:", data);
+        console.log("Raw profile data from Supabase:", data);
         
-        const userProfile = {
+        let lifestyleObj: LifestyleDetail = {
+          cleanliness: '-',
+          guests: '-',
+          smoking: '-',
+          pets: '-',
+          schedule: '-'
+        };
+        
+        if (data.lifestyle) {
+          if (typeof data.lifestyle === 'string') {
+            try {
+              lifestyleObj = JSON.parse(data.lifestyle);
+            } catch (e) {
+              console.error('Error parsing lifestyle JSON:', e);
+            }
+          } else {
+            const parsedLifestyle = data.lifestyle as Json;
+            if (typeof parsedLifestyle === 'object' && parsedLifestyle !== null) {
+              lifestyleObj = {
+                cleanliness: typeof parsedLifestyle.cleanliness === 'string' ? parsedLifestyle.cleanliness : '-',
+                guests: typeof parsedLifestyle.guests === 'string' ? parsedLifestyle.guests : '-',
+                smoking: typeof parsedLifestyle.smoking === 'string' ? parsedLifestyle.smoking : '-',
+                pets: typeof parsedLifestyle.pets === 'string' ? parsedLifestyle.pets : '-',
+                schedule: typeof parsedLifestyle.schedule === 'string' ? parsedLifestyle.schedule : '-'
+              };
+            }
+          }
+        }
+        
+        console.log("Parsed lifestyle object:", lifestyleObj);
+        
+        const lookingForObj: LookingForPreferences = {
+          hasApartment: data.hasApartment || false,
+          roommatesCount: data.companeros_count || "0",
+          genderPreference: data.genderPreference || "cualquiera",
+          smokingPreference: data.smokingPreference || "no",
+          occupationPreference: data.occupationPreference || "cualquiera",
+          minAge: "18",
+          maxAge: "99",
+          budgetRange: [400, 600],
+          exactPrice: 450
+        };
+        
+        const userProfile: ProfileData = {
           id: user.id,
           name: `${data.first_name || ''} ${data.last_name || ''}`.trim() || 'Usuario',
           username: data.username || 'usuario',
@@ -108,32 +197,16 @@ const ProfilePage = () => {
           bio: data.bio || '-',
           imgUrl: data.profile_image || defaultProfile.imgUrl,
           galleryImgs: data.gallery_images?.length ? data.gallery_images : [defaultProfile.imgUrl],
-          tags: Array.isArray(data.interests) ? data.interests.map((tag, index) => ({ id: index + 1, name: tag })) : [],
+          tags: Array.isArray(data.interests) ? data.interests.map((tag: string, index: number) => ({ id: index + 1, name: tag })) : [],
           verified: true,
           preferences: {
-            budget: `€${data.lookingFor?.budgetRange?.[0] || 400}-€${data.lookingFor?.budgetRange?.[1] || 600}`,
+            budget: `€${lookingForObj.budgetRange[0]}-€${lookingForObj.budgetRange[1]}`,
             location: data.sevilla_zona || '-',
             roommates: data.companeros_count || '-',
             moveInDate: '-'
           },
-          lifestyle: {
-            cleanliness: data.lifestyle?.cleanliness || '-',
-            guests: data.lifestyle?.guests || '-',
-            smoking: data.lifestyle?.smoking || '-',
-            pets: data.lifestyle?.pets || '-',
-            schedule: data.lifestyle?.schedule || '-'
-          },
-          lookingFor: {
-            hasApartment: data.hasApartment || false,
-            roommatesCount: data.companeros_count || "0",
-            genderPreference: data.genderPreference || "cualquiera",
-            smokingPreference: data.smokingPreference || "no",
-            occupationPreference: data.occupationPreference || "cualquiera",
-            minAge: "18",
-            maxAge: "99",
-            budgetRange: [400, 600],
-            exactPrice: 450
-          }
+          lifestyle: lifestyleObj,
+          lookingFor: lookingForObj
         };
         
         console.log("Processed profile data:", userProfile);
@@ -302,13 +375,21 @@ const ProfilePage = () => {
     if (!user) return;
     
     try {
+      const lifestyleObject = {
+        cleanliness: profile.lifestyle.cleanliness,
+        guests: profile.lifestyle.guests,
+        smoking: profile.lifestyle.smoking,
+        pets: profile.lifestyle.pets,
+        schedule: profile.lifestyle.schedule
+      };
+      
       const updateData = {
         companeros_count: profile.lookingFor.roommatesCount,
         hasApartment: profile.lookingFor.hasApartment,
         genderPreference: profile.lookingFor.genderPreference,
         smokingPreference: profile.lookingFor.smokingPreference,
         occupationPreference: profile.lookingFor.occupationPreference,
-        lifestyle: profile.lifestyle
+        lifestyle: lifestyleObject
       };
       
       console.log("Saving profile updates:", updateData);

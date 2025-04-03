@@ -27,13 +27,20 @@ const AdminPage = () => {
                 <div className="p-3 mt-2 bg-yellow-50 border border-yellow-200 rounded-md">
                   <p className="text-sm text-yellow-700">
                     <strong>Nota sobre valores vacíos:</strong> Si ves valores "No especificado" o "-", el usuario aún no ha completado ese campo en su perfil. 
-                    Estos pueden aparecer como cadenas vacías o valores nulos en la base de datos.
+                    Estos pueden aparecer como cadenas vacías, valores nulos o propiedades que faltan en la base de datos.
                   </p>
                 </div>
                 <div className="p-3 bg-blue-50 border border-blue-200 rounded-md">
                   <p className="text-sm text-blue-700">
-                    <strong>Información importante:</strong> Los datos del perfil se almacenan como cadenas de texto vacías ('') cuando no se proporcionan valores, 
-                    y se muestran como "No especificado" o "-" en la interfaz. Asegúrate de que los usuarios completen todos los campos obligatorios.
+                    <strong>Estructura de los datos:</strong> Algunos datos como preferencias de búsqueda y estilo de vida se almacenan 
+                    en diferentes columnas o como objetos JSON. La aplicación convierte estos datos a un formato legible.
+                  </p>
+                </div>
+                <div className="p-3 bg-green-50 border border-green-200 rounded-md">
+                  <p className="text-sm text-green-700">
+                    <strong>Sobre la estructura:</strong> Los datos de lifestyle se almacenan como un objeto JSON, mientras que otros 
+                    campos como hasApartment, genderPreference, etc. se almacenan como columnas separadas. Ambos se muestran de forma unificada 
+                    en la interfaz de usuario.
                   </p>
                 </div>
               </div>
