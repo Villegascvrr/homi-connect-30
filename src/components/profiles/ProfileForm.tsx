@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -112,8 +113,10 @@ const ProfileForm = () => {
             throw error;
           }
           
+          console.log("Raw profile data from Supabase:", profileData);
+          
           // Check if user is looking for apartment in Sevilla
-          setIsLookingForApartment(!!profileData.sevilla_zona);
+          setIsLookingForApartment(!!profileData.sevilla_zona && profileData.sevilla_zona !== 'no_busco');
           
           // Set form data with the fetched profile
           form.reset({
@@ -130,7 +133,7 @@ const ProfileForm = () => {
             companeros_count: profileData.companeros_count || "",
           });
           
-          console.log("Profile data loaded:", profileData);
+          console.log("Profile data loaded into form:", form.getValues());
         } catch (err) {
           console.error("Error loading profile data:", err);
           // Fallback to using just the auth user data
@@ -168,26 +171,37 @@ const ProfileForm = () => {
       const firstName = nameParts[0] || '';
       const lastName = nameParts.slice(1).join(' ') || '';
       
+      // Prepare data for update, ensuring empty strings instead of nulls
+      const updateData = {
+        first_name: firstName || '',
+        last_name: lastName || '',
+        bio: values.bio || '',
+        edad: values.age || '',
+        ubicacion: values.location || '',
+        universidad: values.university || '',
+        ocupacion: values.occupation || '',
+        profile_image: values.profileImage || '',
+        is_profile_active: values.isProfileActive,
+        sevilla_zona: values.sevilla_zona || '',
+        companeros_count: values.companeros_count || '',
+        updated_at: new Date().toISOString()
+      };
+      
+      console.log("Data being sent to Supabase:", updateData);
+      
       // Update the profile in Supabase
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('profiles')
-        .update({
-          first_name: firstName,
-          last_name: lastName,
-          bio: values.bio,
-          edad: values.age,
-          ubicacion: values.location,
-          universidad: values.university,
-          ocupacion: values.occupation,
-          profile_image: values.profileImage,
-          is_profile_active: values.isProfileActive,
-          sevilla_zona: values.sevilla_zona,
-          companeros_count: values.companeros_count,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', user.id);
+        .update(updateData)
+        .eq('id', user.id)
+        .select();
         
-      if (error) throw error;
+      if (error) {
+        console.error("Error from Supabase:", error);
+        throw error;
+      }
+      
+      console.log("Update successful, returned data:", data);
       
       toast({
         title: "Perfil actualizado",
@@ -210,7 +224,7 @@ const ProfileForm = () => {
   };
   
   const handleApartmentSearchToggle = (val: string) => {
-    setIsLookingForApartment(!!val);
+    setIsLookingForApartment(!!val && val !== 'no_busco');
   };
 
   if (isLoading) {

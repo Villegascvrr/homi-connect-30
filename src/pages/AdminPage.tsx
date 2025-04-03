@@ -19,14 +19,21 @@ const AdminPage = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">
-                Aquí puedes ver todos los perfiles de usuarios, incluyendo los que tienen campos incompletos.
-                Los perfiles marcados en amarillo tienen información faltante.
-              </p>
-              <div className="p-2 mt-2 bg-yellow-50 border border-yellow-200 rounded-md">
-                <p className="text-xs text-yellow-700">
-                  <strong>Nota:</strong> Si ves valores "nulos" o "No especificado", significa que el usuario no ha completado ese campo en su perfil.
+              <div className="space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  Aquí puedes ver todos los perfiles de usuarios, incluyendo los que tienen campos incompletos.
+                  Los perfiles marcados en amarillo tienen información faltante.
                 </p>
+                <div className="p-3 mt-2 bg-yellow-50 border border-yellow-200 rounded-md">
+                  <p className="text-sm text-yellow-700">
+                    <strong>Nota sobre valores vacíos:</strong> Si ves valores "No especificado", el usuario no ha completado ese campo en su perfil o se está guardando como una cadena vacía.
+                  </p>
+                </div>
+                <div className="p-3 bg-blue-50 border border-blue-200 rounded-md">
+                  <p className="text-sm text-blue-700">
+                    <strong>Información importante:</strong> Asegúrate de que los usuarios completen todos los campos obligatorios en su perfil para mejorar la visibilidad y emparejamiento en la plataforma.
+                  </p>
+                </div>
               </div>
             </CardContent>
           </Card>
