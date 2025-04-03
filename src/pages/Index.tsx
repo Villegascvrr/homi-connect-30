@@ -1,3 +1,4 @@
+
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
@@ -92,8 +93,6 @@ const Index = () => {
       <div className="pt-16">
         <Navbar />
       </div>
-      
-      {!user && <DemoBanner />}
       
       <main className="flex-grow">
         <Hero />
