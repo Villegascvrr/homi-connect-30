@@ -18,62 +18,59 @@ import SignInPage from "./pages/SignInPage";
 import RegisterPage from "./pages/RegisterPage";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
-import DemoBanner from "./components/layout/DemoBanner";
-import { useAuth } from "./context/AuthContext";
 
 const queryClient = new QueryClient();
 
-const AppContent = () => {
-  const { user } = useAuth();
-  
+const AppLayout = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <DevelopmentBanner />
-      {user && <DemoBanner />}
       <Navbar />
-      <Routes>
-        {/* Public routes */}
-        <Route path="/" element={<Index />} />
-        <Route path="/signin" element={<SignInPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        
-        {/* Routes with preview for non-authenticated users */}
-        <Route path="/matching" element={
-          <ProtectedRoute allowPreview={true}>
-            <MatchingPage isPreview={!queryClient.getQueryCache().findAll().some(
-              query => query.queryKey[0] === 'user'
-            )} />
-          </ProtectedRoute>
-        } />
-        <Route path="/profile" element={
-          <ProtectedRoute>
-            <ProfilePage />
-          </ProtectedRoute>
-        } />
-        <Route path="/profile/:id" element={
-          <ProtectedRoute>
-            <ProfileViewPage />
-          </ProtectedRoute>
-        } />
-        <Route path="/profile/create" element={
-          <ProtectedRoute>
-            <ProfileForm />
-          </ProtectedRoute>
-        } />
-        <Route path="/chat" element={
-          <ProtectedRoute allowPreview={true}>
-            <ChatPage isPreview={!queryClient.getQueryCache().findAll().some(
-              query => query.queryKey[0] === 'user'
-            )} />
-          </ProtectedRoute>
-        } />
-        
-        {/* Redirects */}
-        <Route path="" element={<Navigate to="/" replace />} />
-        
-        {/* Catch-all route */}
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      <div className="flex-1">
+        <Routes>
+          {/* Public routes */}
+          <Route path="/" element={<Index />} />
+          <Route path="/signin" element={<SignInPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          
+          {/* Routes with preview for non-authenticated users */}
+          <Route path="/matching" element={
+            <ProtectedRoute allowPreview={true}>
+              <MatchingPage isPreview={!queryClient.getQueryCache().findAll().some(
+                query => query.queryKey[0] === 'user'
+              )} />
+            </ProtectedRoute>
+          } />
+          <Route path="/profile" element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          } />
+          <Route path="/profile/:id" element={
+            <ProtectedRoute>
+              <ProfileViewPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/profile/create" element={
+            <ProtectedRoute>
+              <ProfileForm />
+            </ProtectedRoute>
+          } />
+          <Route path="/chat" element={
+            <ProtectedRoute allowPreview={true}>
+              <ChatPage isPreview={!queryClient.getQueryCache().findAll().some(
+                query => query.queryKey[0] === 'user'
+              )} />
+            </ProtectedRoute>
+          } />
+          
+          {/* Redirects */}
+          <Route path="" element={<Navigate to="/" replace />} />
+          
+          {/* Catch-all route */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </div>
     </div>
   );
 };
@@ -86,7 +83,7 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <ScrollToTop />
-          <AppContent />
+          <AppLayout />
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>

@@ -7,6 +7,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/context/AuthContext';
 import AuthButton from '@/components/auth/AuthButton';
+import DemoBanner from './DemoBanner';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);

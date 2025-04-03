@@ -1,6 +1,5 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import DemoBanner from "../layout/DemoBanner";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -17,7 +16,7 @@ const ProtectedRoute = ({
   const location = useLocation();
 
   if (loading) {
-    return <div className="flex justify-center items-center h-screen">
+    return <div className="flex justify-center items-center h-full py-10">
       <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
     </div>;
   }
@@ -33,14 +32,9 @@ const ProtectedRoute = ({
   }
 
   // If preview is allowed but no preview component is provided, 
-  // show the actual content with a demo banner
+  // show the actual content
   if (allowPreview) {
-    return (
-      <>
-        <DemoBanner />
-        {children}
-      </>
-    );
+    return <>{children}</>;
   }
 
   // Otherwise redirect to the login page
