@@ -1,4 +1,3 @@
-
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
@@ -14,61 +13,63 @@ import DemoBanner from '@/components/layout/DemoBanner';
 
 const Index = () => {
   const { user } = useAuth();
-  const featuredProfiles = [{
-    id: '1',
-    name: 'Elena',
-    age: 23,
-    location: 'Madrid',
-    bio: 'Estudiante de Arquitectura. Me gusta leer, el arte y las noches tranquilas. Busco piso cerca de la universidad.',
-    imgUrl: 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7',
-    tags: [{
-      id: 1,
-      name: 'Ordenada'
+  const featuredProfiles = [
+    {
+      id: '1',
+      name: 'Elena',
+      age: 23,
+      location: 'Madrid',
+      bio: 'Estudiante de Arquitectura. Me gusta leer, el arte y las noches tranquilas. Busco piso cerca de la universidad.',
+      imgUrl: 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7',
+      tags: [{
+        id: 1,
+        name: 'Ordenada'
+      }, {
+        id: 2,
+        name: 'Tranquila'
+      }, {
+        id: 3,
+        name: 'Estudiante'
+      }],
+      compatibility: 87
     }, {
-      id: 2,
-      name: 'Tranquila'
+      id: '2',
+      name: 'Carlos',
+      age: 25,
+      location: 'Barcelona',
+      bio: 'Desarrollador web, amante de la tecnología y los videojuegos. Busco un ambiente relajado donde pueda trabajar y descansar.',
+      imgUrl: 'https://images.unsplash.com/photo-1581092795360-fd1ca04f0952',
+      tags: [{
+        id: 1,
+        name: 'Tecnología'
+      }, {
+        id: 4,
+        name: 'Deportista'
+      }, {
+        id: 5,
+        name: 'Profesional'
+      }],
+      compatibility: 75
     }, {
-      id: 3,
-      name: 'Estudiante'
-    }],
-    compatibility: 87
-  }, {
-    id: '2',
-    name: 'Carlos',
-    age: 25,
-    location: 'Barcelona',
-    bio: 'Desarrollador web, amante de la tecnología y los videojuegos. Busco un ambiente relajado donde pueda trabajar y descansar.',
-    imgUrl: 'https://images.unsplash.com/photo-1581092795360-fd1ca04f0952',
-    tags: [{
-      id: 1,
-      name: 'Tecnología'
-    }, {
-      id: 4,
-      name: 'Deportista'
-    }, {
-      id: 5,
-      name: 'Profesional'
-    }],
-    compatibility: 75
-  }, {
-    id: '3',
-    name: 'Laura',
-    age: 22,
-    location: 'Valencia',
-    bio: 'Estudiante de Medicina. Me encanta cocinar y compartir momentos con amigos. Busco compañeros con intereses similares.',
-    imgUrl: 'https://images.unsplash.com/photo-1472396961693-142e6e269027',
-    tags: [{
-      id: 6,
-      name: 'Sociable'
-    }, {
-      id: 7,
-      name: 'Cocinera'
-    }, {
-      id: 3,
-      name: 'Estudiante'
-    }],
-    compatibility: 92
-  }];
+      id: '3',
+      name: 'Laura',
+      age: 22,
+      location: 'Valencia',
+      bio: 'Estudiante de Medicina. Me encanta cocinar y compartir momentos con amigos. Busco compañeros con intereses similares.',
+      imgUrl: 'https://images.unsplash.com/photo-1472396961693-142e6e269027',
+      tags: [{
+        id: 6,
+        name: 'Sociable'
+      }, {
+        id: 7,
+        name: 'Cocinera'
+      }, {
+        id: 3,
+        name: 'Estudiante'
+      }],
+      compatibility: 92
+    }
+  ];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -93,7 +94,7 @@ const Index = () => {
         <Navbar />
       </div>
       
-      {!user && <DemoBanner />}
+      {!user && <div className="pt-0"><DemoBanner /></div>}
       
       <main className="flex-grow">
         <Hero />
