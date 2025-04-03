@@ -34,11 +34,15 @@ const Hero = () => {
     }, 100);
   };
 
-  return <section style={{
-    paddingTop: '17px',
-    paddingBottom: '25px', // Increased from 5px to 25px for more consistent spacing
-    minHeight: showSignupForm ? 'auto' : '60vh'
-  }} className="relative overflow-visible py-[20px] my-0">
+  return (
+    <section 
+      style={{
+        paddingTop: '25px',
+        paddingBottom: '25px', 
+        minHeight: showSignupForm ? 'auto' : '60vh'
+      }} 
+      className="relative overflow-visible py-[20px] my-0"
+    >
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-0 left-0 w-64 md:w-96 h-64 md:h-96 bg-homi-ultraLightPurple rounded-full opacity-50 blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
         <div className="absolute bottom-0 right-0 w-64 md:w-96 h-64 md:h-96 bg-homi-ultraLightPurple rounded-full opacity-50 blur-3xl translate-x-1/3 translate-y-1/3"></div>
@@ -46,9 +50,9 @@ const Hero = () => {
 
       <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto text-center" style={{
-        paddingTop: '17px',
-        paddingBottom: '15px' // Increased from 5px to 15px for more consistent spacing
-      }}>
+          paddingTop: '25px',
+          paddingBottom: '15px'
+        }}>
           {!user ? (
             <>
               <div className="inline-block px-4 py-1.5 mb-3 md:mb-4 rounded-full bg-homi-ultraLightPurple text-homi-purple text-xs md:text-sm font-medium animate-pulse-soft">
@@ -117,7 +121,8 @@ const Hero = () => {
             </div>}
         </div>
       </div>
-    </section>;
+    </section>
+  );
 };
 
 export default Hero;

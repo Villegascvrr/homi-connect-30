@@ -14,8 +14,8 @@ const DemoBanner = ({
   const { user } = useAuth();
   
   return (
-    <div className="bg-homi-purple/80 text-white py-2 px-4 text-center sticky top-16 z-40">
-      <p className="text-sm font-medium">
+    <div className="bg-homi-purple/80 text-white py-2 px-4 text-center z-40 relative">
+      <p className="text-sm font-medium max-w-4xl mx-auto">
         {user 
           ? "¡Gracias por registrarte en Homi! Te avisaremos cuando la aplicación esté completamente funcional."
           : customMessage || message
