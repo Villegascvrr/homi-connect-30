@@ -56,11 +56,10 @@ const Navbar = () => {
       path: '/matching',
       dropdown: [
         { name: 'Buscar compañeros', path: '/matching' },
-        { name: 'Compatibilidad', path: '/compatibility' },
       ]
     },
-    { name: 'Perfil', path: '/profile' },
     { name: 'Chat', path: '/chat' },
+    { name: 'Perfil', path: '/profile' },
   ];
 
   // All links are now visible regardless of authentication status
