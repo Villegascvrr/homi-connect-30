@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -371,7 +370,7 @@ const ProfileForm = () => {
               name="sevilla_zona"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>¿En qué zona de Sevilla estás buscando piso?</FormLabel>
+                  <FormLabel>¿En qué zona de Sevilla estás buscando piso o compañeros?</FormLabel>
                   <Select 
                     onValueChange={(value) => {
                       field.onChange(value);
@@ -385,7 +384,7 @@ const ProfileForm = () => {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="">No estoy buscando piso en Sevilla</SelectItem>
+                      <SelectItem value="no_busco">No estoy buscando piso ni compañeros en Sevilla</SelectItem>
                       {sevillaZones.map((zone) => (
                         <SelectItem key={zone} value={zone}>{zone}</SelectItem>
                       ))}
@@ -429,7 +428,7 @@ const ProfileForm = () => {
             
             {!isLookingForApartment && (
               <p className="text-sm text-muted-foreground">
-                Indica si estás buscando piso en Sevilla para poder mostrarte compañeros compatibles.
+                Indica si estás buscando piso o compañeros en Sevilla para poder mostrarte perfiles compatibles.
               </p>
             )}
           </CardContent>
