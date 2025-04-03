@@ -6,6 +6,7 @@ import Footer from '@/components/layout/Footer';
 import ChatList from '@/components/chat/ChatList';
 import ChatWindow from '@/components/chat/ChatWindow';
 import DemoBanner from '@/components/layout/DemoBanner';
+import { useAuth } from '@/context/AuthContext';
 
 // Define a mock chat match for demo purposes
 const mockChatMatches = [
@@ -57,6 +58,7 @@ interface ChatPageProps {
 
 const ChatPage = ({ isPreview = false }: ChatPageProps) => {
   const [selectedChatId, setSelectedChatId] = useState<string | null>(mockChatMatches[0]?.id || null);
+  const { user } = useAuth();
   
   const handleSelectChat = (id: string) => {
     setSelectedChatId(id);
@@ -69,9 +71,16 @@ const ChatPage = ({ isPreview = false }: ChatPageProps) => {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       
-      {isPreview && <DemoBanner />}
+      {isPreview && (
+        <DemoBanner 
+          customMessage={user 
+            ? "Estás viendo una demostración de la función de chat" 
+            : "Estás viendo una demostración de la función de chat"
+          }
+        />
+      )}
       
-      <main className="flex-grow flex">
+      <main className="flex-grow flex flex-col pt-0">
         <div className="flex w-full h-[calc(100vh-4rem)]">
           <div className="w-full sm:w-1/3 md:w-1/4 border-r">
             <ChatList 

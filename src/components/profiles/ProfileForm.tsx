@@ -1,10 +1,11 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { useToast } from "@/hooks/use-toast"
 import { useIsMobile } from "@/hooks/use-mobile"
+import { useAuth } from "@/context/AuthContext"
 
 import {
   Form,
@@ -19,6 +20,7 @@ import { Button } from "@/components/ui/button"
 import { FormImageUpload } from "@/components/ui/form-image-upload"
 import ProfileStatusToggle from "@/components/profiles/ProfileStatusToggle"
 import { Separator } from "@/components/ui/separator"
+import { Textarea } from "@/components/ui/textarea"
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -27,6 +29,11 @@ const formSchema = z.object({
   email: z.string().email({
     message: "Please enter a valid email address.",
   }),
+  bio: z.string().optional(),
+  age: z.string().optional(),
+  location: z.string().optional(),
+  university: z.string().optional(),
+  occupation: z.string().optional(),
   profileImage: z.string().optional(),
   galleryImages: z.array(z.string()).optional(),
   isProfileActive: z.boolean().default(true),
@@ -35,18 +42,51 @@ const formSchema = z.object({
 const ProfileForm = () => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const isMobile = useIsMobile();
+  const { user } = useAuth();
   
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
       email: "",
+      bio: "",
+      age: "",
+      location: "",
+      university: "",
+      occupation: "",
       profileImage: "",
       galleryImages: [] as string[],
       isProfileActive: true,
     },
   });
+
+  // Fetch user profile data when component mounts
+  useEffect(() => {
+    if (user) {
+      // In a real app, you would fetch the user's profile from the database
+      // For now, we'll use the user object from the auth context
+      setIsLoading(true);
+      
+      // Simulate API call with timeout
+      setTimeout(() => {
+        form.reset({
+          name: user.user_metadata?.full_name || "",
+          email: user.email || "",
+          bio: user.user_metadata?.bio || "",
+          age: user.user_metadata?.age || "",
+          location: user.user_metadata?.location || "",
+          university: user.user_metadata?.university || "",
+          occupation: user.user_metadata?.occupation || "",
+          profileImage: user.user_metadata?.avatar_url || "",
+          galleryImages: user.user_metadata?.gallery_images || [],
+          isProfileActive: user.user_metadata?.is_profile_active !== false,
+        });
+        setIsLoading(false);
+      }, 500);
+    }
+  }, [user, form]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
@@ -65,6 +105,17 @@ const ProfileForm = () => {
   const handleProfileStatusToggle = (active: boolean) => {
     form.setValue('isProfileActive', active);
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-[400px] flex items-center justify-center">
+        <div className="animate-pulse space-y-4">
+          <div className="h-8 w-64 bg-gray-200 rounded mb-4"></div>
+          <div className="h-4 w-44 bg-gray-200 rounded"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <Form {...form}>
@@ -120,6 +171,80 @@ const ProfileForm = () => {
                   </FormItem>
                 )}
               />
+              
+              <FormField
+                control={form.control}
+                name="age"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Edad</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Tu edad" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="location"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Ubicación</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Tu ciudad" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="university"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Universidad</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Tu universidad" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="occupation"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Ocupación</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Tu ocupación" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <div className="col-span-full">
+                <FormField
+                  control={form.control}
+                  name="bio"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Bio</FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          placeholder="Cuéntanos sobre ti..." 
+                          className="min-h-[100px]" 
+                          {...field} 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
             </div>
           </div>
         </div>
