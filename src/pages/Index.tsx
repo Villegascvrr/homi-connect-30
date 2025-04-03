@@ -94,7 +94,11 @@ const Index = () => {
         <Navbar />
       </div>
       
-      {!user && <div className="pt-0"><DemoBanner /></div>}
+      {!user && (
+        <div className="pt-16">
+          <DemoBanner />
+        </div>
+      )}
       
       <main className="flex-grow">
         <Hero />
