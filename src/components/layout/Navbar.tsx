@@ -50,7 +50,6 @@ const Navbar = () => {
 
   const navLinks = [
     { name: 'Inicio', path: '/' },
-    { name: 'Cómo funciona', path: '/how-it-works' },
     { name: 'Encuentra compañeros', path: '/matching' },
     { name: 'Chat', path: '/chat' },
     { name: 'Perfil', path: '/profile' },

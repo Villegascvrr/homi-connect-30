@@ -15,7 +15,6 @@ import ChatPage from "./pages/ChatPage";
 import SignInPage from "./pages/SignInPage";
 import RegisterPage from "./pages/RegisterPage";
 import NotFound from "./pages/NotFound";
-import HowItWorksPage from "./pages/HowItWorksPage";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -33,7 +32,6 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/signin" element={<SignInPage />} />
             <Route path="/register" element={<RegisterPage />} />
-            <Route path="/how-it-works" element={<HowItWorksPage />} />
             
             {/* Routes with preview for non-authenticated users */}
             <Route path="/matching" element={
