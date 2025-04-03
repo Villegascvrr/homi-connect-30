@@ -136,8 +136,8 @@ const ChatWindow = ({ chat }: ChatWindowProps) => {
         </div>
       </div>
       
-      {/* Messages area - increased height */}
-      <div className="flex-1 py-2 px-3 overflow-y-auto">
+      {/* Messages area - adjusted height to be smaller */}
+      <div className="flex-1 py-2 px-3 overflow-y-auto max-h-[calc(100vh-14rem)]">
         <div className="space-y-2">
           {messages.map((message) => (
             <div 
@@ -169,8 +169,8 @@ const ChatWindow = ({ chat }: ChatWindowProps) => {
         </div>
       </div>
       
-      {/* Message input - reduced padding and height */}
-      <div className="py-2 px-3 border-t border-border">
+      {/* Message input - increased padding to make it more prominent */}
+      <div className="py-3 px-3 border-t border-border mt-auto">
         <div className="flex items-center gap-1">
           <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
             <Smile size={16} />
@@ -183,7 +183,7 @@ const ChatWindow = ({ chat }: ChatWindowProps) => {
             <input
               type="text"
               placeholder="Escribe un mensaje..."
-              className="w-full p-2 pr-10 rounded-full border border-border bg-background focus:outline-none focus:ring-2 focus:ring-homi-purple text-sm"
+              className="w-full p-2.5 pr-10 rounded-full border border-border bg-background focus:outline-none focus:ring-2 focus:ring-homi-purple text-sm"
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               onKeyDown={(e) => {
