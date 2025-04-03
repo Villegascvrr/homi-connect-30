@@ -26,12 +26,14 @@ const AdminPage = () => {
                 </p>
                 <div className="p-3 mt-2 bg-yellow-50 border border-yellow-200 rounded-md">
                   <p className="text-sm text-yellow-700">
-                    <strong>Nota sobre valores vacíos:</strong> Si ves valores "No especificado", el usuario no ha completado ese campo en su perfil o se está guardando como una cadena vacía.
+                    <strong>Nota sobre valores vacíos:</strong> Si ves valores "No especificado" o "-", el usuario aún no ha completado ese campo en su perfil. 
+                    Estos pueden aparecer como cadenas vacías o valores nulos en la base de datos.
                   </p>
                 </div>
                 <div className="p-3 bg-blue-50 border border-blue-200 rounded-md">
                   <p className="text-sm text-blue-700">
-                    <strong>Información importante:</strong> Asegúrate de que los usuarios completen todos los campos obligatorios en su perfil para mejorar la visibilidad y emparejamiento en la plataforma.
+                    <strong>Información importante:</strong> Los datos del perfil se almacenan como cadenas de texto vacías ('') cuando no se proporcionan valores, 
+                    y se muestran como "No especificado" o "-" en la interfaz. Asegúrate de que los usuarios completen todos los campos obligatorios.
                   </p>
                 </div>
               </div>

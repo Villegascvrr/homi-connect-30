@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { useState, useRef, ChangeEvent } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -19,6 +18,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Slider } from '@/components/ui/slider';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAuth } from '@/context/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 
 const ProfilePage = () => {
   const [liked, setLiked] = useState(false);
@@ -26,65 +27,131 @@ const ProfilePage = () => {
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [activeGalleryIndex, setActiveGalleryIndex] = useState(0);
   const [isEditingLookingFor, setIsEditingLookingFor] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const isMobile = useIsMobile();
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
   const qrCodeRef = useRef<HTMLDivElement>(null);
   const profileCardRef = useRef<HTMLDivElement>(null);
-  const [profile, setProfile] = useState({
+  const { user } = useAuth();
+  
+  const defaultProfile = {
     id: '1',
-    name: 'Elena García',
-    username: 'elena_garcia',
-    age: 23,
-    location: 'Madrid',
-    university: 'Universidad Complutense de Madrid',
-    occupation: 'Estudiante de Arquitectura',
-    bio: 'Soy una estudiante apasionada por el diseño y la arquitectura. Me gusta leer, visitar museos y disfrutar de noches tranquilas en casa. Soy ordenada y respetuosa con los espacios compartidos. Busco un piso cerca de la universidad con personas afines a mi estilo de vida.',
+    name: 'Usuario',
+    username: 'usuario',
+    age: 0,
+    location: '-',
+    university: '-',
+    occupation: '-',
+    bio: '-',
     imgUrl: 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7',
-    galleryImgs: ['https://images.unsplash.com/photo-1649972904349-6e44c42644a7', 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158', 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158'],
-    tags: [{
-      id: 1,
-      name: 'Ordenada'
-    }, {
-      id: 2,
-      name: 'Tranquila'
-    }, {
-      id: 3,
-      name: 'Estudiante'
-    }, {
-      id: 4,
-      name: 'Lectora'
-    }, {
-      id: 5,
-      name: 'Madrugadora'
-    }],
-    verified: true,
+    galleryImgs: ['https://images.unsplash.com/photo-1649972904349-6e44c42644a7'],
+    tags: [],
+    verified: false,
     preferences: {
-      budget: '€400-€600',
-      location: 'Cerca de Universidad Complutense',
-      roommates: '2-3 personas',
-      moveInDate: 'Septiembre 2023'
+      budget: '-',
+      location: '-',
+      roommates: '-',
+      moveInDate: '-'
     },
     lifestyle: {
-      cleanliness: 'Alta',
-      guests: 'Ocasionalmente',
-      smoking: 'No',
-      pets: 'Me gustan, pero no tengo',
-      schedule: 'Madrugadora'
+      cleanliness: '-',
+      guests: '-',
+      smoking: '-',
+      pets: '-',
+      schedule: '-'
     },
     lookingFor: {
-      hasApartment: true,
-      roommatesCount: "2",
-      genderPreference: "mujeres",
+      hasApartment: false,
+      roommatesCount: "0",
+      genderPreference: "cualquiera",
       smokingPreference: "no",
-      occupationPreference: "estudiantes",
+      occupationPreference: "cualquiera",
       minAge: "18",
-      maxAge: "25",
+      maxAge: "99",
       budgetRange: [400, 600],
       exactPrice: 450
     }
-  });
+  };
+  
+  const [profile, setProfile] = useState(defaultProfile);
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (!user) return;
+      
+      setIsLoading(true);
+      
+      try {
+        console.log("Fetching profile for user ID:", user.id);
+        
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+          
+        if (error) {
+          console.error("Error fetching profile:", error);
+          throw error;
+        }
+        
+        console.log("Raw profile data:", data);
+        
+        const userProfile = {
+          id: user.id,
+          name: `${data.first_name || ''} ${data.last_name || ''}`.trim() || 'Usuario',
+          username: data.username || 'usuario',
+          age: data.edad ? parseInt(data.edad) : 0,
+          location: data.ubicacion || '-',
+          university: data.universidad || '-',
+          occupation: data.ocupacion || '-',
+          bio: data.bio || '-',
+          imgUrl: data.profile_image || defaultProfile.imgUrl,
+          galleryImgs: data.gallery_images?.length ? data.gallery_images : [defaultProfile.imgUrl],
+          tags: Array.isArray(data.interests) ? data.interests.map((tag, index) => ({ id: index + 1, name: tag })) : [],
+          verified: true,
+          preferences: {
+            budget: `€${data.lookingFor?.budgetRange?.[0] || 400}-€${data.lookingFor?.budgetRange?.[1] || 600}`,
+            location: data.sevilla_zona || '-',
+            roommates: data.companeros_count || '-',
+            moveInDate: '-'
+          },
+          lifestyle: {
+            cleanliness: data.lifestyle?.cleanliness || '-',
+            guests: data.lifestyle?.guests || '-',
+            smoking: data.lifestyle?.smoking || '-',
+            pets: data.lifestyle?.pets || '-',
+            schedule: data.lifestyle?.schedule || '-'
+          },
+          lookingFor: {
+            hasApartment: data.hasApartment || false,
+            roommatesCount: data.companeros_count || "0",
+            genderPreference: data.genderPreference || "cualquiera",
+            smokingPreference: data.smokingPreference || "no",
+            occupationPreference: data.occupationPreference || "cualquiera",
+            minAge: "18",
+            maxAge: "99",
+            budgetRange: [400, 600],
+            exactPrice: 450
+          }
+        };
+        
+        console.log("Processed profile data:", userProfile);
+        setProfile(userProfile);
+      } catch (error) {
+        console.error("Error loading profile:", error);
+        toast({
+          title: "Error al cargar perfil",
+          description: "No se pudo cargar tu información de perfil",
+          variant: "destructive"
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchUserProfile();
+  }, [user, toast]);
 
   const handleLike = () => {
     setLiked(!liked);
@@ -231,12 +298,42 @@ const ProfilePage = () => {
     setIsEditingLookingFor(true);
   };
 
-  const handleSaveLookingFor = () => {
-    setIsEditingLookingFor(false);
-    toast({
-      title: 'Preferencias guardadas',
-      description: 'Tus preferencias de búsqueda han sido actualizadas'
-    });
+  const handleSaveLookingFor = async () => {
+    if (!user) return;
+    
+    try {
+      const updateData = {
+        companeros_count: profile.lookingFor.roommatesCount,
+        hasApartment: profile.lookingFor.hasApartment,
+        genderPreference: profile.lookingFor.genderPreference,
+        smokingPreference: profile.lookingFor.smokingPreference,
+        occupationPreference: profile.lookingFor.occupationPreference,
+        lifestyle: profile.lifestyle
+      };
+      
+      console.log("Saving profile updates:", updateData);
+      
+      const { error } = await supabase
+        .from('profiles')
+        .update(updateData)
+        .eq('id', user.id);
+        
+      if (error) throw error;
+      
+      setIsEditingLookingFor(false);
+      
+      toast({
+        title: 'Preferencias guardadas',
+        description: 'Tus preferencias de búsqueda han sido actualizadas'
+      });
+    } catch (error) {
+      console.error("Error saving preferences:", error);
+      toast({
+        title: 'Error al guardar',
+        description: 'No se pudieron guardar tus preferencias',
+        variant: 'destructive'
+      });
+    }
   };
 
   const handleCancelEditLookingFor = () => {
@@ -253,6 +350,21 @@ const ProfilePage = () => {
     }));
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <main className="flex-grow pt-20 md:pt-24 pb-16 md:pb-20 flex items-center justify-center">
+          <div className="animate-pulse space-y-4">
+            <div className="h-8 w-64 bg-gray-200 rounded mb-4"></div>
+            <div className="h-4 w-44 bg-gray-200 rounded"></div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -262,9 +374,7 @@ const ProfilePage = () => {
           <div className="max-w-4xl mx-auto">
             <div className="glass-card overflow-hidden">
               <div className="relative p-6 md:p-8">
-                {/* Profile Header with improved layout */}
                 <div className="flex flex-col md:flex-row md:items-center gap-6">
-                  {/* Avatar section */}
                   <div className="relative">
                     <Avatar className={`${isMobile ? 'w-24 h-24' : 'w-32 h-32'} border-4 border-white shadow-lg`}>
                       <AvatarImage src={profile.imgUrl} alt={profile.name} />
@@ -277,7 +387,6 @@ const ProfilePage = () => {
                     )}
                   </div>
                   
-                  {/* Profile info section */}
                   <div className="flex-grow space-y-2">
                     <h1 className="text-xl md:text-3xl font-bold flex items-center gap-2">
                       {profile.name}, {profile.age}
@@ -300,14 +409,12 @@ const ProfilePage = () => {
                     </div>
                   </div>
                   
-                  {/* Action buttons section - top right */}
                   <div className="absolute top-6 right-6 flex flex-col gap-3">
                     <Link to="/profile/edit">
                       <Button variant="outline" size="sm" className="rounded-full bg-white/80 hover:bg-white">
                         {isMobile ? <Pencil size={16} /> : <><Pencil size={16} className="mr-2" />Editar Perfil</>}
                       </Button>
                     </Link>
-                    {/* Action buttons moved to bottom on mobile */}
                     {!isMobile && (
                       <div className="flex flex-col gap-2 mt-2">
                         <Button 
@@ -336,7 +443,6 @@ const ProfilePage = () => {
                   </div>
                 </div>
                 
-                {/* Mobile action buttons - below profile info */}
                 {isMobile && (
                   <div className="flex justify-between mt-6 pt-4 border-t border-gray-100">
                     <Button 

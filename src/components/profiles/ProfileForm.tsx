@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -417,8 +416,7 @@ const ProfileForm = () => {
                   <FormItem>
                     <FormLabel className="flex items-center gap-2">
                       <Users className="text-homi-purple" size={18} />
-                      ¿Cuántos compañeros de piso buscas?
-                    </FormLabel>
+                      ¿Cuántos compañeros de piso buscas?</FormLabel>
                     <Select 
                       onValueChange={field.onChange}
                       defaultValue={field.value}
