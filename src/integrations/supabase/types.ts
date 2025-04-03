@@ -12,6 +12,7 @@ export type Database = {
       profiles: {
         Row: {
           bio: string | null
+          companeros_count: string | null
           created_at: string
           edad: string | null
           email: string
@@ -24,6 +25,7 @@ export type Database = {
           lifestyle: Json | null
           ocupacion: string | null
           profile_image: string | null
+          sevilla_zona: string | null
           ubicacion: string | null
           universidad: string | null
           updated_at: string
@@ -31,6 +33,7 @@ export type Database = {
         }
         Insert: {
           bio?: string | null
+          companeros_count?: string | null
           created_at?: string
           edad?: string | null
           email: string
@@ -43,6 +46,7 @@ export type Database = {
           lifestyle?: Json | null
           ocupacion?: string | null
           profile_image?: string | null
+          sevilla_zona?: string | null
           ubicacion?: string | null
           universidad?: string | null
           updated_at?: string
@@ -50,6 +54,7 @@ export type Database = {
         }
         Update: {
           bio?: string | null
+          companeros_count?: string | null
           created_at?: string
           edad?: string | null
           email?: string
@@ -62,6 +67,7 @@ export type Database = {
           lifestyle?: Json | null
           ocupacion?: string | null
           profile_image?: string | null
+          sevilla_zona?: string | null
           ubicacion?: string | null
           universidad?: string | null
           updated_at?: string

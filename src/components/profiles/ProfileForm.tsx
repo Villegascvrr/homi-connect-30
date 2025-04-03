@@ -1,12 +1,13 @@
 
 import React, { useState, useEffect } from 'react';
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-import { useToast } from "@/hooks/use-toast"
-import { useIsMobile } from "@/hooks/use-mobile"
-import { useAuth } from "@/context/AuthContext"
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { useToast } from "@/hooks/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { MapPin, Users } from "lucide-react";
 
 import {
   Form,
@@ -15,13 +16,21 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { FormImageUpload } from "@/components/ui/form-image-upload"
-import ProfileStatusToggle from "@/components/profiles/ProfileStatusToggle"
-import { Separator } from "@/components/ui/separator"
-import { Textarea } from "@/components/ui/textarea"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { FormImageUpload } from "@/components/ui/form-image-upload";
+import ProfileStatusToggle from "@/components/profiles/ProfileStatusToggle";
+import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -36,14 +45,35 @@ const formSchema = z.object({
   university: z.string().optional(),
   occupation: z.string().optional(),
   profileImage: z.string().optional(),
-  galleryImages: z.array(z.string()).optional(),
   isProfileActive: z.boolean().default(true),
-})
+  sevilla_zona: z.string().optional(),
+  companeros_count: z.string().optional(),
+});
+
+// Zonas de Sevilla
+const sevillaZones = [
+  "Casco Antiguo",
+  "Triana",
+  "Los Remedios",
+  "Nervión",
+  "San Pablo - Santa Justa",
+  "Este - Alcosa - Torreblanca",
+  "Cerro - Amate",
+  "Sur",
+  "Bellavista - La Palmera",
+  "Macarena",
+  "Norte",
+  "Otro/Alrededores"
+];
+
+// Número de compañeros options
+const companeroOptions = ["1", "2", "3", "4", "5+"];
 
 const ProfileForm = () => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLookingForApartment, setIsLookingForApartment] = useState(false);
   const isMobile = useIsMobile();
   const { user } = useAuth();
   
@@ -58,8 +88,9 @@ const ProfileForm = () => {
       university: "",
       occupation: "",
       profileImage: "",
-      galleryImages: [] as string[],
       isProfileActive: true,
+      sevilla_zona: "",
+      companeros_count: "",
     },
   });
 
@@ -82,6 +113,9 @@ const ProfileForm = () => {
             throw error;
           }
           
+          // Check if user is looking for apartment in Sevilla
+          setIsLookingForApartment(!!profileData.sevilla_zona);
+          
           // Set form data with the fetched profile
           form.reset({
             name: `${profileData.first_name || ''} ${profileData.last_name || ''}`.trim() || user.user_metadata?.full_name || "",
@@ -92,8 +126,9 @@ const ProfileForm = () => {
             university: profileData.universidad || "",
             occupation: profileData.ocupacion || "",
             profileImage: profileData.profile_image || user.user_metadata?.avatar_url || "",
-            galleryImages: profileData.gallery_images || [],
             isProfileActive: profileData.is_profile_active !== false,
+            sevilla_zona: profileData.sevilla_zona || "",
+            companeros_count: profileData.companeros_count || "",
           });
           
           console.log("Profile data loaded:", profileData);
@@ -109,8 +144,9 @@ const ProfileForm = () => {
             university: "",
             occupation: "",
             profileImage: user.user_metadata?.avatar_url || "",
-            galleryImages: [],
             isProfileActive: true,
+            sevilla_zona: "",
+            companeros_count: "",
           });
         } finally {
           setIsLoading(false);
@@ -145,8 +181,9 @@ const ProfileForm = () => {
           universidad: values.university,
           ocupacion: values.occupation,
           profile_image: values.profileImage,
-          gallery_images: values.galleryImages,
           is_profile_active: values.isProfileActive,
+          sevilla_zona: values.sevilla_zona,
+          companeros_count: values.companeros_count,
           updated_at: new Date().toISOString()
         })
         .eq('id', user.id);
@@ -171,6 +208,10 @@ const ProfileForm = () => {
 
   const handleProfileStatusToggle = (active: boolean) => {
     form.setValue('isProfileActive', active);
+  };
+  
+  const handleApartmentSearchToggle = (val: string) => {
+    setIsLookingForApartment(!!val);
   };
 
   if (isLoading) {
@@ -316,15 +357,83 @@ const ProfileForm = () => {
           </div>
         </div>
 
-        {/* Gallery section - improved mobile layout */}
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Galería de fotos</h2>
-          <FormImageUpload
-            name="galleryImages"
-            multiple={true}
-            description="Comparte fotos de ti o de tus espacios para que otros usuarios te conozcan mejor"
-          />
-        </div>
+        {/* Búsqueda de piso en Sevilla */}
+        <Card className="border-homi-purple/30">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-xl font-semibold flex items-center gap-2">
+              <MapPin className="text-homi-purple" size={20} />
+              Búsqueda de piso en Sevilla
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <FormField
+              control={form.control}
+              name="sevilla_zona"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>¿En qué zona de Sevilla estás buscando piso?</FormLabel>
+                  <Select 
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                      handleApartmentSearchToggle(value);
+                    }}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecciona una zona" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="">No estoy buscando piso en Sevilla</SelectItem>
+                      {sevillaZones.map((zone) => (
+                        <SelectItem key={zone} value={zone}>{zone}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            {isLookingForApartment && (
+              <FormField
+                control={form.control}
+                name="companeros_count"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2">
+                      <Users className="text-homi-purple" size={18} />
+                      ¿Cuántos compañeros de piso buscas?
+                    </FormLabel>
+                    <Select 
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecciona un número" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {companeroOptions.map((option) => (
+                          <SelectItem key={option} value={option}>{option}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+            
+            {!isLookingForApartment && (
+              <p className="text-sm text-muted-foreground">
+                Indica si estás buscando piso en Sevilla para poder mostrarte compañeros compatibles.
+              </p>
+            )}
+          </CardContent>
+        </Card>
 
         <Button 
           type="submit" 
