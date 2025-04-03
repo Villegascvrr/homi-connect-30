@@ -1,5 +1,6 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import DemoBanner from "../layout/DemoBanner";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -36,11 +37,7 @@ const ProtectedRoute = ({
   if (allowPreview) {
     return (
       <>
-        <div className="bg-homi-purple/80 text-white py-2 px-4 text-center sticky top-16 z-40">
-          <p className="text-sm">
-            Estás viendo una demostración. <a href="/register" className="underline font-bold">Regístrate</a> para acceder a todas las funciones.
-          </p>
-        </div>
+        <DemoBanner />
         {children}
       </>
     );

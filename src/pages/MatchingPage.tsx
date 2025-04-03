@@ -13,6 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Filter, UserRound, LayoutGrid, SwatchBook, Heart, Users, Settings } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Link } from 'react-router-dom';
+import DemoBanner from '@/components/layout/DemoBanner';
 
 // Make the mock profile type explicit so we can match it
 type MockProfile = {
@@ -38,6 +39,7 @@ type MockProfile = {
     max: number;
   };
 };
+
 const mockProfiles: MockProfile[] = [{
   id: 1,
   name: "Laura García",
@@ -127,6 +129,7 @@ const mockProfiles: MockProfile[] = [{
     max: 700
   }
 }];
+
 const formatProfileForMatchCard = (profile: any) => {
   const tags = profile.interests.map((interest: string, index: number) => ({
     id: index + 1,
@@ -148,6 +151,7 @@ const formatProfileForMatchCard = (profile: any) => {
     onView: () => {}
   };
 };
+
 interface FilterValues {
   presupuesto?: [number, number];
   ubicacion?: string;
@@ -163,7 +167,6 @@ interface FilterValues {
   mascotas?: string;
 }
 
-// Updated interface to explicitly make all properties required
 interface Lifestyle {
   cleanliness: string;
   noise: string;
@@ -172,7 +175,6 @@ interface Lifestyle {
   smoking: string;
 }
 
-// Empty lifestyle with default values
 const emptyLifestyle: Lifestyle = {
   cleanliness: "",
   noise: "",
@@ -181,7 +183,6 @@ const emptyLifestyle: Lifestyle = {
   smoking: ""
 };
 
-// Make Profile interface compatible with MockProfile
 interface Profile {
   id: number;
   name: string;
@@ -272,6 +273,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
       name: "fotografía"
     }]
   }]);
+
   React.useEffect(() => {
     if (isMobile) {
       setViewMode('swipe');
@@ -280,7 +282,6 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
     }
   }, [isMobile]);
 
-  // Handle actions based on whether we're in preview mode
   const handleAction = (action: () => void, message: string) => {
     if (isPreview) {
       toast({
@@ -332,7 +333,6 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
     );
   };
 
-  // Calculate similarity score between a profile and filters
   const calculateSimilarityScore = (profile: MockProfile, filters: FilterValues) => {
     let score = 0;
     let possiblePoints = 0;
@@ -350,9 +350,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
         max: maxProfile
       } = profile.budget;
 
-      // Check for budget overlap
       if (maxProfile >= minFilter && minProfile <= maxFilter) {
-        // Calculate overlap percentage
         const overlapStart = Math.max(minFilter, minProfile);
         const overlapEnd = Math.min(maxFilter, maxProfile);
         const overlapSize = overlapEnd - overlapStart;
@@ -406,7 +404,6 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
       score += Math.round(15 * matchPercentage);
     }
 
-    // More specific filters
     if (filters.nivelLimpieza && profile.lifestyle) {
       possiblePoints += 5;
       if (filters.nivelLimpieza === 'alta' && profile.lifestyle.cleanliness === "Muy ordenada" || filters.nivelLimpieza === 'media' && profile.lifestyle.cleanliness === "Normal") {
@@ -426,9 +423,9 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
       }
     }
 
-    // Calculate final percentage (avoid division by zero)
     return possiblePoints > 0 ? score / possiblePoints * 100 : 0;
   };
+
   const applyFiltersAndSearch = (query: string, filters: FilterValues | null) => {
     let exactMatches: MockProfile[] = [];
     let similarProfiles: {
@@ -436,18 +433,18 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
       score: number;
     }[] = [];
     let results = [...mockProfiles];
+
     if (query.trim()) {
       const lowerCaseQuery = query.toLowerCase();
       results = results.filter(profile => profile.name.toLowerCase().includes(lowerCaseQuery) || profile.username.toLowerCase().includes(lowerCaseQuery) || profile.bio.toLowerCase().includes(lowerCaseQuery) || profile.location.toLowerCase().includes(lowerCaseQuery) || profile.occupation.toLowerCase().includes(lowerCaseQuery));
     }
+
     if (filters) {
-      // Store all profiles with similarity scores
       similarProfiles = results.map(profile => ({
         profile,
         score: calculateSimilarityScore(profile, filters)
       }));
 
-      // Apply exact filters to find exact matches
       let filteredResults = [...results];
       if (filters.ubicacion) {
         filteredResults = filteredResults.filter(profile => profile.location === filters.ubicacion);
@@ -538,15 +535,10 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
       }
       exactMatches = filteredResults;
 
-      // If no exact matches, use similar profiles
       if (exactMatches.length === 0 && similarProfiles.length > 0) {
-        // Sort by similarity score (highest first)
         similarProfiles.sort((a, b) => b.score - a.score);
-
-        // Filter profiles with at least 30% similarity
         const similarEnough = similarProfiles.filter(item => item.score >= 30);
         if (similarEnough.length > 0) {
-          // Extract just the profiles
           results = similarEnough.map(item => item.profile);
           toast({
             title: "No hay coincidencias exactas",
@@ -557,10 +549,10 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
           results = [];
         }
       } else {
-        // Use exact matches
         results = exactMatches;
       }
     }
+
     setOriginalFilteredProfiles(results);
     setFilteredProfiles(results);
     if (activeFilters !== null || query.trim()) {
@@ -571,6 +563,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
       });
     }
   };
+
   const handleLike = (id: string) => {
     handleAction(
       () => {
@@ -680,13 +673,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       
-      {isPreview && (
-        <div className="bg-homi-purple/80 text-white py-2 px-4 text-center sticky top-16 z-40">
-          <p className="text-sm">
-            Estás viendo una demostración de cómo funciona Homi. <Link to="/register" className="underline font-bold">Regístrate</Link> para acceder a todas las funciones.
-          </p>
-        </div>
-      )}
+      {isPreview && <DemoBanner />}
       
       <main className="flex-grow pt-10 pb-12 bg-transparent">
         <div className="container mx-auto px-4">
@@ -707,21 +694,26 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                 <TabsTrigger value="matches" className="flex items-center gap-2">
                   <Heart size={16} />
                   <span className="hidden sm:inline">Mis Matches</span>
-                  {matches.length > 0 && <span className="ml-1 px-1.5 py-0.5 text-xs rounded-full bg-homi-purple/20">
+                  {matches.length > 0 && (
+                    <span className="ml-1 px-1.5 py-0.5 text-xs rounded-full bg-homi-purple/20">
                       {matches.length}
-                    </span>}
+                    </span>
+                  )}
                 </TabsTrigger>
               </TabsList>
               
-              {activeTab === 'discover' && <div className="flex gap-2">
-                  {isMobile && <div className="flex items-center mr-auto">
+              {activeTab === 'discover' && (
+                <div className="flex gap-2">
+                  {isMobile && (
+                    <div className="flex items-center mr-auto">
                       <Button variant="ghost" size="sm" className={`rounded-l-full ${viewMode === 'grid' ? 'bg-muted' : ''}`} onClick={() => setViewMode('grid')}>
                         <LayoutGrid size={18} />
                       </Button>
                       <Button variant="ghost" size="sm" className={`rounded-r-full ${viewMode === 'swipe' ? 'bg-muted' : ''}`} onClick={() => setViewMode('swipe')}>
                         <SwatchBook size={18} />
                       </Button>
-                    </div>}
+                    </div>
+                  )}
                   
                   <Popover open={openSearchFilters} onOpenChange={setOpenSearchFilters}>
                     <PopoverTrigger asChild>
@@ -732,10 +724,15 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="end" sideOffset={5}>
                       <div className="overflow-auto max-h-[90vh] max-w-[90vw] w-[800px]">
-                        <MatchingFilters onApplyFilters={filters => {
-                      handleApplyFilters(filters);
-                      setOpenSearchFilters(false);
-                    }} onClearFilters={handleClearFilters} activeTab="filtros" className="w-full" />
+                        <MatchingFilters 
+                          onApplyFilters={filters => {
+                            handleApplyFilters(filters);
+                            setOpenSearchFilters(false);
+                          }} 
+                          onClearFilters={handleClearFilters} 
+                          activeTab="filtros" 
+                          className="w-full" 
+                        />
                       </div>
                     </PopoverContent>
                   </Popover>
@@ -749,14 +746,20 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="end" sideOffset={5}>
                       <div className="overflow-auto max-h-[90vh] max-w-[90vw] w-[800px]">
-                        <MatchingFilters onApplyFilters={filters => {
-                      handleApplyFilters(filters);
-                      setOpenPreferences(false);
-                    }} onClearFilters={handleClearFilters} activeTab="preferencias" className="w-full" />
+                        <MatchingFilters 
+                          onApplyFilters={filters => {
+                            handleApplyFilters(filters);
+                            setOpenPreferences(false);
+                          }} 
+                          onClearFilters={handleClearFilters} 
+                          activeTab="preferencias" 
+                          className="w-full" 
+                        />
                       </div>
                     </PopoverContent>
                   </Popover>
-                </div>}
+                </div>
+              )}
             </div>
           
             <TabsContent value="discover" className="mt-0">
@@ -769,31 +772,95 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                 </div>
               </div>
               
-              {filteredProfiles.length > 0 ? <>
-                  {viewMode === 'swipe' && <div className="mb-6">
-                      <SwipeInterface profiles={filteredProfiles.map(profile => ({
-                  id: profile.id.toString(),
-                  name: profile.name,
-                  age: profile.age,
-                  location: profile.location,
-                  bio: profile.bio,
-                  imgUrl: profile.profileImage,
-                  tags: profile.interests.map((interest, idx) => ({
-                    id: idx + 1,
-                    name: interest
-                  })),
-                  compatibility: profile.compatibility,
-                  lifestyle: profile.lifestyle,
-                  budget: profile.budget
-                }))} onLike={handleLike} onPass={handlePass} onView={handleView} />
-                    </div>}
+              {filteredProfiles.length > 0 ? (
+                <>
+                  {viewMode === 'swipe' && (
+                    <div className="mb-6">
+                      <SwipeInterface 
+                        profiles={filteredProfiles.map(profile => ({
+                          id: profile.id.toString(),
+                          name: profile.name,
+                          age: profile.age,
+                          location: profile.location,
+                          bio: profile.bio,
+                          imgUrl: profile.profileImage,
+                          tags: profile.interests.map((interest, idx) => ({
+                            id: idx + 1,
+                            name: interest
+                          })),
+                          compatibility: profile.compatibility,
+                          lifestyle: profile.lifestyle,
+                          budget: profile.budget
+                        }))} 
+                        onLike={handleLike} 
+                        onPass={handlePass} 
+                        onView={handleView} 
+                      />
+                    </div>
+                  )}
                   
-                  {viewMode === 'grid' && <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {viewMode === 'grid' && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                       {filteredProfiles.map(profile => {
-                  const cardProps = formatProfileForMatchCard(profile);
-                  return <MatchCard key={profile.id} {...cardProps} onLike={handleLike} onPass={handlePass} onView={handleView} compact={isMobile} />;
-                })}
-                    </div>}
-                </> : <div className="text-center py-16">
+                        const cardProps = formatProfileForMatchCard(profile);
+                        return (
+                          <MatchCard 
+                            key={profile.id} 
+                            {...cardProps} 
+                            onLike={handleLike} 
+                            onPass={handlePass} 
+                            onView={handleView} 
+                            compact={isMobile} 
+                          />
+                        );
+                      })}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="text-center py-16">
                   <p className="text-xl text-muted-foreground">
-                    No se encontraron per
+                    No se encontraron perfiles que coincidan con tus criterios.
+                  </p>
+                </div>
+              )}
+            </TabsContent>
+            
+            <TabsContent value="matches" className="mt-0">
+              {matches.length > 0 ? (
+                <MatchesList 
+                  matches={matches} 
+                  onMessage={handleMessage}
+                  onUnmatch={handleUnmatch}
+                  onViewProfile={handleViewProfile}
+                />
+              ) : (
+                <div className="text-center py-16">
+                  <div className="mb-6">
+                    <div className="inline-block p-4 rounded-full bg-muted mb-4">
+                      <Heart className="h-10 w-10 text-muted-foreground" />
+                    </div>
+                    <h3 className="text-xl font-semibold mb-2">No tienes matches aún</h3>
+                    <p className="text-muted-foreground max-w-md mx-auto">
+                      ¡Sigue explorando perfiles y encontrarás compañeros de piso compatibles!
+                    </p>
+                  </div>
+                  <Button 
+                    onClick={() => setActiveTab('discover')}
+                    className="rounded-full bg-homi-purple hover:bg-homi-purple/90"
+                  >
+                    Explorar perfiles
+                  </Button>
+                </div>
+              )}
+            </TabsContent>
+          </Tabs>
+        </div>
+      </main>
+      
+      <Footer />
+    </div>
+  );
+};
+
+export default MatchingPage;
