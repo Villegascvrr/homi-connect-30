@@ -13,16 +13,13 @@ const DemoBanner = ({
 }: DemoBannerProps) => {
   const { user } = useAuth();
   
+  // Only show for authenticated users
+  if (!user) return null;
+  
   return (
     <div className="bg-homi-purple/80 text-white py-2 px-4 text-center">
       <p className="text-sm font-medium max-w-4xl mx-auto">
-        {user 
-          ? "¡Gracias por registrarte en Homi! Te avisaremos cuando la aplicación esté completamente funcional."
-          : customMessage || message
-        }
-        {!user && (
-          <> <Link to="/register" className="underline font-bold">Regístrate</Link> para acceder a todas las funciones.</>
-        )}
+        {customMessage || "¡Gracias por registrarte en Homi! Te avisaremos cuando la aplicación esté completamente funcional."}
       </p>
     </div>
   );
