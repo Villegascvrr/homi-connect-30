@@ -80,6 +80,7 @@ const ProfilePage = () => {
   const profileCardRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
   
+  // Default profile with placeholder values
   const defaultProfile: ProfileData = {
     id: '1',
     name: 'Usuario',
@@ -108,14 +109,14 @@ const ProfilePage = () => {
     },
     lookingFor: {
       hasApartment: false,
-      roommatesCount: "0",
-      genderPreference: "cualquiera",
-      smokingPreference: "no",
-      occupationPreference: "cualquiera",
-      minAge: "18",
-      maxAge: "99",
+      roommatesCount: "-",
+      genderPreference: "-",
+      smokingPreference: "-",
+      occupationPreference: "-",
+      minAge: "-",
+      maxAge: "-",
       budgetRange: [400, 600],
-      exactPrice: 450
+      exactPrice: 0
     }
   };
   
@@ -143,6 +144,7 @@ const ProfilePage = () => {
         
         console.log("Raw profile data from Supabase:", data);
         
+        // Parse lifestyle object if it exists
         let lifestyleObj: LifestyleDetail = {
           cleanliness: '-',
           guests: '-',
@@ -158,32 +160,33 @@ const ProfilePage = () => {
             } catch (e) {
               console.error('Error parsing lifestyle JSON:', e);
             }
-          } else {
-            const parsedLifestyle = data.lifestyle as Json;
-            if (typeof parsedLifestyle === 'object' && parsedLifestyle !== null) {
-              lifestyleObj = {
-                cleanliness: typeof parsedLifestyle.cleanliness === 'string' ? parsedLifestyle.cleanliness : '-',
-                guests: typeof parsedLifestyle.guests === 'string' ? parsedLifestyle.guests : '-',
-                smoking: typeof parsedLifestyle.smoking === 'string' ? parsedLifestyle.smoking : '-',
-                pets: typeof parsedLifestyle.pets === 'string' ? parsedLifestyle.pets : '-',
-                schedule: typeof parsedLifestyle.schedule === 'string' ? parsedLifestyle.schedule : '-'
-              };
-            }
+          } else if (typeof data.lifestyle === 'object' && data.lifestyle !== null) {
+            // Handle the case where lifestyle is an object (not an array)
+            const parsedLifestyle = data.lifestyle as Record<string, any>;
+            
+            lifestyleObj = {
+              cleanliness: typeof parsedLifestyle.cleanliness === 'string' ? parsedLifestyle.cleanliness : '-',
+              guests: typeof parsedLifestyle.guests === 'string' ? parsedLifestyle.guests : '-',
+              smoking: typeof parsedLifestyle.smoking === 'string' ? parsedLifestyle.smoking : '-',
+              pets: typeof parsedLifestyle.pets === 'string' ? parsedLifestyle.pets : '-',
+              schedule: typeof parsedLifestyle.schedule === 'string' ? parsedLifestyle.schedule : '-'
+            };
           }
         }
         
         console.log("Parsed lifestyle object:", lifestyleObj);
         
+        // Use actual values from database or defaults for missing values
         const lookingForObj: LookingForPreferences = {
-          hasApartment: data.hasApartment || false,
-          roommatesCount: data.companeros_count || "0",
-          genderPreference: data.genderPreference || "cualquiera",
-          smokingPreference: data.smokingPreference || "no",
-          occupationPreference: data.occupationPreference || "cualquiera",
-          minAge: "18",
-          maxAge: "99",
-          budgetRange: [400, 600],
-          exactPrice: 450
+          hasApartment: data.hasApartment === true, // Explicitly check for true
+          roommatesCount: data.companeros_count || "-",
+          genderPreference: data.genderPreference || "-",
+          smokingPreference: data.smokingPreference || "-",
+          occupationPreference: data.occupationPreference || "-",
+          minAge: data.minAge || "-",
+          maxAge: data.maxAge || "-",
+          budgetRange: [400, 600], // Default budget range
+          exactPrice: data.exactPrice || 0
         };
         
         const userProfile: ProfileData = {
@@ -200,7 +203,8 @@ const ProfilePage = () => {
           tags: Array.isArray(data.interests) ? data.interests.map((tag: string, index: number) => ({ id: index + 1, name: tag })) : [],
           verified: true,
           preferences: {
-            budget: `€${lookingForObj.budgetRange[0]}-€${lookingForObj.budgetRange[1]}`,
+            // Use actual data or placeholders if data is missing
+            budget: lookingForObj.exactPrice ? `€${lookingForObj.exactPrice}` : '-',
             location: data.sevilla_zona || '-',
             roommates: data.companeros_count || '-',
             moveInDate: '-'
@@ -375,15 +379,17 @@ const ProfilePage = () => {
     if (!user) return;
     
     try {
-      const lifestyleObject = {
-        cleanliness: profile.lifestyle.cleanliness,
-        guests: profile.lifestyle.guests,
-        smoking: profile.lifestyle.smoking,
-        pets: profile.lifestyle.pets,
-        schedule: profile.lifestyle.schedule
+      // Create a properly structured lifestyle object
+      const lifestyleObject: Record<string, string> = {
+        cleanliness: profile.lifestyle.cleanliness || '-',
+        guests: profile.lifestyle.guests || '-',
+        smoking: profile.lifestyle.smoking || '-',
+        pets: profile.lifestyle.pets || '-',
+        schedule: profile.lifestyle.schedule || '-'
       };
       
-      const updateData = {
+      // Prepare the data for update
+      const updateData: Record<string, any> = {
         companeros_count: profile.lookingFor.roommatesCount,
         hasApartment: profile.lookingFor.hasApartment,
         genderPreference: profile.lookingFor.genderPreference,
@@ -780,320 +786,4 @@ const ProfilePage = () => {
                         <Button variant="outline" size="sm" onClick={handleCancelEditLookingFor} className="rounded-full h-8 w-8 p-0 border-red-400 text-red-500">
                           <X size={15} />
                         </Button>
-                        <Button variant="outline" size="sm" onClick={handleSaveLookingFor} className="rounded-full h-8 w-8 p-0 border-green-400 text-green-500">
-                          <Check size={15} />
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                  
-                  <div className="space-y-5">
-                    {!isEditingLookingFor ? (
-                      <div className="space-y-6">
-                        <div className="flex items-center gap-2 text-sm md:text-base">
-                          <div className="bg-homi-ultraLightPurple text-homi-purple p-1.5 rounded-full">
-                            <Home size={16} />
-                          </div>
-                          <span>
-                            {profile.lookingFor.hasApartment ? 'Ya tengo piso y busco compañeros' : 'Busco piso compartido'}
-                          </span>
-                        </div>
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="md:col-span-2">
-                            <div className="flex items-center gap-2 mb-2">
-                              <DollarSign size={16} className="text-homi-purple" />
-                              <span className="font-medium">
-                                {profile.lookingFor.hasApartment ? 'Precio por habitación' : 'Presupuesto'}
-                              </span>
-                            </div>
-                            <p className="text-sm md:text-base font-bold">
-                              €{profile.lookingFor.exactPrice}/mes
-                            </p>
-                          </div>
-                          
-                          <div>
-                            <div className="flex items-center gap-2 mb-2">
-                              <MapPin size={16} className="text-homi-purple" />
-                              <span className="font-medium">Ubicación</span>
-                            </div>
-                            <p className="text-sm md:text-base">{profile.preferences.location}</p>
-                          </div>
-                          
-                          <div>
-                            <div className="flex items-center gap-2 mb-2">
-                              <Users size={16} className="text-homi-purple" />
-                              <span className="font-medium">Compañeros</span>
-                            </div>
-                            <p className="text-sm md:text-base">{profile.lookingFor.roommatesCount}</p>
-                          </div>
-                          
-                          <div>
-                            <div className="flex items-center gap-2 mb-2">
-                              <Calendar size={16} className="text-homi-purple" />
-                              <span className="font-medium">Fecha de entrada</span>
-                            </div>
-                            <p className="text-sm md:text-base">{profile.preferences.moveInDate}</p>
-                          </div>
-                          
-                          <div>
-                            <span className="font-medium">Preferencia de género</span>
-                            <p className="text-sm md:text-base mt-2">
-                              {profile.lookingFor.genderPreference === 'mujeres' && 'Solo mujeres'}
-                              {profile.lookingFor.genderPreference === 'hombres' && 'Solo hombres'}
-                              {profile.lookingFor.genderPreference === 'cualquiera' && 'Cualquier género'}
-                            </p>
-                          </div>
-                          
-                          <div>
-                            <span className="font-medium">Preferencia tabaco</span>
-                            <p className="text-sm md:text-base mt-2">
-                              {profile.lookingFor.smokingPreference === 'no' && 'No fumadores'}
-                              {profile.lookingFor.smokingPreference === 'ocasional' && 'Fumador ocasional'}
-                              {profile.lookingFor.smokingPreference === 'si' && 'Fumadores permitidos'}
-                            </p>
-                          </div>
-                          
-                          <div>
-                            <span className="font-medium">Ocupación</span>
-                            <p className="text-sm md:text-base mt-2">
-                              {profile.lookingFor.occupationPreference === 'estudiantes' && 'Estudiantes'}
-                              {profile.lookingFor.occupationPreference === 'trabajadores' && 'Trabajadores'}
-                              {profile.lookingFor.occupationPreference === 'cualquiera' && 'Cualquier ocupación'}
-                            </p>
-                          </div>
-                          
-                          <div>
-                            <span className="font-medium">Rango de edad</span>
-                            <p className="text-sm md:text-base mt-2">
-                              {profile.lookingFor.minAge} - {profile.lookingFor.maxAge} años
-                            </p>
-                          </div>
-                        </div>
-                        
-                        <div>
-                          <h3 className="font-medium mb-3">Estilo de vida preferido</h3>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                              <span className="text-xs md:text-sm text-muted-foreground">Limpieza:</span>
-                              <p className="font-medium text-sm md:text-base">{profile.lifestyle.cleanliness}</p>
-                            </div>
-                            <div>
-                              <span className="text-xs md:text-sm text-muted-foreground">Visitas:</span>
-                              <p className="font-medium text-sm md:text-base">{profile.lifestyle.guests}</p>
-                            </div>
-                            <div>
-                              <span className="text-xs md:text-sm text-muted-foreground">Tabaco:</span>
-                              <p className="font-medium text-sm md:text-base">{profile.lifestyle.smoking}</p>
-                            </div>
-                            <div>
-                              <span className="text-xs md:text-sm text-muted-foreground">Mascotas:</span>
-                              <p className="font-medium text-sm md:text-base">{profile.lifestyle.pets}</p>
-                            </div>
-                            <div>
-                              <span className="text-xs md:text-sm text-muted-foreground">Horario:</span>
-                              <p className="font-medium text-sm md:text-base">{profile.lifestyle.schedule}</p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="space-y-5">
-                        <div className="flex items-center justify-between gap-2 p-3 border border-input rounded-md bg-background/50">
-                          <div className="flex items-center gap-2">
-                            <div className="bg-homi-ultraLightPurple text-homi-purple p-1.5 rounded-full">
-                              <Home size={16} />
-                            </div>
-                            <span className="text-sm md:text-base">
-                              {profile.lookingFor.hasApartment ? 'Ya tengo piso y busco compañeros' : 'Busco piso compartido'}
-                            </span>
-                          </div>
-                          <Switch 
-                            checked={profile.lookingFor.hasApartment} 
-                            onCheckedChange={checked => handleLookingForChange('hasApartment', checked)} 
-                          />
-                        </div>
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <label className="text-xs md:text-sm text-muted-foreground">
-                              Número de compañeros:
-                            </label>
-                            <select 
-                              className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm" 
-                              value={profile.lookingFor.roommatesCount} 
-                              onChange={e => handleLookingForChange('roommatesCount', e.target.value)}
-                            >
-                              <option value="1">1</option>
-                              <option value="2">2</option>
-                              <option value="3">3</option>
-                              <option value="4+">4 o más</option>
-                            </select>
-                          </div>
-                          
-                          <div className="space-y-2">
-                            <label className="text-xs md:text-sm text-muted-foreground">
-                              Preferencia de género:
-                            </label>
-                            <select 
-                              className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm" 
-                              value={profile.lookingFor.genderPreference} 
-                              onChange={e => handleLookingForChange('genderPreference', e.target.value)}
-                            >
-                              <option value="mujeres">Solo mujeres</option>
-                              <option value="hombres">Solo hombres</option>
-                              <option value="cualquiera">Cualquier género</option>
-                            </select>
-                          </div>
-                          
-                          <div className="space-y-2">
-                            <label className="text-xs md:text-sm text-muted-foreground">
-                              Presupuesto:
-                            </label>
-                            <div className="pt-5 px-3">
-                              <Slider
-                                defaultValue={profile.lookingFor.budgetRange}
-                                min={200}
-                                max={1500}
-                                step={50}
-                                onValueChange={(value) => handleLookingForChange('budgetRange', value)}
-                              />
-                              <div className="flex justify-between mt-2 text-xs text-muted-foreground">
-                                <span>€{profile.lookingFor.budgetRange[0]}</span>
-                                <span>€{profile.lookingFor.budgetRange[1]}</span>
-                              </div>
-                            </div>
-                          </div>
-                          
-                          <div className="space-y-2">
-                            <label className="text-xs md:text-sm text-muted-foreground">
-                              Precio exacto:
-                            </label>
-                            <Input 
-                              type="number"
-                              min={200}
-                              max={1500}
-                              value={profile.lookingFor.exactPrice}
-                              onChange={(e) => handleLookingForChange('exactPrice', Number(e.target.value))}
-                              className="w-full"
-                            />
-                          </div>
-                          
-                          <div className="space-y-2">
-                            <label className="text-xs md:text-sm text-muted-foreground">
-                              Edad mínima:
-                            </label>
-                            <Input 
-                              type="number"
-                              min={18}
-                              max={99}
-                              value={profile.lookingFor.minAge}
-                              onChange={(e) => handleLookingForChange('minAge', e.target.value)}
-                              className="w-full"
-                            />
-                          </div>
-                          
-                          <div className="space-y-2">
-                            <label className="text-xs md:text-sm text-muted-foreground">
-                              Edad máxima:
-                            </label>
-                            <Input 
-                              type="number"
-                              min={18}
-                              max={99}
-                              value={profile.lookingFor.maxAge}
-                              onChange={(e) => handleLookingForChange('maxAge', e.target.value)}
-                              className="w-full"
-                            />
-                          </div>
-                          
-                          <div className="space-y-2">
-                            <label className="text-xs md:text-sm text-muted-foreground">
-                              Preferencia tabaco:
-                            </label>
-                            <select 
-                              className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm" 
-                              value={profile.lookingFor.smokingPreference} 
-                              onChange={e => handleLookingForChange('smokingPreference', e.target.value)}
-                            >
-                              <option value="no">No fumadores</option>
-                              <option value="ocasional">Fumador ocasional</option>
-                              <option value="si">Fumadores permitidos</option>
-                            </select>
-                          </div>
-                          
-                          <div className="space-y-2">
-                            <label className="text-xs md:text-sm text-muted-foreground">
-                              Ocupación:
-                            </label>
-                            <select 
-                              className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm" 
-                              value={profile.lookingFor.occupationPreference} 
-                              onChange={e => handleLookingForChange('occupationPreference', e.target.value)}
-                            >
-                              <option value="estudiantes">Estudiantes</option>
-                              <option value="trabajadores">Trabajadores</option>
-                              <option value="cualquiera">Cualquier ocupación</option>
-                            </select>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-                
-                <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
-                  <DialogContent className="sm:max-w-md">
-                    <DialogHeader>
-                      <DialogTitle>Compartir Perfil</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      <div className="flex flex-col items-center gap-4">
-                        <div ref={qrCodeRef} className="bg-white p-5 rounded-lg">
-                          <QRCodeSVG value={getProfileUrl()} size={200} bgColor="#FFFFFF" fgColor="#6E59A5" />
-                        </div>
-                        <Button variant="outline" size="sm" onClick={handleDownloadQR}>
-                          <Download size={16} className="mr-2" />
-                          Descargar QR
-                        </Button>
-                      </div>
-                      
-                      <div className="flex items-center space-x-2">
-                        <Input value={getProfileUrl()} readOnly className="flex-1" />
-                        <Button size="sm" onClick={handleCopyLink}>
-                          Copiar
-                        </Button>
-                      </div>
-                      
-                      <div className="flex flex-col gap-4">
-                        <p className="text-center text-sm text-muted-foreground">Compartir en redes sociales</p>
-                        <div className="flex justify-center gap-4">
-                          <Button variant="outline" size="icon" className="rounded-full" onClick={() => shareToSocialMedia('whatsapp')}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm14 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-7 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" /></svg>
-                          </Button>
-                          <Button variant="outline" size="icon" className="rounded-full" onClick={() => shareToSocialMedia('telegram')}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z" /></svg>
-                          </Button>
-                          <Button variant="outline" size="icon" className="rounded-full" onClick={() => shareToSocialMedia('facebook')}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" /></svg>
-                          </Button>
-                          <Button variant="outline" size="icon" className="rounded-full" onClick={() => shareToSocialMedia('twitter')}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" /></svg>
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
-      
-      <Footer />
-    </div>
-  );
-};
-
-export default ProfilePage;
+                        <Button variant="outline" size="sm" onClick={handleSaveLookingFor} className="rounded-full h-8 w-8 p

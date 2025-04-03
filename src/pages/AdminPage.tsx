@@ -32,15 +32,16 @@ const AdminPage = () => {
                 </div>
                 <div className="p-3 bg-blue-50 border border-blue-200 rounded-md">
                   <p className="text-sm text-blue-700">
-                    <strong>Estructura de los datos:</strong> Algunos datos como preferencias de búsqueda y estilo de vida se almacenan 
-                    en diferentes columnas o como objetos JSON. La aplicación convierte estos datos a un formato legible.
+                    <strong>Estructura de los datos:</strong> Algunos datos como preferencias de búsqueda se almacenan 
+                    como columnas individuales (companeros_count, hasApartment, etc.), mientras que el estilo de vida (lifestyle) 
+                    se almacena como un objeto JSON que contiene cleanliness, guests, smoking, pets y schedule.
                   </p>
                 </div>
                 <div className="p-3 bg-green-50 border border-green-200 rounded-md">
                   <p className="text-sm text-green-700">
-                    <strong>Sobre la estructura:</strong> Los datos de lifestyle se almacenan como un objeto JSON, mientras que otros 
-                    campos como hasApartment, genderPreference, etc. se almacenan como columnas separadas. Ambos se muestran de forma unificada 
-                    en la interfaz de usuario.
+                    <strong>Sobre las preferencias:</strong> Las preferencias de búsqueda como hasApartment, genderPreference, 
+                    smokingPreference y occupationPreference se añaden al perfil cuando el usuario las configura. Hasta entonces, 
+                    no aparecerán en la base de datos.
                   </p>
                 </div>
               </div>
