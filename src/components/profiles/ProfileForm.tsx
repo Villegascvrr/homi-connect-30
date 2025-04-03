@@ -6,6 +6,7 @@ import * as z from "zod"
 import { useToast } from "@/hooks/use-toast"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { useAuth } from "@/context/AuthContext"
+import { supabase } from "@/integrations/supabase/client";
 
 import {
   Form,
@@ -64,42 +65,108 @@ const ProfileForm = () => {
 
   // Fetch user profile data when component mounts
   useEffect(() => {
-    if (user) {
-      // In a real app, you would fetch the user's profile from the database
-      // For now, we'll use the user object from the auth context
-      setIsLoading(true);
-      
-      // Simulate API call with timeout
-      setTimeout(() => {
-        form.reset({
-          name: user.user_metadata?.full_name || "",
-          email: user.email || "",
-          bio: user.user_metadata?.bio || "",
-          age: user.user_metadata?.age || "",
-          location: user.user_metadata?.location || "",
-          university: user.user_metadata?.university || "",
-          occupation: user.user_metadata?.occupation || "",
-          profileImage: user.user_metadata?.avatar_url || "",
-          galleryImages: user.user_metadata?.gallery_images || [],
-          isProfileActive: user.user_metadata?.is_profile_active !== false,
-        });
-        setIsLoading(false);
-      }, 500);
-    }
+    const fetchUserProfile = async () => {
+      if (user) {
+        setIsLoading(true);
+        
+        try {
+          // Fetch user's profile from Supabase
+          const { data: profileData, error } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', user.id)
+            .single();
+          
+          if (error) {
+            console.error("Error fetching profile:", error);
+            throw error;
+          }
+          
+          // Set form data with the fetched profile
+          form.reset({
+            name: `${profileData.first_name || ''} ${profileData.last_name || ''}`.trim() || user.user_metadata?.full_name || "",
+            email: user.email || "",
+            bio: profileData.bio || "",
+            age: profileData.edad || "",
+            location: profileData.ubicacion || "",
+            university: profileData.universidad || "",
+            occupation: profileData.ocupacion || "",
+            profileImage: profileData.profile_image || user.user_metadata?.avatar_url || "",
+            galleryImages: profileData.gallery_images || [],
+            isProfileActive: profileData.is_profile_active !== false,
+          });
+          
+          console.log("Profile data loaded:", profileData);
+        } catch (err) {
+          console.error("Error loading profile data:", err);
+          // Fallback to using just the auth user data
+          form.reset({
+            name: user.user_metadata?.full_name || "",
+            email: user.email || "",
+            bio: "",
+            age: "",
+            location: "",
+            university: "",
+            occupation: "",
+            profileImage: user.user_metadata?.avatar_url || "",
+            galleryImages: [],
+            isProfileActive: true,
+          });
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+    
+    fetchUserProfile();
   }, [user, form]);
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!user) return;
+    
     setIsSubmitting(true);
     console.log("Form submitted with values:", values);
     
-    // Simulate API call with timeout
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      // Split the name into first and last name
+      const nameParts = values.name.split(' ');
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts.slice(1).join(' ') || '';
+      
+      // Update the profile in Supabase
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          first_name: firstName,
+          last_name: lastName,
+          bio: values.bio,
+          edad: values.age,
+          ubicacion: values.location,
+          universidad: values.university,
+          ocupacion: values.occupation,
+          profile_image: values.profileImage,
+          gallery_images: values.galleryImages,
+          is_profile_active: values.isProfileActive,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', user.id);
+        
+      if (error) throw error;
+      
       toast({
-        title: "Profile updated",
-        description: "Your profile information has been saved.",
+        title: "Perfil actualizado",
+        description: "Tu información de perfil ha sido guardada.",
       });
-    }, 1000);
+    } catch (error: any) {
+      console.error("Error updating profile:", error);
+      toast({
+        title: "Error al actualizar el perfil",
+        description: error.message || "Ha ocurrido un error al guardar los cambios.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   const handleProfileStatusToggle = (active: boolean) => {

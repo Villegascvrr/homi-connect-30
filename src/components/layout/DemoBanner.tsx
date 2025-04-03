@@ -15,7 +15,7 @@ const DemoBanner = ({
   
   return (
     <div className="bg-homi-purple/80 text-white py-2 px-4 text-center sticky top-16 z-40">
-      <p className="text-sm">
+      <p className="text-sm font-medium">
         {customMessage || message}
         {!user && (
           <> <Link to="/register" className="underline font-bold">Regístrate</Link> para acceder a todas las funciones.</>
