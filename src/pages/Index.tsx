@@ -8,8 +8,11 @@ import HowItWorks from '@/components/home/HowItWorks';
 import DevelopmentBanner from '@/components/layout/DevelopmentBanner';
 import { Button } from '@/components/ui/button';
 import ProfileCard from '@/components/profiles/ProfileCard';
+import { useAuth } from '@/context/AuthContext';
+import DemoBanner from '@/components/layout/DemoBanner';
 
 const Index = () => {
+  const { user } = useAuth();
   const featuredProfiles = [{
     id: '1',
     name: 'Elena',
@@ -83,7 +86,7 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col pb-10">
       <DevelopmentBanner />
       <div className="pt-16">
         <Navbar />
@@ -202,6 +205,7 @@ const Index = () => {
       </main>
       
       <Footer />
+      {!user && <DemoBanner />}
     </div>
   );
 };

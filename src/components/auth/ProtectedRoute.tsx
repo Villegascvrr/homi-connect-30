@@ -1,3 +1,4 @@
+
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import DemoBanner from "../layout/DemoBanner";
@@ -29,7 +30,12 @@ const ProtectedRoute = ({
 
   // If preview is allowed and a preview component is provided, show the preview
   if (allowPreview && previewComponent) {
-    return <>{previewComponent}</>;
+    return (
+      <>
+        {previewComponent}
+        <DemoBanner />
+      </>
+    );
   }
 
   // If preview is allowed but no preview component is provided, 
@@ -37,8 +43,8 @@ const ProtectedRoute = ({
   if (allowPreview) {
     return (
       <>
-        <DemoBanner />
         {children}
+        <DemoBanner />
       </>
     );
   }
