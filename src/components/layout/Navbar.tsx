@@ -51,13 +51,7 @@ const Navbar = () => {
   const navLinks = [
     { name: 'Inicio', path: '/' },
     { name: 'Cómo funciona', path: '/how-it-works' },
-    { 
-      name: 'Encuentra compañeros', 
-      path: '/matching',
-      dropdown: [
-        { name: 'Buscar compañeros', path: '/matching' },
-      ]
-    },
+    { name: 'Encuentra compañeros', path: '/matching' },
     { name: 'Chat', path: '/chat' },
     { name: 'Perfil', path: '/profile' },
   ];
@@ -79,55 +73,18 @@ const Navbar = () => {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-1">
             {navLinks.map((link) => (
-              !link.dropdown ? (
-                <Link
-                  key={link.name}
-                  to={link.path}
-                  className={cn(
-                    "px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                    location.pathname === link.path
-                      ? "text-homi-purple"
-                      : "text-foreground hover:text-homi-purple"
-                  )}
-                >
-                  {link.name}
-                </Link>
-              ) : (
-                <div key={link.name} className="relative">
-                  <button
-                    className={cn(
-                      "px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center",
-                      activeDropdown === link.name || link.dropdown.some(item => location.pathname === item.path)
-                        ? "text-homi-purple"
-                        : "text-foreground hover:text-homi-purple"
-                    )}
-                    onClick={() => toggleDropdown(link.name)}
-                  >
-                    {link.name}
-                    {activeDropdown === link.name ? (
-                      <ChevronUp className="ml-1 h-4 w-4" />
-                    ) : (
-                      <ChevronDown className="ml-1 h-4 w-4" />
-                    )}
-                  </button>
-                  {activeDropdown === link.name && (
-                    <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-card ring-1 ring-black ring-opacity-5 z-50">
-                      <div className="py-1">
-                        {link.dropdown.map((item) => (
-                          <Link
-                            key={item.name}
-                            to={item.path}
-                            className="block px-4 py-2 text-sm text-foreground hover:bg-muted"
-                            onClick={() => setActiveDropdown(null)}
-                          >
-                            {item.name}
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )
+              <Link
+                key={link.name}
+                to={link.path}
+                className={cn(
+                  "px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                  location.pathname === link.path
+                    ? "text-homi-purple"
+                    : "text-foreground hover:text-homi-purple"
+                )}
+              >
+                {link.name}
+              </Link>
             ))}
           </nav>
 
@@ -159,52 +116,18 @@ const Navbar = () => {
         <div className="md:hidden bg-white dark:bg-card shadow-lg">
           <div className="px-2 pt-2 pb-3 space-y-1">
             {navLinks.map((link) => (
-              !link.dropdown ? (
-                <Link
-                  key={link.name}
-                  to={link.path}
-                  className={cn(
-                    "block px-3 py-2 rounded-md text-base font-medium",
-                    location.pathname === link.path
-                      ? "bg-homi-ultraLightPurple text-homi-purple"
-                      : "text-foreground hover:bg-muted"
-                  )}
-                >
-                  {link.name}
-                </Link>
-              ) : (
-                <div key={link.name}>
-                  <button
-                    className={cn(
-                      "w-full text-left px-3 py-2 rounded-md text-base font-medium flex items-center justify-between",
-                      activeDropdown === link.name || link.dropdown.some(item => location.pathname === item.path)
-                        ? "bg-homi-ultraLightPurple text-homi-purple"
-                        : "text-foreground hover:bg-muted"
-                    )}
-                    onClick={() => toggleDropdown(link.name)}
-                  >
-                    {link.name}
-                    {activeDropdown === link.name ? (
-                      <ChevronUp className="ml-1 h-4 w-4" />
-                    ) : (
-                      <ChevronDown className="ml-1 h-4 w-4" />
-                    )}
-                  </button>
-                  {activeDropdown === link.name && (
-                    <div className="pl-4 space-y-1 mt-1">
-                      {link.dropdown.map((item) => (
-                        <Link
-                          key={item.name}
-                          to={item.path}
-                          className="block px-3 py-2 rounded-md text-sm text-foreground hover:bg-muted"
-                        >
-                          {item.name}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )
+              <Link
+                key={link.name}
+                to={link.path}
+                className={cn(
+                  "block px-3 py-2 rounded-md text-base font-medium",
+                  location.pathname === link.path
+                    ? "bg-homi-ultraLightPurple text-homi-purple"
+                    : "text-foreground hover:bg-muted"
+                )}
+              >
+                {link.name}
+              </Link>
             ))}
             
             {/* Mobile Auth Buttons */}
