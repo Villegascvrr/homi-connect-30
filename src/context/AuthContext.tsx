@@ -82,29 +82,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       if (error) throw error;
       
-      // The trigger will create a basic profile, then we need to update with all form data
-      if (user) {
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .update({
-            edad: userData.edad,
-            ubicacion: userData.ubicacion,
-            ocupacion: userData.ocupacion,
-            universidad: userData.universidad,
-            bio: userData.bio,
-            profile_image: userData.profileImage,
-            gallery_images: userData.galleryImages,
-            interests: userData.interests,
-            lifestyle: userData.lifestyle
-          })
-          .eq('id', user.id);
-
-        if (profileError) throw profileError;
-      }
-
+      // After signup, the trigger will create a basic profile, but we need to wait for it
+      // We'll update the profile information after the user completes the first login
+      // The updateUserProfile function can be called separately once user is authenticated
+      
       toast({
         title: "Cuenta creada con éxito",
-        description: "Tu perfil ha sido registrado.",
+        description: "Tu perfil ha sido registrado. Por favor verifica tu correo electrónico.",
       });
     } catch (error: any) {
       toast({
@@ -114,6 +98,42 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const updateUserProfile = async (userId: string, profileData: Partial<Omit<UserSignUpData, 'password'>>) => {
+    try {
+      // Create an object with the profile data in the proper format for Supabase
+      const profileUpdateData: Record<string, any> = {
+        edad: profileData.edad,
+        ubicacion: profileData.ubicacion,
+        ocupacion: profileData.ocupacion,
+        universidad: profileData.universidad,
+        bio: profileData.bio,
+        profile_image: profileData.profileImage,
+        gallery_images: profileData.galleryImages,
+        interests: profileData.interests,
+        lifestyle: profileData.lifestyle
+      };
+
+      // Only include fields that are defined
+      Object.keys(profileUpdateData).forEach(key => {
+        if (profileUpdateData[key] === undefined) {
+          delete profileUpdateData[key];
+        }
+      });
+
+      const { error } = await supabase
+        .from('profiles')
+        .update(profileUpdateData)
+        .eq('id', userId);
+
+      if (error) throw error;
+
+      return true;
+    } catch (error: any) {
+      console.error("Error updating profile:", error.message);
+      return false;
     }
   };
 
