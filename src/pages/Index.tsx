@@ -10,7 +10,6 @@ import { Button } from '@/components/ui/button';
 import ProfileCard from '@/components/profiles/ProfileCard';
 
 const Index = () => {
-  // Sample data for demonstration
   const featuredProfiles = [{
     id: '1',
     name: 'Elena',
@@ -67,7 +66,6 @@ const Index = () => {
     compatibility: 92
   }];
 
-  // Animation on scroll
   useEffect(() => {
     const handleScroll = () => {
       const elements = document.querySelectorAll('.animate-on-scroll');
@@ -80,21 +78,20 @@ const Index = () => {
       });
     };
     window.addEventListener('scroll', handleScroll);
-    // Trigger once on load
     handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-  return <div className="min-h-screen flex flex-col">
+
+  return (
+    <div className="min-h-screen flex flex-col">
       <DevelopmentBanner />
-      <div className="pt-[7px] py-0"> {/* Reduced padding from 29px to 7px */}
+      <div className="pt-16">
         <Navbar />
       </div>
       
       <main className="flex-grow">
-        {/* Hero section is at the top of the page as the first main content */}
         <Hero />
         
-        {/* Features section with ID but no automatic scrolling */}
         <div id="features">
           <Features />
         </div>
@@ -103,7 +100,6 @@ const Index = () => {
           <HowItWorks />
         </div>
         
-        {/* Featured Profiles Section */}
         <section className="py-20">
           <div className="container mx-auto px-4">
             <div className="text-center max-w-3xl mx-auto mb-16 animate-on-scroll">
@@ -132,7 +128,6 @@ const Index = () => {
           </div>
         </section>
         
-        {/* Features Highlight */}
         <section className="py-20 bg-muted">
           <div className="container mx-auto px-4">
             <div className="text-center max-w-3xl mx-auto mb-16 animate-on-scroll">
@@ -187,7 +182,6 @@ const Index = () => {
           </div>
         </section>
         
-        {/* CTA Section */}
         <section className="py-20 bg-homi-purple text-white">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center animate-on-scroll">
@@ -208,7 +202,8 @@ const Index = () => {
       </main>
       
       <Footer />
-    </div>;
+    </div>
+  );
 };
 
 export default Index;
