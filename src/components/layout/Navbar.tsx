@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ChevronDown, ChevronUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
@@ -11,12 +11,21 @@ import AuthButton from '@/components/auth/AuthButton';
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const location = useLocation();
   const isMobile = useIsMobile();
   const { user, signOut } = useAuth();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const toggleDropdown = (dropdown: string) => {
+    if (activeDropdown === dropdown) {
+      setActiveDropdown(null);
+    } else {
+      setActiveDropdown(dropdown);
+    }
   };
 
   useEffect(() => {
@@ -35,7 +44,7 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    // Cerrar menu móvil cuando cambia la ruta
+    // Close mobile menu when route changes
     setIsMenuOpen(false);
   }, [location.pathname]);
 
@@ -46,10 +55,12 @@ const Navbar = () => {
     { name: 'Perfil', path: '/profile' },
   ];
 
+  // All links are now visible regardless of authentication status
+
   return (
     <header className={cn(
-      "w-full bg-white transition-all duration-300",
-      isScrolled ? "bg-white/90 dark:bg-background/90 backdrop-blur-md shadow-sm" : "bg-white"
+      "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+      isScrolled ? "bg-white/80 dark:bg-background/80 backdrop-blur-md shadow-sm" : "bg-transparent"
     )}>
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 md:h-20">

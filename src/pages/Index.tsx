@@ -1,67 +1,94 @@
-
-import React, { useState, useEffect } from 'react';
+import { useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import Navbar from '@/components/layout/Navbar';
+import Footer from '@/components/layout/Footer';
 import Hero from '@/components/home/Hero';
 import Features from '@/components/home/Features';
 import HowItWorks from '@/components/home/HowItWorks';
-import Footer from '@/components/layout/Footer';
-import { useAuth } from '@/context/AuthContext';
+import DevelopmentBanner from '@/components/layout/DevelopmentBanner';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
-import { ArrowRight, Smartphone, Users, Home, Key, Shield, CheckCircle2 } from 'lucide-react';
-import { motion } from 'framer-motion';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-import EmailSignup from '@/components/home/EmailSignup';
-
-// Quotes for testimonials
-const testimonials = [
-  {
-    quote: "Homi me ayudó a encontrar un compañero de piso compatible con mi estilo de vida. Ahora compartimos gastos y una gran amistad.",
-    author: "María G.",
-    location: "Madrid",
-    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1964&auto=format&fit=crop"
-  },
-  {
-    quote: "La aplicación es súper intuitiva. En menos de una semana ya había encontrado varias opciones de pisos que encajaban con mi presupuesto.",
-    author: "Carlos P.",
-    location: "Barcelona",
-    avatar: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=1974&auto=format&fit=crop"
-  },
-  {
-    quote: "Lo que más me gusta es la seguridad que ofrece. Poder verificar perfiles y chatear antes de quedar en persona me da mucha tranquilidad.",
-    author: "Laura S.",
-    location: "Valencia",
-    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1974&auto=format&fit=crop"
-  }
-];
-
-// Create a mock function to get a random number of registered users between 500-900
-const getRegisteredUsers = () => {
-  return Math.floor(Math.random() * (900 - 500 + 1) + 500);
-};
+import ProfileCard from '@/components/profiles/ProfileCard';
 
 const Index = () => {
-  const { user } = useAuth();
-  const [registeredUsers, setRegisteredUsers] = useState(0);
-  const [percentComplete, setPercentComplete] = useState(0);
-  
+  const featuredProfiles = [{
+    id: '1',
+    name: 'Elena',
+    age: 23,
+    location: 'Madrid',
+    bio: 'Estudiante de Arquitectura. Me gusta leer, el arte y las noches tranquilas. Busco piso cerca de la universidad.',
+    imgUrl: 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7',
+    tags: [{
+      id: 1,
+      name: 'Ordenada'
+    }, {
+      id: 2,
+      name: 'Tranquila'
+    }, {
+      id: 3,
+      name: 'Estudiante'
+    }],
+    compatibility: 87
+  }, {
+    id: '2',
+    name: 'Carlos',
+    age: 25,
+    location: 'Barcelona',
+    bio: 'Desarrollador web, amante de la tecnología y los videojuegos. Busco un ambiente relajado donde pueda trabajar y descansar.',
+    imgUrl: 'https://images.unsplash.com/photo-1581092795360-fd1ca04f0952',
+    tags: [{
+      id: 1,
+      name: 'Tecnología'
+    }, {
+      id: 4,
+      name: 'Deportista'
+    }, {
+      id: 5,
+      name: 'Profesional'
+    }],
+    compatibility: 75
+  }, {
+    id: '3',
+    name: 'Laura',
+    age: 22,
+    location: 'Valencia',
+    bio: 'Estudiante de Medicina. Me encanta cocinar y compartir momentos con amigos. Busco compañeros con intereses similares.',
+    imgUrl: 'https://images.unsplash.com/photo-1472396961693-142e6e269027',
+    tags: [{
+      id: 6,
+      name: 'Sociable'
+    }, {
+      id: 7,
+      name: 'Cocinera'
+    }, {
+      id: 3,
+      name: 'Estudiante'
+    }],
+    compatibility: 92
+  }];
+
   useEffect(() => {
-    // Set a mock number of registered users
-    const userCount = getRegisteredUsers();
-    setRegisteredUsers(userCount);
-    
-    // Calculate percentage to 1000 users
-    const percent = Math.min(Math.round((userCount / 1000) * 100), 99);
-    setPercentComplete(percent);
+    const handleScroll = () => {
+      const elements = document.querySelectorAll('.animate-on-scroll');
+      elements.forEach(el => {
+        const rect = el.getBoundingClientRect();
+        const isVisible = rect.top < window.innerHeight * 0.8;
+        if (isVisible) {
+          el.classList.add('active');
+        }
+      });
+    };
+    window.addEventListener('scroll', handleScroll);
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-  
+
   return (
-    <>
+    <div className="min-h-screen flex flex-col">
+      <DevelopmentBanner />
+      <div className="pt-16">
+        <Navbar />
+      </div>
+      
       <main className="flex-grow">
         <Hero />
         
@@ -69,118 +96,113 @@ const Index = () => {
           <Features />
         </div>
         
-        {/* Progress section */}
-        <section className="py-16 bg-slate-50 dark:bg-slate-900/50">
-          <div className="container px-4 mx-auto text-center">
-            <h2 className="text-3xl font-bold tracking-tight mb-8 homi-gradient-text">¡Ayúdanos a lanzar Homi!</h2>
-            
-            <div className="max-w-md mx-auto mb-10">
-              <div className="relative pt-1">
-                <div className="flex items-center justify-between mb-2">
-                  <div>
-                    <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full bg-homi-purple text-white">
-                      Progreso
-                    </span>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-xs font-semibold inline-block text-homi-purple">
-                      {percentComplete}%
-                    </span>
-                  </div>
-                </div>
-                <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-homi-ultraLightPurple">
-                  <div style={{ width: `${percentComplete}%` }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-homi-purple transition-all duration-500"></div>
-                </div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
-                  {registeredUsers} de 1000 usuarios registrados
-                </p>
-              </div>
-            </div>
-            
-            {!user && (
-              <EmailSignup />
-            )}
-          </div>
-        </section>
-        
         <div id="how-it-works">
           <HowItWorks />
         </div>
         
-        {/* Testimonials Section */}
-        <section className="py-16 bg-white dark:bg-background">
-          <div className="container px-4 mx-auto">
-            <h2 className="text-3xl font-bold tracking-tight text-center mb-12 homi-gradient-text">Lo que dicen nuestros usuarios</h2>
+        <section className="py-20">
+          <div className="container mx-auto px-4">
+            <div className="text-center max-w-3xl mx-auto mb-16 animate-on-scroll">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                Encuentra tu <span className="homi-gradient-text">compañero ideal</span>
+              </h2>
+              <p className="text-muted-foreground text-lg">
+                Miles de estudiantes y jóvenes profesionales ya están utilizando Homi
+                para encontrar compañeros de piso compatibles.
+              </p>
+            </div>
             
-            <Carousel className="max-w-4xl mx-auto">
-              <CarouselContent>
-                {testimonials.map((testimonial, index) => (
-                  <CarouselItem key={index} className="md:basis-1/1 lg:basis-1/1">
-                    <div className="p-6 bg-slate-50 dark:bg-slate-900/50 rounded-xl shadow-sm">
-                      <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
-                        <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
-                          <img 
-                            src={testimonial.avatar} 
-                            alt={`Avatar de ${testimonial.author}`}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <div className="flex-1">
-                          <p className="text-lg italic mb-4">"{testimonial.quote}"</p>
-                          <div className="flex justify-between items-center">
-                            <div>
-                              <p className="font-semibold">{testimonial.author}</p>
-                              <p className="text-sm text-muted-foreground">{testimonial.location}</p>
-                            </div>
-                            <div className="flex">
-                              {[1, 2, 3, 4, 5].map((star) => (
-                                <CheckCircle2 
-                                  key={star} 
-                                  className="w-5 h-5 text-homi-purple"
-                                  fill="currentColor"
-                                />
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious className="hidden md:flex" />
-              <CarouselNext className="hidden md:flex" />
-            </Carousel>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+              {featuredProfiles.map(profile => <div key={profile.id} className="animate-on-scroll">
+                  <ProfileCard {...profile} onLike={id => console.log('Liked:', id)} onMessage={id => window.location.href = '/chat'} onView={id => window.location.href = '/profile'} />
+                </div>)}
+            </div>
+            
+            <div className="text-center">
+              <Link to="/matching">
+                <Button size="lg" className="rounded-full bg-homi-purple hover:bg-homi-purple/90 px-8">
+                  Ver más perfiles
+                </Button>
+              </Link>
+            </div>
           </div>
         </section>
         
-        {/* CTA Section */}
-        <section className="py-16 bg-gradient-to-r from-homi-purple to-homi-lightPurple text-white">
-          <div className="container px-4 mx-auto text-center">
-            <h2 className="text-3xl font-bold tracking-tight mb-4">¿Listo para encontrar tu hogar ideal?</h2>
-            <p className="max-w-xl mx-auto mb-8 text-white/90">
-              Únete a Homi hoy y forma parte de la comunidad que está revolucionando la forma de compartir vivienda en España.
-            </p>
+        <section className="py-20 bg-muted">
+          <div className="container mx-auto px-4">
+            <div className="text-center max-w-3xl mx-auto mb-16 animate-on-scroll">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                Conecta de <span className="homi-gradient-text">forma inteligente</span>
+              </h2>
+              <p className="text-muted-foreground text-lg">
+                Nuestro algoritmo de matching inteligente te ayuda a encontrar compañeros de piso compatibles con tu estilo de vida.
+              </p>
+            </div>
             
-            {!user ? (
-              <Button asChild size="lg" className="bg-white text-homi-purple hover:bg-white/90">
-                <Link to="/register">
-                  Regístrate ahora <ArrowRight className="ml-2 h-4 w-4" />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="glass-card p-6 animate-on-scroll">
+                <div className="w-12 h-12 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple mb-4">
+                  <span className="text-xl">🧠</span>
+                </div>
+                <h3 className="text-xl font-semibold mb-3">Matching inteligente</h3>
+                <p className="text-muted-foreground mb-4">
+                  Nuestro algoritmo analiza tu perfil y preferencias para encontrar las mejores coincidencias.
+                </p>
+                <Link to="/matching" className="text-homi-purple font-medium hover:underline inline-flex items-center">
+                  Encontrar matches <span className="ml-1">→</span>
                 </Link>
-              </Button>
-            ) : (
-              <Button asChild size="lg" className="bg-white text-homi-purple hover:bg-white/90">
-                <Link to="/matching">
-                  Explorar coincidencias <ArrowRight className="ml-2 h-4 w-4" />
+              </div>
+              
+              <div className="glass-card p-6 animate-on-scroll">
+                <div className="w-12 h-12 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple mb-4">
+                  <span className="text-xl">💬</span>
+                </div>
+                <h3 className="text-xl font-semibold mb-3">Chat en tiempo real</h3>
+                <p className="text-muted-foreground mb-4">
+                  Comunícate directamente con tus matches para conocerlos mejor antes de tomar una decisión.
+                </p>
+                <Link to="/chat" className="text-homi-purple font-medium hover:underline inline-flex items-center">
+                  Ir al chat <span className="ml-1">→</span>
                 </Link>
-              </Button>
-            )}
+              </div>
+              
+              <div className="glass-card p-6 animate-on-scroll">
+                <div className="w-12 h-12 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple mb-4">
+                  <span className="text-xl">👤</span>
+                </div>
+                <h3 className="text-xl font-semibold mb-3">Perfiles detallados</h3>
+                <p className="text-muted-foreground mb-4">
+                  Crea tu perfil personalizado con tus preferencias de convivencia y encuentra compañeros afines.
+                </p>
+                <Link to="/profile" className="text-homi-purple font-medium hover:underline inline-flex items-center">
+                  Ver mi perfil <span className="ml-1">→</span>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        <section className="py-20 bg-homi-purple text-white">
+          <div className="container mx-auto px-4">
+            <div className="max-w-3xl mx-auto text-center animate-on-scroll">
+              <h2 className="text-3xl md:text-4xl font-bold mb-6">
+                ¿Listo para encontrar a tu compañero ideal?
+              </h2>
+              <p className="text-xl mb-8 text-white/80">
+                Únete a Homi y comienza a conectar con personas compatibles con tu estilo de vida.
+              </p>
+              <Link to="/matching">
+                <Button size="lg" variant="secondary" className="rounded-full bg-white text-homi-purple hover:bg-white/90 px-8">
+                  Comenzar Ahora
+                </Button>
+              </Link>
+            </div>
           </div>
         </section>
       </main>
       
       <Footer />
-    </>
+    </div>
   );
 };
 

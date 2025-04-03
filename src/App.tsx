@@ -16,13 +16,9 @@ import SignInPage from "./pages/SignInPage";
 import RegisterPage from "./pages/RegisterPage";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
-import DevelopmentBanner from "./components/layout/DevelopmentBanner";
-import Navbar from "./components/layout/Navbar";
-import DemoBanner from "./components/layout/DemoBanner";
 
 const queryClient = new QueryClient();
 
-// No más layouts con Outlet, volvemos a un enfoque más directo
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
@@ -31,121 +27,49 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <ScrollToTop />
-          <div className="flex flex-col min-h-screen">
-            <DevelopmentBanner />
+          <Routes>
+            {/* Public routes */}
+            <Route path="/" element={<Index />} />
+            <Route path="/signin" element={<SignInPage />} />
+            <Route path="/register" element={<RegisterPage />} />
             
-            {/* Rutas de autenticación (sin Navbar) */}
-            <Routes>
-              <Route path="/signin" element={<SignInPage />} />
-              <Route path="/register" element={<RegisterPage />} />
-
-              {/* Página principal */}
-              <Route
-                path="/"
-                element={
-                  <>
-                    <Navbar />
-                    <DemoBanner />
-                    <div className="flex-1">
-                      <Index />
-                    </div>
-                  </>
-                }
-              />
-
-              {/* Rutas protegidas con Navbar */}
-              <Route
-                path="/matching"
-                element={
-                  <ProtectedRoute allowPreview={true}>
-                    <>
-                      <Navbar />
-                      <DemoBanner />
-                      <div className="flex-1">
-                        <MatchingPage isPreview={false} />
-                      </div>
-                    </>
-                  </ProtectedRoute>
-                }
-              />
-
-              <Route
-                path="/chat"
-                element={
-                  <ProtectedRoute allowPreview={true}>
-                    <>
-                      <Navbar />
-                      <DemoBanner />
-                      <div className="flex-1">
-                        <ChatPage isPreview={false} />
-                      </div>
-                    </>
-                  </ProtectedRoute>
-                }
-              />
-
-              <Route
-                path="/profile"
-                element={
-                  <ProtectedRoute>
-                    <>
-                      <Navbar />
-                      <DemoBanner />
-                      <div className="flex-1">
-                        <ProfilePage />
-                      </div>
-                    </>
-                  </ProtectedRoute>
-                }
-              />
-
-              <Route
-                path="/profile/:id"
-                element={
-                  <ProtectedRoute>
-                    <>
-                      <Navbar />
-                      <DemoBanner />
-                      <div className="flex-1">
-                        <ProfileViewPage />
-                      </div>
-                    </>
-                  </ProtectedRoute>
-                }
-              />
-
-              <Route
-                path="/profile/create"
-                element={
-                  <ProtectedRoute>
-                    <>
-                      <Navbar />
-                      <DemoBanner />
-                      <div className="flex-1">
-                        <ProfileForm />
-                      </div>
-                    </>
-                  </ProtectedRoute>
-                }
-              />
-
-              {/* Redirecciones */}
-              <Route path="" element={<Navigate to="/" replace />} />
-              
-              {/* Ruta para capturar todas las demás */}
-              <Route
-                path="*"
-                element={
-                  <>
-                    <Navbar />
-                    <div className="flex-1">
-                      <NotFound />
-                    </div>
-                  </>
-                }
-              />
-            </Routes>
-          </div>
+            {/* Routes with preview for non-authenticated users */}
+            <Route path="/matching" element={
+              <ProtectedRoute allowPreview={true}>
+                <MatchingPage isPreview={!queryClient.getQueryCache().findAll().some(
+                  query => query.queryKey[0] === 'user'
+                )} />
+              </ProtectedRoute>
+            } />
+            <Route path="/profile" element={
+              <ProtectedRoute>
+                <ProfilePage />
+              </ProtectedRoute>
+            } />
+            <Route path="/profile/:id" element={
+              <ProtectedRoute>
+                <ProfileViewPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/profile/create" element={
+              <ProtectedRoute>
+                <ProfileForm />
+              </ProtectedRoute>
+            } />
+            <Route path="/chat" element={
+              <ProtectedRoute allowPreview={true}>
+                <ChatPage isPreview={!queryClient.getQueryCache().findAll().some(
+                  query => query.queryKey[0] === 'user'
+                )} />
+              </ProtectedRoute>
+            } />
+            
+            {/* Redirects */}
+            <Route path="" element={<Navigate to="/" replace />} />
+            
+            {/* Catch-all route */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>
