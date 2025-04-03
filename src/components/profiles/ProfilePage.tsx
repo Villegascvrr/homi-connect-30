@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
@@ -786,4 +787,256 @@ const ProfilePage = () => {
                         <Button variant="outline" size="sm" onClick={handleCancelEditLookingFor} className="rounded-full h-8 w-8 p-0 border-red-400 text-red-500">
                           <X size={15} />
                         </Button>
-                        <Button variant="outline" size="sm" onClick={handleSaveLookingFor} className="rounded-full h-8 w-8 p
+                        <Button variant="outline" size="sm" onClick={handleSaveLookingFor} className="rounded-full h-8 w-8 p-0 border-green-400 text-green-500">
+                          <Check size={15} />
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {isEditingLookingFor ? (
+                    <div className="space-y-4">
+                      <div>
+                        <label className="text-sm font-medium mb-1.5 block">¿Tienes apartamento?</label>
+                        <div className="flex items-center">
+                          <Switch 
+                            checked={profile.lookingFor.hasApartment} 
+                            onCheckedChange={(checked) => handleLookingForChange('hasApartment', checked)} 
+                          />
+                          <span className="ml-2 text-sm">
+                            {profile.lookingFor.hasApartment ? 'Sí, tengo apartamento' : 'No, estoy buscando'}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <label className="text-sm font-medium mb-1.5 block">Número de compañeros</label>
+                        <Select
+                          value={profile.lookingFor.roommatesCount}
+                          onValueChange={(value) => handleLookingForChange('roommatesCount', value)}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Selecciona cuántos compañeros buscas" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="1">1 compañero</SelectItem>
+                            <SelectItem value="2">2 compañeros</SelectItem>
+                            <SelectItem value="3">3 compañeros</SelectItem>
+                            <SelectItem value="4+">4 o más compañeros</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div>
+                        <label className="text-sm font-medium mb-1.5 block">Preferencia de género</label>
+                        <Select
+                          value={profile.lookingFor.genderPreference}
+                          onValueChange={(value) => handleLookingForChange('genderPreference', value)}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Selecciona tu preferencia de género" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="cualquiera">Sin preferencia</SelectItem>
+                            <SelectItem value="mujeres">Solo mujeres</SelectItem>
+                            <SelectItem value="hombres">Solo hombres</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div>
+                        <label className="text-sm font-medium mb-1.5 block">Preferencia de fumadores</label>
+                        <Select
+                          value={profile.lookingFor.smokingPreference}
+                          onValueChange={(value) => handleLookingForChange('smokingPreference', value)}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Selecciona tu preferencia sobre fumar" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="cualquiera">Sin preferencia</SelectItem>
+                            <SelectItem value="no-fumadores">No fumadores</SelectItem>
+                            <SelectItem value="fumadores">Fumadores</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div>
+                        <label className="text-sm font-medium mb-1.5 block">Preferencia de ocupación</label>
+                        <Select
+                          value={profile.lookingFor.occupationPreference}
+                          onValueChange={(value) => handleLookingForChange('occupationPreference', value)}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Selecciona tu preferencia de ocupación" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="cualquiera">Sin preferencia</SelectItem>
+                            <SelectItem value="estudiantes">Estudiantes</SelectItem>
+                            <SelectItem value="trabajadores">Trabajadores</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div>
+                        <label className="text-sm font-medium mb-1.5 block">Rango de presupuesto (€ al mes)</label>
+                        <Slider
+                          value={profile.lookingFor.budgetRange}
+                          min={200}
+                          max={1500}
+                          step={50}
+                          onValueChange={(value) => handleLookingForChange('budgetRange', value)}
+                          className="my-6"
+                        />
+                        <div className="flex justify-between text-sm text-muted-foreground">
+                          <span>€{profile.lookingFor.budgetRange[0]}</span>
+                          <span>€{profile.lookingFor.budgetRange[1]}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div>
+                      {profile.lookingFor.hasApartment === false && 
+                       profile.lookingFor.roommatesCount === "-" && 
+                       profile.lookingFor.genderPreference === "-" && 
+                       profile.lookingFor.smokingPreference === "-" && 
+                       profile.lookingFor.occupationPreference === "-" ? (
+                        <div className="p-4 text-center bg-gray-50 rounded-lg border border-gray-100">
+                          <p className="text-sm text-muted-foreground">
+                            No has configurado tus preferencias de búsqueda aún.
+                          </p>
+                          <Button onClick={handleEditLookingFor} variant="outline" size="sm" className="mt-3">
+                            <Pencil size={14} className="mr-1.5" />
+                            Configurar ahora
+                          </Button>
+                        </div>
+                      ) : (
+                        <dl className="space-y-3 text-sm">
+                          <div>
+                            <dt className="text-muted-foreground mb-1">¿Tienes apartamento?</dt>
+                            <dd className="font-medium">
+                              {profile.lookingFor.hasApartment ? 'Sí, tengo apartamento' : 'No, estoy buscando'}
+                            </dd>
+                          </div>
+                          
+                          {profile.lookingFor.roommatesCount !== "-" && (
+                            <div>
+                              <dt className="text-muted-foreground mb-1">Compañeros de piso</dt>
+                              <dd className="font-medium">{profile.lookingFor.roommatesCount} compañeros</dd>
+                            </div>
+                          )}
+                          
+                          {profile.lookingFor.genderPreference !== "-" && (
+                            <div>
+                              <dt className="text-muted-foreground mb-1">Preferencia de género</dt>
+                              <dd className="font-medium">
+                                {profile.lookingFor.genderPreference === 'mujeres' 
+                                  ? 'Solo mujeres' 
+                                  : profile.lookingFor.genderPreference === 'hombres' 
+                                    ? 'Solo hombres' 
+                                    : 'Sin preferencia'}
+                              </dd>
+                            </div>
+                          )}
+                          
+                          {profile.lookingFor.smokingPreference !== "-" && (
+                            <div>
+                              <dt className="text-muted-foreground mb-1">Fumadores</dt>
+                              <dd className="font-medium">
+                                {profile.lookingFor.smokingPreference === 'no-fumadores' 
+                                  ? 'Prefiero no fumadores' 
+                                  : profile.lookingFor.smokingPreference === 'fumadores' 
+                                    ? 'Acepto fumadores' 
+                                    : 'Sin preferencia'}
+                              </dd>
+                            </div>
+                          )}
+                          
+                          {profile.lookingFor.occupationPreference !== "-" && (
+                            <div>
+                              <dt className="text-muted-foreground mb-1">Ocupación</dt>
+                              <dd className="font-medium">
+                                {profile.lookingFor.occupationPreference === 'estudiantes' 
+                                  ? 'Preferiblemente estudiantes' 
+                                  : profile.lookingFor.occupationPreference === 'trabajadores' 
+                                    ? 'Preferiblemente trabajadores' 
+                                    : 'Sin preferencia'}
+                              </dd>
+                            </div>
+                          )}
+                          
+                          <div>
+                            <dt className="text-muted-foreground mb-1">Presupuesto</dt>
+                            <dd className="font-medium">€{profile.lookingFor.budgetRange[0]} - €{profile.lookingFor.budgetRange[1]} / mes</dd>
+                          </div>
+                        </dl>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+      <Footer />
+      
+      <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Compartir perfil</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-2">
+            <div className="flex justify-center mb-2">
+              <div className="p-2 bg-white rounded-lg border" ref={qrCodeRef}>
+                <QRCodeSVG value={getProfileUrl()} size={180} bgColor="#FFFFFF" fgColor="#6E59A5" />
+              </div>
+            </div>
+            
+            <div className="flex flex-col gap-2">
+              <Button onClick={handleCopyLink} className="bg-homi-purple hover:bg-homi-purple/90 w-full">
+                Copiar enlace
+              </Button>
+              <Button onClick={handleDownloadQR} variant="outline" className="w-full">
+                Descargar código QR
+              </Button>
+            </div>
+            
+            <div className="pt-2">
+              <p className="text-sm font-medium mb-3">Compartir en redes sociales</p>
+              <div className="grid grid-cols-2 gap-3">
+                <Button variant="outline" onClick={() => shareToSocialMedia('whatsapp')} className="justify-start">
+                  <span className="w-5 h-5 mr-2 text-green-500">
+                    {/* WhatsApp icon would go here */}
+                  </span>
+                  WhatsApp
+                </Button>
+                <Button variant="outline" onClick={() => shareToSocialMedia('telegram')} className="justify-start">
+                  <span className="w-5 h-5 mr-2 text-blue-500">
+                    {/* Telegram icon would go here */}
+                  </span>
+                  Telegram
+                </Button>
+                <Button variant="outline" onClick={() => shareToSocialMedia('facebook')} className="justify-start">
+                  <span className="w-5 h-5 mr-2 text-blue-700">
+                    {/* Facebook icon would go here */}
+                  </span>
+                  Facebook
+                </Button>
+                <Button variant="outline" onClick={() => shareToSocialMedia('twitter')} className="justify-start">
+                  <span className="w-5 h-5 mr-2 text-blue-400">
+                    {/* Twitter icon would go here */}
+                  </span>
+                  Twitter
+                </Button>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+};
+
+export default ProfilePage;
