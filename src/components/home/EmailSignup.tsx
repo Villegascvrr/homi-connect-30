@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -248,10 +249,12 @@ const EmailSignup = () => {
       setActiveTab("perfil");
       if (formContainerRef.current) {
         setTimeout(() => {
-          window.scrollTo({
-            top: formContainerRef.current!.offsetTop - 100,
-            behavior: 'smooth'
-          });
+          if (formContainerRef.current) {
+            window.scrollTo({
+              top: formContainerRef.current.offsetTop - 100,
+              behavior: 'smooth'
+            });
+          }
         }, 50);
       }
     } else {
@@ -664,7 +667,7 @@ const EmailSignup = () => {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="">No estoy buscando piso en Sevilla</SelectItem>
+                            <SelectItem value="no_busco">No estoy buscando piso en Sevilla</SelectItem>
                             {sevillaZones.map((zone) => (
                               <SelectItem key={zone} value={zone}>{zone}</SelectItem>
                             ))}
