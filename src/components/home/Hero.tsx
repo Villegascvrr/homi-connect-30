@@ -5,11 +5,13 @@ import { Check } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import EmailSignup from './EmailSignup';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useAuth } from '@/context/AuthContext';
 
 const Hero = () => {
   const [email, setEmail] = useState('');
   const [showSignupForm, setShowSignupForm] = useState(false);
   const isMobile = useIsMobile();
+  const { user } = useAuth();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,42 +49,70 @@ const Hero = () => {
         paddingTop: '17px',
         paddingBottom: '15px' // Increased from 5px to 15px for more consistent spacing
       }}>
-          <div className="inline-block px-4 py-1.5 mb-3 md:mb-4 rounded-full bg-homi-ultraLightPurple text-homi-purple text-xs md:text-sm font-medium animate-pulse-soft">
-            ¡Ayúdanos a alcanzar los 1000 usuarios!
-          </div>
-          
-          <h1 className="text-3xl md:text-6xl font-bold mb-3 md:mb-4 animate-slide-up leading-tight">
-            Conecta con compañeros de piso <span className="homi-gradient-text">compatibles</span>
-          </h1>
-          
-          <p className="text-base md:text-xl text-muted-foreground mb-3 md:mb-4 max-w-3xl mx-auto my-[34px]">
-            Homi utiliza un sistema de matching inteligente para conectarte con compañeros 
-            de piso que comparten tus intereses, hábitos y estilo de vida.
-          </p>
+          {!user ? (
+            <>
+              <div className="inline-block px-4 py-1.5 mb-3 md:mb-4 rounded-full bg-homi-ultraLightPurple text-homi-purple text-xs md:text-sm font-medium animate-pulse-soft">
+                ¡Ayúdanos a alcanzar los 1000 usuarios!
+              </div>
+              
+              <h1 className="text-3xl md:text-6xl font-bold mb-3 md:mb-4 animate-slide-up leading-tight">
+                Conecta con compañeros de piso <span className="homi-gradient-text">compatibles</span>
+              </h1>
+              
+              <p className="text-base md:text-xl text-muted-foreground mb-3 md:mb-4 max-w-3xl mx-auto my-[34px]">
+                Homi utiliza un sistema de matching inteligente para conectarte con compañeros 
+                de piso que comparten tus intereses, hábitos y estilo de vida.
+              </p>
 
-          <div className="bg-homi-ultraLightPurple/50 p-3 md:p-4 rounded-xl mb-4 md:mb-6 max-w-3xl mx-auto my-[34px]">
-            <p className="text-sm md:text-lg font-medium text-homi-purple">
-              Homi estará disponible próximamente - ¡Regístrate ahora para ser de los primeros en usarlo!
-              <br />
-              <span className="text-xs md:text-sm font-normal mt-1 inline-block">
-                Necesitamos alcanzar 1000 usuarios registrados para lanzar oficialmente la app.
-              </span>
-            </p>
-          </div>
+              <div className="bg-homi-ultraLightPurple/50 p-3 md:p-4 rounded-xl mb-4 md:mb-6 max-w-3xl mx-auto my-[34px]">
+                <p className="text-sm md:text-lg font-medium text-homi-purple">
+                  Homi estará disponible próximamente - ¡Regístrate ahora para ser de los primeros en usarlo!
+                  <br />
+                  <span className="text-xs md:text-sm font-normal mt-1 inline-block">
+                    Necesitamos alcanzar 1000 usuarios registrados para lanzar oficialmente la app.
+                  </span>
+                </p>
+              </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 mb-6">
-            {/* Changed mb-0 to mb-6 to add consistent bottom margin */}
-            <div className="relative w-full sm:w-auto moving-border-container">
-              <Button size={isMobile ? "default" : "lg"} className="rounded-full bg-gradient-to-r from-homi-purple to-homi-lightPurple hover:from-homi-lightPurple hover:to-homi-purple text-white font-bold shadow-lg shadow-purple-500/30 transform hover:scale-105 transition-all duration-300 w-full z-10 relative" onClick={handleRegisterClick}>
-                ¡Regístrate ahora!
-              </Button>
-            </div>
-            <Button size={isMobile ? "default" : "lg"} variant="outline" className="rounded-full w-full sm:w-auto mt-2 sm:mt-0" asChild>
-              <Link to="/how-it-works">Cómo Funciona</Link>
-            </Button>
-          </div>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 mb-6">
+                {/* Changed mb-0 to mb-6 to add consistent bottom margin */}
+                <div className="relative w-full sm:w-auto moving-border-container">
+                  <Button size={isMobile ? "default" : "lg"} className="rounded-full bg-gradient-to-r from-homi-purple to-homi-lightPurple hover:from-homi-lightPurple hover:to-homi-purple text-white font-bold shadow-lg shadow-purple-500/30 transform hover:scale-105 transition-all duration-300 w-full z-10 relative" onClick={handleRegisterClick}>
+                    ¡Regístrate ahora!
+                  </Button>
+                </div>
+                <Button size={isMobile ? "default" : "lg"} variant="outline" className="rounded-full w-full sm:w-auto mt-2 sm:mt-0" asChild>
+                  <Link to="/how-it-works">Cómo Funciona</Link>
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="inline-block px-4 py-1.5 mb-3 md:mb-4 rounded-full bg-green-100 text-green-700 text-xs md:text-sm font-medium">
+                <Check className="inline-block mr-1 h-4 w-4" /> Usuario registrado
+              </div>
+              
+              <h1 className="text-3xl md:text-5xl font-bold mb-3 md:mb-4 animate-slide-up leading-tight">
+                ¡Bienvenido a <span className="homi-gradient-text">Homi</span>!
+              </h1>
+              
+              <p className="text-base md:text-xl text-muted-foreground mb-6 max-w-3xl mx-auto">
+                Gracias por registrarte. Te notificaremos cuando la aplicación esté completamente funcional.
+                Mientras tanto, puedes explorar algunas de las características disponibles.
+              </p>
+
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 mb-6">
+                <Button size={isMobile ? "default" : "lg"} className="rounded-full bg-gradient-to-r from-homi-purple to-homi-lightPurple hover:from-homi-lightPurple hover:to-homi-purple text-white font-bold shadow-lg shadow-purple-500/30 transform hover:scale-105 transition-all duration-300 w-full sm:w-auto" asChild>
+                  <Link to="/profile">Ver mi perfil</Link>
+                </Button>
+                <Button size={isMobile ? "default" : "lg"} variant="outline" className="rounded-full w-full sm:w-auto mt-2 sm:mt-0" asChild>
+                  <Link to="/matching">Explorar perfiles</Link>
+                </Button>
+              </div>
+            </>
+          )}
           
-          {showSignupForm && <div id="signup-form" className="mt-4 md:mt-6 bg-white dark:bg-background border border-border rounded-xl p-4 md:p-6 shadow-sm mb-2 relative z-10">
+          {showSignupForm && !user && <div id="signup-form" className="mt-4 md:mt-6 bg-white dark:bg-background border border-border rounded-xl p-4 md:p-6 shadow-sm mb-2 relative z-10">
               <EmailSignup />
             </div>}
         </div>

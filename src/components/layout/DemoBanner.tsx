@@ -16,7 +16,10 @@ const DemoBanner = ({
   return (
     <div className="bg-homi-purple/80 text-white py-2 px-4 text-center sticky top-16 z-40">
       <p className="text-sm font-medium">
-        {customMessage || message}
+        {user 
+          ? "¡Gracias por registrarte en Homi! Te avisaremos cuando la aplicación esté completamente funcional."
+          : customMessage || message
+        }
         {!user && (
           <> <Link to="/register" className="underline font-bold">Regístrate</Link> para acceder a todas las funciones.</>
         )}
