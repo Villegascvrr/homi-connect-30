@@ -1,11 +1,12 @@
 
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/context/AuthContext';
 
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -29,6 +30,11 @@ const SignInPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { signIn, loading } = useAuth();
+  
+  // Get the redirect path from location state or default to home
+  const from = location.state?.from || '/';
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -38,18 +44,15 @@ const SignInPage = () => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    // In a real application, this would call an authentication API
-    console.log('Form values:', values);
-    
-    // Simulate successful login
-    toast({
-      title: "Inicio de sesión exitoso",
-      description: "Bienvenido de nuevo a Homi",
-    });
-    
-    // Redirect to home page after successful login
-    navigate('/');
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      await signIn(values.email, values.password);
+      // Navigate to the redirect path
+      navigate(from, { replace: true });
+    } catch (error) {
+      console.error("Login error:", error);
+      // Error handling is done in the signIn function within AuthContext
+    }
   };
 
   return (
@@ -130,8 +133,19 @@ const SignInPage = () => {
                     </Link>
                   </div>
                   
-                  <Button type="submit" className="w-full rounded-full bg-homi-purple hover:bg-homi-purple/90">
-                    Iniciar Sesión
+                  <Button 
+                    type="submit" 
+                    className="w-full rounded-full bg-homi-purple hover:bg-homi-purple/90"
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <div className="flex items-center justify-center">
+                        <div className="h-5 w-5 animate-spin rounded-full border-2 border-t-transparent border-white"></div>
+                        <span className="ml-2">Iniciando sesión...</span>
+                      </div>
+                    ) : (
+                      "Iniciar Sesión"
+                    )}
                   </Button>
                 </form>
               </Form>

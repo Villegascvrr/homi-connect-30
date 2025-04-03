@@ -1,13 +1,31 @@
-
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { Menu, X, ChevronDown, ChevronUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Home, Users, MessageSquare, User, LogIn } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { cn } from '@/lib/utils';
+import { useAuth } from '@/context/AuthContext';
+import AuthButton from '@/components/auth/AuthButton';
 
 const Navbar = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const location = useLocation();
+  const isMobile = useIsMobile();
+  const { user, signOut } = useAuth();
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const toggleDropdown = (dropdown: string) => {
+    if (activeDropdown === dropdown) {
+      setActiveDropdown(null);
+    } else {
+      setActiveDropdown(dropdown);
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -17,149 +35,217 @@ const Navbar = () => {
         setIsScrolled(false);
       }
     };
+
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   useEffect(() => {
+    // Close mobile menu when route changes
     setIsMenuOpen(false);
   }, [location.pathname]);
 
-  const isActive = (path: string) => {
-    return location.pathname === path;
-  };
+  const navLinks = [
+    { name: 'Inicio', path: '/' },
+    { name: 'Cómo funciona', path: '/how-it-works' },
+    { 
+      name: 'Encuentra compañeros', 
+      path: '/matching',
+      dropdown: [
+        { name: 'Buscar compañeros', path: '/matching' },
+        { name: 'Compatibilidad', path: '/compatibility' },
+      ]
+    },
+    { name: 'Perfil', path: '/profile', requiresAuth: true },
+    { name: 'Chat', path: '/chat', requiresAuth: true },
+  ];
+
+  const filteredNavLinks = navLinks.filter(link => 
+    !link.requiresAuth || (link.requiresAuth && user)
+  );
 
   return (
-    <header 
-      className="navbar-header rounded-none"
-      style={{
-        padding: "7px 0 !important"
-      }}
-    >
-      <div className="container mx-auto px-4 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2" onClick={() => window.scrollTo(0, 0)}>
-          <span className="text-2xl font-bold text-homi-purple">Homi</span>
-        </Link>
+    <header className={cn(
+      "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+      isScrolled ? "bg-white/80 dark:bg-background/80 backdrop-blur-md shadow-sm" : "bg-transparent"
+    )}>
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-between h-16 md:h-20">
+          {/* Logo */}
+          <Link to="/" className="flex items-center">
+            <span className="text-xl md:text-2xl font-bold homi-gradient-text">Homi</span>
+          </Link>
 
-        <nav className="hidden md:flex items-center gap-8">
-          <Link 
-            to="/" 
-            className={`transition-colors ${isActive('/') ? 'text-homi-purple font-medium' : 'text-foreground/80 hover:text-homi-purple'}`}
-            onClick={() => window.scrollTo(0, 0)}
-          >
-            Inicio
-          </Link>
-          <Link 
-            to="/matching" 
-            className={`transition-colors text-[1.05rem] font-medium ${isActive('/matching') ? 'text-homi-purple font-semibold' : 'text-foreground/90 hover:text-homi-purple'}`}
-            onClick={() => window.scrollTo(0, 0)}
-          >
-            Encuentra Compañeros
-          </Link>
-          <Link 
-            to="/chat" 
-            className={`transition-colors text-[1.05rem] font-medium ${isActive('/chat') ? 'text-homi-purple font-semibold' : 'text-foreground/90 hover:text-homi-purple'}`}
-            onClick={() => window.scrollTo(0, 0)}
-          >
-            Mensajes
-          </Link>
-          <Link 
-            to="/profile" 
-            className={`transition-colors text-[1.05rem] font-medium ${isActive('/profile') ? 'text-homi-purple font-semibold' : 'text-foreground/90 hover:text-homi-purple'}`}
-            onClick={() => window.scrollTo(0, 0)}
-          >
-            Mi Perfil
-          </Link>
-        </nav>
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center space-x-1">
+            {filteredNavLinks.map((link) => (
+              !link.dropdown ? (
+                <Link
+                  key={link.name}
+                  to={link.path}
+                  className={cn(
+                    "px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                    location.pathname === link.path
+                      ? "text-homi-purple"
+                      : "text-foreground hover:text-homi-purple"
+                  )}
+                >
+                  {link.name}
+                </Link>
+              ) : (
+                <div key={link.name} className="relative">
+                  <button
+                    className={cn(
+                      "px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center",
+                      activeDropdown === link.name || link.dropdown.some(item => location.pathname === item.path)
+                        ? "text-homi-purple"
+                        : "text-foreground hover:text-homi-purple"
+                    )}
+                    onClick={() => toggleDropdown(link.name)}
+                  >
+                    {link.name}
+                    {activeDropdown === link.name ? (
+                      <ChevronUp className="ml-1 h-4 w-4" />
+                    ) : (
+                      <ChevronDown className="ml-1 h-4 w-4" />
+                    )}
+                  </button>
+                  {activeDropdown === link.name && (
+                    <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-card ring-1 ring-black ring-opacity-5 z-50">
+                      <div className="py-1">
+                        {link.dropdown.map((item) => (
+                          <Link
+                            key={item.name}
+                            to={item.path}
+                            className="block px-4 py-2 text-sm text-foreground hover:bg-muted"
+                            onClick={() => setActiveDropdown(null)}
+                          >
+                            {item.name}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )
+            ))}
+          </nav>
 
-        <div className="hidden md:flex items-center gap-4">
-          <Button asChild variant="outline" className="rounded-full">
-            <Link to="/signin" onClick={() => window.scrollTo(0, 0)}>Iniciar Sesión</Link>
-          </Button>
-          <Button asChild className="rounded-full bg-homi-purple hover:bg-homi-purple/90">
-            <Link to="/register" onClick={() => window.scrollTo(0, 0)}>Registrarse</Link>
-          </Button>
+          {/* Auth Buttons / User Menu */}
+          <div className="hidden md:block">
+            <AuthButton />
+          </div>
+
+          {/* Mobile Menu Button */}
+          <div className="flex md:hidden">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleMenu}
+              aria-label="Toggle menu"
+            >
+              {isMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
+            </Button>
+          </div>
         </div>
-
-        <button className="md:hidden text-foreground p-2" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
       </div>
 
-      {isMenuOpen && <div className="md:hidden bg-background border-t border-border animate-fade-in">
-          <div className="container mx-auto px-4 py-4 flex flex-col">
-            <Link 
-              to="/" 
-              onClick={() => {
-                setIsMenuOpen(false);
-                window.scrollTo(0, 0);
-              }} 
-              className={`flex items-center gap-2 py-3 transition-colors ${isActive('/') ? 'text-homi-purple font-medium' : 'text-foreground/80 hover:text-homi-purple'}`}
-            >
-              <Home size={20} />
-              <span>Inicio</span>
-            </Link>
-            <Link 
-              to="/matching" 
-              onClick={() => {
-                setIsMenuOpen(false);
-                window.scrollTo(0, 0);
-              }} 
-              className={`flex items-center gap-2 py-3.5 transition-colors text-[1.1rem] ${isActive('/matching') ? 'text-homi-purple font-semibold' : 'text-foreground/90 hover:text-homi-purple font-medium'}`}
-            >
-              <Users size={22} />
-              <span>Encuentra Compañeros</span>
-            </Link>
-            <Link 
-              to="/chat" 
-              onClick={() => {
-                setIsMenuOpen(false);
-                window.scrollTo(0, 0);
-              }} 
-              className={`flex items-center gap-2 py-3.5 transition-colors text-[1.1rem] ${isActive('/chat') ? 'text-homi-purple font-semibold' : 'text-foreground/90 hover:text-homi-purple font-medium'}`}
-            >
-              <MessageSquare size={22} />
-              <span>Mensajes</span>
-            </Link>
-            <Link 
-              to="/profile" 
-              onClick={() => {
-                setIsMenuOpen(false);
-                window.scrollTo(0, 0);
-              }} 
-              className={`flex items-center gap-2 py-3.5 transition-colors text-[1.1rem] ${isActive('/profile') ? 'text-homi-purple font-semibold' : 'text-foreground/90 hover:text-homi-purple font-medium'}`}
-            >
-              <User size={22} />
-              <span>Mi Perfil</span>
-            </Link>
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <div className="md:hidden bg-white dark:bg-card shadow-lg">
+          <div className="px-2 pt-2 pb-3 space-y-1">
+            {filteredNavLinks.map((link) => (
+              !link.dropdown ? (
+                <Link
+                  key={link.name}
+                  to={link.path}
+                  className={cn(
+                    "block px-3 py-2 rounded-md text-base font-medium",
+                    location.pathname === link.path
+                      ? "bg-homi-ultraLightPurple text-homi-purple"
+                      : "text-foreground hover:bg-muted"
+                  )}
+                >
+                  {link.name}
+                </Link>
+              ) : (
+                <div key={link.name}>
+                  <button
+                    className={cn(
+                      "w-full text-left px-3 py-2 rounded-md text-base font-medium flex items-center justify-between",
+                      activeDropdown === link.name || link.dropdown.some(item => location.pathname === item.path)
+                        ? "bg-homi-ultraLightPurple text-homi-purple"
+                        : "text-foreground hover:bg-muted"
+                    )}
+                    onClick={() => toggleDropdown(link.name)}
+                  >
+                    {link.name}
+                    {activeDropdown === link.name ? (
+                      <ChevronUp className="ml-1 h-4 w-4" />
+                    ) : (
+                      <ChevronDown className="ml-1 h-4 w-4" />
+                    )}
+                  </button>
+                  {activeDropdown === link.name && (
+                    <div className="pl-4 space-y-1 mt-1">
+                      {link.dropdown.map((item) => (
+                        <Link
+                          key={item.name}
+                          to={item.path}
+                          className="block px-3 py-2 rounded-md text-sm text-foreground hover:bg-muted"
+                        >
+                          {item.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )
+            ))}
             
-            <div className="flex flex-col gap-3 mt-4 pt-4 border-t border-border">
-              <Button asChild variant="outline" className="rounded-full w-full justify-center">
-                <Link 
-                  to="/signin"
-                  onClick={() => {
-                    setIsMenuOpen(false);
-                    window.scrollTo(0, 0);
-                  }}
-                >
-                  <LogIn className="mr-2 h-4 w-4" />
-                  Iniciar Sesión
-                </Link>
-              </Button>
-              <Button asChild className="rounded-full w-full justify-center bg-homi-purple hover:bg-homi-purple/90">
-                <Link 
-                  to="/register"
-                  onClick={() => {
-                    setIsMenuOpen(false);
-                    window.scrollTo(0, 0);
-                  }}
-                >
-                  Registrarse
-                </Link>
-              </Button>
+            {/* Mobile Auth Buttons */}
+            <div className="pt-2 pb-1">
+              {!user ? (
+                <>
+                  <Link
+                    to="/signin"
+                    className="block w-full text-center px-3 py-2 rounded-md text-base font-medium text-foreground hover:bg-muted"
+                  >
+                    Iniciar sesión
+                  </Link>
+                  <Link
+                    to="/register"
+                    className="block w-full text-center mt-2 px-3 py-2 rounded-md text-base font-medium bg-homi-purple text-white hover:bg-homi-purple/90"
+                  >
+                    Registrarse
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/profile"
+                    className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-foreground hover:bg-muted"
+                  >
+                    Mi perfil
+                  </Link>
+                  <button
+                    onClick={() => signOut()}
+                    className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                  >
+                    Cerrar sesión
+                  </button>
+                </>
+              )}
             </div>
           </div>
-        </div>}
+        </div>
+      )}
     </header>
   );
 };

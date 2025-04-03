@@ -15,6 +15,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { FormImageUpload } from "@/components/ui/form-image-upload";
+import { useAuth, UserSignUpData } from '@/context/AuthContext';
 
 const formSchema = z.object({
   firstName: z.string().min(2, {
@@ -32,6 +33,9 @@ const formSchema = z.object({
   }),
   email: z.string().email({
     message: 'Email inválido'
+  }),
+  password: z.string().min(6, {
+    message: 'La contraseña debe tener al menos 6 caracteres'
   }),
   edad: z.string().refine(val => {
     const num = parseInt(val);
@@ -63,13 +67,13 @@ const EmailSignup = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSigningWithGoogle, setIsSigningWithGoogle] = useState(false);
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("datos");
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const navigate = useNavigate();
   const formContainerRef = useRef<HTMLDivElement>(null);
+  const { signUp } = useAuth();
+  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -77,6 +81,7 @@ const EmailSignup = () => {
       lastName: '',
       username: '',
       email: '',
+      password: '',
       edad: '',
       ubicacion: '',
       ocupacion: '',
@@ -196,10 +201,19 @@ const EmailSignup = () => {
     }));
   };
 
-  const isPersonalDataValid = form.getValues('firstName')?.length > 0 && form.getValues('lastName')?.length > 0 && form.getValues('username')?.length > 0 && form.getValues('email')?.length > 0 && !form.formState.errors.firstName && !form.formState.errors.lastName && !form.formState.errors.username && !form.formState.errors.email;
+  const isPersonalDataValid = form.getValues('firstName')?.length > 0 && 
+                             form.getValues('lastName')?.length > 0 && 
+                             form.getValues('username')?.length > 0 && 
+                             form.getValues('email')?.length > 0 && 
+                             form.getValues('password')?.length > 5 &&
+                             !form.formState.errors.firstName && 
+                             !form.formState.errors.lastName && 
+                             !form.formState.errors.username && 
+                             !form.formState.errors.email &&
+                             !form.formState.errors.password;
 
   const handleNextStep = async () => {
-    const fieldsToValidate = ["firstName", "lastName", "username", "email"] as const;
+    const fieldsToValidate = ["firstName", "lastName", "username", "email", "password"] as const;
     const result = await form.trigger(fieldsToValidate);
     if (result && isPersonalDataValid) {
       setActiveTab("perfil");
@@ -234,23 +248,32 @@ const EmailSignup = () => {
     if (activeTab === "perfil") {
       console.log("Submitting full form");
       setIsLoading(true);
-      const userData = {
-        ...values,
-        interests: selectedInterests,
-        lifestyle: lifestylePreferences
-      };
-      console.log('Datos completos del usuario:', userData);
+      
       try {
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        const userData: UserSignUpData = {
+          email: values.email,
+          password: values.password!,
+          firstName: values.firstName,
+          lastName: values.lastName,
+          username: values.username,
+          edad: values.edad,
+          ubicacion: values.ubicacion,
+          ocupacion: values.ocupacion,
+          universidad: values.universidad,
+          bio: values.bio,
+          profileImage: values.profileImage,
+          galleryImages: values.galleryImages,
+          interests: selectedInterests,
+          lifestyle: lifestylePreferences
+        };
+        
+        await signUp(userData);
+        
         setIsSubmitted(true);
-        toast({
-          title: "¡Registro exitoso!",
-          description: "Tu perfil se ha creado correctamente."
-        });
         setTimeout(() => {
           navigate("/profile");
         }, 500);
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error submitting form:", error);
         toast({
           title: "Error",
@@ -368,6 +391,19 @@ const EmailSignup = () => {
                       <FormControl>
                         <div className="relative">
                           <Input id="email" type="email" placeholder="tu@email.com" className="pl-10" {...field} />
+                          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>} />
+                
+                <FormField control={form.control} name="password" render={({
+                field
+              }) => <FormItem>
+                      <FormLabel>Contraseña *</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Input id="password" type="password" placeholder="••••••••" className="pl-10" {...field} />
                           <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                         </div>
                       </FormControl>
@@ -567,8 +603,6 @@ const EmailSignup = () => {
                     </div>
                   </div>
                 </div>
-                
-                
                 
                 <div className="flex justify-between">
                   <Button type="button" variant="outline" onClick={() => setActiveTab("datos")} className="rounded-full">
