@@ -13,7 +13,7 @@ type AuthContextType = {
   refreshUser: () => Promise<void>;
 };
 
-export type UserSignUpData = {
+export interface UserSignUpData {
   email: string;
   password: string;
   firstName: string;
@@ -27,14 +27,10 @@ export type UserSignUpData = {
   profileImage?: string;
   galleryImages?: string[];
   interests?: string[];
-  lifestyle?: {
-    morningPerson: boolean;
-    nightPerson: boolean;
-    socializing: string;
-    cleanliness: string;
-    noise: string;
-  };
-};
+  lifestyle?: any;
+  sevilla_zona?: string;
+  companeros_count?: string;
+}
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -45,7 +41,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Set up the auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, currentSession) => {
         console.log("Auth state changed:", event);
@@ -55,7 +50,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
     );
 
-    // Check for existing session
     supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
       console.log("Initial session check:", currentSession ? "Found session" : "No session");
       setSession(currentSession);
@@ -82,7 +76,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const signUp = async (userData: UserSignUpData) => {
     setLoading(true);
     try {
-      // Register the user with Supabase auth
       const { error } = await supabase.auth.signUp({
         email: userData.email,
         password: userData.password,
@@ -96,10 +89,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
 
       if (error) throw error;
-      
-      // After signup, the trigger will create a basic profile, but we need to wait for it
-      // We'll update the profile information after the user completes the first login
-      // The updateUserProfile function can be called separately once user is authenticated
       
       toast({
         title: "Cuenta creada con éxito",
@@ -118,7 +107,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const updateUserProfile = async (userId: string, profileData: Partial<Omit<UserSignUpData, 'password'>>) => {
     try {
-      // Create an object with the profile data in the proper format for Supabase
       const profileUpdateData: Record<string, any> = {
         edad: profileData.edad,
         ubicacion: profileData.ubicacion,
@@ -128,10 +116,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         profile_image: profileData.profileImage,
         gallery_images: profileData.galleryImages,
         interests: profileData.interests,
-        lifestyle: profileData.lifestyle
+        lifestyle: profileData.lifestyle,
+        sevilla_zona: profileData.sevilla_zona,
+        companeros_count: profileData.companeros_count
       };
 
-      // Only include fields that are defined
       Object.keys(profileUpdateData).forEach(key => {
         if (profileUpdateData[key] === undefined) {
           delete profileUpdateData[key];

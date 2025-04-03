@@ -16,7 +16,8 @@ import {
   AtSign,
   Camera,
   ArrowRight,
-  ArrowLeft
+  ArrowLeft,
+  MapPin
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Navbar from '@/components/layout/Navbar';
@@ -38,6 +39,13 @@ import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useIsMobile } from '@/hooks/use-mobile';
 import { FormImageUpload } from '@/components/ui/form-image-upload';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const formSchema = z.object({
   firstName: z.string().min(2, { message: 'El nombre debe tener al menos 2 caracteres' }),
@@ -71,10 +79,29 @@ const formSchema = z.object({
   }),
   profileImage: z.string().optional(),
   galleryImages: z.array(z.string()).optional(),
+  sevilla_zona: z.string().optional(),
+  companeros_count: z.string().optional(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Las contraseñas no coinciden",
   path: ["confirmPassword"],
 });
+
+const sevillaZones = [
+  "Casco Antiguo",
+  "Triana",
+  "Los Remedios",
+  "Nervión",
+  "San Pablo - Santa Justa",
+  "Este - Alcosa - Torreblanca",
+  "Cerro - Amate",
+  "Sur",
+  "Bellavista - La Palmera",
+  "Macarena",
+  "Norte",
+  "Otro/Alrededores"
+];
+
+const companeroOptions = ["1", "2", "3", "4", "5+"];
 
 type Interest = {
   id: string;
@@ -95,6 +122,7 @@ const RegisterPage = () => {
   });
   const [isSigningWithGoogle, setIsSigningWithGoogle] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLookingForApartment, setIsLookingForApartment] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
@@ -140,6 +168,8 @@ const RegisterPage = () => {
       bio: '',
       profileImage: '',
       galleryImages: [],
+      sevilla_zona: '',
+      companeros_count: '',
     },
     mode: "onChange"
   });
@@ -202,6 +232,10 @@ const RegisterPage = () => {
       ...prev,
       [field]: value
     }));
+  };
+
+  const handleApartmentSearchToggle = (val: string) => {
+    setIsLookingForApartment(!!val);
   };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -836,6 +870,82 @@ const RegisterPage = () => {
                           multiple={true}
                           description="Comparte algunas fotos para que otros usuarios te conozcan mejor (máximo 5)"
                         />
+                      </div>
+                      
+                      <Separator className="my-4" />
+                      
+                      <div className="space-y-4 bg-muted/20 p-4 rounded-xl border border-border">
+                        <h2 className="text-xl font-semibold flex items-center gap-2">
+                          <MapPin className="text-homi-purple" size={20} />
+                          Búsqueda de piso en Sevilla
+                        </h2>
+                        
+                        <FormField
+                          control={form.control}
+                          name="sevilla_zona"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>¿En qué zona de Sevilla estás buscando piso?</FormLabel>
+                              <Select 
+                                onValueChange={(value) => {
+                                  field.onChange(value);
+                                  handleApartmentSearchToggle(value);
+                                }}
+                                defaultValue={field.value}
+                              >
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Selecciona una zona" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="">No estoy buscando piso en Sevilla</SelectItem>
+                                  {sevillaZones.map((zone) => (
+                                    <SelectItem key={zone} value={zone}>{zone}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        
+                        {isLookingForApartment && (
+                          <FormField
+                            control={form.control}
+                            name="companeros_count"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="flex items-center gap-2">
+                                  <Users className="text-homi-purple" size={18} />
+                                  ¿Cuántos compañeros de piso buscas?
+                                </FormLabel>
+                                <Select 
+                                  onValueChange={field.onChange}
+                                  defaultValue={field.value}
+                                >
+                                  <FormControl>
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Selecciona un número" />
+                                    </SelectTrigger>
+                                  </FormControl>
+                                  <SelectContent>
+                                    {companeroOptions.map((option) => (
+                                      <SelectItem key={option} value={option}>{option}</SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        )}
+                        
+                        {!isLookingForApartment && (
+                          <p className="text-sm text-muted-foreground">
+                            Indica si estás buscando piso en Sevilla para poder mostrarte compañeros compatibles.
+                          </p>
+                        )}
                       </div>
                       
                       <Separator className="my-4" />
