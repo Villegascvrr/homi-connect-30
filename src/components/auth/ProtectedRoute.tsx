@@ -5,13 +5,11 @@ import { useAuth } from "@/context/AuthContext";
 interface ProtectedRouteProps {
   children: React.ReactNode;
   allowPreview?: boolean;
-  previewComponent?: React.ReactNode;
 }
 
 const ProtectedRoute = ({ 
   children, 
   allowPreview = false,
-  previewComponent 
 }: ProtectedRouteProps) => {
   const { user, loading } = useAuth();
   const location = useLocation();
@@ -27,12 +25,7 @@ const ProtectedRoute = ({
     return <>{children}</>;
   }
 
-  // Si se permite vista previa y hay un componente de vista previa, mostrar la vista previa
-  if (allowPreview && previewComponent) {
-    return <>{previewComponent}</>;
-  }
-
-  // Si se permite vista previa pero no hay componente de vista previa, mostrar el contenido real
+  // Si se permite vista previa, mostrar el contenido real
   if (allowPreview) {
     return <>{children}</>;
   }
