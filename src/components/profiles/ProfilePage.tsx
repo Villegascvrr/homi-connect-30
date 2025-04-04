@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
@@ -7,11 +6,7 @@ import Footer from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { 
-  MessageSquare, Share, Heart, Home, Briefcase, GraduationCap, UserCheck, 
-  Pencil, Download, QrCode, Camera, ChevronLeft, ChevronRight, Search, 
-  Check, X, DollarSign, Calendar, MapPin, Users, AtSign, Save 
-} from 'lucide-react';
+import { MessageSquare, Share, Heart, Home, Briefcase, GraduationCap, UserCheck, Pencil, Download, QrCode, Camera, ChevronLeft, ChevronRight, Search, Check, X, DollarSign, Calendar, MapPin, Users, AtSign, Save } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import html2canvas from 'html2canvas';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -27,7 +22,6 @@ import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { type Json } from '@/integrations/supabase/types';
 import { FormImageUpload } from "@/components/ui/form-image-upload";
-
 interface LifestyleDetail {
   cleanliness?: string;
   guests?: string;
@@ -35,7 +29,6 @@ interface LifestyleDetail {
   pets?: string;
   schedule?: string;
 }
-
 interface LookingForPreferences {
   hasApartment: boolean;
   roommatesCount: string;
@@ -47,14 +40,12 @@ interface LookingForPreferences {
   budgetRange: number[];
   exactPrice: number;
 }
-
 interface ProfilePreferences {
   budget: string;
   location: string;
   roommates: string;
   moveInDate: string;
 }
-
 interface ProfileData {
   id: string;
   name: string;
@@ -66,13 +57,15 @@ interface ProfileData {
   bio: string;
   imgUrl: string;
   galleryImgs: string[];
-  tags: { id: number; name: string }[];
+  tags: {
+    id: number;
+    name: string;
+  }[];
   verified: boolean;
   preferences: ProfilePreferences;
   lifestyle: LifestyleDetail;
   lookingFor: LookingForPreferences;
 }
-
 interface SupabaseProfileData {
   id: string;
   bio: string | null;
@@ -103,32 +96,13 @@ interface SupabaseProfileData {
 }
 
 // Zonas de Sevilla
-const sevillaZones = [
-  "Casco Antiguo",
-  "Triana",
-  "Los Remedios",
-  "Nervión",
-  "San Pablo - Santa Justa",
-  "Este - Alcosa - Torreblanca",
-  "Cerro - Amate",
-  "Sur",
-  "Bellavista - La Palmera",
-  "Macarena",
-  "Norte",
-  "Otro/Alrededores"
-];
+const sevillaZones = ["Casco Antiguo", "Triana", "Los Remedios", "Nervión", "San Pablo - Santa Justa", "Este - Alcosa - Torreblanca", "Cerro - Amate", "Sur", "Bellavista - La Palmera", "Macarena", "Norte", "Otro/Alrededores"];
 
 // Número de compañeros options
 const companeroOptions = ["1", "2", "3", "4", "5+"];
 
 // Intereses predefinidos
-const predefinedInterests = [
-  "Deportes", "Música", "Cine", "Lectura", "Viajes", 
-  "Cocina", "Arte", "Tecnología", "Fotografía", "Naturaleza",
-  "Gaming", "Fitness", "Yoga", "Idiomas", "Historia",
-  "Moda", "Voluntariado", "Mascotas", "Gastronomía", "Festivales"
-];
-
+const predefinedInterests = ["Deportes", "Música", "Cine", "Lectura", "Viajes", "Cocina", "Arte", "Tecnología", "Fotografía", "Naturaleza", "Gaming", "Fitness", "Yoga", "Idiomas", "Historia", "Moda", "Voluntariado", "Mascotas", "Gastronomía", "Festivales"];
 const ProfilePage = () => {
   const [liked, setLiked] = useState(false);
   const [activeGalleryIndex, setActiveGalleryIndex] = useState(0);
@@ -137,7 +111,7 @@ const ProfilePage = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [showAddImageDialog, setShowAddImageDialog] = useState(false);
   const [newInterest, setNewInterest] = useState("");
-  
+
   // Campos editables
   const [isEditingBasic, setIsEditingBasic] = useState(false);
   const [isEditingBio, setIsEditingBio] = useState(false);
@@ -145,13 +119,16 @@ const ProfilePage = () => {
   const [isEditingLifestyle, setIsEditingLifestyle] = useState(false);
   const [isEditingLookingFor, setIsEditingLookingFor] = useState(false);
   const [tempImageUrl, setTempImageUrl] = useState("");
-  
   const isMobile = useIsMobile();
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const qrCodeRef = useRef<HTMLDivElement>(null);
   const profileCardRef = useRef<HTMLDivElement>(null);
-  const { user, refreshUser } = useAuth();
-  
+  const {
+    user,
+    refreshUser
+  } = useAuth();
   const defaultProfile: ProfileData = {
     id: '1',
     name: 'Usuario',
@@ -190,33 +167,23 @@ const ProfilePage = () => {
       exactPrice: 0
     }
   };
-  
   const [profile, setProfile] = useState<ProfileData>(defaultProfile);
-
   useEffect(() => {
     const fetchUserProfile = async () => {
       if (!user) return;
-      
       setIsLoading(true);
-      
       try {
         console.log("Fetching profile for user ID:", user.id);
-        
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', user.id)
-          .single();
-        
+        const {
+          data,
+          error
+        } = await supabase.from('profiles').select('*').eq('id', user.id).single();
         if (error) {
           console.error("Error fetching profile:", error);
           throw error;
         }
-        
         console.log("Raw profile data from Supabase:", data);
-        
         const profileData = data as SupabaseProfileData;
-        
         let lifestyleObj: LifestyleDetail = {
           cleanliness: '',
           guests: '',
@@ -224,7 +191,6 @@ const ProfilePage = () => {
           pets: '',
           schedule: ''
         };
-        
         if (profileData.lifestyle) {
           if (typeof profileData.lifestyle === 'string') {
             try {
@@ -234,7 +200,6 @@ const ProfilePage = () => {
             }
           } else if (typeof profileData.lifestyle === 'object' && profileData.lifestyle !== null) {
             const parsedLifestyle = profileData.lifestyle as Record<string, any>;
-            
             lifestyleObj = {
               cleanliness: typeof parsedLifestyle.cleanliness === 'string' ? parsedLifestyle.cleanliness : '',
               guests: typeof parsedLifestyle.guests === 'string' ? parsedLifestyle.guests : '',
@@ -244,9 +209,7 @@ const ProfilePage = () => {
             };
           }
         }
-        
         console.log("Parsed lifestyle object:", lifestyleObj);
-        
         const lookingForObj: LookingForPreferences = {
           hasApartment: profileData.hasApartment === true,
           roommatesCount: profileData.companeros_count || "",
@@ -258,7 +221,6 @@ const ProfilePage = () => {
           budgetRange: [400, 600],
           exactPrice: profileData.exactPrice || 0
         };
-        
         const userProfile: ProfileData = {
           id: user.id,
           name: `${profileData.first_name || ''} ${profileData.last_name || ''}`.trim() || 'Usuario',
@@ -270,7 +232,10 @@ const ProfilePage = () => {
           bio: profileData.bio || '',
           imgUrl: profileData.profile_image || '',
           galleryImgs: profileData.gallery_images?.length ? profileData.gallery_images : [],
-          tags: Array.isArray(profileData.interests) ? profileData.interests.map((tag: string, index: number) => ({ id: index + 1, name: tag })) : [],
+          tags: Array.isArray(profileData.interests) ? profileData.interests.map((tag: string, index: number) => ({
+            id: index + 1,
+            name: tag
+          })) : [],
           verified: true,
           preferences: {
             budget: lookingForObj.exactPrice ? `€${lookingForObj.exactPrice}` : '',
@@ -281,7 +246,6 @@ const ProfilePage = () => {
           lifestyle: lifestyleObj,
           lookingFor: lookingForObj
         };
-        
         console.log("Processed profile data:", userProfile);
         setProfile(userProfile);
       } catch (error) {
@@ -295,10 +259,8 @@ const ProfilePage = () => {
         setIsLoading(false);
       }
     };
-    
     fetchUserProfile();
   }, [user, toast]);
-
   const handleLike = () => {
     setLiked(!liked);
     toast({
@@ -307,18 +269,15 @@ const ProfilePage = () => {
       variant: liked ? 'destructive' : 'default'
     });
   };
-
   const handleMessage = () => {
     toast({
       title: 'Enviando mensaje',
       description: `Iniciando chat con ${profile.name}`
     });
   };
-
   const handleShare = () => {
     setShowShareDialog(true);
   };
-
   const handleDownloadCard = async () => {
     if (profileCardRef.current) {
       try {
@@ -351,16 +310,13 @@ const ProfilePage = () => {
       }
     }
   };
-
   const getCurrentUrl = () => {
     return window.location.href;
   };
-
   const getProfileUrl = () => {
     const baseUrl = window.location.origin;
     return `${baseUrl}/profile/${profile.id}`;
   };
-
   const handleDownloadQR = async () => {
     if (qrCodeRef.current) {
       try {
@@ -391,7 +347,6 @@ const ProfilePage = () => {
       }
     }
   };
-
   const handleCopyLink = () => {
     navigator.clipboard.writeText(getProfileUrl());
     toast({
@@ -400,19 +355,16 @@ const ProfilePage = () => {
     });
     setTimeout(() => setShowShareDialog(false), 1000);
   };
-
   const handleNextGalleryImage = () => {
     if (profile.galleryImgs.length > 0) {
       setActiveGalleryIndex(prevIndex => prevIndex === profile.galleryImgs.length - 1 ? 0 : prevIndex + 1);
     }
   };
-
   const handlePrevGalleryImage = () => {
     if (profile.galleryImgs.length > 0) {
       setActiveGalleryIndex(prevIndex => prevIndex === 0 ? profile.galleryImgs.length - 1 : prevIndex - 1);
     }
   };
-
   const shareToSocialMedia = (platform: string) => {
     const profileUrl = getProfileUrl();
     let shareUrl = '';
@@ -439,14 +391,11 @@ const ProfilePage = () => {
   // Funciones para la edición directa de perfil
   const handleSaveBasicInfo = async () => {
     if (!user) return;
-    
     setIsSaving(true);
-    
     try {
       const nameParts = profile.name.split(' ');
       const firstName = nameParts[0] || '';
       const lastName = nameParts.slice(1).join(' ') || '';
-      
       const updateData = {
         first_name: firstName,
         last_name: lastName,
@@ -455,18 +404,12 @@ const ProfilePage = () => {
         universidad: profile.university,
         ocupacion: profile.occupation
       };
-      
-      const { error } = await supabase
-        .from('profiles')
-        .update(updateData)
-        .eq('id', user.id);
-        
+      const {
+        error
+      } = await supabase.from('profiles').update(updateData).eq('id', user.id);
       if (error) throw error;
-      
       await refreshUser();
-      
       setIsEditingBasic(false);
-      
       toast({
         title: "Información básica actualizada",
         description: "Tus datos personales han sido guardados"
@@ -482,22 +425,17 @@ const ProfilePage = () => {
       setIsSaving(false);
     }
   };
-  
   const handleSaveBio = async () => {
     if (!user) return;
-    
     setIsSaving(true);
-    
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({ bio: profile.bio })
-        .eq('id', user.id);
-        
+      const {
+        error
+      } = await supabase.from('profiles').update({
+        bio: profile.bio
+      }).eq('id', user.id);
       if (error) throw error;
-      
       setIsEditingBio(false);
-      
       toast({
         title: "Biografía actualizada",
         description: "Tu biografía ha sido guardada correctamente"
@@ -513,12 +451,9 @@ const ProfilePage = () => {
       setIsSaving(false);
     }
   };
-  
   const handleSaveLifestyle = async () => {
     if (!user) return;
-    
     setIsSaving(true);
-    
     try {
       const lifestyleObject: Record<string, string> = {
         cleanliness: profile.lifestyle.cleanliness || '',
@@ -527,16 +462,13 @@ const ProfilePage = () => {
         pets: profile.lifestyle.pets || '',
         schedule: profile.lifestyle.schedule || ''
       };
-      
-      const { error } = await supabase
-        .from('profiles')
-        .update({ lifestyle: lifestyleObject })
-        .eq('id', user.id);
-        
+      const {
+        error
+      } = await supabase.from('profiles').update({
+        lifestyle: lifestyleObject
+      }).eq('id', user.id);
       if (error) throw error;
-      
       setIsEditingLifestyle(false);
-      
       toast({
         title: "Estilo de vida actualizado",
         description: "Tus preferencias de estilo de vida han sido guardadas"
@@ -552,27 +484,21 @@ const ProfilePage = () => {
       setIsSaving(false);
     }
   };
-
   const handleSaveProfileImage = async (imageUrl: string) => {
     if (!user) return;
-    
     setIsSaving(true);
-    
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({ profile_image: imageUrl })
-        .eq('id', user.id);
-        
+      const {
+        error
+      } = await supabase.from('profiles').update({
+        profile_image: imageUrl
+      }).eq('id', user.id);
       if (error) throw error;
-      
       setProfile(prev => ({
         ...prev,
         imgUrl: imageUrl
       }));
-      
       await refreshUser();
-      
       toast({
         title: "Imagen actualizada",
         description: "Tu foto de perfil ha sido actualizada correctamente"
@@ -588,30 +514,23 @@ const ProfilePage = () => {
       setIsSaving(false);
     }
   };
-
   const handleAddToGallery = async (imageUrl: string) => {
     if (!user) return;
-    
     setIsSaving(true);
-    
     try {
       const newGallery = [...(profile.galleryImgs || []), imageUrl];
-      
-      const { error } = await supabase
-        .from('profiles')
-        .update({ gallery_images: newGallery })
-        .eq('id', user.id);
-        
+      const {
+        error
+      } = await supabase.from('profiles').update({
+        gallery_images: newGallery
+      }).eq('id', user.id);
       if (error) throw error;
-      
       setProfile(prev => ({
         ...prev,
         galleryImgs: newGallery
       }));
-      
       setShowAddImageDialog(false);
       setTempImageUrl("");
-      
       toast({
         title: "Imagen añadida",
         description: "La imagen ha sido añadida a tu galería"
@@ -627,32 +546,25 @@ const ProfilePage = () => {
       setIsSaving(false);
     }
   };
-
   const handleRemoveGalleryImage = async (index: number) => {
     if (!user || profile.galleryImgs.length === 0) return;
-    
     setIsSaving(true);
-    
     try {
       const newGallery = [...profile.galleryImgs];
       newGallery.splice(index, 1);
-      
-      const { error } = await supabase
-        .from('profiles')
-        .update({ gallery_images: newGallery })
-        .eq('id', user.id);
-        
+      const {
+        error
+      } = await supabase.from('profiles').update({
+        gallery_images: newGallery
+      }).eq('id', user.id);
       if (error) throw error;
-      
       setProfile(prev => ({
         ...prev,
         galleryImgs: newGallery
       }));
-      
       if (activeGalleryIndex >= newGallery.length) {
         setActiveGalleryIndex(Math.max(0, newGallery.length - 1));
       }
-      
       toast({
         title: "Imagen eliminada",
         description: "La imagen ha sido eliminada de tu galería"
@@ -668,12 +580,10 @@ const ProfilePage = () => {
       setIsSaving(false);
     }
   };
-  
   const handleAddInterest = async () => {
     if (!user || !newInterest.trim()) return;
-    
     const interestToAdd = newInterest.trim();
-    
+
     // Check if interest already exists
     if (profile.tags.some(tag => tag.name.toLowerCase() === interestToAdd.toLowerCase())) {
       toast({
@@ -683,27 +593,24 @@ const ProfilePage = () => {
       });
       return;
     }
-    
     setIsSaving(true);
-    
     try {
-      const newTags = [...profile.tags, { id: profile.tags.length + 1, name: interestToAdd }];
+      const newTags = [...profile.tags, {
+        id: profile.tags.length + 1,
+        name: interestToAdd
+      }];
       const interests = newTags.map(tag => tag.name);
-      
-      const { error } = await supabase
-        .from('profiles')
-        .update({ interests })
-        .eq('id', user.id);
-        
+      const {
+        error
+      } = await supabase.from('profiles').update({
+        interests
+      }).eq('id', user.id);
       if (error) throw error;
-      
       setProfile(prev => ({
         ...prev,
         tags: newTags
       }));
-      
       setNewInterest("");
-      
       toast({
         title: "Interés añadido",
         description: `Se ha añadido "${interestToAdd}" a tus intereses`
@@ -719,28 +626,22 @@ const ProfilePage = () => {
       setIsSaving(false);
     }
   };
-  
   const handleRemoveInterest = async (id: number) => {
     if (!user) return;
-    
     setIsSaving(true);
-    
     try {
       const newTags = profile.tags.filter(tag => tag.id !== id);
       const interests = newTags.map(tag => tag.name);
-      
-      const { error } = await supabase
-        .from('profiles')
-        .update({ interests })
-        .eq('id', user.id);
-        
+      const {
+        error
+      } = await supabase.from('profiles').update({
+        interests
+      }).eq('id', user.id);
       if (error) throw error;
-      
       setProfile(prev => ({
         ...prev,
         tags: newTags
       }));
-      
       toast({
         title: "Interés eliminado",
         description: "El interés ha sido eliminado de tu perfil"
@@ -756,10 +657,9 @@ const ProfilePage = () => {
       setIsSaving(false);
     }
   };
-  
   const handleSelectPredefinedInterest = async (interest: string) => {
     if (!user) return;
-    
+
     // Check if interest already exists
     if (profile.tags.some(tag => tag.name.toLowerCase() === interest.toLowerCase())) {
       toast({
@@ -769,25 +669,23 @@ const ProfilePage = () => {
       });
       return;
     }
-    
     setIsSaving(true);
-    
     try {
-      const newTags = [...profile.tags, { id: profile.tags.length + 1, name: interest }];
+      const newTags = [...profile.tags, {
+        id: profile.tags.length + 1,
+        name: interest
+      }];
       const interests = newTags.map(tag => tag.name);
-      
-      const { error } = await supabase
-        .from('profiles')
-        .update({ interests })
-        .eq('id', user.id);
-        
+      const {
+        error
+      } = await supabase.from('profiles').update({
+        interests
+      }).eq('id', user.id);
       if (error) throw error;
-      
       setProfile(prev => ({
         ...prev,
         tags: newTags
       }));
-      
       toast({
         title: "Interés añadido",
         description: `Se ha añadido "${interest}" a tus intereses`
@@ -803,12 +701,9 @@ const ProfilePage = () => {
       setIsSaving(false);
     }
   };
-  
   const handleSaveLookingFor = async () => {
     if (!user) return;
-    
     setIsSaving(true);
-    
     try {
       const lifestyleObject: Record<string, string> = {
         cleanliness: profile.lifestyle.cleanliness || '',
@@ -817,7 +712,6 @@ const ProfilePage = () => {
         pets: profile.lifestyle.pets || '',
         schedule: profile.lifestyle.schedule || ''
       };
-      
       const updateData: Record<string, any> = {
         companeros_count: profile.lookingFor.roommatesCount,
         hasApartment: profile.lookingFor.hasApartment,
@@ -830,18 +724,12 @@ const ProfilePage = () => {
         sevilla_zona: profile.preferences.location,
         lifestyle: lifestyleObject
       };
-      
       console.log("Saving profile updates:", updateData);
-      
-      const { error } = await supabase
-        .from('profiles')
-        .update(updateData)
-        .eq('id', user.id);
-        
+      const {
+        error
+      } = await supabase.from('profiles').update(updateData).eq('id', user.id);
       if (error) throw error;
-      
       setIsEditingLookingFor(false);
-      
       toast({
         title: 'Preferencias guardadas',
         description: 'Tus preferencias de búsqueda han sido actualizadas'
@@ -857,7 +745,6 @@ const ProfilePage = () => {
       setIsSaving(false);
     }
   };
-
   const handleLookingForChange = (field: string, value: any) => {
     setProfile(prev => ({
       ...prev,
@@ -867,7 +754,6 @@ const ProfilePage = () => {
       }
     }));
   };
-  
   const handleLocationChange = (value: string) => {
     setProfile(prev => ({
       ...prev,
@@ -877,7 +763,6 @@ const ProfilePage = () => {
       }
     }));
   };
-  
   const handleLifestyleChange = (field: string, value: string) => {
     setProfile(prev => ({
       ...prev,
@@ -887,10 +772,8 @@ const ProfilePage = () => {
       }
     }));
   };
-
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex flex-col">
+    return <div className="min-h-screen flex flex-col">
         <Navbar />
         <main className="flex-grow pt-20 md:pt-24 pb-16 md:pb-20 flex items-center justify-center">
           <div className="animate-pulse space-y-4">
@@ -899,12 +782,9 @@ const ProfilePage = () => {
           </div>
         </main>
         <Footer />
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="min-h-screen flex flex-col">
+  return <div className="min-h-screen flex flex-col">
       <Navbar />
       
       <main className="flex-grow pt-20 md:pt-24 pb-16 md:pb-20">
@@ -916,11 +796,7 @@ const ProfilePage = () => {
                   <div className="relative">
                     <div className="relative group">
                       <Avatar className={`${isMobile ? 'w-24 h-24' : 'w-32 h-32'} border-4 border-white shadow-lg cursor-pointer group-hover:opacity-80 transition-opacity`} onClick={() => document.getElementById('profile-image-input')?.click()}>
-                        {profile.imgUrl ? (
-                          <AvatarImage src={profile.imgUrl} alt={profile.name} />
-                        ) : (
-                          <AvatarFallback>{profile.name.charAt(0)}</AvatarFallback>
-                        )}
+                        {profile.imgUrl ? <AvatarImage src={profile.imgUrl} alt={profile.name} /> : <AvatarFallback>{profile.name.charAt(0)}</AvatarFallback>}
                       </Avatar>
                       
                       <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -929,112 +805,76 @@ const ProfilePage = () => {
                         </div>
                       </div>
                       
-                      <FormImageUpload
-                        name="profileImage"
-                        onChange={handleSaveProfileImage}
-                        hideLabel
-                      />
+                      <FormImageUpload name="profileImage" onChange={handleSaveProfileImage} hideLabel />
                     </div>
                     
-                    {profile.verified && (
-                      <div className="absolute bottom-0 right-0 bg-homi-purple text-white p-1 rounded-full">
+                    {profile.verified && <div className="absolute bottom-0 right-0 bg-homi-purple text-white p-1 rounded-full">
                         <UserCheck size={isMobile ? 14 : 16} />
-                      </div>
-                    )}
+                      </div>}
                   </div>
                   
-                  {isEditingBasic ? (
-                    <div className="flex-grow space-y-3">
-                      <Input
-                        placeholder="Tu nombre"
-                        value={profile.name}
-                        onChange={(e) => setProfile(prev => ({ ...prev, name: e.target.value }))}
-                        className="mb-2"
-                      />
+                  {isEditingBasic ? <div className="flex-grow space-y-3">
+                      <Input placeholder="Tu nombre" value={profile.name} onChange={e => setProfile(prev => ({
+                    ...prev,
+                    name: e.target.value
+                  }))} className="mb-2" />
                       
                       <div className="flex items-center gap-2 mb-2">
                         <AtSign size={16} className="text-homi-purple" />
-                        <Input
-                          placeholder="Nombre de usuario"
-                          value={profile.username}
-                          onChange={(e) => setProfile(prev => ({ ...prev, username: e.target.value }))}
-                          className="flex-grow"
-                        />
+                        <Input placeholder="Nombre de usuario" value={profile.username} onChange={e => setProfile(prev => ({
+                      ...prev,
+                      username: e.target.value
+                    }))} className="flex-grow" />
                       </div>
                       
                       <div className="flex items-center gap-2 mb-2">
                         <MapPin size={16} className="text-homi-purple" />
-                        <Input
-                          placeholder="Ubicación"
-                          value={profile.location}
-                          onChange={(e) => setProfile(prev => ({ ...prev, location: e.target.value }))}
-                          className="flex-grow"
-                        />
+                        <Input placeholder="Ubicación" value={profile.location} onChange={e => setProfile(prev => ({
+                      ...prev,
+                      location: e.target.value
+                    }))} className="flex-grow" />
                       </div>
                       
                       <div className="flex gap-3">
                         <div className="flex-1">
                           <label className="text-xs text-muted-foreground">Edad</label>
-                          <Input
-                            type="number"
-                            placeholder="Edad"
-                            value={profile.age || ''}
-                            onChange={(e) => setProfile(prev => ({ ...prev, age: parseInt(e.target.value) || 0 }))}
-                            className="mt-1"
-                          />
+                          <Input type="number" placeholder="Edad" value={profile.age || ''} onChange={e => setProfile(prev => ({
+                        ...prev,
+                        age: parseInt(e.target.value) || 0
+                      }))} className="mt-1" />
                         </div>
                         
                         <div className="flex-1">
                           <label className="text-xs text-muted-foreground">Universidad</label>
-                          <Input
-                            placeholder="Universidad"
-                            value={profile.university}
-                            onChange={(e) => setProfile(prev => ({ ...prev, university: e.target.value }))}
-                            className="mt-1"
-                          />
+                          <Input placeholder="Universidad" value={profile.university} onChange={e => setProfile(prev => ({
+                        ...prev,
+                        university: e.target.value
+                      }))} className="mt-1" />
                         </div>
                       </div>
                       
                       <div className="w-full">
                         <label className="text-xs text-muted-foreground">Ocupación</label>
-                        <Input
-                          placeholder="Ocupación"
-                          value={profile.occupation}
-                          onChange={(e) => setProfile(prev => ({ ...prev, occupation: e.target.value }))}
-                          className="mt-1"
-                        />
+                        <Input placeholder="Ocupación" value={profile.occupation} onChange={e => setProfile(prev => ({
+                      ...prev,
+                      occupation: e.target.value
+                    }))} className="mt-1" />
                       </div>
                       
                       <div className="flex justify-end gap-2 pt-2">
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          onClick={() => setIsEditingBasic(false)}
-                          disabled={isSaving}
-                        >
+                        <Button variant="outline" size="sm" onClick={() => setIsEditingBasic(false)} disabled={isSaving}>
                           Cancelar
                         </Button>
-                        <Button 
-                          size="sm" 
-                          onClick={handleSaveBasicInfo} 
-                          disabled={isSaving}
-                        >
+                        <Button size="sm" onClick={handleSaveBasicInfo} disabled={isSaving}>
                           {isSaving ? "Guardando..." : "Guardar"}
                         </Button>
                       </div>
-                    </div>
-                  ) : (
-                    <div className="flex-grow space-y-2">
+                    </div> : <div className="flex-grow space-y-2">
                       <div className="flex justify-between items-start">
                         <h1 className="text-xl md:text-3xl font-bold flex items-center gap-2">
                           {profile.name || "Usuario"}{profile.age ? `, ${profile.age}` : ""}
                         </h1>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          onClick={() => setIsEditingBasic(true)} 
-                          className="h-8 w-8"
-                        >
+                        <Button variant="ghost" size="icon" onClick={() => setIsEditingBasic(true)} className="h-8 w-8">
                           <Pencil size={16} />
                         </Button>
                       </div>
@@ -1058,18 +898,11 @@ const ProfilePage = () => {
                         <Briefcase size={16} className="text-homi-purple flex-shrink-0" />
                         <span className="text-sm">{profile.occupation || "Añade tu ocupación"}</span>
                       </div>
-                    </div>
-                  )}
+                    </div>}
                 </div>
                 
-                {isMobile && (
-                  <div className="flex justify-between mt-6 pt-4 border-t border-gray-100">
-                    <Button 
-                      variant={liked ? "default" : "outline"} 
-                      size="icon" 
-                      className={`rounded-full ${liked ? 'bg-homi-purple hover:bg-homi-purple/90' : ''}`} 
-                      onClick={handleLike}
-                    >
+                {isMobile && <div className="flex justify-between mt-6 pt-4 border-t border-gray-100">
+                    <Button variant={liked ? "default" : "outline"} size="icon" className={`rounded-full ${liked ? 'bg-homi-purple hover:bg-homi-purple/90' : ''}`} onClick={handleLike}>
                       <Heart size={18} className={liked ? 'fill-white' : ''} />
                     </Button>
                     <Button variant="outline" size="icon" className="rounded-full" onClick={handleShare}>
@@ -1081,8 +914,7 @@ const ProfilePage = () => {
                     <Button size="icon" className="rounded-full bg-homi-purple hover:bg-homi-purple/90" onClick={handleMessage}>
                       <MessageSquare size={18} />
                     </Button>
-                  </div>
-                )}
+                  </div>}
               </div>
             </div>
             
@@ -1092,109 +924,55 @@ const ProfilePage = () => {
                 <div className="glass-card p-5 md:p-7">
                   <div className="flex justify-between items-center mb-4 md:mb-5">
                     <h2 className="text-lg md:text-xl font-semibold">Sobre mí</h2>
-                    {!isEditingBio && (
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        onClick={() => setIsEditingBio(true)} 
-                        className="h-8 w-8"
-                      >
+                    {!isEditingBio && <Button variant="ghost" size="icon" onClick={() => setIsEditingBio(true)} className="h-8 w-8">
                         <Pencil size={16} />
-                      </Button>
-                    )}
+                      </Button>}
                   </div>
                   
-                  {isEditingBio ? (
-                    <div className="space-y-4">
-                      <Textarea 
-                        placeholder="Cuéntanos sobre ti..."
-                        value={profile.bio}
-                        onChange={(e) => setProfile(prev => ({ ...prev, bio: e.target.value }))}
-                        className="min-h-[100px]"
-                      />
+                  {isEditingBio ? <div className="space-y-4">
+                      <Textarea placeholder="Cuéntanos sobre ti..." value={profile.bio} onChange={e => setProfile(prev => ({
+                    ...prev,
+                    bio: e.target.value
+                  }))} className="min-h-[100px]" />
                       
                       <div className="flex justify-end gap-2 pt-2">
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          onClick={() => setIsEditingBio(false)}
-                          disabled={isSaving}
-                        >
+                        <Button variant="outline" size="sm" onClick={() => setIsEditingBio(false)} disabled={isSaving}>
                           Cancelar
                         </Button>
-                        <Button 
-                          size="sm" 
-                          onClick={handleSaveBio} 
-                          disabled={isSaving}
-                        >
+                        <Button size="sm" onClick={handleSaveBio} disabled={isSaving}>
                           {isSaving ? "Guardando..." : "Guardar"}
                         </Button>
                       </div>
-                    </div>
-                  ) : (
-                    <div>
-                      {profile.bio ? (
-                        <p className="text-sm md:text-base">{profile.bio}</p>
-                      ) : (
-                        <p className="text-sm md:text-base italic text-muted-foreground">
+                    </div> : <div>
+                      {profile.bio ? <p className="text-sm md:text-base">{profile.bio}</p> : <p className="text-sm md:text-base italic text-muted-foreground">
                           Añade una descripción sobre ti para que los demás usuarios te conozcan mejor.
-                        </p>
-                      )}
-                    </div>
-                  )}
+                        </p>}
+                    </div>}
                   
                   {/* Intereses */}
                   <div className="mt-5 md:mt-7">
                     <div className="flex justify-between items-center mb-3">
                       <h3 className="font-medium">Intereses</h3>
-                      {!isEditingInterests && (
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          onClick={() => setIsEditingInterests(true)} 
-                          className="h-7 w-7"
-                        >
+                      {!isEditingInterests && <Button variant="ghost" size="icon" onClick={() => setIsEditingInterests(true)} className="h-7 w-7">
                           <Pencil size={14} />
-                        </Button>
-                      )}
+                        </Button>}
                     </div>
                     
-                    {isEditingInterests ? (
-                      <div className="space-y-3">
+                    {isEditingInterests ? <div className="space-y-3">
                         <div className="flex flex-wrap gap-2 mb-2">
-                          {profile.tags.length > 0 ? profile.tags.map(tag => (
-                            <div key={tag.id} className="flex items-center px-2 md:px-3 py-1 text-xs md:text-sm rounded-full bg-homi-ultraLightPurple text-homi-purple">
+                          {profile.tags.length > 0 ? profile.tags.map(tag => <div key={tag.id} className="flex items-center px-2 md:px-3 py-1 text-xs md:text-sm rounded-full bg-homi-ultraLightPurple text-homi-purple">
                               {tag.name}
-                              <Button 
-                                variant="ghost" 
-                                size="icon" 
-                                onClick={() => handleRemoveInterest(tag.id)} 
-                                className="h-4 w-4 ml-1 hover:bg-homi-purple/20"
-                              >
+                              <Button variant="ghost" size="icon" onClick={() => handleRemoveInterest(tag.id)} className="h-4 w-4 ml-1 hover:bg-homi-purple/20">
                                 <X size={10} />
                               </Button>
-                            </div>
-                          )) : (
-                            <p className="text-sm text-muted-foreground italic">
+                            </div>) : <p className="text-sm text-muted-foreground italic">
                               No has añadido intereses. Añádelos para conectar con personas afines.
-                            </p>
-                          )}
+                            </p>}
                         </div>
                         
                         <div className="flex gap-2">
-                          <Input
-                            placeholder="Añadir nuevo interés"
-                            value={newInterest}
-                            onChange={(e) => setNewInterest(e.target.value)}
-                            className="flex-grow"
-                          />
-                          <Button 
-                            variant="outline"
-                            size="sm"
-                            onClick={handleAddInterest}
-                            disabled={!newInterest.trim() || isSaving}
-                            className="whitespace-nowrap"
-                          >
+                          <Input placeholder="Añadir nuevo interés" value={newInterest} onChange={e => setNewInterest(e.target.value)} className="flex-grow" />
+                          <Button variant="outline" size="sm" onClick={handleAddInterest} disabled={!newInterest.trim() || isSaving} className="whitespace-nowrap">
                             Añadir
                           </Button>
                         </div>
@@ -1202,54 +980,27 @@ const ProfilePage = () => {
                         <div className="pt-2">
                           <h4 className="text-xs font-medium text-muted-foreground mb-2">Intereses populares:</h4>
                           <div className="flex flex-wrap gap-1">
-                            {predefinedInterests
-                              .filter(interest => !profile.tags.some(tag => tag.name === interest))
-                              .slice(0, 12)
-                              .map((interest, index) => (
-                                <Button
-                                  key={index}
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => handleSelectPredefinedInterest(interest)}
-                                  className="text-xs py-1 h-auto"
-                                >
+                            {predefinedInterests.filter(interest => !profile.tags.some(tag => tag.name === interest)).slice(0, 12).map((interest, index) => <Button key={index} variant="outline" size="sm" onClick={() => handleSelectPredefinedInterest(interest)} className="text-xs py-1 h-auto">
                                   {interest}
-                                </Button>
-                              ))}
+                                </Button>)}
                           </div>
                         </div>
                         
                         <div className="flex justify-end gap-2 pt-3">
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            onClick={() => setIsEditingInterests(false)}
-                            disabled={isSaving}
-                          >
+                          <Button variant="outline" size="sm" onClick={() => setIsEditingInterests(false)} disabled={isSaving}>
                             Cancelar
                           </Button>
-                          <Button 
-                            size="sm" 
-                            onClick={() => setIsEditingInterests(false)} 
-                            disabled={isSaving}
-                          >
+                          <Button size="sm" onClick={() => setIsEditingInterests(false)} disabled={isSaving}>
                             Listo
                           </Button>
                         </div>
-                      </div>
-                    ) : (
-                      <div className="flex flex-wrap gap-2">
-                        {profile.tags.length > 0 ? profile.tags.map(tag => (
-                          <span key={tag.id} className="px-2 md:px-3 py-1 text-xs md:text-sm rounded-full bg-homi-ultraLightPurple text-homi-purple">
+                      </div> : <div className="flex flex-wrap gap-2">
+                        {profile.tags.length > 0 ? profile.tags.map(tag => <span key={tag.id} className="px-2 md:px-3 py-1 text-xs md:text-sm rounded-full bg-homi-ultraLightPurple text-homi-purple">
                             {tag.name}
-                          </span>
-                        )) : (
-                          <p className="text-sm text-muted-foreground italic">
+                          </span>) : <p className="text-sm text-muted-foreground italic">
                             No has añadido intereses. Añádelos para conectar con personas afines.
-                          </p>
-                        )}
-                      </div>
-                    )}
+                          </p>}
+                      </div>}
                   </div>
                 </div>
                 
@@ -1260,26 +1011,15 @@ const ProfilePage = () => {
                       <Home size={20} className="text-homi-purple" />
                       Estilo de vida
                     </h2>
-                    {!isEditingLifestyle && (
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        onClick={() => setIsEditingLifestyle(true)} 
-                        className="h-8 w-8"
-                      >
+                    {!isEditingLifestyle && <Button variant="ghost" size="icon" onClick={() => setIsEditingLifestyle(true)} className="h-8 w-8">
                         <Pencil size={16} />
-                      </Button>
-                    )}
+                      </Button>}
                   </div>
                   
-                  {isEditingLifestyle ? (
-                    <div className="space-y-4">
+                  {isEditingLifestyle ? <div className="space-y-4">
                       <div>
                         <label className="text-sm font-medium mb-1.5 block">Limpieza</label>
-                        <Select
-                          value={profile.lifestyle.cleanliness}
-                          onValueChange={(value) => handleLifestyleChange('cleanliness', value)}
-                        >
+                        <Select value={profile.lifestyle.cleanliness} onValueChange={value => handleLifestyleChange('cleanliness', value)}>
                           <SelectTrigger className="w-full">
                             <SelectValue placeholder="¿Cómo eres con la limpieza?" />
                           </SelectTrigger>
@@ -1294,10 +1034,7 @@ const ProfilePage = () => {
                       
                       <div>
                         <label className="text-sm font-medium mb-1.5 block">Invitados</label>
-                        <Select
-                          value={profile.lifestyle.guests}
-                          onValueChange={(value) => handleLifestyleChange('guests', value)}
-                        >
+                        <Select value={profile.lifestyle.guests} onValueChange={value => handleLifestyleChange('guests', value)}>
                           <SelectTrigger className="w-full">
                             <SelectValue placeholder="¿Cómo te sientes con los invitados?" />
                           </SelectTrigger>
@@ -1312,10 +1049,7 @@ const ProfilePage = () => {
                       
                       <div>
                         <label className="text-sm font-medium mb-1.5 block">Fumadores</label>
-                        <Select
-                          value={profile.lifestyle.smoking}
-                          onValueChange={(value) => handleLifestyleChange('smoking', value)}
-                        >
+                        <Select value={profile.lifestyle.smoking} onValueChange={value => handleLifestyleChange('smoking', value)}>
                           <SelectTrigger className="w-full">
                             <SelectValue placeholder="¿Cómo te sientes con respecto a fumar?" />
                           </SelectTrigger>
@@ -1330,10 +1064,7 @@ const ProfilePage = () => {
                       
                       <div>
                         <label className="text-sm font-medium mb-1.5 block">Mascotas</label>
-                        <Select
-                          value={profile.lifestyle.pets}
-                          onValueChange={(value) => handleLifestyleChange('pets', value)}
-                        >
+                        <Select value={profile.lifestyle.pets} onValueChange={value => handleLifestyleChange('pets', value)}>
                           <SelectTrigger className="w-full">
                             <SelectValue placeholder="¿Tienes o te gustan las mascotas?" />
                           </SelectTrigger>
@@ -1349,10 +1080,7 @@ const ProfilePage = () => {
                       
                       <div>
                         <label className="text-sm font-medium mb-1.5 block">Horarios</label>
-                        <Select
-                          value={profile.lifestyle.schedule}
-                          onValueChange={(value) => handleLifestyleChange('schedule', value)}
-                        >
+                        <Select value={profile.lifestyle.schedule} onValueChange={value => handleLifestyleChange('schedule', value)}>
                           <SelectTrigger className="w-full">
                             <SelectValue placeholder="¿Cuáles son tus horarios habituales?" />
                           </SelectTrigger>
@@ -1366,209 +1094,55 @@ const ProfilePage = () => {
                       </div>
                       
                       <div className="flex justify-end gap-2 pt-2">
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          onClick={() => setIsEditingLifestyle(false)}
-                          disabled={isSaving}
-                        >
+                        <Button variant="outline" size="sm" onClick={() => setIsEditingLifestyle(false)} disabled={isSaving}>
                           Cancelar
                         </Button>
-                        <Button 
-                          size="sm" 
-                          onClick={handleSaveLifestyle} 
-                          disabled={isSaving}
-                        >
+                        <Button size="sm" onClick={handleSaveLifestyle} disabled={isSaving}>
                           {isSaving ? "Guardando..." : "Guardar"}
                         </Button>
                       </div>
-                    </div>
-                  ) : (
-                    <dl className="space-y-3 text-sm">
+                    </div> : <dl className="space-y-3 text-sm">
                       <div>
                         <dt className="text-muted-foreground mb-1">Limpieza</dt>
                         <dd className={`font-medium ${!profile.lifestyle.cleanliness ? "italic text-muted-foreground" : ""}`}>
-                          {profile.lifestyle.cleanliness ? (
-                            profile.lifestyle.cleanliness === 'muy-ordenado' ? 'Muy ordenado/a' :
-                            profile.lifestyle.cleanliness === 'ordenado' ? 'Ordenado/a' :
-                            profile.lifestyle.cleanliness === 'normal' ? 'Normal' :
-                            profile.lifestyle.cleanliness === 'relajado' ? 'Relajado/a con la limpieza' : ''
-                          ) : "Por definir"}
+                          {profile.lifestyle.cleanliness ? profile.lifestyle.cleanliness === 'muy-ordenado' ? 'Muy ordenado/a' : profile.lifestyle.cleanliness === 'ordenado' ? 'Ordenado/a' : profile.lifestyle.cleanliness === 'normal' ? 'Normal' : profile.lifestyle.cleanliness === 'relajado' ? 'Relajado/a con la limpieza' : '' : "Por definir"}
                         </dd>
                       </div>
                       
                       <div>
                         <dt className="text-muted-foreground mb-1">Invitados</dt>
                         <dd className={`font-medium ${!profile.lifestyle.guests ? "italic text-muted-foreground" : ""}`}>
-                          {profile.lifestyle.guests ? (
-                            profile.lifestyle.guests === 'frecuentes' ? 'Me gusta tener invitados frecuentemente' :
-                            profile.lifestyle.guests === 'ocasionales' ? 'Invitados ocasionales está bien' :
-                            profile.lifestyle.guests === 'pocos' ? 'Prefiero pocos invitados' :
-                            profile.lifestyle.guests === 'ninguno' ? 'Prefiero no tener invitados' : ''
-                          ) : "Por definir"}
+                          {profile.lifestyle.guests ? profile.lifestyle.guests === 'frecuentes' ? 'Me gusta tener invitados frecuentemente' : profile.lifestyle.guests === 'ocasionales' ? 'Invitados ocasionales está bien' : profile.lifestyle.guests === 'pocos' ? 'Prefiero pocos invitados' : profile.lifestyle.guests === 'ninguno' ? 'Prefiero no tener invitados' : '' : "Por definir"}
                         </dd>
                       </div>
                       
                       <div>
                         <dt className="text-muted-foreground mb-1">Fumadores</dt>
                         <dd className={`font-medium ${!profile.lifestyle.smoking ? "italic text-muted-foreground" : ""}`}>
-                          {profile.lifestyle.smoking ? (
-                            profile.lifestyle.smoking === 'fumador' ? 'Soy fumador/a' :
-                            profile.lifestyle.smoking === 'fumo-ocasionalmente' ? 'Fumo ocasionalmente' :
-                            profile.lifestyle.smoking === 'no-fumo' ? 'No fumo pero no me importa' :
-                            profile.lifestyle.smoking === 'no-fumadores' ? 'Prefiero ambiente sin humo' : ''
-                          ) : "Por definir"}
+                          {profile.lifestyle.smoking ? profile.lifestyle.smoking === 'fumador' ? 'Soy fumador/a' : profile.lifestyle.smoking === 'fumo-ocasionalmente' ? 'Fumo ocasionalmente' : profile.lifestyle.smoking === 'no-fumo' ? 'No fumo pero no me importa' : profile.lifestyle.smoking === 'no-fumadores' ? 'Prefiero ambiente sin humo' : '' : "Por definir"}
                         </dd>
                       </div>
                       
                       <div>
                         <dt className="text-muted-foreground mb-1">Mascotas</dt>
                         <dd className={`font-medium ${!profile.lifestyle.pets ? "italic text-muted-foreground" : ""}`}>
-                          {profile.lifestyle.pets ? (
-                            profile.lifestyle.pets === 'tengo-mascota' ? 'Tengo mascota' :
-                            profile.lifestyle.pets === 'me-encantan' ? 'Me encantan las mascotas' :
-                            profile.lifestyle.pets === 'no-tengo' ? 'No tengo pero me gustan' :
-                            profile.lifestyle.pets === 'prefiero-sin' ? 'Prefiero vivir sin mascotas' :
-                            profile.lifestyle.pets === 'alergia' ? 'Tengo alergia a las mascotas' : ''
-                          ) : "Por definir"}
+                          {profile.lifestyle.pets ? profile.lifestyle.pets === 'tengo-mascota' ? 'Tengo mascota' : profile.lifestyle.pets === 'me-encantan' ? 'Me encantan las mascotas' : profile.lifestyle.pets === 'no-tengo' ? 'No tengo pero me gustan' : profile.lifestyle.pets === 'prefiero-sin' ? 'Prefiero vivir sin mascotas' : profile.lifestyle.pets === 'alergia' ? 'Tengo alergia a las mascotas' : '' : "Por definir"}
                         </dd>
                       </div>
                       
                       <div>
                         <dt className="text-muted-foreground mb-1">Horarios</dt>
                         <dd className={`font-medium ${!profile.lifestyle.schedule ? "italic text-muted-foreground" : ""}`}>
-                          {profile.lifestyle.schedule ? (
-                            profile.lifestyle.schedule === 'madrugador' ? 'Madrugador/a' :
-                            profile.lifestyle.schedule === 'nocturno' ? 'Nocturno/a' :
-                            profile.lifestyle.schedule === 'variable' ? 'Horarios variables' :
-                            profile.lifestyle.schedule === 'regular' ? 'Horarios regulares' : ''
-                          ) : "Por definir"}
+                          {profile.lifestyle.schedule ? profile.lifestyle.schedule === 'madrugador' ? 'Madrugador/a' : profile.lifestyle.schedule === 'nocturno' ? 'Nocturno/a' : profile.lifestyle.schedule === 'variable' ? 'Horarios variables' : profile.lifestyle.schedule === 'regular' ? 'Horarios regulares' : '' : "Por definir"}
                         </dd>
                       </div>
-                    </dl>
-                  )}
+                    </dl>}
                 </div>
                 
                 {/* Galería */}
-                <div className="glass-card p-5 md:p-7">
-                  <div className="flex justify-between items-center mb-4 md:mb-5">
-                    <h2 className="text-lg md:text-xl font-semibold">Galería</h2>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setShowAddImageDialog(true)}
-                      className="rounded-full flex items-center gap-2"
-                    >
-                      <Camera size={16} />
-                      <span className="hidden sm:inline">Añadir imagen</span>
-                    </Button>
-                  </div>
-                  
-                  {isMobile ? (
-                    profile.galleryImgs.length > 0 ? (
-                      <div className="relative">
-                        <div className="aspect-square rounded-lg overflow-hidden bg-muted">
-                          <img 
-                            src={profile.galleryImgs[activeGalleryIndex]} 
-                            alt={`Imagen ${activeGalleryIndex + 1}`} 
-                            className="w-full h-full object-cover" 
-                          />
-                        </div>
-                        
-                        <Button 
-                          variant="outline" 
-                          size="icon" 
-                          className="absolute left-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-white/80" 
-                          onClick={handlePrevGalleryImage}
-                        >
-                          <ChevronLeft size={16} />
-                        </Button>
-                        
-                        <Button 
-                          variant="outline" 
-                          size="icon" 
-                          className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-white/80" 
-                          onClick={handleNextGalleryImage}
-                        >
-                          <ChevronRight size={16} />
-                        </Button>
-                        
-                        <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-2">
-                          {profile.galleryImgs.map((_, index) => (
-                            <button 
-                              key={index} 
-                              className={`h-2.5 w-2.5 rounded-full ${activeGalleryIndex === index ? 'bg-white' : 'bg-white/50'}`} 
-                              onClick={() => setActiveGalleryIndex(index)} 
-                              aria-label={`Ver imagen ${index + 1}`} 
-                            />
-                          ))}
-                        </div>
-                        
-                        <div className="absolute top-2 right-2">
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            onClick={() => handleRemoveGalleryImage(activeGalleryIndex)}
-                            className="h-8 w-8 rounded-full bg-white/80"
-                          >
-                            <X size={16} />
-                          </Button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="text-center p-8 border border-dashed rounded-lg">
-                        <Camera size={40} className="mx-auto mb-2 text-muted-foreground" />
-                        <p className="text-muted-foreground">Añade fotos a tu galería para mostrar más sobre ti</p>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setShowAddImageDialog(true)}
-                          className="mt-4"
-                        >
-                          Subir imagen
-                        </Button>
-                      </div>
-                    )
-                  ) : (
-                    <div className="grid grid-cols-3 gap-4">
-                      {profile.galleryImgs.map((img, index) => (
-                        <div key={index} className="aspect-square rounded-lg overflow-hidden bg-muted relative group">
-                          <img 
-                            src={img} 
-                            alt={`Imagen ${index + 1}`} 
-                            className="w-full h-full object-cover transition-transform hover:scale-105" 
-                          />
-                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              onClick={() => handleRemoveGalleryImage(index)}
-                              className="h-8 w-8 rounded-full bg-white/80"
-                            >
-                              <X size={16} />
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                      
-                      {profile.galleryImgs.length === 0 && (
-                        <div className="col-span-3 text-center p-12 border border-dashed rounded-lg">
-                          <Camera size={48} className="mx-auto mb-3 text-muted-foreground" />
-                          <p className="text-muted-foreground mb-2">Añade fotos a tu galería para mostrar más sobre ti</p>
-                          <Button
-                            variant="outline"
-                            onClick={() => setShowAddImageDialog(true)}
-                          >
-                            Subir imágenes
-                          </Button>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
                 
-                {!isMobile && (
-                  <div className="glass-card p-7">
+                
+                {!isMobile && <div className="glass-card p-7">
                     <h2 className="text-xl font-semibold mb-5 flex items-center gap-2">
                       <QrCode size={20} className="text-homi-purple" />
                       Tarjeta de presentación
@@ -1578,11 +1152,7 @@ const ProfilePage = () => {
                     </p>
                     
                     <div className="mt-6 flex flex-col items-center">
-                      <div 
-                        id="profile-card" 
-                        ref={profileCardRef} 
-                        className="w-[360px] h-[640px] bg-gradient-to-br from-purple-600 to-pink-500 rounded-xl shadow-xl overflow-hidden relative mx-auto mb-8"
-                      >
+                      <div id="profile-card" ref={profileCardRef} className="w-[360px] h-[640px] bg-gradient-to-br from-purple-600 to-pink-500 rounded-xl shadow-xl overflow-hidden relative mx-auto mb-8">
                         <div className="absolute top-4 left-0 w-full flex justify-center z-10">
                           <div className="bg-white rounded-full px-6 py-2 shadow-lg">
                             <span className="text-homi-purple font-bold text-xl">homi</span>
@@ -1601,22 +1171,16 @@ const ProfilePage = () => {
                           
                           <div className="mb-8 flex items-center gap-3 mt-8">
                             <div className="w-20 h-20 rounded-full border-2 border-white overflow-hidden">
-                              {profile.imgUrl ? (
-                                <img src={profile.imgUrl} alt={profile.name} className="w-full h-full object-cover" />
-                              ) : (
-                                <div className="w-full h-full flex items-center justify-center bg-purple-400 text-white text-2xl font-bold">
+                              {profile.imgUrl ? <img src={profile.imgUrl} alt={profile.name} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center bg-purple-400 text-white text-2xl font-bold">
                                   {profile.name.charAt(0)}
-                                </div>
-                              )}
+                                </div>}
                             </div>
                             <div>
                               <h3 className="text-xl font-bold text-white flex items-center gap-1">
                                 {profile.name}, {profile.age || "?"}
-                                {profile.verified && (
-                                  <div className="bg-white text-purple-600 p-0.5 rounded-full">
+                                {profile.verified && <div className="bg-white text-purple-600 p-0.5 rounded-full">
                                     <UserCheck size={14} />
-                                  </div>
-                                )}
+                                  </div>}
                               </h3>
                               <p className="text-sm text-white/80 mt-1">{profile.location || "Sin ubicación"} · {profile.occupation || "Sin ocupación"}</p>
                             </div>
@@ -1624,16 +1188,12 @@ const ProfilePage = () => {
                           
                           <div className="mb-6">
                             <div className="flex flex-wrap gap-2 mb-4">
-                              {profile.tags.slice(0, 3).map(tag => (
-                                <span key={tag.id} className="px-3 py-1 text-xs rounded-full bg-white/20 text-white">
+                              {profile.tags.slice(0, 3).map(tag => <span key={tag.id} className="px-3 py-1 text-xs rounded-full bg-white/20 text-white">
                                   {tag.name}
-                                </span>
-                              ))}
-                              {profile.tags.length === 0 && (
-                                <span className="px-3 py-1 text-xs rounded-full bg-white/20 text-white">
+                                </span>)}
+                              {profile.tags.length === 0 && <span className="px-3 py-1 text-xs rounded-full bg-white/20 text-white">
                                   Sin intereses
-                                </span>
-                              )}
+                                </span>}
                             </div>
                             
                             <p className="text-white/90 text-sm line-clamp-2 mb-2">
@@ -1654,11 +1214,7 @@ const ProfilePage = () => {
                               <div>
                                 <span className="text-white/60">Género:</span>
                                 <p className="mt-1">
-                                  {profile.lookingFor.genderPreference === 'mujeres' 
-                                    ? 'Solo mujeres' 
-                                    : profile.lookingFor.genderPreference === 'hombres' 
-                                      ? 'Solo hombres' 
-                                      : 'Cualquier género'}
+                                  {profile.lookingFor.genderPreference === 'mujeres' ? 'Solo mujeres' : profile.lookingFor.genderPreference === 'hombres' ? 'Solo hombres' : 'Cualquier género'}
                                 </p>
                               </div>
                               <div>
@@ -1700,8 +1256,7 @@ const ProfilePage = () => {
                         </Button>
                       </div>
                     </div>
-                  </div>
-                )}
+                  </div>}
               </div>
               
               <div className="space-y-6 md:space-y-8">
@@ -1712,22 +1267,16 @@ const ProfilePage = () => {
                       Preferencias y búsqueda
                     </h2>
                     
-                    {!isEditingLookingFor && (
-                      <Button variant="ghost" size="icon" onClick={() => setIsEditingLookingFor(true)} className="h-8 w-8">
+                    {!isEditingLookingFor && <Button variant="ghost" size="icon" onClick={() => setIsEditingLookingFor(true)} className="h-8 w-8">
                         <Pencil size={15} />
-                      </Button>
-                    )}
+                      </Button>}
                   </div>
                   
-                  {isEditingLookingFor ? (
-                    <div className="space-y-4">
+                  {isEditingLookingFor ? <div className="space-y-4">
                       <div>
                         <label className="text-sm font-medium mb-1.5 block">¿Tienes apartamento?</label>
                         <div className="flex items-center">
-                          <Switch 
-                            checked={profile.lookingFor.hasApartment} 
-                            onCheckedChange={(checked) => handleLookingForChange('hasApartment', checked)} 
-                          />
+                          <Switch checked={profile.lookingFor.hasApartment} onCheckedChange={checked => handleLookingForChange('hasApartment', checked)} />
                           <span className="ml-2 text-sm">
                             {profile.lookingFor.hasApartment ? 'Sí, tengo apartamento' : 'No, estoy buscando'}
                           </span>
@@ -1736,28 +1285,20 @@ const ProfilePage = () => {
                       
                       <div>
                         <label className="text-sm font-medium mb-1.5 block">Zona en Sevilla</label>
-                        <Select
-                          value={profile.preferences.location}
-                          onValueChange={handleLocationChange}
-                        >
+                        <Select value={profile.preferences.location} onValueChange={handleLocationChange}>
                           <SelectTrigger className="w-full">
                             <SelectValue placeholder="Selecciona una zona de Sevilla" />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="no_busco">No estoy buscando en Sevilla</SelectItem>
-                            {sevillaZones.map((zone) => (
-                              <SelectItem key={zone} value={zone}>{zone}</SelectItem>
-                            ))}
+                            {sevillaZones.map(zone => <SelectItem key={zone} value={zone}>{zone}</SelectItem>)}
                           </SelectContent>
                         </Select>
                       </div>
                       
                       <div>
                         <label className="text-sm font-medium mb-1.5 block">Número de compañeros</label>
-                        <Select
-                          value={profile.lookingFor.roommatesCount}
-                          onValueChange={(value) => handleLookingForChange('roommatesCount', value)}
-                        >
+                        <Select value={profile.lookingFor.roommatesCount} onValueChange={value => handleLookingForChange('roommatesCount', value)}>
                           <SelectTrigger className="w-full">
                             <SelectValue placeholder="Selecciona cuántos compañeros buscas" />
                           </SelectTrigger>
@@ -1772,10 +1313,7 @@ const ProfilePage = () => {
                       
                       <div>
                         <label className="text-sm font-medium mb-1.5 block">Preferencia de género</label>
-                        <Select
-                          value={profile.lookingFor.genderPreference}
-                          onValueChange={(value) => handleLookingForChange('genderPreference', value)}
-                        >
+                        <Select value={profile.lookingFor.genderPreference} onValueChange={value => handleLookingForChange('genderPreference', value)}>
                           <SelectTrigger className="w-full">
                             <SelectValue placeholder="Selecciona tu preferencia de género" />
                           </SelectTrigger>
@@ -1789,10 +1327,7 @@ const ProfilePage = () => {
                       
                       <div>
                         <label className="text-sm font-medium mb-1.5 block">Preferencia de fumadores</label>
-                        <Select
-                          value={profile.lookingFor.smokingPreference}
-                          onValueChange={(value) => handleLookingForChange('smokingPreference', value)}
-                        >
+                        <Select value={profile.lookingFor.smokingPreference} onValueChange={value => handleLookingForChange('smokingPreference', value)}>
                           <SelectTrigger className="w-full">
                             <SelectValue placeholder="Selecciona tu preferencia sobre fumar" />
                           </SelectTrigger>
@@ -1806,10 +1341,7 @@ const ProfilePage = () => {
                       
                       <div>
                         <label className="text-sm font-medium mb-1.5 block">Preferencia de ocupación</label>
-                        <Select
-                          value={profile.lookingFor.occupationPreference}
-                          onValueChange={(value) => handleLookingForChange('occupationPreference', value)}
-                        >
+                        <Select value={profile.lookingFor.occupationPreference} onValueChange={value => handleLookingForChange('occupationPreference', value)}>
                           <SelectTrigger className="w-full">
                             <SelectValue placeholder="Selecciona tu preferencia de ocupación" />
                           </SelectTrigger>
@@ -1824,34 +1356,17 @@ const ProfilePage = () => {
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <label className="text-sm font-medium mb-1.5 block">Edad mínima</label>
-                          <Input 
-                            type="number" 
-                            placeholder="Edad mínima" 
-                            value={profile.lookingFor.minAge || ''} 
-                            onChange={(e) => handleLookingForChange('minAge', e.target.value)} 
-                          />
+                          <Input type="number" placeholder="Edad mínima" value={profile.lookingFor.minAge || ''} onChange={e => handleLookingForChange('minAge', e.target.value)} />
                         </div>
                         <div>
                           <label className="text-sm font-medium mb-1.5 block">Edad máxima</label>
-                          <Input 
-                            type="number" 
-                            placeholder="Edad máxima" 
-                            value={profile.lookingFor.maxAge || ''} 
-                            onChange={(e) => handleLookingForChange('maxAge', e.target.value)} 
-                          />
+                          <Input type="number" placeholder="Edad máxima" value={profile.lookingFor.maxAge || ''} onChange={e => handleLookingForChange('maxAge', e.target.value)} />
                         </div>
                       </div>
                       
                       <div>
                         <label className="text-sm font-medium mb-1.5 block">Rango de presupuesto (€ al mes)</label>
-                        <Slider
-                          value={profile.lookingFor.budgetRange}
-                          min={200}
-                          max={1500}
-                          step={50}
-                          onValueChange={(value) => handleLookingForChange('budgetRange', value)}
-                          className="my-6"
-                        />
+                        <Slider value={profile.lookingFor.budgetRange} min={200} max={1500} step={50} onValueChange={value => handleLookingForChange('budgetRange', value)} className="my-6" />
                         <div className="flex justify-between text-sm text-muted-foreground">
                           <span>€{profile.lookingFor.budgetRange[0]}</span>
                           <span>€{profile.lookingFor.budgetRange[1]}</span>
@@ -1859,37 +1374,17 @@ const ProfilePage = () => {
                       </div>
                       
                       <div className="flex justify-end gap-2 pt-4">
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          onClick={() => setIsEditingLookingFor(false)}
-                          disabled={isSaving}
-                        >
+                        <Button variant="outline" size="sm" onClick={() => setIsEditingLookingFor(false)} disabled={isSaving}>
                           Cancelar
                         </Button>
-                        <Button 
-                          className="bg-homi-purple hover:bg-homi-purple/90" 
-                          size="sm" 
-                          onClick={handleSaveLookingFor} 
-                          disabled={isSaving}
-                        >
-                          {isSaving ? "Guardando..." : (
-                            <>
+                        <Button className="bg-homi-purple hover:bg-homi-purple/90" size="sm" onClick={handleSaveLookingFor} disabled={isSaving}>
+                          {isSaving ? "Guardando..." : <>
                               <Save size={14} className="mr-1" /> Guardar
-                            </>
-                          )}
+                            </>}
                         </Button>
                       </div>
-                    </div>
-                  ) : (
-                    <div>
-                      {!profile.lookingFor.hasApartment && 
-                       profile.lookingFor.roommatesCount === "" && 
-                       profile.lookingFor.genderPreference === "" && 
-                       profile.lookingFor.smokingPreference === "" && 
-                       profile.lookingFor.occupationPreference === "" &&
-                       profile.preferences.location === "" ? (
-                        <div className="p-4 text-center bg-gray-50 rounded-lg border border-gray-100">
+                    </div> : <div>
+                      {!profile.lookingFor.hasApartment && profile.lookingFor.roommatesCount === "" && profile.lookingFor.genderPreference === "" && profile.lookingFor.smokingPreference === "" && profile.lookingFor.occupationPreference === "" && profile.preferences.location === "" ? <div className="p-4 text-center bg-gray-50 rounded-lg border border-gray-100">
                           <p className="text-sm text-muted-foreground">
                             No has configurado tus preferencias de búsqueda aún.
                           </p>
@@ -1897,9 +1392,7 @@ const ProfilePage = () => {
                             <Pencil size={14} className="mr-1.5" />
                             Configurar ahora
                           </Button>
-                        </div>
-                      ) : (
-                        <dl className="space-y-3 text-sm">
+                        </div> : <dl className="space-y-3 text-sm">
                           <div>
                             <dt className="text-muted-foreground mb-1">¿Tienes apartamento?</dt>
                             <dd className="font-medium">
@@ -1907,76 +1400,50 @@ const ProfilePage = () => {
                             </dd>
                           </div>
                           
-                          {profile.preferences.location && profile.preferences.location !== 'no_busco' && (
-                            <div>
+                          {profile.preferences.location && profile.preferences.location !== 'no_busco' && <div>
                               <dt className="text-muted-foreground mb-1">Zona en Sevilla</dt>
                               <dd className="font-medium">{profile.preferences.location}</dd>
-                            </div>
-                          )}
+                            </div>}
                           
-                          {profile.lookingFor.roommatesCount && (
-                            <div>
+                          {profile.lookingFor.roommatesCount && <div>
                               <dt className="text-muted-foreground mb-1">Compañeros de piso</dt>
                               <dd className="font-medium">{profile.lookingFor.roommatesCount} compañeros</dd>
-                            </div>
-                          )}
+                            </div>}
                           
-                          {profile.lookingFor.genderPreference && (
-                            <div>
+                          {profile.lookingFor.genderPreference && <div>
                               <dt className="text-muted-foreground mb-1">Preferencia de género</dt>
                               <dd className="font-medium">
-                                {profile.lookingFor.genderPreference === 'mujeres' 
-                                  ? 'Solo mujeres' 
-                                  : profile.lookingFor.genderPreference === 'hombres' 
-                                    ? 'Solo hombres' 
-                                    : 'Sin preferencia'}
+                                {profile.lookingFor.genderPreference === 'mujeres' ? 'Solo mujeres' : profile.lookingFor.genderPreference === 'hombres' ? 'Solo hombres' : 'Sin preferencia'}
                               </dd>
-                            </div>
-                          )}
+                            </div>}
                           
-                          {profile.lookingFor.smokingPreference && (
-                            <div>
+                          {profile.lookingFor.smokingPreference && <div>
                               <dt className="text-muted-foreground mb-1">Fumadores</dt>
                               <dd className="font-medium">
-                                {profile.lookingFor.smokingPreference === 'no-fumadores' 
-                                  ? 'Prefiero no fumadores' 
-                                  : profile.lookingFor.smokingPreference === 'fumadores' 
-                                    ? 'Acepto fumadores' 
-                                    : 'Sin preferencia'}
+                                {profile.lookingFor.smokingPreference === 'no-fumadores' ? 'Prefiero no fumadores' : profile.lookingFor.smokingPreference === 'fumadores' ? 'Acepto fumadores' : 'Sin preferencia'}
                               </dd>
-                            </div>
-                          )}
+                            </div>}
                           
-                          {profile.lookingFor.occupationPreference && (
-                            <div>
+                          {profile.lookingFor.occupationPreference && <div>
                               <dt className="text-muted-foreground mb-1">Ocupación</dt>
                               <dd className="font-medium">
-                                {profile.lookingFor.occupationPreference === 'estudiantes' 
-                                  ? 'Preferiblemente estudiantes' 
-                                  : profile.lookingFor.occupationPreference === 'trabajadores' 
-                                    ? 'Preferiblemente trabajadores' 
-                                    : 'Sin preferencia'}
+                                {profile.lookingFor.occupationPreference === 'estudiantes' ? 'Preferiblemente estudiantes' : profile.lookingFor.occupationPreference === 'trabajadores' ? 'Preferiblemente trabajadores' : 'Sin preferencia'}
                               </dd>
-                            </div>
-                          )}
+                            </div>}
                           
-                          {(profile.lookingFor.minAge || profile.lookingFor.maxAge) && (
-                            <div>
+                          {(profile.lookingFor.minAge || profile.lookingFor.maxAge) && <div>
                               <dt className="text-muted-foreground mb-1">Rango de edad</dt>
                               <dd className="font-medium">
                                 {profile.lookingFor.minAge || "?"} - {profile.lookingFor.maxAge || "?"} años
                               </dd>
-                            </div>
-                          )}
+                            </div>}
                           
                           <div>
                             <dt className="text-muted-foreground mb-1">Presupuesto</dt>
                             <dd className="font-medium">€{profile.lookingFor.budgetRange[0]} - €{profile.lookingFor.budgetRange[1]} / mes</dd>
                           </div>
-                        </dl>
-                      )}
-                    </div>
-                  )}
+                        </dl>}
+                    </div>}
                 </div>
               </div>
             </div>
@@ -2048,18 +1515,10 @@ const ProfilePage = () => {
           </DialogHeader>
           
           <div className="space-y-4 py-2">
-            <FormImageUpload
-              name="galleryImage"
-              label="Imagen para la galería"
-              description="Añade una imagen a tu galería para mostrar más sobre ti"
-              onChange={(url) => handleAddToGallery(url)}
-            />
+            <FormImageUpload name="galleryImage" label="Imagen para la galería" description="Añade una imagen a tu galería para mostrar más sobre ti" onChange={url => handleAddToGallery(url)} />
           </div>
         </DialogContent>
       </Dialog>
-    </div>
-  );
+    </div>;
 };
-
 export default ProfilePage;
-
