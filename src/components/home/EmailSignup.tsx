@@ -296,8 +296,7 @@ const EmailSignup = () => {
           smokingPreference: "",
           occupationPreference: "",
           minAge: "",
-          maxAge: "",
-          exactPrice: 0
+          maxAge: ""
         };
         
         const userData: UserSignUpData = {

@@ -111,15 +111,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           interests: userData.interests || [],
           lifestyle: userData.lifestyle || null,
           sevilla_zona: userData.sevilla_zona || null,
-          companeros_count: userData.companeros_count || null,
-          // Add preferences when specified
-          hasApartment: userData.lifestyle?.hasApartment || false,
-          genderPreference: userData.lifestyle?.genderPreference || null,
-          smokingPreference: userData.lifestyle?.smokingPreference || null,
-          occupationPreference: userData.lifestyle?.occupationPreference || null,
-          minAge: userData.lifestyle?.minAge || null,
-          maxAge: userData.lifestyle?.maxAge || null,
-          exactPrice: userData.lifestyle?.exactPrice || null
+          companeros_count: userData.companeros_count || null
+          // Eliminamos los campos que no existen en la tabla profiles
+          // hasApartment, genderPreference, smokingPreference, occupationPreference,
+          // minAge, maxAge, exactPrice
         };
 
         // Insert or update profile record
