@@ -18,7 +18,7 @@ interface FormImageUploadProps<TFieldValues extends FieldValues> {
   multiple?: boolean;
   className?: string;
   required?: boolean;
-  onChange?: (field: ControllerRenderProps<TFieldValues, Path<TFieldValues>>, value: string | string[]) => void;
+  onChange?: (value: string | string[]) => void;
 }
 
 export function FormImageUpload<TFieldValues extends FieldValues>({
@@ -28,7 +28,7 @@ export function FormImageUpload<TFieldValues extends FieldValues>({
   multiple = false,
   className,
   required = false,
-  onChange,
+  onChange: customOnChange,
 }: FormImageUploadProps<TFieldValues>) {
   // Get form context to log state for debugging
   const formContext = useFormContext();
@@ -37,6 +37,27 @@ export function FormImageUpload<TFieldValues extends FieldValues>({
     formValues: formContext?.getValues(),
     fieldValue: formContext?.getValues(name as any)
   });
+  
+  // Make sure this component is only used within a form context
+  if (!formContext) {
+    console.error("FormImageUpload must be used within a Form component");
+    // Return a simplified version when no form context is available
+    return (
+      <div className={className}>
+        {label && <div className="mb-2 font-medium">{label}</div>}
+        <ImageUpload
+          multiple={multiple}
+          value={multiple ? [] : ''}
+          onChange={(value) => {
+            if (customOnChange) customOnChange(value);
+          }}
+          disableCompression={!multiple}
+          enableCropping={!multiple}
+        />
+        {description && <p className="text-sm text-muted-foreground mt-2">{description}</p>}
+      </div>
+    );
+  }
   
   return (
     <FormField
@@ -58,8 +79,8 @@ export function FormImageUpload<TFieldValues extends FieldValues>({
                 value={field.value || (multiple ? [] : '')}
                 onChange={(value) => {
                   console.log(`Image upload onChange for ${name}:`, value);
-                  if (onChange) {
-                    onChange(field as any, value);
+                  if (customOnChange) {
+                    customOnChange(value);
                   } else {
                     field.onChange(value);
                   }
