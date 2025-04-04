@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Check } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import EmailSignup from './EmailSignup';
 import WelcomeMessage from './WelcomeMessage';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -14,6 +14,7 @@ const Hero = () => {
   const [justRegistered, setJustRegistered] = useState(false);
   const isMobile = useIsMobile();
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -30,16 +31,8 @@ const Hero = () => {
   };
 
   const handleRegisterClick = () => {
-    setShowSignupForm(true);
-    setTimeout(() => {
-      const formElement = document.getElementById('signup-form');
-      if (formElement) {
-        formElement.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center'
-        });
-      }
-    }, 100);
+    // Navigate to the register page instead of showing the form
+    navigate('/register');
   };
 
   return (
@@ -88,7 +81,11 @@ const Hero = () => {
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 mb-6">
                 <div className="relative w-full sm:w-auto moving-border-container">
-                  <Button size={isMobile ? "default" : "lg"} className="rounded-full bg-gradient-to-r from-homi-purple to-homi-lightPurple hover:from-homi-lightPurple hover:to-homi-purple text-white font-bold shadow-lg shadow-purple-500/30 transform hover:scale-105 transition-all duration-300 w-full z-10 relative" onClick={handleRegisterClick}>
+                  <Button 
+                    size={isMobile ? "default" : "lg"} 
+                    className="rounded-full bg-gradient-to-r from-homi-purple to-homi-lightPurple hover:from-homi-lightPurple hover:to-homi-purple text-white font-bold shadow-lg shadow-purple-500/30 transform hover:scale-105 transition-all duration-300 w-full z-10 relative" 
+                    onClick={handleRegisterClick}
+                  >
                     ¡Regístrate ahora!
                   </Button>
                 </div>
@@ -121,10 +118,6 @@ const Hero = () => {
               </div>
             </>
           )}
-          
-          {showSignupForm && !user && <div id="signup-form" className="mt-4 md:mt-6 bg-white dark:bg-background border border-border rounded-xl p-4 md:p-6 shadow-sm mb-2 relative z-10">
-              <EmailSignup />
-            </div>}
         </div>
       </div>
     </section>

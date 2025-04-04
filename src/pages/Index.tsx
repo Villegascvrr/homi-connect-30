@@ -1,6 +1,6 @@
 
 import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import Hero from '@/components/home/Hero';
@@ -12,6 +12,7 @@ import { useAuth } from '@/context/AuthContext';
 
 const Index = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const featuredProfiles = [
     {
       id: '1',
@@ -86,6 +87,10 @@ const Index = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleRegisterClick = () => {
+    navigate('/register');
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <div className="pt-16">
@@ -122,11 +127,21 @@ const Index = () => {
             </div>
             
             <div className="text-center">
-              <Link to="/matching">
-                <Button size="lg" className="rounded-full bg-homi-purple hover:bg-homi-purple/90 px-8">
+              {user ? (
+                <Link to="/matching">
+                  <Button size="lg" className="rounded-full bg-homi-purple hover:bg-homi-purple/90 px-8">
+                    Ver más perfiles
+                  </Button>
+                </Link>
+              ) : (
+                <Button 
+                  size="lg" 
+                  className="rounded-full bg-homi-purple hover:bg-homi-purple/90 px-8"
+                  onClick={handleRegisterClick}
+                >
                   Ver más perfiles
                 </Button>
-              </Link>
+              )}
             </div>
           </div>
         </section>
@@ -151,7 +166,7 @@ const Index = () => {
                 <p className="text-muted-foreground mb-4">
                   Nuestro algoritmo analiza tu perfil y preferencias para encontrar las mejores coincidencias.
                 </p>
-                <Link to="/matching" className="text-homi-purple font-medium hover:underline inline-flex items-center">
+                <Link to={user ? "/matching" : "/register"} className="text-homi-purple font-medium hover:underline inline-flex items-center">
                   Encontrar matches <span className="ml-1">→</span>
                 </Link>
               </div>
@@ -164,7 +179,7 @@ const Index = () => {
                 <p className="text-muted-foreground mb-4">
                   Comunícate directamente con tus matches para conocerlos mejor antes de tomar una decisión.
                 </p>
-                <Link to="/chat" className="text-homi-purple font-medium hover:underline inline-flex items-center">
+                <Link to={user ? "/chat" : "/register"} className="text-homi-purple font-medium hover:underline inline-flex items-center">
                   Ir al chat <span className="ml-1">→</span>
                 </Link>
               </div>
@@ -177,7 +192,7 @@ const Index = () => {
                 <p className="text-muted-foreground mb-4">
                   Crea tu perfil personalizado con tus preferencias de convivencia y encuentra compañeros afines.
                 </p>
-                <Link to="/profile" className="text-homi-purple font-medium hover:underline inline-flex items-center">
+                <Link to={user ? "/profile" : "/register"} className="text-homi-purple font-medium hover:underline inline-flex items-center">
                   Ver mi perfil <span className="ml-1">→</span>
                 </Link>
               </div>
@@ -194,11 +209,14 @@ const Index = () => {
               <p className="text-xl mb-8 text-white/80">
                 Únete a Homi y comienza a conectar con personas compatibles con tu estilo de vida.
               </p>
-              <Link to="/register">
-                <Button size="lg" variant="secondary" className="rounded-full bg-white text-homi-purple hover:bg-white/90 px-8">
-                  Comenzar Ahora
-                </Button>
-              </Link>
+              <Button 
+                size="lg" 
+                variant="secondary" 
+                className="rounded-full bg-white text-homi-purple hover:bg-white/90 px-8"
+                onClick={() => navigate('/register')}
+              >
+                Comenzar Ahora
+              </Button>
             </div>
           </div>
         </section>
