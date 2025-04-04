@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/form";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { ControllerRenderProps, FieldValues, Path, useFormContext } from "react-hook-form";
-import { ensureImageString, ensureImageArray } from "@/utils/image-helpers";
 
 interface FormImageUploadProps<TFieldValues extends FieldValues> {
   name: Path<TFieldValues>;
@@ -20,7 +19,7 @@ interface FormImageUploadProps<TFieldValues extends FieldValues> {
   className?: string;
   required?: boolean;
   onChange?: (value: string | string[]) => void;
-  hideLabel?: boolean;
+  hideLabel?: boolean; // Added hideLabel property
 }
 
 export function FormImageUpload<TFieldValues extends FieldValues>({
@@ -31,7 +30,7 @@ export function FormImageUpload<TFieldValues extends FieldValues>({
   className,
   required = false,
   onChange: customOnChange,
-  hideLabel = false,
+  hideLabel = false, // Added default value for hideLabel
 }: FormImageUploadProps<TFieldValues>) {
   // Get form context to log state for debugging
   const formContext = useFormContext();
