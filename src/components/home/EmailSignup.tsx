@@ -108,7 +108,8 @@ const EmailSignup = () => {
       
       setIsSubmitted(true);
       setTimeout(() => {
-        navigate("/profile");
+        // Redirect to home with registered parameter
+        navigate("/?registered=true");
       }, 500);
     } catch (error: any) {
       console.error("Error submitting form:", error);

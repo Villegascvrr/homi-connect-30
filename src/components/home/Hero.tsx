@@ -1,17 +1,29 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Check } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import EmailSignup from './EmailSignup';
+import WelcomeMessage from './WelcomeMessage';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/context/AuthContext';
 
 const Hero = () => {
   const [email, setEmail] = useState('');
   const [showSignupForm, setShowSignupForm] = useState(false);
+  const [justRegistered, setJustRegistered] = useState(false);
   const isMobile = useIsMobile();
   const { user } = useAuth();
+
+  // Check if user just registered (from URL parameter)
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('registered') === 'true' && user) {
+      setJustRegistered(true);
+      // Clear the URL parameter
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, [user]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,6 +102,8 @@ const Hero = () => {
                 </Button>
               </div>
             </>
+          ) : justRegistered ? (
+            <WelcomeMessage firstName={user?.user_metadata?.firstName || user?.user_metadata?.first_name} />
           ) : (
             <>
               <div className="inline-block px-4 py-1.5 mb-3 md:mb-4 rounded-full bg-green-100 text-green-700 text-xs md:text-sm font-medium">
