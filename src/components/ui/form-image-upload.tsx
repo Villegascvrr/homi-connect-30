@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/form";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { ControllerRenderProps, FieldValues, Path, useFormContext } from "react-hook-form";
+import { ensureImageString, ensureImageArray } from "@/utils/image-helpers";
 
 interface FormImageUploadProps<TFieldValues extends FieldValues> {
   name: Path<TFieldValues>;
