@@ -4,7 +4,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Camera, Plus, X, Upload, CropIcon, RefreshCw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-
 interface ImageUploadProps {
   onChange: (value: string | string[]) => void;
   onBlur?: () => void;
@@ -14,7 +13,6 @@ interface ImageUploadProps {
   disableCompression?: boolean;
   enableCropping?: boolean;
 }
-
 export const ImageUpload: React.FC<ImageUploadProps> = ({
   onChange,
   onBlur,
@@ -40,7 +38,6 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
     setIsCropperOpen(false);
     setRotation(0);
   }, []);
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
     setIsUploading(true);
@@ -101,7 +98,6 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
       }
     }, 1000);
   };
-
   const handleRemoveImage = (index: number) => {
     const newImages = [...images];
     newImages.splice(index, 1);
@@ -112,16 +108,14 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
     }
     toast({
       title: "Imagen eliminada",
-      description: "La imagen se ha eliminada correctamente"
+      description: "La imagen se ha eliminado correctamente"
     });
   };
-
   const handleClickUpload = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
   };
-
   const applyImageCrop = () => {
     // In a real implementation, we would apply the crop transformation
     // For now, we'll just use the selected image as-is
@@ -134,11 +128,9 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
     }
     resetCropper();
   };
-
   const rotateImage = () => {
     setRotation(prev => (prev + 90) % 360);
   };
-
   return <div className={className}>
       <input type="file" accept="image/*" ref={fileInputRef} onChange={handleFileChange} onBlur={onBlur} className="hidden" multiple={multiple} />
       
