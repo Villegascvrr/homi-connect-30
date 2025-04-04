@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Session, User } from "@supabase/supabase-js";
@@ -76,7 +77,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const signUp = async (userData: UserSignUpData) => {
     setLoading(true);
     try {
-      const { error } = await supabase.auth.signUp({
+      // First, sign up the user with Supabase Auth
+      const { data: authData, error: authError } = await supabase.auth.signUp({
         email: userData.email,
         password: userData.password,
         options: {
@@ -88,7 +90,48 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         },
       });
 
-      if (error) throw error;
+      if (authError) throw authError;
+      
+      // If the signup was successful and we have a user
+      if (authData.user) {
+        // Create a profile record with additional user data
+        const profileData = {
+          id: authData.user.id,
+          first_name: userData.firstName,
+          last_name: userData.lastName,
+          username: userData.username,
+          email: userData.email,
+          edad: userData.edad || null,
+          ubicacion: userData.ubicacion || null,
+          ocupacion: userData.ocupacion || null,
+          universidad: userData.universidad || null,
+          bio: userData.bio || null,
+          profile_image: userData.profileImage || null,
+          gallery_images: userData.galleryImages || [],
+          interests: userData.interests || [],
+          lifestyle: userData.lifestyle || null,
+          sevilla_zona: userData.sevilla_zona || null,
+          companeros_count: userData.companeros_count || null,
+          // Add preferences when specified
+          hasApartment: userData.lifestyle?.hasApartment || false,
+          genderPreference: userData.lifestyle?.genderPreference || null,
+          smokingPreference: userData.lifestyle?.smokingPreference || null,
+          occupationPreference: userData.lifestyle?.occupationPreference || null,
+          minAge: userData.lifestyle?.minAge || null,
+          maxAge: userData.lifestyle?.maxAge || null,
+          exactPrice: userData.lifestyle?.exactPrice || null
+        };
+
+        // Insert or update profile record
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .upsert(profileData, { onConflict: 'id' });
+
+        if (profileError) {
+          console.error("Error creating profile:", profileError.message);
+          throw profileError;
+        }
+      }
       
       toast({
         title: "Cuenta creada con éxito",

@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -286,6 +285,21 @@ const EmailSignup = () => {
       setIsLoading(true);
       
       try {
+        const lifestyleObject = {
+          morningPerson: lifestylePreferences.morningPerson,
+          nightPerson: lifestylePreferences.nightPerson,
+          socializing: lifestylePreferences.socializing,
+          cleanliness: lifestylePreferences.cleanliness,
+          noise: lifestylePreferences.noise,
+          hasApartment: values.sevilla_zona && values.sevilla_zona !== 'no_busco',
+          genderPreference: "",
+          smokingPreference: "",
+          occupationPreference: "",
+          minAge: "",
+          maxAge: "",
+          exactPrice: 0
+        };
+        
         const userData: UserSignUpData = {
           email: values.email,
           password: values.password!,
@@ -300,11 +314,12 @@ const EmailSignup = () => {
           profileImage: values.profileImage,
           galleryImages: values.galleryImages,
           interests: selectedInterests,
-          lifestyle: lifestylePreferences,
+          lifestyle: lifestyleObject,
           sevilla_zona: values.sevilla_zona,
           companeros_count: values.companeros_count
         };
         
+        console.log("Sending user data to signUp function:", userData);
         await signUp(userData);
         
         setIsSubmitted(true);
@@ -534,7 +549,7 @@ const EmailSignup = () => {
                 <div>
                   <h3 className="text-base font-medium mb-3">Intereses y aficiones</h3>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Selecciona intereses que te definan para encontrar personas afines.
+                    Selecciona intereses que te definan para encontrar compañeros compatibles.
                   </p>
                   
                   <div className="flex flex-wrap gap-3 mb-6">
