@@ -64,10 +64,10 @@ const AuthButton = () => {
     // For desktop view, show buttons side by side
     return (
       <div className="flex items-center gap-2">
-        <Button asChild variant="ghost" size="sm">
+        <Button asChild variant="outline" size="sm" className="border-homi-purple text-homi-purple hover:bg-homi-purple/10">
           <Link to="/signin">Iniciar sesión</Link>
         </Button>
-        <Button asChild className="bg-homi-purple hover:bg-homi-purple/90">
+        <Button asChild className="bg-homi-purple hover:bg-homi-purple/90 text-white">
           <Link to="/register">Registrarse</Link>
         </Button>
       </div>
