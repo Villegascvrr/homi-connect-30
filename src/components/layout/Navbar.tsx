@@ -8,6 +8,16 @@ import { cn } from '@/lib/utils';
 import { useAuth } from '@/context/AuthContext';
 import AuthButton from '@/components/auth/AuthButton';
 
+import {
+  NavigationMenu,
+  NavigationMenuList,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuContent,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu"
+
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
