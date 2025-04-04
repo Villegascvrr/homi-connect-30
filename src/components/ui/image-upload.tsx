@@ -152,8 +152,9 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
             <Button 
               type="button" 
               onClick={handleClickUpload} 
-              disabled={isUploading} 
-              className="w-24 h-24 md:w-32 md:h-32 rounded-full flex items-center justify-center border-2 border-dashed border-primary/20 bg-muted hover:border-primary/50 transition-colors"
+              disabled={isUploading}
+              variant="outline"
+              className="w-24 h-24 md:w-32 md:h-32 rounded-full flex items-center justify-center border-2 border-dashed border-primary/20 hover:border-primary/50 transition-colors"
             >
               <Camera size={32} className="text-muted-foreground" />
             </Button>
