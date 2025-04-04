@@ -1,12 +1,16 @@
-
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Session, User } from "@supabase/supabase-js";
 import { useToast } from "@/hooks/use-toast";
+import { Tables } from "@/integrations/supabase/types";
+
+type ExtendedUser = User & {
+  profile_image?: string | null;
+};
 
 type AuthContextType = {
   session: Session | null;
-  user: User | null;
+  user: ExtendedUser | null;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (userData: UserSignUpData) => Promise<void>;
   signOut: () => Promise<void>;
@@ -25,25 +29,77 @@ export interface UserSignUpData {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<ExtendedUser | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, currentSession) => {
+      async (event, currentSession) => {
         console.log("Auth state changed:", event);
         setSession(currentSession);
-        setUser(currentSession?.user ?? null);
+        
+        if (currentSession?.user) {
+          const authUser = currentSession.user;
+          
+          try {
+            const { data: profileData, error } = await supabase
+              .from('profiles')
+              .select('profile_image')
+              .eq('id', authUser.id)
+              .single();
+            
+            if (!error && profileData) {
+              setUser({
+                ...authUser,
+                profile_image: profileData.profile_image
+              });
+            } else {
+              setUser(authUser);
+            }
+          } catch (error) {
+            console.error("Error fetching profile data:", error);
+            setUser(authUser);
+          }
+        } else {
+          setUser(null);
+        }
+        
         setLoading(false);
       }
     );
 
-    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+    supabase.auth.getSession().then(async ({ data: { session: currentSession } }) => {
       console.log("Initial session check:", currentSession ? "Found session" : "No session");
       setSession(currentSession);
-      setUser(currentSession?.user ?? null);
+      
+      if (currentSession?.user) {
+        const authUser = currentSession.user;
+        
+        try {
+          const { data: profileData, error } = await supabase
+            .from('profiles')
+            .select('profile_image')
+            .eq('id', authUser.id)
+            .single();
+          
+          if (!error && profileData) {
+            setUser({
+              ...authUser,
+              profile_image: profileData.profile_image
+            });
+          } else {
+            setUser(authUser);
+          }
+        } catch (error) {
+          console.error("Error fetching profile data:", error);
+          setUser(authUser);
+        }
+      } else {
+        setUser(null);
+      }
+      
       setLoading(false);
     });
 
@@ -54,8 +110,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const { data: { user: refreshedUser }, error } = await supabase.auth.getUser();
       if (error) throw error;
+      
       if (refreshedUser) {
-        setUser(refreshedUser);
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('profile_image')
+          .eq('id', refreshedUser.id)
+          .single();
+        
+        if (!profileError && profileData) {
+          setUser({
+            ...refreshedUser,
+            profile_image: profileData.profile_image
+          });
+        } else {
+          setUser(refreshedUser);
+        }
       }
       return;
     } catch (error: any) {
@@ -66,7 +136,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const signUp = async (userData: UserSignUpData) => {
     setLoading(true);
     try {
-      // First, sign up the user with Supabase Auth
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: userData.email,
         password: userData.password,
@@ -81,9 +150,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       if (authError) throw authError;
       
-      // If the signup was successful and we have a user
       if (authData.user) {
-        // Create a profile record with basic user data
         const profileData = {
           id: authData.user.id,
           first_name: userData.firstName,
@@ -92,7 +159,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           email: userData.email
         };
 
-        // Insert or update profile record
         const { error: profileError } = await supabase
           .from('profiles')
           .upsert(profileData, { onConflict: 'id' });
