@@ -19,6 +19,7 @@ interface FormImageUploadProps<TFieldValues extends FieldValues> {
   className?: string;
   required?: boolean;
   onChange?: (value: string | string[]) => void;
+  hideLabel?: boolean; // Added hideLabel property
 }
 
 export function FormImageUpload<TFieldValues extends FieldValues>({
@@ -29,6 +30,7 @@ export function FormImageUpload<TFieldValues extends FieldValues>({
   className,
   required = false,
   onChange: customOnChange,
+  hideLabel = false, // Added default value for hideLabel
 }: FormImageUploadProps<TFieldValues>) {
   // Get form context to log state for debugging
   const formContext = useFormContext();
@@ -44,7 +46,7 @@ export function FormImageUpload<TFieldValues extends FieldValues>({
     // Return a simplified version when no form context is available
     return (
       <div className={className}>
-        {label && <div className="mb-2 font-medium">{label}</div>}
+        {label && !hideLabel && <div className="mb-2 font-medium">{label}</div>}
         <ImageUpload
           multiple={multiple}
           value={multiple ? [] : ''}
@@ -67,7 +69,7 @@ export function FormImageUpload<TFieldValues extends FieldValues>({
         
         return (
           <FormItem className={className}>
-            {label && (
+            {label && !hideLabel && (
               <FormLabel>
                 {label}
                 {required && <span className="text-destructive ml-1">*</span>}
@@ -80,6 +82,7 @@ export function FormImageUpload<TFieldValues extends FieldValues>({
                 onChange={(value) => {
                   console.log(`Image upload onChange for ${name}:`, value);
                   if (customOnChange) {
+                    // Make sure we handle both string and string[] properly
                     customOnChange(value);
                   } else {
                     field.onChange(value);
