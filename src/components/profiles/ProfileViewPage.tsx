@@ -1,3 +1,4 @@
+
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/layout/Navbar';
@@ -7,7 +8,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { MessageSquare, Share, Heart, Home, Briefcase, GraduationCap, UserCheck, AtSign } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { ensureImageArray } from '@/utils/image-helpers';
+import { ensureImageString } from '@/utils/image-helpers';
 
 interface LifestylePreferences {
   budget?: string;
@@ -88,7 +89,6 @@ const ProfileViewPage = () => {
             occupation: data.ocupacion || 'No especificado',
             bio: data.bio || 'Sin descripción disponible',
             imgUrl: data.profile_image || 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7',
-            galleryImgs: ensureImageArray(data.gallery_images || []),
             tags: data.interests ? data.interests.map((interest: string, index: number) => ({
               id: index + 1,
               name: interest
@@ -185,10 +185,6 @@ const ProfileViewPage = () => {
       </div>
     );
   }
-
-  const galleryImages = profile?.galleryImgs && profile.galleryImgs.length > 0
-    ? profile.galleryImgs
-    : profile?.imgUrl ? [profile.imgUrl] : ['https://images.unsplash.com/photo-1649972904349-6e44c42644a7'];
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -311,23 +307,6 @@ const ProfileViewPage = () => {
                     </div>
                   )}
                 </div>
-                
-                {galleryImages && galleryImages.length > 0 && (
-                  <div className="glass-card p-6">
-                    <h2 className="text-xl font-semibold mb-4">Galería</h2>
-                    <div className="grid grid-cols-3 gap-4">
-                      {Array.from(new Set(galleryImages)).map((img: string, index: number) => (
-                        <div key={index} className="aspect-square rounded-lg overflow-hidden bg-muted">
-                          <img
-                            src={img}
-                            alt={`Imagen ${index + 1}`}
-                            className="w-full h-full object-cover transition-transform hover:scale-105"
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
               </div>
               
               <div className="space-y-6">
