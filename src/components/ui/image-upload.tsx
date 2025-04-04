@@ -131,7 +131,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
       
       <div className="flex flex-col items-center gap-4">
         {value ? (
-          <div className="relative group">
+          <div className="relative">
             <Avatar className="w-24 h-24 md:w-32 md:h-32 mx-auto">
               <AvatarImage src={value} alt="Foto de perfil" className="object-cover" />
               <AvatarFallback className="bg-primary text-white">

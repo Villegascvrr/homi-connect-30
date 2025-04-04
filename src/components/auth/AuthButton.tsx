@@ -40,9 +40,9 @@ const AuthButton = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-9 w-9 rounded-full">
+        <Button variant="ghost" className="relative h-9 w-9 rounded-full p-0">
           <Avatar className="h-9 w-9">
-            <AvatarImage src={""} alt="Profile" />
+            <AvatarImage src={user.profile_image || ""} alt="Profile" />
             <AvatarFallback className="bg-homi-purple text-white">
               {user.email?.charAt(0).toUpperCase() || "U"}
             </AvatarFallback>

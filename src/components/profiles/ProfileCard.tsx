@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import CompatibilityBadge from '@/components/ui/CompatibilityBadge';
 import { Button } from '@/components/ui/button';
-import { MessageSquare, User, Heart, MapPin, Search, QrCode, AtSign } from 'lucide-react';
+import { MessageSquare, User, Heart, MapPin, QrCode, AtSign } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { QRCodeSVG } from 'qrcode.react';
 import { Input } from '@/components/ui/input';
