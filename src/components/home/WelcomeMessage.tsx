@@ -49,11 +49,11 @@ const WelcomeMessage = ({ firstName }: WelcomeMessageProps) => {
       
       <p className="text-center text-muted-foreground mb-4">
         Te avisaremos cuando la aplicación esté completamente disponible.
-        Mientras tanto, puedes completar tu perfil para estar listo.
+        Mientras tanto, puedes completar tu perfil para estar listo cuando lancemos.
       </p>
       
       <div className="flex flex-col gap-4 mt-6">
-        <Button asChild className="w-full">
+        <Button asChild className="w-full bg-gradient-to-r from-homi-purple to-homi-lightPurple hover:from-homi-lightPurple hover:to-homi-purple text-white font-bold shadow-lg shadow-purple-500/30 transform hover:scale-105 transition-all duration-300 rounded-full">
           <Link to="/profile">
             <UserRound className="mr-2 h-4 w-4" />
             Completar mi perfil
@@ -67,7 +67,7 @@ const WelcomeMessage = ({ firstName }: WelcomeMessageProps) => {
           <Button 
             variant="outline" 
             onClick={handleInstagramClick} 
-            className="gap-2"
+            className="gap-2 rounded-full"
           >
             <Instagram size={18} />
             @homimatch

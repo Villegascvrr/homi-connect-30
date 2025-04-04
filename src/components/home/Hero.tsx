@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Check } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import EmailSignup from './EmailSignup';
 import WelcomeMessage from './WelcomeMessage';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -15,6 +15,7 @@ const Hero = () => {
   const isMobile = useIsMobile();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -22,7 +23,7 @@ const Hero = () => {
       setJustRegistered(true);
       window.history.replaceState({}, document.title, window.location.pathname);
     }
-  }, [user]);
+  }, [user, location]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -105,15 +106,38 @@ const Hero = () => {
               
               <p className="text-base md:text-xl text-muted-foreground mb-6 max-w-3xl mx-auto">
                 Gracias por registrarte. Te notificaremos cuando la aplicación esté completamente funcional.
-                Mientras tanto, puedes explorar algunas de las características disponibles.
+                Mientras tanto, puedes explorar algunas de las características disponibles o completar tu perfil.
               </p>
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 mb-6">
-                <Button size={isMobile ? "default" : "lg"} className="rounded-full bg-gradient-to-r from-homi-purple to-homi-lightPurple hover:from-homi-lightPurple hover:to-homi-purple text-white font-bold shadow-lg shadow-purple-500/30 transform hover:scale-105 transition-all duration-300 w-full sm:w-auto" asChild>
-                  <Link to="/profile">Ver mi perfil</Link>
+                <Button 
+                  size={isMobile ? "default" : "lg"} 
+                  className="rounded-full bg-gradient-to-r from-homi-purple to-homi-lightPurple hover:from-homi-lightPurple hover:to-homi-purple text-white font-bold shadow-lg shadow-purple-500/30 transform hover:scale-105 transition-all duration-300 w-full sm:w-auto" 
+                  asChild
+                >
+                  <Link to="/profile">Completar mi perfil</Link>
                 </Button>
-                <Button size={isMobile ? "default" : "lg"} variant="outline" className="rounded-full w-full sm:w-auto mt-2 sm:mt-0" asChild>
+                <Button 
+                  size={isMobile ? "default" : "lg"} 
+                  variant="outline" 
+                  className="rounded-full w-full sm:w-auto mt-2 sm:mt-0" 
+                  asChild
+                >
                   <Link to="/matching">Explorar perfiles</Link>
+                </Button>
+              </div>
+              
+              <div className="mt-4 text-center">
+                <p className="text-sm text-muted-foreground mb-2">
+                  Síguenos en Instagram para enterarte de las últimas novedades:
+                </p>
+                <Button 
+                  variant="outline" 
+                  className="rounded-full gap-2"
+                  onClick={() => window.open('https://instagram.com/homimatch', '_blank')}
+                >
+                  <Instagram size={18} />
+                  @homimatch
                 </Button>
               </div>
             </>
