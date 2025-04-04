@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
@@ -65,8 +66,6 @@ interface ProfileData {
   occupation: string;
   bio: string;
   imgUrl: string;
-  galleryImgs: string[];
-  tags: { id: number; name: string }[];
   verified: boolean;
   preferences: ProfilePreferences;
   lifestyle: LifestyleDetail;
@@ -81,10 +80,9 @@ interface SupabaseProfileData {
   edad: string | null;
   email: string;
   first_name: string;
-  gallery_images: string[] | null;
+  last_name: string;
   interests: string[] | null;
   is_profile_active: boolean | null;
-  last_name: string;
   lifestyle: Json | null;
   ocupacion: string | null;
   profile_image: string | null;
@@ -170,6 +168,72 @@ const ProfilePage = () => {
   
   const profileCardRef = useRef<HTMLDivElement>(null);
 
+  const fetchProfile = async () => {
+    if (!user) return;
+    
+    try {
+      setLoading(true);
+      
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+      
+      if (error) {
+        throw error;
+      }
+      
+      if (data) {
+        setProfileImage(data.profile_image || '');
+        setFirstName(data.first_name || '');
+        setLastName(data.last_name || '');
+        setUsername(data.username || '');
+        setBio(data.bio || '');
+        setAge(data.edad || '');
+        setLocation(data.ubicacion || '');
+        setUniversity(data.universidad || '');
+        setOccupation(data.ocupacion || '');
+        setSevillaZone(data.sevilla_zona || '');
+        setCompaneros(data.companeros_count || '');
+        
+        // Set interests if available
+        if (data.interests && Array.isArray(data.interests)) {
+          setInterests(data.interests);
+          setSelectedInterests(data.interests);
+        }
+        
+        // Set lifestyle data if available
+        if (data.lifestyle) {
+          const lifestyleData = data.lifestyle as unknown as LifestyleDetail;
+          setCleanliness(lifestyleData.cleanliness || '');
+          setGuests(lifestyleData.guests || '');
+          setSmoking(lifestyleData.smoking || '');
+          setPets(lifestyleData.pets || '');
+          setSchedule(lifestyleData.schedule || '');
+        }
+        
+        // Set preferences and lookingFor data if available
+        setHasApartment(!!data.hasApartment);
+        setGenderPreference(data.genderPreference || '');
+        setSmokingPreference(data.smokingPreference || '');
+        setOccupationPreference(data.occupationPreference || '');
+        setMinAge(data.minAge || '');
+        setMaxAge(data.maxAge || '');
+        setExactPrice(data.exactPrice || 500);
+      }
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+      toast({
+        title: "Error al cargar el perfil",
+        description: "Ha ocurrido un error al cargar tu perfil. Por favor, inténtalo de nuevo.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSaveProfileImage = async (value: string | string[]) => {
     if (!user) return;
 
@@ -200,6 +264,68 @@ const ProfilePage = () => {
       toast({
         title: "Error al actualizar la imagen de perfil",
         description: "Ha ocurrido un error al actualizar tu imagen de perfil. Por favor, inténtalo de nuevo.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleSaveProfile = async () => {
+    if (!user) return;
+
+    try {
+      setIsSaving(true);
+      
+      // Prepare lifestyle data
+      const lifestyleData: LifestyleDetail = {
+        cleanliness,
+        guests,
+        smoking,
+        pets,
+        schedule
+      };
+      
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          first_name: firstName,
+          last_name: lastName,
+          bio: bio,
+          edad: age,
+          ubicacion: location,
+          universidad: university,
+          ocupacion: occupation,
+          sevilla_zona: sevillaZone,
+          companeros_count: companeros,
+          interests: selectedInterests,
+          lifestyle: lifestyleData,
+          hasApartment: hasApartment,
+          genderPreference: genderPreference,
+          smokingPreference: smokingPreference,
+          occupationPreference: occupationPreference,
+          minAge: minAge,
+          maxAge: maxAge,
+          exactPrice: exactPrice
+        })
+        .eq('id', user.id);
+        
+      if (error) {
+        throw error;
+      }
+      
+      setEditMode(false);
+      setInterests(selectedInterests);
+      
+      toast({
+        title: "Perfil actualizado",
+        description: "Tu perfil ha sido actualizado correctamente",
+      });
+    } catch (error) {
+      console.error('Error saving profile:', error);
+      toast({
+        title: "Error al actualizar el perfil",
+        description: "Ha ocurrido un error al actualizar tu perfil. Por favor, inténtalo de nuevo.",
         variant: "destructive",
       });
     } finally {
@@ -304,7 +430,13 @@ const ProfilePage = () => {
                         size="sm"
                         variant={editMode ? "default" : "outline"}
                         className={editMode ? "bg-homi-purple hover:bg-homi-purple/90" : ""}
-                        onClick={() => setEditMode(!editMode)}
+                        onClick={() => {
+                          if (editMode) {
+                            handleSaveProfile();
+                          } else {
+                            setEditMode(true);
+                          }
+                        }}
                       >
                         {editMode ? (
                           <>
