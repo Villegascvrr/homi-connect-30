@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Check } from 'lucide-react';
+import { Check, Instagram } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import EmailSignup from './EmailSignup';
 import WelcomeMessage from './WelcomeMessage';
