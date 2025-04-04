@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -57,8 +57,24 @@ interface ChatPageProps {
 }
 
 const ChatPage = ({ isPreview = false }: ChatPageProps) => {
-  const [selectedChatId, setSelectedChatId] = useState<string | null>(mockChatMatches[0]?.id || null);
+  const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
   const { user } = useAuth();
+  const [isLoading, setIsLoading] = useState(true);
+  
+  useEffect(() => {
+    // Set initial selected chat and indicate loading is complete
+    if (mockChatMatches.length > 0) {
+      setSelectedChatId(mockChatMatches[0].id);
+    }
+    
+    // Add a small delay to ensure the component renders correctly
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+      console.log("Chat page loaded successfully");
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, []);
   
   const handleSelectChat = (id: string) => {
     setSelectedChatId(id);
@@ -66,6 +82,18 @@ const ChatPage = ({ isPreview = false }: ChatPageProps) => {
   
   // Find the currently selected chat
   const selectedChat = mockChatMatches.find(match => match.id === selectedChatId) || mockChatMatches[0];
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <div className="flex-grow flex items-center justify-center">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -90,15 +118,17 @@ const ChatPage = ({ isPreview = false }: ChatPageProps) => {
             />
           </div>
           <div className="hidden sm:block sm:w-2/3 md:w-3/4">
-            <ChatWindow 
-              chat={{
-                id: selectedChat.id,
-                name: selectedChat.name,
-                imgUrl: selectedChat.imgUrl,
-                online: selectedChat.online,
-                typing: selectedChat.typing
-              }} 
-            />
+            {selectedChat && (
+              <ChatWindow 
+                chat={{
+                  id: selectedChat.id,
+                  name: selectedChat.name,
+                  imgUrl: selectedChat.imgUrl,
+                  online: selectedChat.online,
+                  typing: selectedChat.typing
+                }} 
+              />
+            )}
           </div>
         </div>
       </main>

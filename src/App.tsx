@@ -18,7 +18,16 @@ import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import AdminPage from "./pages/AdminPage";
 
-const queryClient = new QueryClient();
+// Create a new query client with explicit configuration for cache stability
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
+      staleTime: 1000 * 60 * 5, // 5 minutes
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -37,9 +46,7 @@ const App = () => (
             {/* Routes with preview for non-authenticated users */}
             <Route path="/matching" element={
               <ProtectedRoute allowPreview={true}>
-                <MatchingPage isPreview={!queryClient.getQueryCache().findAll().some(
-                  query => query.queryKey[0] === 'user'
-                )} />
+                <MatchingPage isPreview={!queryClient.getQueryData(['user'])} />
               </ProtectedRoute>
             } />
             <Route path="/profile" element={
@@ -64,9 +71,7 @@ const App = () => (
             } />
             <Route path="/chat" element={
               <ProtectedRoute allowPreview={true}>
-                <ChatPage isPreview={!queryClient.getQueryCache().findAll().some(
-                  query => query.queryKey[0] === 'user'
-                )} />
+                <ChatPage isPreview={!queryClient.getQueryData(['user'])} />
               </ProtectedRoute>
             } />
             
