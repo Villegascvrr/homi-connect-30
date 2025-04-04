@@ -78,7 +78,6 @@ const formSchema = z.object({
     message: "La bio no puede tener más de 500 caracteres.",
   }),
   profileImage: z.string().optional(),
-  galleryImages: z.array(z.string()).optional(),
   sevilla_zona: z.string().optional(),
   companeros_count: z.string().optional(),
 }).refine((data) => data.password === data.confirmPassword, {
@@ -167,7 +166,6 @@ const RegisterPage = () => {
       university: '',
       bio: '',
       profileImage: '',
-      galleryImages: [],
       sevilla_zona: '',
       companeros_count: '',
     },
@@ -358,6 +356,7 @@ const RegisterPage = () => {
                 
                 <Form {...form}>
                   <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    
                     <TabsContent value="cuenta" className="space-y-4 sm:space-y-6">
                       <div className="mb-6">
                         <Button
@@ -860,126 +859,7 @@ const RegisterPage = () => {
                         </div>
                       </div>
                       
-                      <div className="space-y-4">
-                        <h2 className="text-xl font-semibold flex items-center gap-2">
-                          <Camera className="text-homi-purple" size={20} />
-                          Galería de fotos
-                        </h2>
-                        <FormImageUpload
-                          name="galleryImages"
-                          multiple={true}
-                          description="Comparte algunas fotos para que otros usuarios te conozcan mejor (máximo 5)"
-                        />
-                      </div>
-                      
                       <Separator className="my-4" />
                       
                       <div className="space-y-4 bg-muted/20 p-4 rounded-xl border border-border">
-                        <h2 className="text-xl font-semibold flex items-center gap-2">
-                          <MapPin className="text-homi-purple" size={20} />
-                          Búsqueda de piso en Sevilla
-                        </h2>
-                        
-                        <FormField
-                          control={form.control}
-                          name="sevilla_zona"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>¿En qué zona de Sevilla estás buscando piso?</FormLabel>
-                              <Select 
-                                onValueChange={(value) => {
-                                  field.onChange(value);
-                                  handleApartmentSearchToggle(value);
-                                }}
-                                defaultValue={field.value}
-                              >
-                                <FormControl>
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Selecciona una zona" />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  <SelectItem value="">No estoy buscando piso en Sevilla</SelectItem>
-                                  {sevillaZones.map((zone) => (
-                                    <SelectItem key={zone} value={zone}>{zone}</SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        
-                        {isLookingForApartment && (
-                          <FormField
-                            control={form.control}
-                            name="companeros_count"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="flex items-center gap-2">
-                                  <Users className="text-homi-purple" size={18} />
-                                  ¿Cuántos compañeros de piso buscas?
-                                </FormLabel>
-                                <Select 
-                                  onValueChange={field.onChange}
-                                  defaultValue={field.value}
-                                >
-                                  <FormControl>
-                                    <SelectTrigger>
-                                      <SelectValue placeholder="Selecciona un número" />
-                                    </SelectTrigger>
-                                  </FormControl>
-                                  <SelectContent>
-                                    {companeroOptions.map((option) => (
-                                      <SelectItem key={option} value={option}>{option}</SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        )}
-                        
-                        {!isLookingForApartment && (
-                          <p className="text-sm text-muted-foreground">
-                            Indica si estás buscando piso en Sevilla para poder mostrarte compañeros compatibles.
-                          </p>
-                        )}
-                      </div>
-                      
-                      <Separator className="my-4" />
-                      
-                      <div className="flex justify-between mt-8">
-                        <Button 
-                          type="button" 
-                          variant="outline" 
-                          className="rounded-full flex items-center gap-1"
-                          onClick={() => setActiveTab("cuenta")}
-                        >
-                          <ArrowLeft className="mr-1 h-4 w-4" />
-                          Atrás
-                        </Button>
-                        <Button 
-                          type="submit" 
-                          className="rounded-full bg-homi-purple hover:bg-homi-purple/90"
-                          disabled={isSubmitting}
-                        >
-                          {isSubmitting ? "Procesando..." : "Completar registro"}
-                        </Button>
-                      </div>
-                    </TabsContent>
-                  </form>
-                </Form>
-              </Tabs>
-            </div>
-          </div>
-        </div>
-      </main>
-      
-      <Footer />
-    </div>
-  );
-};
-
-export default RegisterPage;
+                        <
