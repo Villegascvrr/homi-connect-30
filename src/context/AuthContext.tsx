@@ -94,27 +94,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       
       // If the signup was successful and we have a user
       if (authData.user) {
-        // Create a profile record with additional user data
+        // Create a profile record with basic user data
         const profileData = {
           id: authData.user.id,
           first_name: userData.firstName,
           last_name: userData.lastName,
           username: userData.username,
-          email: userData.email,
-          edad: userData.edad || null,
-          ubicacion: userData.ubicacion || null,
-          ocupacion: userData.ocupacion || null,
-          universidad: userData.universidad || null,
-          bio: userData.bio || null,
-          profile_image: userData.profileImage || null,
-          gallery_images: userData.galleryImages || [],
-          interests: userData.interests || [],
-          lifestyle: userData.lifestyle || null,
-          sevilla_zona: userData.sevilla_zona || null,
-          companeros_count: userData.companeros_count || null
-          // Eliminamos los campos que no existen en la tabla profiles
-          // hasApartment, genderPreference, smokingPreference, occupationPreference,
-          // minAge, maxAge, exactPrice
+          email: userData.email
         };
 
         // Insert or update profile record
@@ -130,7 +116,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       
       toast({
         title: "Cuenta creada con éxito",
-        description: "Tu perfil ha sido registrado. Por favor verifica tu correo electrónico.",
+        description: "Tu cuenta ha sido registrada. Por favor verifica tu correo electrónico.",
       });
     } catch (error: any) {
       toast({
