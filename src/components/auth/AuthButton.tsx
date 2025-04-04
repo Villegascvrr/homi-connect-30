@@ -12,9 +12,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const AuthButton = () => {
   const { user, signOut, loading } = useAuth();
+  const isMobile = useIsMobile();
 
   if (loading) {
     return (
@@ -25,6 +27,27 @@ const AuthButton = () => {
   }
 
   if (!user) {
+    // For mobile view, show a stacked layout
+    if (isMobile) {
+      return (
+        <div className="flex flex-col space-y-2">
+          <Link
+            to="/signin"
+            className="block w-full text-center px-3 py-2 rounded-md text-base font-medium text-foreground hover:bg-muted"
+          >
+            Iniciar sesión
+          </Link>
+          <Link
+            to="/register"
+            className="block w-full text-center px-3 py-2 rounded-md text-base font-medium bg-homi-purple text-white hover:bg-homi-purple/90"
+          >
+            Registrarse
+          </Link>
+        </div>
+      );
+    }
+    
+    // For desktop view, show buttons side by side
     return (
       <div className="flex items-center gap-2">
         <Button asChild variant="ghost" size="sm" className="rounded-full">
@@ -37,6 +60,7 @@ const AuthButton = () => {
     );
   }
 
+  // User is logged in, show avatar dropdown
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
