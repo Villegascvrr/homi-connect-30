@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Check } from 'lucide-react';
@@ -15,26 +14,22 @@ const Hero = () => {
   const isMobile = useIsMobile();
   const { user } = useAuth();
 
-  // Check if user just registered (from URL parameter)
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('registered') === 'true' && user) {
       setJustRegistered(true);
-      // Clear the URL parameter
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, [user]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle newsletter subscription
     console.log('Subscribed with email:', email);
     setEmail('');
   };
 
   const handleRegisterClick = () => {
     setShowSignupForm(true);
-    // Scroll to the form after it's shown
     setTimeout(() => {
       const formElement = document.getElementById('signup-form');
       if (formElement) {
@@ -91,15 +86,11 @@ const Hero = () => {
               </div>
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 mb-6">
-                {/* Changed mb-0 to mb-6 to add consistent bottom margin */}
                 <div className="relative w-full sm:w-auto moving-border-container">
                   <Button size={isMobile ? "default" : "lg"} className="rounded-full bg-gradient-to-r from-homi-purple to-homi-lightPurple hover:from-homi-lightPurple hover:to-homi-purple text-white font-bold shadow-lg shadow-purple-500/30 transform hover:scale-105 transition-all duration-300 w-full z-10 relative" onClick={handleRegisterClick}>
                     ¡Regístrate ahora!
                   </Button>
                 </div>
-                <Button size={isMobile ? "default" : "lg"} variant="outline" className="rounded-full w-full sm:w-auto mt-2 sm:mt-0" asChild>
-                  <Link to="/how-it-works">Cómo Funciona</Link>
-                </Button>
               </div>
             </>
           ) : justRegistered ? (
