@@ -1,3 +1,4 @@
+
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
@@ -193,7 +194,7 @@ const Index = () => {
               <p className="text-xl mb-8 text-white/80">
                 Únete a Homi y comienza a conectar con personas compatibles con tu estilo de vida.
               </p>
-              <Link to="/matching">
+              <Link to="/register">
                 <Button size="lg" variant="secondary" className="rounded-full bg-white text-homi-purple hover:bg-white/90 px-8">
                   Comenzar Ahora
                 </Button>

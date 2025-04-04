@@ -7,7 +7,7 @@ import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { CheckCircle2, ArrowRight, User, Mail, AtSign } from 'lucide-react';
+import { CheckCircle2, ArrowRight, User, Mail, AtSign, Lock } from 'lucide-react';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useAuth } from '@/context/AuthContext';
 
@@ -146,7 +146,7 @@ const EmailSignup = () => {
 
       <div className="bg-white dark:bg-card border border-border shadow-sm rounded-xl p-6 md:p-8 animate-fade-in">
         <div className="mb-6">
-          <Button type="button" variant="outline" onClick={handleGoogleSignIn} disabled={isSigningWithGoogle} className="w-full flex items-center justify-center gap-2 py-5 border-2 relative">
+          <Button type="button" variant="outline" onClick={handleGoogleSignIn} disabled={isSigningWithGoogle} className="w-full flex items-center justify-center gap-2 py-5 border-2 relative rounded-full">
             {isSigningWithGoogle ? <>
                 <div className="h-5 w-5 animate-spin rounded-full border-b-2 border-homi-purple"></div>
                 <span>Conectando con Google...</span>
@@ -177,7 +177,7 @@ const EmailSignup = () => {
                     <FormLabel>Nombre *</FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <Input id="firstName" placeholder="Tu nombre" className="pl-10" {...field} />
+                        <Input id="firstName" placeholder="Tu nombre" className="pl-10 rounded-full" {...field} />
                         <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                       </div>
                     </FormControl>
@@ -190,7 +190,7 @@ const EmailSignup = () => {
                     <FormLabel>Apellidos *</FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <Input id="lastName" placeholder="Tus apellidos" className="pl-10" {...field} />
+                        <Input id="lastName" placeholder="Tus apellidos" className="pl-10 rounded-full" {...field} />
                         <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                       </div>
                     </FormControl>
@@ -204,7 +204,7 @@ const EmailSignup = () => {
                   <FormLabel>Nombre de usuario *</FormLabel>
                   <FormControl>
                     <div className="relative">
-                      <Input id="username" placeholder="tu_usuario" className="pl-10" {...field} />
+                      <Input id="username" placeholder="tu_usuario" className="pl-10 rounded-full" {...field} />
                       <AtSign className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                     </div>
                   </FormControl>
@@ -217,7 +217,7 @@ const EmailSignup = () => {
                   <FormLabel>Email *</FormLabel>
                   <FormControl>
                     <div className="relative">
-                      <Input id="email" type="email" placeholder="tu@email.com" className="pl-10" {...field} />
+                      <Input id="email" type="email" placeholder="tu@email.com" className="pl-10 rounded-full" {...field} />
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                     </div>
                   </FormControl>
@@ -230,14 +230,14 @@ const EmailSignup = () => {
                   <FormLabel>Contraseña *</FormLabel>
                   <FormControl>
                     <div className="relative">
-                      <Input id="password" type="password" placeholder="••••••••" className="pl-10" {...field} />
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                      <Input id="password" type="password" placeholder="••••••••" className="pl-10 rounded-full" {...field} />
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                     </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>} />
             
-            <Button type="submit" disabled={isLoading} className="w-full mt-6">
+            <Button type="submit" disabled={isLoading} className="w-full mt-6 rounded-full">
               {isLoading ? "Creando cuenta..." : "Crear cuenta"}
               <ArrowRight className="ml-1 h-4 w-4" />
             </Button>
