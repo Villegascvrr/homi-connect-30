@@ -47,13 +47,13 @@ const AuthButton = () => {
         <div className="flex flex-col space-y-2">
           <Link
             to="/signin"
-            className="block w-full text-center px-3 py-2 rounded-md text-base font-medium text-foreground hover:bg-muted"
+            className="block w-full text-center px-3 py-2 rounded-full text-base font-medium text-foreground hover:bg-muted"
           >
             Iniciar sesión
           </Link>
           <Link
             to="/register"
-            className="block w-full text-center px-3 py-2 rounded-md text-base font-medium bg-homi-purple text-white hover:bg-homi-purple/90"
+            className="block w-full text-center px-3 py-2 rounded-full text-base font-medium bg-homi-purple text-white hover:bg-homi-purple/90"
           >
             Registrarse
           </Link>
@@ -64,10 +64,10 @@ const AuthButton = () => {
     // For desktop view, show buttons side by side
     return (
       <div className="flex items-center gap-2">
-        <Button asChild variant="outline" size="sm" className="border-homi-purple text-homi-purple hover:bg-homi-purple/10">
+        <Button asChild variant="outline" size="sm" className="border-homi-purple text-homi-purple hover:bg-homi-purple/10 rounded-full">
           <Link to="/signin">Iniciar sesión</Link>
         </Button>
-        <Button asChild className="bg-homi-purple hover:bg-homi-purple/90 text-white">
+        <Button asChild className="bg-homi-purple hover:bg-homi-purple/90 text-white rounded-full">
           <Link to="/register">Registrarse</Link>
         </Button>
       </div>
