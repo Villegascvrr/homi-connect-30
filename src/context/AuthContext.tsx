@@ -20,17 +20,6 @@ export interface UserSignUpData {
   firstName: string;
   lastName: string;
   username: string;
-  edad?: string;
-  ubicacion?: string;
-  ocupacion?: string;
-  universidad?: string;
-  bio?: string;
-  profileImage?: string;
-  galleryImages?: string[];
-  interests?: string[];
-  lifestyle?: any;
-  sevilla_zona?: string;
-  companeros_count?: string;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -126,42 +115,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
     } finally {
       setLoading(false);
-    }
-  };
-
-  const updateUserProfile = async (userId: string, profileData: Partial<Omit<UserSignUpData, 'password'>>) => {
-    try {
-      const profileUpdateData: Record<string, any> = {
-        edad: profileData.edad,
-        ubicacion: profileData.ubicacion,
-        ocupacion: profileData.ocupacion,
-        universidad: profileData.universidad,
-        bio: profileData.bio,
-        profile_image: profileData.profileImage,
-        gallery_images: profileData.galleryImages,
-        interests: profileData.interests,
-        lifestyle: profileData.lifestyle,
-        sevilla_zona: profileData.sevilla_zona,
-        companeros_count: profileData.companeros_count
-      };
-
-      Object.keys(profileUpdateData).forEach(key => {
-        if (profileUpdateData[key] === undefined) {
-          delete profileUpdateData[key];
-        }
-      });
-
-      const { error } = await supabase
-        .from('profiles')
-        .update(profileUpdateData)
-        .eq('id', userId);
-
-      if (error) throw error;
-
-      return true;
-    } catch (error: any) {
-      console.error("Error updating profile:", error.message);
-      return false;
     }
   };
 

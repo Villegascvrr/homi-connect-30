@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -74,7 +75,7 @@ const ProfileForm = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isLookingForApartment, setIsLookingForApartment] = useState(false);
   const isMobile = useIsMobile();
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -117,7 +118,7 @@ const ProfileForm = () => {
           // Check if user is looking for apartment in Sevilla
           setIsLookingForApartment(!!profileData.sevilla_zona && profileData.sevilla_zona !== 'no_busco');
           
-          // Set form data with the fetched profile
+          // Set form data with the fetched profile, using empty strings instead of nulls for better UX
           form.reset({
             name: `${profileData.first_name || ''} ${profileData.last_name || ''}`.trim() || user.user_metadata?.full_name || "",
             email: user.email || "",
@@ -126,7 +127,7 @@ const ProfileForm = () => {
             location: profileData.ubicacion || "",
             university: profileData.universidad || "",
             occupation: profileData.ocupacion || "",
-            profileImage: profileData.profile_image || user.user_metadata?.avatar_url || "",
+            profileImage: profileData.profile_image || "",
             isProfileActive: profileData.is_profile_active !== false,
             sevilla_zona: profileData.sevilla_zona || "",
             companeros_count: profileData.companeros_count || "",
@@ -144,7 +145,7 @@ const ProfileForm = () => {
             location: "",
             university: "",
             occupation: "",
-            profileImage: user.user_metadata?.avatar_url || "",
+            profileImage: "",
             isProfileActive: true,
             sevilla_zona: "",
             companeros_count: "",
@@ -201,6 +202,9 @@ const ProfileForm = () => {
       }
       
       console.log("Update successful, returned data:", data);
+      
+      // Refresh the user data in the global context
+      await refreshUser();
       
       toast({
         title: "Perfil actualizado",
@@ -259,7 +263,7 @@ const ProfileForm = () => {
               <FormImageUpload
                 name="profileImage"
                 label="Foto de perfil"
-                description="Esta será tu imagen principal en tu perfil (opcional)"
+                description="Esta será tu imagen principal en tu perfil"
                 required={false}
               />
             </div>
@@ -272,7 +276,7 @@ const ProfileForm = () => {
                   <FormItem>
                     <FormLabel>Nombre</FormLabel>
                     <FormControl>
-                      <Input placeholder="Tu nombre" {...field} />
+                      <Input placeholder="Tu nombre completo" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -312,7 +316,7 @@ const ProfileForm = () => {
                   <FormItem>
                     <FormLabel>Ubicación</FormLabel>
                     <FormControl>
-                      <Input placeholder="Tu ciudad" {...field} />
+                      <Input placeholder="Tu ciudad actual" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -339,7 +343,7 @@ const ProfileForm = () => {
                   <FormItem>
                     <FormLabel>Ocupación</FormLabel>
                     <FormControl>
-                      <Input placeholder="Tu ocupación" {...field} />
+                      <Input placeholder="Tu ocupación actual" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
