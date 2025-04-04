@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -862,4 +863,158 @@ const RegisterPage = () => {
                       <Separator className="my-4" />
                       
                       <div className="space-y-4 bg-muted/20 p-4 rounded-xl border border-border">
-                        <
+                        <h2 className="text-xl font-semibold flex items-center gap-2">
+                          <MapPin className="text-homi-purple" size={20} />
+                          Preferencias de búsqueda
+                        </h2>
+                        
+                        <div className="space-y-4">
+                          <div>
+                            <p className="text-sm text-muted-foreground mb-3">
+                              Indica si estás buscando un piso o ya tienes un piso y buscas compañeros
+                            </p>
+                            <div className="grid grid-cols-1 gap-2">
+                              <Button
+                                type="button"
+                                variant="outline"
+                                className={`justify-start px-4 py-6 ${!isLookingForApartment ? 'border-homi-purple bg-homi-ultraLightPurple' : ''}`}
+                                onClick={() => handleApartmentSearchToggle('')}
+                              >
+                                <div className="flex items-center gap-2">
+                                  <div className={`w-4 h-4 rounded-full border ${!isLookingForApartment ? 'bg-homi-purple border-homi-purple' : 'border-input'}`}>
+                                    {!isLookingForApartment && <div className="w-2 h-2 bg-white rounded-full m-[3px]"></div>}
+                                  </div>
+                                  <div className="text-left">
+                                    <p className="font-medium">Tengo piso y busco compañeros</p>
+                                    <p className="text-sm text-muted-foreground mt-1">Ya tengo un piso y estoy buscando personas para compartirlo</p>
+                                  </div>
+                                </div>
+                              </Button>
+                              
+                              <Button
+                                type="button"
+                                variant="outline"
+                                className={`justify-start px-4 py-6 ${isLookingForApartment ? 'border-homi-purple bg-homi-ultraLightPurple' : ''}`}
+                                onClick={() => handleApartmentSearchToggle('1')}
+                              >
+                                <div className="flex items-center gap-2">
+                                  <div className={`w-4 h-4 rounded-full border ${isLookingForApartment ? 'bg-homi-purple border-homi-purple' : 'border-input'}`}>
+                                    {isLookingForApartment && <div className="w-2 h-2 bg-white rounded-full m-[3px]"></div>}
+                                  </div>
+                                  <div className="text-left">
+                                    <p className="font-medium">Busco piso para compartir</p>
+                                    <p className="text-sm text-muted-foreground mt-1">Estoy buscando un piso para compartir con otras personas</p>
+                                  </div>
+                                </div>
+                              </Button>
+                            </div>
+                          </div>
+                          
+                          {!isLookingForApartment ? (
+                            <div>
+                              <FormField
+                                control={form.control}
+                                name="companeros_count"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>¿Cuántos compañeros buscas?</FormLabel>
+                                    <FormControl>
+                                      <Select
+                                        value={field.value || ''}
+                                        onValueChange={field.onChange}
+                                      >
+                                        <SelectTrigger>
+                                          <SelectValue placeholder="Selecciona una opción" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                          {companeroOptions.map((option) => (
+                                            <SelectItem key={option} value={option}>
+                                              {option}
+                                            </SelectItem>
+                                          ))}
+                                        </SelectContent>
+                                      </Select>
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
+                          ) : (
+                            <div>
+                              <FormField
+                                control={form.control}
+                                name="sevilla_zona"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>¿En qué zona de Sevilla buscas?</FormLabel>
+                                    <FormControl>
+                                      <Select 
+                                        value={field.value || ''}
+                                        onValueChange={field.onChange}
+                                      >
+                                        <SelectTrigger>
+                                          <SelectValue placeholder="Selecciona una zona" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                          {sevillaZones.map((zone) => (
+                                            <SelectItem key={zone} value={zone}>
+                                              {zone}
+                                            </SelectItem>
+                                          ))}
+                                        </SelectContent>
+                                      </Select>
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      
+                      <div className="flex flex-wrap justify-between gap-4 pt-4">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => setActiveTab("cuenta")}
+                          className="flex items-center gap-2"
+                        >
+                          <ArrowLeft className="h-4 w-4" />
+                          Atrás
+                        </Button>
+                        <Button 
+                          type="submit"
+                          className="bg-homi-purple hover:bg-homi-purple/90 gap-2"
+                          disabled={isSubmitting}
+                        >
+                          {isSubmitting ? (
+                            <>
+                              <div className="h-4 w-4 animate-spin rounded-full border-2 border-b-transparent"></div>
+                              Creando perfil...
+                            </>
+                          ) : (
+                            <>
+                              Completar registro
+                              <ArrowRight className="h-4 w-4" />
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    </TabsContent>
+                  </form>
+                </Form>
+              </Tabs>
+            </div>
+          </div>
+        </div>
+      </main>
+      
+      <Footer />
+    </div>
+  );
+};
+
+export default RegisterPage;
+
