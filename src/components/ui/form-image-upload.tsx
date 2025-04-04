@@ -19,7 +19,7 @@ interface FormImageUploadProps<TFieldValues extends FieldValues> {
   className?: string;
   required?: boolean;
   onChange?: (value: string | string[]) => void;
-  hideLabel?: boolean; // Added hideLabel property
+  hideLabel?: boolean;
 }
 
 export function FormImageUpload<TFieldValues extends FieldValues>({
@@ -30,7 +30,7 @@ export function FormImageUpload<TFieldValues extends FieldValues>({
   className,
   required = false,
   onChange: customOnChange,
-  hideLabel = false, // Added default value for hideLabel
+  hideLabel = false,
 }: FormImageUploadProps<TFieldValues>) {
   // Get form context to log state for debugging
   const formContext = useFormContext();
