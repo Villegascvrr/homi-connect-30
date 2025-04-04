@@ -1,6 +1,7 @@
+
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, ChevronDown, ChevronUp } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
@@ -23,7 +24,7 @@ const Navbar = () => {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const location = useLocation();
   const isMobile = useIsMobile();
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -91,7 +92,7 @@ const Navbar = () => {
             ))}
           </nav>
 
-          <div className="hidden md:block">
+          <div className="hidden md:flex items-center">
             <AuthButton />
           </div>
 
