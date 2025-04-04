@@ -15,22 +15,20 @@ interface FormImageUploadProps<TFieldValues extends FieldValues> {
   name: Path<TFieldValues>;
   label?: string;
   description?: string;
-  multiple?: boolean;
   className?: string;
   required?: boolean;
-  onChange?: (value: string | string[]) => void;
-  hideLabel?: boolean; // Added hideLabel property
+  onChange?: (value: string) => void;
+  hideLabel?: boolean;
 }
 
 export function FormImageUpload<TFieldValues extends FieldValues>({
   name,
   label,
   description,
-  multiple = false,
   className,
   required = false,
   onChange: customOnChange,
-  hideLabel = false, // Added default value for hideLabel
+  hideLabel = false,
 }: FormImageUploadProps<TFieldValues>) {
   // Get form context to log state for debugging
   const formContext = useFormContext();
@@ -48,13 +46,12 @@ export function FormImageUpload<TFieldValues extends FieldValues>({
       <div className={className}>
         {label && !hideLabel && <div className="mb-2 font-medium">{label}</div>}
         <ImageUpload
-          multiple={multiple}
-          value={multiple ? [] : ''}
+          value={''}
           onChange={(value) => {
             if (customOnChange) customOnChange(value);
           }}
-          disableCompression={!multiple}
-          enableCropping={!multiple}
+          disableCompression={true}
+          enableCropping={true}
         />
         {description && <p className="text-sm text-muted-foreground mt-2">{description}</p>}
       </div>
@@ -77,20 +74,18 @@ export function FormImageUpload<TFieldValues extends FieldValues>({
             )}
             <FormControl>
               <ImageUpload
-                multiple={multiple}
-                value={field.value || (multiple ? [] : '')}
+                value={field.value || ''}
                 onChange={(value) => {
                   console.log(`Image upload onChange for ${name}:`, value);
                   if (customOnChange) {
-                    // Make sure we handle both string and string[] properly
                     customOnChange(value);
                   } else {
                     field.onChange(value);
                   }
                 }}
                 onBlur={field.onBlur}
-                disableCompression={!multiple}
-                enableCropping={!multiple}
+                disableCompression={true}
+                enableCropping={true}
               />
             </FormControl>
             {description && <FormDescription>{description}</FormDescription>}
