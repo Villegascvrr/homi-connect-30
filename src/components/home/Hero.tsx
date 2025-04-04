@@ -124,7 +124,7 @@ const Hero = () => {
                   <Link to="/profile">Ver mi perfil</Link>
                 </Button>
                 <Button size={isMobile ? "default" : "lg"} variant="outline" className="rounded-full w-full sm:w-auto mt-2 sm:mt-0" asChild>
-                  <Link to="/how-it-works">Explorar perfiles</Link>
+                  <Link to="/matching">Explorar perfiles</Link>
                 </Button>
               </div>
             </>

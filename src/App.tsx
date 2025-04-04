@@ -18,7 +18,6 @@ import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import AdminPage from "./pages/AdminPage";
 import { useEffect } from "react";
-import HowItWorksPage from "./pages/HowItWorksPage";
 
 // Create a new query client with explicit configuration for cache stability and better error handling
 const queryClient = new QueryClient({
@@ -57,7 +56,6 @@ const App = () => {
               <Route path="/" element={<Index />} />
               <Route path="/signin" element={<SignInPage />} />
               <Route path="/register" element={<RegisterPage />} />
-              <Route path="/how-it-works" element={<HowItWorksPage />} />
               
               {/* Routes with preview for non-authenticated users */}
               <Route path="/matching" element={
