@@ -13,12 +13,26 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useEffect, useState } from "react";
 
 const AuthButton = () => {
-  const { user, signOut, loading } = useAuth();
+  const { user, signOut, loading: authLoading } = useAuth();
   const isMobile = useIsMobile();
+  const [loading, setLoading] = useState(true);
 
-  if (loading) {
+  // Add a short timeout to ensure we don't get stuck in loading state
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1500);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Use local loading state that times out, or auth loading state
+  const isLoading = loading && authLoading;
+
+  if (isLoading) {
     return (
       <Button variant="ghost" size="sm" disabled className="h-9 w-9 rounded-full">
         <div className="h-4 w-4 animate-spin rounded-full border-2 border-b-transparent"></div>
@@ -53,7 +67,7 @@ const AuthButton = () => {
         <Button asChild variant="ghost" size="sm">
           <Link to="/signin">Iniciar sesión</Link>
         </Button>
-        <Button asChild>
+        <Button asChild className="bg-homi-purple hover:bg-homi-purple/90">
           <Link to="/register">Registrarse</Link>
         </Button>
       </div>
