@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -258,7 +257,7 @@ const RegisterPage = () => {
         variant: "default",
       });
       
-      navigate('/profile');
+      navigate('/?registered=true');
     } catch (error) {
       toast({
         title: "Error",
@@ -1017,4 +1016,3 @@ const RegisterPage = () => {
 };
 
 export default RegisterPage;
-
