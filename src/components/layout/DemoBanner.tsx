@@ -33,7 +33,7 @@ const DemoBanner = ({
           : customMessage || message
         }
         {!user && (
-          <> <Link to="/register" className="underline font-bold">Regístrate</Link> para acceder a todas las funciones.</>
+          <> <Link to="/register" className="underline font-bold hover:text-white/80 transition-colors">Regístrate</Link> para acceder a todas las funciones.</>
         )}
       </p>
     </div>
