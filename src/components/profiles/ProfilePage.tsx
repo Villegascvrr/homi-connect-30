@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
@@ -6,7 +7,11 @@ import Footer from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { MessageSquare, Share, Heart, Home, Briefcase, GraduationCap, UserCheck, Pencil, Download, QrCode, Camera, ChevronLeft, ChevronRight, Search, Check, X, DollarSign, Calendar, MapPin, Users, AtSign } from 'lucide-react';
+import { 
+  MessageSquare, Share, Heart, Home, Briefcase, GraduationCap, UserCheck, 
+  Pencil, Download, QrCode, Camera, ChevronLeft, ChevronRight, Search, 
+  Check, X, DollarSign, Calendar, MapPin, Users, AtSign, Save 
+} from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import html2canvas from 'html2canvas';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -21,6 +26,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { type Json } from '@/integrations/supabase/types';
+import { FormImageUpload } from "@/components/ui/form-image-upload";
 
 interface LifestyleDetail {
   cleanliness?: string;
@@ -96,18 +102,55 @@ interface SupabaseProfileData {
   exactPrice?: number;
 }
 
+// Zonas de Sevilla
+const sevillaZones = [
+  "Casco Antiguo",
+  "Triana",
+  "Los Remedios",
+  "Nervión",
+  "San Pablo - Santa Justa",
+  "Este - Alcosa - Torreblanca",
+  "Cerro - Amate",
+  "Sur",
+  "Bellavista - La Palmera",
+  "Macarena",
+  "Norte",
+  "Otro/Alrededores"
+];
+
+// Número de compañeros options
+const companeroOptions = ["1", "2", "3", "4", "5+"];
+
+// Intereses predefinidos
+const predefinedInterests = [
+  "Deportes", "Música", "Cine", "Lectura", "Viajes", 
+  "Cocina", "Arte", "Tecnología", "Fotografía", "Naturaleza",
+  "Gaming", "Fitness", "Yoga", "Idiomas", "Historia",
+  "Moda", "Voluntariado", "Mascotas", "Gastronomía", "Festivales"
+];
+
 const ProfilePage = () => {
   const [liked, setLiked] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [showShareDialog, setShowShareDialog] = useState(false);
   const [activeGalleryIndex, setActiveGalleryIndex] = useState(0);
-  const [isEditingLookingFor, setIsEditingLookingFor] = useState(false);
+  const [showShareDialog, setShowShareDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [showAddImageDialog, setShowAddImageDialog] = useState(false);
+  const [newInterest, setNewInterest] = useState("");
+  
+  // Campos editables
+  const [isEditingBasic, setIsEditingBasic] = useState(false);
+  const [isEditingBio, setIsEditingBio] = useState(false);
+  const [isEditingInterests, setIsEditingInterests] = useState(false);
+  const [isEditingLifestyle, setIsEditingLifestyle] = useState(false);
+  const [isEditingLookingFor, setIsEditingLookingFor] = useState(false);
+  const [tempImageUrl, setTempImageUrl] = useState("");
+  
   const isMobile = useIsMobile();
   const { toast } = useToast();
   const qrCodeRef = useRef<HTMLDivElement>(null);
   const profileCardRef = useRef<HTMLDivElement>(null);
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   
   const defaultProfile: ProfileData = {
     id: '1',
@@ -118,8 +161,8 @@ const ProfilePage = () => {
     university: '-',
     occupation: '-',
     bio: '-',
-    imgUrl: 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7',
-    galleryImgs: ['https://images.unsplash.com/photo-1649972904349-6e44c42644a7'],
+    imgUrl: '',
+    galleryImgs: [],
     tags: [],
     verified: false,
     preferences: {
@@ -129,20 +172,20 @@ const ProfilePage = () => {
       moveInDate: '-'
     },
     lifestyle: {
-      cleanliness: '-',
-      guests: '-',
-      smoking: '-',
-      pets: '-',
-      schedule: '-'
+      cleanliness: '',
+      guests: '',
+      smoking: '',
+      pets: '',
+      schedule: ''
     },
     lookingFor: {
       hasApartment: false,
-      roommatesCount: "-",
-      genderPreference: "-",
-      smokingPreference: "-",
-      occupationPreference: "-",
-      minAge: "-",
-      maxAge: "-",
+      roommatesCount: "",
+      genderPreference: "",
+      smokingPreference: "",
+      occupationPreference: "",
+      minAge: "",
+      maxAge: "",
       budgetRange: [400, 600],
       exactPrice: 0
     }
@@ -175,11 +218,11 @@ const ProfilePage = () => {
         const profileData = data as SupabaseProfileData;
         
         let lifestyleObj: LifestyleDetail = {
-          cleanliness: '-',
-          guests: '-',
-          smoking: '-',
-          pets: '-',
-          schedule: '-'
+          cleanliness: '',
+          guests: '',
+          smoking: '',
+          pets: '',
+          schedule: ''
         };
         
         if (profileData.lifestyle) {
@@ -193,11 +236,11 @@ const ProfilePage = () => {
             const parsedLifestyle = profileData.lifestyle as Record<string, any>;
             
             lifestyleObj = {
-              cleanliness: typeof parsedLifestyle.cleanliness === 'string' ? parsedLifestyle.cleanliness : '-',
-              guests: typeof parsedLifestyle.guests === 'string' ? parsedLifestyle.guests : '-',
-              smoking: typeof parsedLifestyle.smoking === 'string' ? parsedLifestyle.smoking : '-',
-              pets: typeof parsedLifestyle.pets === 'string' ? parsedLifestyle.pets : '-',
-              schedule: typeof parsedLifestyle.schedule === 'string' ? parsedLifestyle.schedule : '-'
+              cleanliness: typeof parsedLifestyle.cleanliness === 'string' ? parsedLifestyle.cleanliness : '',
+              guests: typeof parsedLifestyle.guests === 'string' ? parsedLifestyle.guests : '',
+              smoking: typeof parsedLifestyle.smoking === 'string' ? parsedLifestyle.smoking : '',
+              pets: typeof parsedLifestyle.pets === 'string' ? parsedLifestyle.pets : '',
+              schedule: typeof parsedLifestyle.schedule === 'string' ? parsedLifestyle.schedule : ''
             };
           }
         }
@@ -206,12 +249,12 @@ const ProfilePage = () => {
         
         const lookingForObj: LookingForPreferences = {
           hasApartment: profileData.hasApartment === true,
-          roommatesCount: profileData.companeros_count || "-",
-          genderPreference: profileData.genderPreference || "-",
-          smokingPreference: profileData.smokingPreference || "-",
-          occupationPreference: profileData.occupationPreference || "-",
-          minAge: profileData.minAge || "-",
-          maxAge: profileData.maxAge || "-",
+          roommatesCount: profileData.companeros_count || "",
+          genderPreference: profileData.genderPreference || "",
+          smokingPreference: profileData.smokingPreference || "",
+          occupationPreference: profileData.occupationPreference || "",
+          minAge: profileData.minAge || "",
+          maxAge: profileData.maxAge || "",
           budgetRange: [400, 600],
           exactPrice: profileData.exactPrice || 0
         };
@@ -221,19 +264,19 @@ const ProfilePage = () => {
           name: `${profileData.first_name || ''} ${profileData.last_name || ''}`.trim() || 'Usuario',
           username: profileData.username || 'usuario',
           age: profileData.edad ? parseInt(profileData.edad) : 0,
-          location: profileData.ubicacion || '-',
-          university: profileData.universidad || '-',
-          occupation: profileData.ocupacion || '-',
-          bio: profileData.bio || '-',
-          imgUrl: profileData.profile_image || defaultProfile.imgUrl,
-          galleryImgs: profileData.gallery_images?.length ? profileData.gallery_images : [defaultProfile.imgUrl],
+          location: profileData.ubicacion || '',
+          university: profileData.universidad || '',
+          occupation: profileData.ocupacion || '',
+          bio: profileData.bio || '',
+          imgUrl: profileData.profile_image || '',
+          galleryImgs: profileData.gallery_images?.length ? profileData.gallery_images : [],
           tags: Array.isArray(profileData.interests) ? profileData.interests.map((tag: string, index: number) => ({ id: index + 1, name: tag })) : [],
           verified: true,
           preferences: {
-            budget: lookingForObj.exactPrice ? `€${lookingForObj.exactPrice}` : '-',
-            location: profileData.sevilla_zona || '-',
-            roommates: profileData.companeros_count || '-',
-            moveInDate: '-'
+            budget: lookingForObj.exactPrice ? `€${lookingForObj.exactPrice}` : '',
+            location: profileData.sevilla_zona || '',
+            roommates: profileData.companeros_count || '',
+            moveInDate: ''
           },
           lifestyle: lifestyleObj,
           lookingFor: lookingForObj
@@ -274,14 +317,6 @@ const ProfilePage = () => {
 
   const handleShare = () => {
     setShowShareDialog(true);
-  };
-
-  const handleEditProfile = () => {
-    setIsEditing(true);
-    toast({
-      title: 'Editar perfil',
-      description: 'Redirigiendo al editor de perfil'
-    });
   };
 
   const handleDownloadCard = async () => {
@@ -367,11 +402,15 @@ const ProfilePage = () => {
   };
 
   const handleNextGalleryImage = () => {
-    setActiveGalleryIndex(prevIndex => prevIndex === profile.galleryImgs.length - 1 ? 0 : prevIndex + 1);
+    if (profile.galleryImgs.length > 0) {
+      setActiveGalleryIndex(prevIndex => prevIndex === profile.galleryImgs.length - 1 ? 0 : prevIndex + 1);
+    }
   };
 
   const handlePrevGalleryImage = () => {
-    setActiveGalleryIndex(prevIndex => prevIndex === 0 ? profile.galleryImgs.length - 1 : prevIndex - 1);
+    if (profile.galleryImgs.length > 0) {
+      setActiveGalleryIndex(prevIndex => prevIndex === 0 ? profile.galleryImgs.length - 1 : prevIndex - 1);
+    }
   };
 
   const shareToSocialMedia = (platform: string) => {
@@ -397,20 +436,386 @@ const ProfilePage = () => {
     }
   };
 
-  const handleEditLookingFor = () => {
-    setIsEditingLookingFor(true);
-  };
-
-  const handleSaveLookingFor = async () => {
+  // Funciones para la edición directa de perfil
+  const handleSaveBasicInfo = async () => {
     if (!user) return;
+    
+    setIsSaving(true);
+    
+    try {
+      const nameParts = profile.name.split(' ');
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts.slice(1).join(' ') || '';
+      
+      const updateData = {
+        first_name: firstName,
+        last_name: lastName,
+        edad: profile.age.toString(),
+        ubicacion: profile.location,
+        universidad: profile.university,
+        ocupacion: profile.occupation
+      };
+      
+      const { error } = await supabase
+        .from('profiles')
+        .update(updateData)
+        .eq('id', user.id);
+        
+      if (error) throw error;
+      
+      await refreshUser();
+      
+      setIsEditingBasic(false);
+      
+      toast({
+        title: "Información básica actualizada",
+        description: "Tus datos personales han sido guardados"
+      });
+    } catch (error: any) {
+      console.error("Error saving basic info:", error);
+      toast({
+        title: "Error al guardar",
+        description: error.message || "No se pudieron guardar los cambios",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+  
+  const handleSaveBio = async () => {
+    if (!user) return;
+    
+    setIsSaving(true);
+    
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ bio: profile.bio })
+        .eq('id', user.id);
+        
+      if (error) throw error;
+      
+      setIsEditingBio(false);
+      
+      toast({
+        title: "Biografía actualizada",
+        description: "Tu biografía ha sido guardada correctamente"
+      });
+    } catch (error: any) {
+      console.error("Error saving bio:", error);
+      toast({
+        title: "Error al guardar",
+        description: error.message || "No se pudo guardar tu biografía",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+  
+  const handleSaveLifestyle = async () => {
+    if (!user) return;
+    
+    setIsSaving(true);
     
     try {
       const lifestyleObject: Record<string, string> = {
-        cleanliness: profile.lifestyle.cleanliness || '-',
-        guests: profile.lifestyle.guests || '-',
-        smoking: profile.lifestyle.smoking || '-',
-        pets: profile.lifestyle.pets || '-',
-        schedule: profile.lifestyle.schedule || '-'
+        cleanliness: profile.lifestyle.cleanliness || '',
+        guests: profile.lifestyle.guests || '',
+        smoking: profile.lifestyle.smoking || '',
+        pets: profile.lifestyle.pets || '',
+        schedule: profile.lifestyle.schedule || ''
+      };
+      
+      const { error } = await supabase
+        .from('profiles')
+        .update({ lifestyle: lifestyleObject })
+        .eq('id', user.id);
+        
+      if (error) throw error;
+      
+      setIsEditingLifestyle(false);
+      
+      toast({
+        title: "Estilo de vida actualizado",
+        description: "Tus preferencias de estilo de vida han sido guardadas"
+      });
+    } catch (error: any) {
+      console.error("Error saving lifestyle:", error);
+      toast({
+        title: "Error al guardar",
+        description: error.message || "No se pudieron guardar las preferencias",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleSaveProfileImage = async (imageUrl: string) => {
+    if (!user) return;
+    
+    setIsSaving(true);
+    
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ profile_image: imageUrl })
+        .eq('id', user.id);
+        
+      if (error) throw error;
+      
+      setProfile(prev => ({
+        ...prev,
+        imgUrl: imageUrl
+      }));
+      
+      await refreshUser();
+      
+      toast({
+        title: "Imagen actualizada",
+        description: "Tu foto de perfil ha sido actualizada correctamente"
+      });
+    } catch (error: any) {
+      console.error("Error saving profile image:", error);
+      toast({
+        title: "Error al guardar",
+        description: error.message || "No se pudo actualizar la imagen de perfil",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleAddToGallery = async (imageUrl: string) => {
+    if (!user) return;
+    
+    setIsSaving(true);
+    
+    try {
+      const newGallery = [...(profile.galleryImgs || []), imageUrl];
+      
+      const { error } = await supabase
+        .from('profiles')
+        .update({ gallery_images: newGallery })
+        .eq('id', user.id);
+        
+      if (error) throw error;
+      
+      setProfile(prev => ({
+        ...prev,
+        galleryImgs: newGallery
+      }));
+      
+      setShowAddImageDialog(false);
+      setTempImageUrl("");
+      
+      toast({
+        title: "Imagen añadida",
+        description: "La imagen ha sido añadida a tu galería"
+      });
+    } catch (error: any) {
+      console.error("Error adding gallery image:", error);
+      toast({
+        title: "Error al añadir imagen",
+        description: error.message || "No se pudo añadir la imagen a la galería",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleRemoveGalleryImage = async (index: number) => {
+    if (!user || profile.galleryImgs.length === 0) return;
+    
+    setIsSaving(true);
+    
+    try {
+      const newGallery = [...profile.galleryImgs];
+      newGallery.splice(index, 1);
+      
+      const { error } = await supabase
+        .from('profiles')
+        .update({ gallery_images: newGallery })
+        .eq('id', user.id);
+        
+      if (error) throw error;
+      
+      setProfile(prev => ({
+        ...prev,
+        galleryImgs: newGallery
+      }));
+      
+      if (activeGalleryIndex >= newGallery.length) {
+        setActiveGalleryIndex(Math.max(0, newGallery.length - 1));
+      }
+      
+      toast({
+        title: "Imagen eliminada",
+        description: "La imagen ha sido eliminada de tu galería"
+      });
+    } catch (error: any) {
+      console.error("Error removing gallery image:", error);
+      toast({
+        title: "Error al eliminar imagen",
+        description: error.message || "No se pudo eliminar la imagen de la galería",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+  
+  const handleAddInterest = async () => {
+    if (!user || !newInterest.trim()) return;
+    
+    const interestToAdd = newInterest.trim();
+    
+    // Check if interest already exists
+    if (profile.tags.some(tag => tag.name.toLowerCase() === interestToAdd.toLowerCase())) {
+      toast({
+        title: "Interés ya existe",
+        description: "Ya tienes este interés añadido en tu perfil",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setIsSaving(true);
+    
+    try {
+      const newTags = [...profile.tags, { id: profile.tags.length + 1, name: interestToAdd }];
+      const interests = newTags.map(tag => tag.name);
+      
+      const { error } = await supabase
+        .from('profiles')
+        .update({ interests })
+        .eq('id', user.id);
+        
+      if (error) throw error;
+      
+      setProfile(prev => ({
+        ...prev,
+        tags: newTags
+      }));
+      
+      setNewInterest("");
+      
+      toast({
+        title: "Interés añadido",
+        description: `Se ha añadido "${interestToAdd}" a tus intereses`
+      });
+    } catch (error: any) {
+      console.error("Error adding interest:", error);
+      toast({
+        title: "Error al añadir interés",
+        description: error.message || "No se pudo añadir el interés",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+  
+  const handleRemoveInterest = async (id: number) => {
+    if (!user) return;
+    
+    setIsSaving(true);
+    
+    try {
+      const newTags = profile.tags.filter(tag => tag.id !== id);
+      const interests = newTags.map(tag => tag.name);
+      
+      const { error } = await supabase
+        .from('profiles')
+        .update({ interests })
+        .eq('id', user.id);
+        
+      if (error) throw error;
+      
+      setProfile(prev => ({
+        ...prev,
+        tags: newTags
+      }));
+      
+      toast({
+        title: "Interés eliminado",
+        description: "El interés ha sido eliminado de tu perfil"
+      });
+    } catch (error: any) {
+      console.error("Error removing interest:", error);
+      toast({
+        title: "Error al eliminar interés",
+        description: error.message || "No se pudo eliminar el interés",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+  
+  const handleSelectPredefinedInterest = async (interest: string) => {
+    if (!user) return;
+    
+    // Check if interest already exists
+    if (profile.tags.some(tag => tag.name.toLowerCase() === interest.toLowerCase())) {
+      toast({
+        title: "Interés ya existe",
+        description: "Ya tienes este interés añadido en tu perfil",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setIsSaving(true);
+    
+    try {
+      const newTags = [...profile.tags, { id: profile.tags.length + 1, name: interest }];
+      const interests = newTags.map(tag => tag.name);
+      
+      const { error } = await supabase
+        .from('profiles')
+        .update({ interests })
+        .eq('id', user.id);
+        
+      if (error) throw error;
+      
+      setProfile(prev => ({
+        ...prev,
+        tags: newTags
+      }));
+      
+      toast({
+        title: "Interés añadido",
+        description: `Se ha añadido "${interest}" a tus intereses`
+      });
+    } catch (error: any) {
+      console.error("Error adding interest:", error);
+      toast({
+        title: "Error al añadir interés",
+        description: error.message || "No se pudo añadir el interés",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+  
+  const handleSaveLookingFor = async () => {
+    if (!user) return;
+    
+    setIsSaving(true);
+    
+    try {
+      const lifestyleObject: Record<string, string> = {
+        cleanliness: profile.lifestyle.cleanliness || '',
+        guests: profile.lifestyle.guests || '',
+        smoking: profile.lifestyle.smoking || '',
+        pets: profile.lifestyle.pets || '',
+        schedule: profile.lifestyle.schedule || ''
       };
       
       const updateData: Record<string, any> = {
@@ -422,6 +827,7 @@ const ProfilePage = () => {
         minAge: profile.lookingFor.minAge,
         maxAge: profile.lookingFor.maxAge,
         exactPrice: profile.lookingFor.budgetRange[1],
+        sevilla_zona: profile.preferences.location,
         lifestyle: lifestyleObject
       };
       
@@ -447,11 +853,9 @@ const ProfilePage = () => {
         description: 'No se pudieron guardar tus preferencias',
         variant: 'destructive'
       });
+    } finally {
+      setIsSaving(false);
     }
-  };
-
-  const handleCancelEditLookingFor = () => {
-    setIsEditingLookingFor(false);
   };
 
   const handleLookingForChange = (field: string, value: any) => {
@@ -459,6 +863,26 @@ const ProfilePage = () => {
       ...prev,
       lookingFor: {
         ...prev.lookingFor,
+        [field]: value
+      }
+    }));
+  };
+  
+  const handleLocationChange = (value: string) => {
+    setProfile(prev => ({
+      ...prev,
+      preferences: {
+        ...prev.preferences,
+        location: value
+      }
+    }));
+  };
+  
+  const handleLifestyleChange = (field: string, value: string) => {
+    setProfile(prev => ({
+      ...prev,
+      lifestyle: {
+        ...prev.lifestyle,
         [field]: value
       }
     }));
@@ -490,10 +914,28 @@ const ProfilePage = () => {
               <div className="relative p-6 md:p-8">
                 <div className="flex flex-col md:flex-row md:items-center gap-6">
                   <div className="relative">
-                    <Avatar className={`${isMobile ? 'w-24 h-24' : 'w-32 h-32'} border-4 border-white shadow-lg`}>
-                      <AvatarImage src={profile.imgUrl} alt={profile.name} />
-                      <AvatarFallback>{profile.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
+                    <div className="relative group">
+                      <Avatar className={`${isMobile ? 'w-24 h-24' : 'w-32 h-32'} border-4 border-white shadow-lg cursor-pointer group-hover:opacity-80 transition-opacity`} onClick={() => document.getElementById('profile-image-input')?.click()}>
+                        {profile.imgUrl ? (
+                          <AvatarImage src={profile.imgUrl} alt={profile.name} />
+                        ) : (
+                          <AvatarFallback>{profile.name.charAt(0)}</AvatarFallback>
+                        )}
+                      </Avatar>
+                      
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="bg-black/50 rounded-full p-2">
+                          <Camera size={24} className="text-white" />
+                        </div>
+                      </div>
+                      
+                      <FormImageUpload
+                        name="profileImage"
+                        onChange={handleSaveProfileImage}
+                        hideLabel
+                      />
+                    </div>
+                    
                     {profile.verified && (
                       <div className="absolute bottom-0 right-0 bg-homi-purple text-white p-1 rounded-full">
                         <UserCheck size={isMobile ? 14 : 16} />
@@ -501,60 +943,123 @@ const ProfilePage = () => {
                     )}
                   </div>
                   
-                  <div className="flex-grow space-y-2">
-                    <h1 className="text-xl md:text-3xl font-bold flex items-center gap-2">
-                      {profile.name}, {profile.age}
-                    </h1>
-                    <p className="text-sm text-muted-foreground flex items-center gap-1.5">
-                      <AtSign size={16} className="text-homi-purple flex-shrink-0" />
-                      {profile.username || "usuario"}
-                    </p>
-                    <p className="text-muted-foreground flex items-center gap-1.5">
-                      <Home size={16} className="flex-shrink-0" />
-                      {profile.location}
-                    </p>
-                    <div className="flex items-center gap-1.5 pt-1">
-                      <GraduationCap size={16} className="text-homi-purple flex-shrink-0" />
-                      <span className="text-sm">{profile.university}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <Briefcase size={16} className="text-homi-purple flex-shrink-0" />
-                      <span className="text-sm">{profile.occupation}</span>
-                    </div>
-                  </div>
-                  
-                  <div className="absolute top-6 right-6 flex flex-col gap-3">
-                    <Link to="/profile/edit">
-                      <Button variant="outline" size="sm" className="rounded-full bg-white/80 hover:bg-white">
-                        {isMobile ? <Pencil size={16} /> : <><Pencil size={16} className="mr-2" />Editar Perfil</>}
-                      </Button>
-                    </Link>
-                    {!isMobile && (
-                      <div className="flex flex-col gap-2 mt-2">
-                        <Button 
-                          variant={liked ? "default" : "outline"} 
-                          size="sm" 
-                          className={`rounded-full ${liked ? 'bg-homi-purple hover:bg-homi-purple/90' : ''}`} 
-                          onClick={handleLike}
-                        >
-                          <Heart size={18} className={liked ? 'mr-2 fill-white' : 'mr-2'} />
-                          {liked ? 'Te gusta' : 'Me gusta'}
-                        </Button>
-                        <Button size="sm" className="rounded-full bg-homi-purple hover:bg-homi-purple/90" onClick={handleMessage}>
-                          <MessageSquare size={18} className="mr-2" />
-                          Mensaje
-                        </Button>
-                        <div className="flex gap-2">
-                          <Button variant="outline" size="sm" className="rounded-full flex-1" onClick={handleShare}>
-                            <Share size={18} />
-                          </Button>
-                          <Button variant="outline" size="sm" className="rounded-full flex-1" onClick={() => setShowShareDialog(true)}>
-                            <QrCode size={18} />
-                          </Button>
+                  {isEditingBasic ? (
+                    <div className="flex-grow space-y-3">
+                      <Input
+                        placeholder="Tu nombre"
+                        value={profile.name}
+                        onChange={(e) => setProfile(prev => ({ ...prev, name: e.target.value }))}
+                        className="mb-2"
+                      />
+                      
+                      <div className="flex items-center gap-2 mb-2">
+                        <AtSign size={16} className="text-homi-purple" />
+                        <Input
+                          placeholder="Nombre de usuario"
+                          value={profile.username}
+                          onChange={(e) => setProfile(prev => ({ ...prev, username: e.target.value }))}
+                          className="flex-grow"
+                        />
+                      </div>
+                      
+                      <div className="flex items-center gap-2 mb-2">
+                        <MapPin size={16} className="text-homi-purple" />
+                        <Input
+                          placeholder="Ubicación"
+                          value={profile.location}
+                          onChange={(e) => setProfile(prev => ({ ...prev, location: e.target.value }))}
+                          className="flex-grow"
+                        />
+                      </div>
+                      
+                      <div className="flex gap-3">
+                        <div className="flex-1">
+                          <label className="text-xs text-muted-foreground">Edad</label>
+                          <Input
+                            type="number"
+                            placeholder="Edad"
+                            value={profile.age || ''}
+                            onChange={(e) => setProfile(prev => ({ ...prev, age: parseInt(e.target.value) || 0 }))}
+                            className="mt-1"
+                          />
+                        </div>
+                        
+                        <div className="flex-1">
+                          <label className="text-xs text-muted-foreground">Universidad</label>
+                          <Input
+                            placeholder="Universidad"
+                            value={profile.university}
+                            onChange={(e) => setProfile(prev => ({ ...prev, university: e.target.value }))}
+                            className="mt-1"
+                          />
                         </div>
                       </div>
-                    )}
-                  </div>
+                      
+                      <div className="w-full">
+                        <label className="text-xs text-muted-foreground">Ocupación</label>
+                        <Input
+                          placeholder="Ocupación"
+                          value={profile.occupation}
+                          onChange={(e) => setProfile(prev => ({ ...prev, occupation: e.target.value }))}
+                          className="mt-1"
+                        />
+                      </div>
+                      
+                      <div className="flex justify-end gap-2 pt-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => setIsEditingBasic(false)}
+                          disabled={isSaving}
+                        >
+                          Cancelar
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          onClick={handleSaveBasicInfo} 
+                          disabled={isSaving}
+                        >
+                          {isSaving ? "Guardando..." : "Guardar"}
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex-grow space-y-2">
+                      <div className="flex justify-between items-start">
+                        <h1 className="text-xl md:text-3xl font-bold flex items-center gap-2">
+                          {profile.name || "Usuario"}{profile.age ? `, ${profile.age}` : ""}
+                        </h1>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          onClick={() => setIsEditingBasic(true)} 
+                          className="h-8 w-8"
+                        >
+                          <Pencil size={16} />
+                        </Button>
+                      </div>
+                      
+                      <p className="text-sm text-muted-foreground flex items-center gap-1.5">
+                        <AtSign size={16} className="text-homi-purple flex-shrink-0" />
+                        {profile.username || "usuario"}
+                      </p>
+                      
+                      <p className={`text-muted-foreground flex items-center gap-1.5 ${!profile.location ? "opacity-50 italic" : ""}`}>
+                        <MapPin size={16} className="flex-shrink-0" />
+                        {profile.location || "Añade tu ubicación"}
+                      </p>
+                      
+                      <div className={`flex items-center gap-1.5 pt-1 ${!profile.university ? "opacity-50 italic" : ""}`}>
+                        <GraduationCap size={16} className="text-homi-purple flex-shrink-0" />
+                        <span className="text-sm">{profile.university || "Añade tu universidad"}</span>
+                      </div>
+                      
+                      <div className={`flex items-center gap-1.5 ${!profile.occupation ? "opacity-50 italic" : ""}`}>
+                        <Briefcase size={16} className="text-homi-purple flex-shrink-0" />
+                        <span className="text-sm">{profile.occupation || "Añade tu ocupación"}</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 
                 {isMobile && (
@@ -583,89 +1088,481 @@ const ProfilePage = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mt-6 md:mt-8">
               <div className="md:col-span-2 space-y-6 md:space-y-8">
+                {/* Sobre mí */}
                 <div className="glass-card p-5 md:p-7">
-                  <h2 className="text-lg md:text-xl font-semibold mb-4 md:mb-5">Sobre mí</h2>
-                  <p className="text-sm md:text-base">{profile.bio}</p>
-                  
-                  <div className="mt-5 md:mt-7">
-                    <h3 className="font-medium mb-3">Datos personales</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
-                      <div className="flex items-center gap-2">
-                        <GraduationCap size={18} className="text-homi-purple" />
-                        <span className="text-sm md:text-base">{profile.university}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Briefcase size={18} className="text-homi-purple" />
-                        <span className="text-sm md:text-base">{profile.occupation}</span>
-                      </div>
-                    </div>
+                  <div className="flex justify-between items-center mb-4 md:mb-5">
+                    <h2 className="text-lg md:text-xl font-semibold">Sobre mí</h2>
+                    {!isEditingBio && (
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        onClick={() => setIsEditingBio(true)} 
+                        className="h-8 w-8"
+                      >
+                        <Pencil size={16} />
+                      </Button>
+                    )}
                   </div>
                   
-                  <div className="mt-5 md:mt-7">
-                    <h3 className="font-medium mb-3">Intereses</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {profile.tags.map(tag => (
-                        <span key={tag.id} className="px-2 md:px-3 py-1 text-xs md:text-sm rounded-full bg-homi-ultraLightPurple text-homi-purple">
-                          {tag.name}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="glass-card p-5 md:p-7">
-                  <h2 className="text-lg md:text-xl font-semibold mb-4 md:mb-5">Galería</h2>
-                  
-                  {isMobile ? (
-                    <div className="relative">
-                      <div className="aspect-square rounded-lg overflow-hidden bg-muted">
-                        <img 
-                          src={profile.galleryImgs[activeGalleryIndex]} 
-                          alt={`Imagen ${activeGalleryIndex + 1}`} 
-                          className="w-full h-full object-cover" 
-                        />
-                      </div>
+                  {isEditingBio ? (
+                    <div className="space-y-4">
+                      <Textarea 
+                        placeholder="Cuéntanos sobre ti..."
+                        value={profile.bio}
+                        onChange={(e) => setProfile(prev => ({ ...prev, bio: e.target.value }))}
+                        className="min-h-[100px]"
+                      />
                       
-                      <Button 
-                        variant="outline" 
-                        size="icon" 
-                        className="absolute left-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-white/80" 
-                        onClick={handlePrevGalleryImage}
-                      >
-                        <ChevronLeft size={16} />
-                      </Button>
-                      
-                      <Button 
-                        variant="outline" 
-                        size="icon" 
-                        className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-white/80" 
-                        onClick={handleNextGalleryImage}
-                      >
-                        <ChevronRight size={16} />
-                      </Button>
-                      
-                      <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-2">
-                        {profile.galleryImgs.map((_, index) => (
-                          <button 
-                            key={index} 
-                            className={`h-2.5 w-2.5 rounded-full ${activeGalleryIndex === index ? 'bg-white' : 'bg-white/50'}`} 
-                            onClick={() => setActiveGalleryIndex(index)} 
-                            aria-label={`Ver imagen ${index + 1}`} 
-                          />
-                        ))}
+                      <div className="flex justify-end gap-2 pt-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => setIsEditingBio(false)}
+                          disabled={isSaving}
+                        >
+                          Cancelar
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          onClick={handleSaveBio} 
+                          disabled={isSaving}
+                        >
+                          {isSaving ? "Guardando..." : "Guardar"}
+                        </Button>
                       </div>
                     </div>
                   ) : (
+                    <div>
+                      {profile.bio ? (
+                        <p className="text-sm md:text-base">{profile.bio}</p>
+                      ) : (
+                        <p className="text-sm md:text-base italic text-muted-foreground">
+                          Añade una descripción sobre ti para que los demás usuarios te conozcan mejor.
+                        </p>
+                      )}
+                    </div>
+                  )}
+                  
+                  {/* Intereses */}
+                  <div className="mt-5 md:mt-7">
+                    <div className="flex justify-between items-center mb-3">
+                      <h3 className="font-medium">Intereses</h3>
+                      {!isEditingInterests && (
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          onClick={() => setIsEditingInterests(true)} 
+                          className="h-7 w-7"
+                        >
+                          <Pencil size={14} />
+                        </Button>
+                      )}
+                    </div>
+                    
+                    {isEditingInterests ? (
+                      <div className="space-y-3">
+                        <div className="flex flex-wrap gap-2 mb-2">
+                          {profile.tags.length > 0 ? profile.tags.map(tag => (
+                            <div key={tag.id} className="flex items-center px-2 md:px-3 py-1 text-xs md:text-sm rounded-full bg-homi-ultraLightPurple text-homi-purple">
+                              {tag.name}
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                onClick={() => handleRemoveInterest(tag.id)} 
+                                className="h-4 w-4 ml-1 hover:bg-homi-purple/20"
+                              >
+                                <X size={10} />
+                              </Button>
+                            </div>
+                          )) : (
+                            <p className="text-sm text-muted-foreground italic">
+                              No has añadido intereses. Añádelos para conectar con personas afines.
+                            </p>
+                          )}
+                        </div>
+                        
+                        <div className="flex gap-2">
+                          <Input
+                            placeholder="Añadir nuevo interés"
+                            value={newInterest}
+                            onChange={(e) => setNewInterest(e.target.value)}
+                            className="flex-grow"
+                          />
+                          <Button 
+                            variant="outline"
+                            size="sm"
+                            onClick={handleAddInterest}
+                            disabled={!newInterest.trim() || isSaving}
+                            className="whitespace-nowrap"
+                          >
+                            Añadir
+                          </Button>
+                        </div>
+                        
+                        <div className="pt-2">
+                          <h4 className="text-xs font-medium text-muted-foreground mb-2">Intereses populares:</h4>
+                          <div className="flex flex-wrap gap-1">
+                            {predefinedInterests
+                              .filter(interest => !profile.tags.some(tag => tag.name === interest))
+                              .slice(0, 12)
+                              .map((interest, index) => (
+                                <Button
+                                  key={index}
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleSelectPredefinedInterest(interest)}
+                                  className="text-xs py-1 h-auto"
+                                >
+                                  {interest}
+                                </Button>
+                              ))}
+                          </div>
+                        </div>
+                        
+                        <div className="flex justify-end gap-2 pt-3">
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            onClick={() => setIsEditingInterests(false)}
+                            disabled={isSaving}
+                          >
+                            Cancelar
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            onClick={() => setIsEditingInterests(false)} 
+                            disabled={isSaving}
+                          >
+                            Listo
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex flex-wrap gap-2">
+                        {profile.tags.length > 0 ? profile.tags.map(tag => (
+                          <span key={tag.id} className="px-2 md:px-3 py-1 text-xs md:text-sm rounded-full bg-homi-ultraLightPurple text-homi-purple">
+                            {tag.name}
+                          </span>
+                        )) : (
+                          <p className="text-sm text-muted-foreground italic">
+                            No has añadido intereses. Añádelos para conectar con personas afines.
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                {/* Estilo de vida */}
+                <div className="glass-card p-5 md:p-7">
+                  <div className="flex justify-between items-center mb-4 md:mb-5">
+                    <h2 className="text-lg md:text-xl font-semibold flex items-center gap-2">
+                      <Home size={20} className="text-homi-purple" />
+                      Estilo de vida
+                    </h2>
+                    {!isEditingLifestyle && (
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        onClick={() => setIsEditingLifestyle(true)} 
+                        className="h-8 w-8"
+                      >
+                        <Pencil size={16} />
+                      </Button>
+                    )}
+                  </div>
+                  
+                  {isEditingLifestyle ? (
+                    <div className="space-y-4">
+                      <div>
+                        <label className="text-sm font-medium mb-1.5 block">Limpieza</label>
+                        <Select
+                          value={profile.lifestyle.cleanliness}
+                          onValueChange={(value) => handleLifestyleChange('cleanliness', value)}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="¿Cómo eres con la limpieza?" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="muy-ordenado">Muy ordenado/a</SelectItem>
+                            <SelectItem value="ordenado">Ordenado/a</SelectItem>
+                            <SelectItem value="normal">Normal</SelectItem>
+                            <SelectItem value="relajado">Relajado/a con la limpieza</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div>
+                        <label className="text-sm font-medium mb-1.5 block">Invitados</label>
+                        <Select
+                          value={profile.lifestyle.guests}
+                          onValueChange={(value) => handleLifestyleChange('guests', value)}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="¿Cómo te sientes con los invitados?" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="frecuentes">Me gusta tener invitados frecuentemente</SelectItem>
+                            <SelectItem value="ocasionales">Invitados ocasionales está bien</SelectItem>
+                            <SelectItem value="pocos">Prefiero pocos invitados</SelectItem>
+                            <SelectItem value="ninguno">Prefiero no tener invitados</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div>
+                        <label className="text-sm font-medium mb-1.5 block">Fumadores</label>
+                        <Select
+                          value={profile.lifestyle.smoking}
+                          onValueChange={(value) => handleLifestyleChange('smoking', value)}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="¿Cómo te sientes con respecto a fumar?" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="fumador">Soy fumador/a</SelectItem>
+                            <SelectItem value="fumo-ocasionalmente">Fumo ocasionalmente</SelectItem>
+                            <SelectItem value="no-fumo">No fumo pero no me importa</SelectItem>
+                            <SelectItem value="no-fumadores">Prefiero ambiente sin humo</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div>
+                        <label className="text-sm font-medium mb-1.5 block">Mascotas</label>
+                        <Select
+                          value={profile.lifestyle.pets}
+                          onValueChange={(value) => handleLifestyleChange('pets', value)}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="¿Tienes o te gustan las mascotas?" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="tengo-mascota">Tengo mascota</SelectItem>
+                            <SelectItem value="me-encantan">Me encantan las mascotas</SelectItem>
+                            <SelectItem value="no-tengo">No tengo pero me gustan</SelectItem>
+                            <SelectItem value="prefiero-sin">Prefiero vivir sin mascotas</SelectItem>
+                            <SelectItem value="alergia">Tengo alergia a las mascotas</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div>
+                        <label className="text-sm font-medium mb-1.5 block">Horarios</label>
+                        <Select
+                          value={profile.lifestyle.schedule}
+                          onValueChange={(value) => handleLifestyleChange('schedule', value)}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="¿Cuáles son tus horarios habituales?" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="madrugador">Madrugador/a</SelectItem>
+                            <SelectItem value="nocturno">Nocturno/a</SelectItem>
+                            <SelectItem value="variable">Horarios variables</SelectItem>
+                            <SelectItem value="regular">Horarios regulares</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div className="flex justify-end gap-2 pt-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => setIsEditingLifestyle(false)}
+                          disabled={isSaving}
+                        >
+                          Cancelar
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          onClick={handleSaveLifestyle} 
+                          disabled={isSaving}
+                        >
+                          {isSaving ? "Guardando..." : "Guardar"}
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <dl className="space-y-3 text-sm">
+                      <div>
+                        <dt className="text-muted-foreground mb-1">Limpieza</dt>
+                        <dd className={`font-medium ${!profile.lifestyle.cleanliness ? "italic text-muted-foreground" : ""}`}>
+                          {profile.lifestyle.cleanliness ? (
+                            profile.lifestyle.cleanliness === 'muy-ordenado' ? 'Muy ordenado/a' :
+                            profile.lifestyle.cleanliness === 'ordenado' ? 'Ordenado/a' :
+                            profile.lifestyle.cleanliness === 'normal' ? 'Normal' :
+                            profile.lifestyle.cleanliness === 'relajado' ? 'Relajado/a con la limpieza' : ''
+                          ) : "Por definir"}
+                        </dd>
+                      </div>
+                      
+                      <div>
+                        <dt className="text-muted-foreground mb-1">Invitados</dt>
+                        <dd className={`font-medium ${!profile.lifestyle.guests ? "italic text-muted-foreground" : ""}`}>
+                          {profile.lifestyle.guests ? (
+                            profile.lifestyle.guests === 'frecuentes' ? 'Me gusta tener invitados frecuentemente' :
+                            profile.lifestyle.guests === 'ocasionales' ? 'Invitados ocasionales está bien' :
+                            profile.lifestyle.guests === 'pocos' ? 'Prefiero pocos invitados' :
+                            profile.lifestyle.guests === 'ninguno' ? 'Prefiero no tener invitados' : ''
+                          ) : "Por definir"}
+                        </dd>
+                      </div>
+                      
+                      <div>
+                        <dt className="text-muted-foreground mb-1">Fumadores</dt>
+                        <dd className={`font-medium ${!profile.lifestyle.smoking ? "italic text-muted-foreground" : ""}`}>
+                          {profile.lifestyle.smoking ? (
+                            profile.lifestyle.smoking === 'fumador' ? 'Soy fumador/a' :
+                            profile.lifestyle.smoking === 'fumo-ocasionalmente' ? 'Fumo ocasionalmente' :
+                            profile.lifestyle.smoking === 'no-fumo' ? 'No fumo pero no me importa' :
+                            profile.lifestyle.smoking === 'no-fumadores' ? 'Prefiero ambiente sin humo' : ''
+                          ) : "Por definir"}
+                        </dd>
+                      </div>
+                      
+                      <div>
+                        <dt className="text-muted-foreground mb-1">Mascotas</dt>
+                        <dd className={`font-medium ${!profile.lifestyle.pets ? "italic text-muted-foreground" : ""}`}>
+                          {profile.lifestyle.pets ? (
+                            profile.lifestyle.pets === 'tengo-mascota' ? 'Tengo mascota' :
+                            profile.lifestyle.pets === 'me-encantan' ? 'Me encantan las mascotas' :
+                            profile.lifestyle.pets === 'no-tengo' ? 'No tengo pero me gustan' :
+                            profile.lifestyle.pets === 'prefiero-sin' ? 'Prefiero vivir sin mascotas' :
+                            profile.lifestyle.pets === 'alergia' ? 'Tengo alergia a las mascotas' : ''
+                          ) : "Por definir"}
+                        </dd>
+                      </div>
+                      
+                      <div>
+                        <dt className="text-muted-foreground mb-1">Horarios</dt>
+                        <dd className={`font-medium ${!profile.lifestyle.schedule ? "italic text-muted-foreground" : ""}`}>
+                          {profile.lifestyle.schedule ? (
+                            profile.lifestyle.schedule === 'madrugador' ? 'Madrugador/a' :
+                            profile.lifestyle.schedule === 'nocturno' ? 'Nocturno/a' :
+                            profile.lifestyle.schedule === 'variable' ? 'Horarios variables' :
+                            profile.lifestyle.schedule === 'regular' ? 'Horarios regulares' : ''
+                          ) : "Por definir"}
+                        </dd>
+                      </div>
+                    </dl>
+                  )}
+                </div>
+                
+                {/* Galería */}
+                <div className="glass-card p-5 md:p-7">
+                  <div className="flex justify-between items-center mb-4 md:mb-5">
+                    <h2 className="text-lg md:text-xl font-semibold">Galería</h2>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowAddImageDialog(true)}
+                      className="rounded-full flex items-center gap-2"
+                    >
+                      <Camera size={16} />
+                      <span className="hidden sm:inline">Añadir imagen</span>
+                    </Button>
+                  </div>
+                  
+                  {isMobile ? (
+                    profile.galleryImgs.length > 0 ? (
+                      <div className="relative">
+                        <div className="aspect-square rounded-lg overflow-hidden bg-muted">
+                          <img 
+                            src={profile.galleryImgs[activeGalleryIndex]} 
+                            alt={`Imagen ${activeGalleryIndex + 1}`} 
+                            className="w-full h-full object-cover" 
+                          />
+                        </div>
+                        
+                        <Button 
+                          variant="outline" 
+                          size="icon" 
+                          className="absolute left-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-white/80" 
+                          onClick={handlePrevGalleryImage}
+                        >
+                          <ChevronLeft size={16} />
+                        </Button>
+                        
+                        <Button 
+                          variant="outline" 
+                          size="icon" 
+                          className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-white/80" 
+                          onClick={handleNextGalleryImage}
+                        >
+                          <ChevronRight size={16} />
+                        </Button>
+                        
+                        <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-2">
+                          {profile.galleryImgs.map((_, index) => (
+                            <button 
+                              key={index} 
+                              className={`h-2.5 w-2.5 rounded-full ${activeGalleryIndex === index ? 'bg-white' : 'bg-white/50'}`} 
+                              onClick={() => setActiveGalleryIndex(index)} 
+                              aria-label={`Ver imagen ${index + 1}`} 
+                            />
+                          ))}
+                        </div>
+                        
+                        <div className="absolute top-2 right-2">
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => handleRemoveGalleryImage(activeGalleryIndex)}
+                            className="h-8 w-8 rounded-full bg-white/80"
+                          >
+                            <X size={16} />
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-center p-8 border border-dashed rounded-lg">
+                        <Camera size={40} className="mx-auto mb-2 text-muted-foreground" />
+                        <p className="text-muted-foreground">Añade fotos a tu galería para mostrar más sobre ti</p>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setShowAddImageDialog(true)}
+                          className="mt-4"
+                        >
+                          Subir imagen
+                        </Button>
+                      </div>
+                    )
+                  ) : (
                     <div className="grid grid-cols-3 gap-4">
                       {profile.galleryImgs.map((img, index) => (
-                        <div key={index} className="aspect-square rounded-lg overflow-hidden bg-muted">
+                        <div key={index} className="aspect-square rounded-lg overflow-hidden bg-muted relative group">
                           <img 
                             src={img} 
                             alt={`Imagen ${index + 1}`} 
                             className="w-full h-full object-cover transition-transform hover:scale-105" 
                           />
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              onClick={() => handleRemoveGalleryImage(index)}
+                              className="h-8 w-8 rounded-full bg-white/80"
+                            >
+                              <X size={16} />
+                            </Button>
+                          </div>
                         </div>
                       ))}
+                      
+                      {profile.galleryImgs.length === 0 && (
+                        <div className="col-span-3 text-center p-12 border border-dashed rounded-lg">
+                          <Camera size={48} className="mx-auto mb-3 text-muted-foreground" />
+                          <p className="text-muted-foreground mb-2">Añade fotos a tu galería para mostrar más sobre ti</p>
+                          <Button
+                            variant="outline"
+                            onClick={() => setShowAddImageDialog(true)}
+                          >
+                            Subir imágenes
+                          </Button>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -704,18 +1601,24 @@ const ProfilePage = () => {
                           
                           <div className="mb-8 flex items-center gap-3 mt-8">
                             <div className="w-20 h-20 rounded-full border-2 border-white overflow-hidden">
-                              <img src={profile.imgUrl} alt={profile.name} className="w-full h-full object-cover" />
+                              {profile.imgUrl ? (
+                                <img src={profile.imgUrl} alt={profile.name} className="w-full h-full object-cover" />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center bg-purple-400 text-white text-2xl font-bold">
+                                  {profile.name.charAt(0)}
+                                </div>
+                              )}
                             </div>
                             <div>
                               <h3 className="text-xl font-bold text-white flex items-center gap-1">
-                                {profile.name}, {profile.age}
+                                {profile.name}, {profile.age || "?"}
                                 {profile.verified && (
                                   <div className="bg-white text-purple-600 p-0.5 rounded-full">
                                     <UserCheck size={14} />
                                   </div>
                                 )}
                               </h3>
-                              <p className="text-sm text-white/80 mt-1">{profile.location} · {profile.occupation}</p>
+                              <p className="text-sm text-white/80 mt-1">{profile.location || "Sin ubicación"} · {profile.occupation || "Sin ocupación"}</p>
                             </div>
                           </div>
                           
@@ -726,10 +1629,15 @@ const ProfilePage = () => {
                                   {tag.name}
                                 </span>
                               ))}
+                              {profile.tags.length === 0 && (
+                                <span className="px-3 py-1 text-xs rounded-full bg-white/20 text-white">
+                                  Sin intereses
+                                </span>
+                              )}
                             </div>
                             
                             <p className="text-white/90 text-sm line-clamp-2 mb-2">
-                              {profile.bio}
+                              {profile.bio || "Sin descripción"}
                             </p>
                           </div>
                           
@@ -755,11 +1663,11 @@ const ProfilePage = () => {
                               </div>
                               <div>
                                 <span className="text-white/60">Edad:</span>
-                                <p className="mt-1">{profile.lookingFor.minAge} - {profile.lookingFor.maxAge} años</p>
+                                <p className="mt-1">{profile.lookingFor.minAge || "?"} - {profile.lookingFor.maxAge || "?"} años</p>
                               </div>
                               <div>
                                 <span className="text-white/60">Compañeros:</span>
-                                <p className="mt-1">{profile.lookingFor.roommatesCount}</p>
+                                <p className="mt-1">{profile.lookingFor.roommatesCount || "No definido"}</p>
                               </div>
                             </div>
                           </div>
@@ -804,19 +1712,10 @@ const ProfilePage = () => {
                       Preferencias y búsqueda
                     </h2>
                     
-                    {!isEditingLookingFor ? (
-                      <Button variant="outline" size="sm" onClick={handleEditLookingFor} className="rounded-full h-8 w-8 p-0">
+                    {!isEditingLookingFor && (
+                      <Button variant="ghost" size="icon" onClick={() => setIsEditingLookingFor(true)} className="h-8 w-8">
                         <Pencil size={15} />
                       </Button>
-                    ) : (
-                      <div className="flex gap-2">
-                        <Button variant="outline" size="sm" onClick={handleCancelEditLookingFor} className="rounded-full h-8 w-8 p-0 border-red-400 text-red-500">
-                          <X size={15} />
-                        </Button>
-                        <Button variant="outline" size="sm" onClick={handleSaveLookingFor} className="rounded-full h-8 w-8 p-0 border-green-400 text-green-500">
-                          <Check size={15} />
-                        </Button>
-                      </div>
                     )}
                   </div>
                   
@@ -833,6 +1732,24 @@ const ProfilePage = () => {
                             {profile.lookingFor.hasApartment ? 'Sí, tengo apartamento' : 'No, estoy buscando'}
                           </span>
                         </div>
+                      </div>
+                      
+                      <div>
+                        <label className="text-sm font-medium mb-1.5 block">Zona en Sevilla</label>
+                        <Select
+                          value={profile.preferences.location}
+                          onValueChange={handleLocationChange}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Selecciona una zona de Sevilla" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="no_busco">No estoy buscando en Sevilla</SelectItem>
+                            {sevillaZones.map((zone) => (
+                              <SelectItem key={zone} value={zone}>{zone}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
                       
                       <div>
@@ -904,6 +1821,27 @@ const ProfilePage = () => {
                         </Select>
                       </div>
                       
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="text-sm font-medium mb-1.5 block">Edad mínima</label>
+                          <Input 
+                            type="number" 
+                            placeholder="Edad mínima" 
+                            value={profile.lookingFor.minAge || ''} 
+                            onChange={(e) => handleLookingForChange('minAge', e.target.value)} 
+                          />
+                        </div>
+                        <div>
+                          <label className="text-sm font-medium mb-1.5 block">Edad máxima</label>
+                          <Input 
+                            type="number" 
+                            placeholder="Edad máxima" 
+                            value={profile.lookingFor.maxAge || ''} 
+                            onChange={(e) => handleLookingForChange('maxAge', e.target.value)} 
+                          />
+                        </div>
+                      </div>
+                      
                       <div>
                         <label className="text-sm font-medium mb-1.5 block">Rango de presupuesto (€ al mes)</label>
                         <Slider
@@ -919,19 +1857,43 @@ const ProfilePage = () => {
                           <span>€{profile.lookingFor.budgetRange[1]}</span>
                         </div>
                       </div>
+                      
+                      <div className="flex justify-end gap-2 pt-4">
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => setIsEditingLookingFor(false)}
+                          disabled={isSaving}
+                        >
+                          Cancelar
+                        </Button>
+                        <Button 
+                          className="bg-homi-purple hover:bg-homi-purple/90" 
+                          size="sm" 
+                          onClick={handleSaveLookingFor} 
+                          disabled={isSaving}
+                        >
+                          {isSaving ? "Guardando..." : (
+                            <>
+                              <Save size={14} className="mr-1" /> Guardar
+                            </>
+                          )}
+                        </Button>
+                      </div>
                     </div>
                   ) : (
                     <div>
-                      {profile.lookingFor.hasApartment === false && 
-                       profile.lookingFor.roommatesCount === "-" && 
-                       profile.lookingFor.genderPreference === "-" && 
-                       profile.lookingFor.smokingPreference === "-" && 
-                       profile.lookingFor.occupationPreference === "-" ? (
+                      {!profile.lookingFor.hasApartment && 
+                       profile.lookingFor.roommatesCount === "" && 
+                       profile.lookingFor.genderPreference === "" && 
+                       profile.lookingFor.smokingPreference === "" && 
+                       profile.lookingFor.occupationPreference === "" &&
+                       profile.preferences.location === "" ? (
                         <div className="p-4 text-center bg-gray-50 rounded-lg border border-gray-100">
                           <p className="text-sm text-muted-foreground">
                             No has configurado tus preferencias de búsqueda aún.
                           </p>
-                          <Button onClick={handleEditLookingFor} variant="outline" size="sm" className="mt-3">
+                          <Button onClick={() => setIsEditingLookingFor(true)} variant="outline" size="sm" className="mt-3">
                             <Pencil size={14} className="mr-1.5" />
                             Configurar ahora
                           </Button>
@@ -945,14 +1907,21 @@ const ProfilePage = () => {
                             </dd>
                           </div>
                           
-                          {profile.lookingFor.roommatesCount !== "-" && (
+                          {profile.preferences.location && profile.preferences.location !== 'no_busco' && (
+                            <div>
+                              <dt className="text-muted-foreground mb-1">Zona en Sevilla</dt>
+                              <dd className="font-medium">{profile.preferences.location}</dd>
+                            </div>
+                          )}
+                          
+                          {profile.lookingFor.roommatesCount && (
                             <div>
                               <dt className="text-muted-foreground mb-1">Compañeros de piso</dt>
                               <dd className="font-medium">{profile.lookingFor.roommatesCount} compañeros</dd>
                             </div>
                           )}
                           
-                          {profile.lookingFor.genderPreference !== "-" && (
+                          {profile.lookingFor.genderPreference && (
                             <div>
                               <dt className="text-muted-foreground mb-1">Preferencia de género</dt>
                               <dd className="font-medium">
@@ -965,7 +1934,7 @@ const ProfilePage = () => {
                             </div>
                           )}
                           
-                          {profile.lookingFor.smokingPreference !== "-" && (
+                          {profile.lookingFor.smokingPreference && (
                             <div>
                               <dt className="text-muted-foreground mb-1">Fumadores</dt>
                               <dd className="font-medium">
@@ -978,7 +1947,7 @@ const ProfilePage = () => {
                             </div>
                           )}
                           
-                          {profile.lookingFor.occupationPreference !== "-" && (
+                          {profile.lookingFor.occupationPreference && (
                             <div>
                               <dt className="text-muted-foreground mb-1">Ocupación</dt>
                               <dd className="font-medium">
@@ -987,6 +1956,15 @@ const ProfilePage = () => {
                                   : profile.lookingFor.occupationPreference === 'trabajadores' 
                                     ? 'Preferiblemente trabajadores' 
                                     : 'Sin preferencia'}
+                              </dd>
+                            </div>
+                          )}
+                          
+                          {(profile.lookingFor.minAge || profile.lookingFor.maxAge) && (
+                            <div>
+                              <dt className="text-muted-foreground mb-1">Rango de edad</dt>
+                              <dd className="font-medium">
+                                {profile.lookingFor.minAge || "?"} - {profile.lookingFor.maxAge || "?"} años
                               </dd>
                             </div>
                           )}
@@ -1007,6 +1985,7 @@ const ProfilePage = () => {
       </main>
       <Footer />
       
+      {/* Dialogs y Drawers */}
       <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
         <DialogContent className="max-w-md">
           <DialogHeader>
@@ -1061,8 +2040,26 @@ const ProfilePage = () => {
           </div>
         </DialogContent>
       </Dialog>
+      
+      <Dialog open={showAddImageDialog} onOpenChange={setShowAddImageDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Añadir imagen a la galería</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-2">
+            <FormImageUpload
+              name="galleryImage"
+              label="Imagen para la galería"
+              description="Añade una imagen a tu galería para mostrar más sobre ti"
+              onChange={(url) => handleAddToGallery(url)}
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
 
 export default ProfilePage;
+
