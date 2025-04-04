@@ -62,33 +62,38 @@ const ChatPage = ({ isPreview = false }: ChatPageProps) => {
   const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
-    // Set initial selected chat and indicate loading is complete
-    if (mockChatMatches.length > 0) {
+    // Set initial selected chat
+    if (mockChatMatches.length > 0 && !selectedChatId) {
       setSelectedChatId(mockChatMatches[0].id);
     }
     
-    // Add a small delay to ensure the component renders correctly
+    // Force loading to complete after a short delay
     const timer = setTimeout(() => {
       setIsLoading(false);
       console.log("Chat page loaded successfully");
-    }, 100);
+    }, 300);
     
     return () => clearTimeout(timer);
-  }, []);
+  }, [selectedChatId]);
   
   const handleSelectChat = (id: string) => {
+    if (id === selectedChatId) return; // Skip if already selected
     setSelectedChatId(id);
   };
   
   // Find the currently selected chat
   const selectedChat = mockChatMatches.find(match => match.id === selectedChatId) || mockChatMatches[0];
 
+  // Show a more visible loading indicator
   if (isLoading) {
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col bg-background">
         <Navbar />
         <div className="flex-grow flex items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+          <div className="flex flex-col items-center gap-2">
+            <div className="h-10 w-10 animate-spin rounded-full border-4 border-homi-purple border-t-transparent"></div>
+            <p className="text-muted-foreground">Cargando chat...</p>
+          </div>
         </div>
         <Footer />
       </div>
@@ -96,7 +101,7 @@ const ChatPage = ({ isPreview = false }: ChatPageProps) => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
       
       {isPreview && (

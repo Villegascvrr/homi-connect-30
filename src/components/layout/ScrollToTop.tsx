@@ -32,14 +32,14 @@ const ScrollToTop = () => {
         window.scrollTo({
           top: 0,
           left: 0,
-          behavior: 'auto' // Use 'auto' for immediate scroll without animation
+          behavior: 'instant' // Use 'instant' for immediate scroll without animation
         });
         
         // Then try document elements for better compatibility
         document.documentElement.scrollTop = 0;
         document.body.scrollTop = 0;
         
-        console.log("Forced scroll to top for path:", pathname);
+        console.log("Scrolled to top for path:", pathname);
       } catch (e) {
         // Fallback method if the above fails
         window.scrollTo(0, 0);
@@ -53,7 +53,7 @@ const ScrollToTop = () => {
           const element = document.getElementById(elementId);
           
           if (element) {
-            element.scrollIntoView({ behavior: 'auto' });
+            element.scrollIntoView({ behavior: 'instant' });
             console.log(`Scrolled to element with id: ${elementId}`);
           } else {
             // If element not found, scroll to top
