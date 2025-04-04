@@ -1,3 +1,4 @@
+
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/layout/Navbar';
@@ -30,15 +31,15 @@ interface ProfileData {
   id: string;
   name: string;
   username: string;
-  age: number;
-  location: string;
-  university: string;
-  occupation: string;
+  edad: string;
+  ubicacion: string;
+  universidad: string;
+  ocupacion: string;
   bio: string;
   imgUrl: string;
   galleryImgs: string[];
-  tags: Tag[];
-  verified: boolean;
+  interests: Tag[];
+  is_profile_active: boolean;
   preferences: {
     budget: string;
     location: string;
@@ -69,15 +70,15 @@ const defaultProfile: ProfileData = {
   id: '',
   name: '',
   username: '',
-  age: 0,
-  location: '',
-  university: '',
-  occupation: '',
+  edad: '',
+  ubicacion: '',
+  universidad: '',
+  ocupacion: '',
   bio: '',
   imgUrl: '',
   galleryImgs: [],
-  tags: [],
-  verified: false,
+  interests: [],
+  is_profile_active: false,
   preferences: {
     budget: '',
     location: '',
@@ -121,15 +122,15 @@ const ProfilePage = () => {
     id: '',
     name: '',
     username: '',
-    age: 0,
-    location: '',
-    university: '',
-    occupation: '',
+    edad: '',
+    ubicacion: '',
+    universidad: '',
+    ocupacion: '',
     bio: '',
     imgUrl: '',
     galleryImgs: [],
-    tags: [],
-    verified: false,
+    interests: [],
+    is_profile_active: false,
     preferences: {
       budget: '',
       location: '',
@@ -252,18 +253,39 @@ const ProfilePage = () => {
             id: data.id,
             name: data.first_name + ' ' + data.last_name,
             username: data.username || '',
-            age: data.age || 18,
-            location: data.location || '',
-            university: data.university || '',
-            occupation: data.occupation || '',
+            edad: data.edad || '',
+            ubicacion: data.ubicacion || '',
+            universidad: data.universidad || '',
+            ocupacion: data.ocupacion || '',
             bio: data.bio || '',
             imgUrl: data.profile_image || '',
             galleryImgs: data.gallery_images || [],
-            tags: data.tags || [],
-            verified: data.verified || false,
-            preferences: data.preferences || defaultProfile.preferences,
-            lifestyle: data.lifestyle || defaultProfile.lifestyle,
-            lookingFor: data.lookingFor || defaultProfile.lookingFor
+            interests: data.interests || [],
+            is_profile_active: data.is_profile_active !== false,
+            preferences: {
+              budget: '',
+              location: '',
+              roommates: '',
+              moveInDate: ''
+            },
+            lifestyle: {
+              cleanliness: '',
+              guests: '',
+              smoking: '',
+              pets: '',
+              schedule: ''
+            },
+            lookingFor: {
+              hasApartment: false,
+              roommatesCount: '1',
+              genderPreference: 'any',
+              smokingPreference: 'any',
+              occupationPreference: 'any',
+              minAge: '18',
+              maxAge: '99',
+              budgetRange: [300, 1500],
+              exactPrice: 0
+            }
           });
         } else {
           // If no profile data, redirect to create profile page
@@ -386,10 +408,10 @@ const ProfilePage = () => {
                   {activeTab === 'info' && (
                     <div>
                       <p><strong>Nombre:</strong> {profile.name}</p>
-                      <p><strong>Edad:</strong> {profile.age}</p>
-                      <p><strong>Ubicación:</strong> {profile.location}</p>
-                      <p><strong>Universidad:</strong> {profile.university}</p>
-                      <p><strong>Ocupación:</strong> {profile.occupation}</p>
+                      <p><strong>Edad:</strong> {profile.edad}</p>
+                      <p><strong>Ubicación:</strong> {profile.ubicacion}</p>
+                      <p><strong>Universidad:</strong> {profile.universidad}</p>
+                      <p><strong>Ocupación:</strong> {profile.ocupacion}</p>
                       <p><strong>Bio:</strong> {profile.bio}</p>
                     </div>
                   )}
