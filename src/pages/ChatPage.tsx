@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
@@ -103,34 +104,35 @@ const ChatPage = ({ isPreview = false }: ChatPageProps) => {
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
       
-      {/* Always show the demo banner, with a custom message for logged-in users */}
+      {/* Demo banner */}
       <DemoBanner 
         customMessage="Estás viendo una demostración de la función de chat. Pronto podrás conectar con compañeros de piso compatibles." 
       />
       
-      {/* Fixed container layout with absolute positioning to prevent scroll issues */}
-      <main className="flex-grow flex flex-col relative">
-        <div className="pt-16"></div> {/* Spacer for navbar */}
-        <div className="fixed top-16 bottom-0 left-0 right-0 flex">
-          <div className="w-full sm:w-1/3 md:w-1/4 border-r overflow-y-auto">
-            <ChatList 
-              matches={mockChatMatches} 
-              selectedChatId={selectedChatId} 
-              onSelectChat={handleSelectChat}
-            />
-          </div>
-          <div className="hidden sm:block sm:w-2/3 md:w-3/4">
-            {selectedChat && (
-              <ChatWindow 
-                chat={{
-                  id: selectedChat.id,
-                  name: selectedChat.name,
-                  imgUrl: selectedChat.imgUrl,
-                  online: selectedChat.online,
-                  typing: selectedChat.typing
-                }} 
+      {/* Content container with proper spacing */}
+      <main className="flex-grow flex flex-col">
+        <div className="h-full flex flex-col">
+          <div className="flex h-[calc(100vh-8rem)]">
+            <div className="w-full sm:w-1/3 md:w-1/4 border-r overflow-y-auto">
+              <ChatList 
+                matches={mockChatMatches} 
+                selectedChatId={selectedChatId} 
+                onSelectChat={handleSelectChat}
               />
-            )}
+            </div>
+            <div className="hidden sm:block sm:w-2/3 md:w-3/4">
+              {selectedChat && (
+                <ChatWindow 
+                  chat={{
+                    id: selectedChat.id,
+                    name: selectedChat.name,
+                    imgUrl: selectedChat.imgUrl,
+                    online: selectedChat.online,
+                    typing: selectedChat.typing
+                  }} 
+                />
+              )}
+            </div>
           </div>
         </div>
       </main>
