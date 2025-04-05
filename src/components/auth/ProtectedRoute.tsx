@@ -28,30 +28,30 @@ const ProtectedRoute = ({
       allowsPreview: allowPreview
     });
     
-    // Set a timeout to prevent infinite loading
+    // Set a shorter timeout to prevent infinite loading - reduced from 2000ms to 800ms
     const timeoutId = setTimeout(() => {
       if (loading) {
         console.log("Auth check taking too long, forcing completion");
         setAuthCheckComplete(true);
       }
-    }, 2000); // 2 seconds timeout
+    }, 800); // Reduced timeout from 2 seconds to 800ms
     
     return () => clearTimeout(timeoutId);
   }, [location.pathname, user, loading, allowPreview]);
   
-  // Mark auth check as complete when loading finishes
+  // Mark auth check as complete immediately when loading finishes
   useEffect(() => {
     if (!loading) {
       setAuthCheckComplete(true);
     }
   }, [loading]);
 
-  // Show improved loading state while checking authentication - but only briefly
+  // Improved loading state - show for a shorter time
   if (loading && !authCheckComplete) {
     return (
       <div className="flex flex-col justify-center items-center h-screen bg-gray-50">
-        <div className="h-10 w-10 animate-spin rounded-full border-4 border-homi-purple border-t-transparent mb-4"></div>
-        <p className="text-sm text-muted-foreground">Verificando acceso...</p>
+        <div className="h-8 w-8 animate-spin rounded-full border-3 border-homi-purple border-t-transparent mb-2"></div>
+        <p className="text-xs text-muted-foreground">Verificando acceso...</p>
       </div>
     );
   }

@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 
 /**
  * This component forces scroll to top on every route change
- * with improved handling for page transitions
+ * with improved performance for smooth transitions
  */
 const ScrollToTop = () => {
   const { pathname, hash } = useLocation();
@@ -19,22 +19,21 @@ const ScrollToTop = () => {
     }
     
     // Skip the effect if the path hasn't actually changed
-    // This prevents unwanted scroll resets when state changes but path doesn't
     if (prevPathRef.current === pathname) {
       return;
     }
     
     prevPathRef.current = pathname;
     
-    // Handle scroll logic without delay to avoid waiting
+    // Handle scroll logic immediately for faster transitions
     try {
       if (!hash) {
-        // Use immediate scrolling for better performance
-        window.scrollTo(0, 0);
-        
-        // Then ensure scroll position is reset for complete compatibility
-        document.documentElement.scrollTop = 0;
-        document.body.scrollTop = 0;
+        // Use fastest scrolling method
+        window.scrollTo({
+          top: 0,
+          left: 0,
+          behavior: 'auto' // Use 'auto' instead of 'smooth' for faster transitions
+        });
         
         console.log("Scrolled to top for path:", pathname);
       } else {
@@ -43,7 +42,9 @@ const ScrollToTop = () => {
         const element = document.getElementById(elementId);
         
         if (element) {
-          element.scrollIntoView();
+          element.scrollIntoView({
+            behavior: 'auto' // Use 'auto' for faster transitions
+          });
           console.log(`Scrolled to element with id: ${elementId}`);
         } else {
           // If element not found, scroll to top
@@ -55,7 +56,6 @@ const ScrollToTop = () => {
       console.error("Scroll error:", e);
       // Fallback method if the above fails
       window.scrollTo(0, 0);
-      console.log("Used fallback scroll method for path:", pathname);
     }
   }, [pathname, hash]);
 
