@@ -15,6 +15,7 @@ import { Separator } from "@/components/ui/separator";
 import ProfileBasicInfo from "./ProfileBasicInfo";
 import ProfileInterests from "./ProfileInterests";
 import ProfileApartmentPreferences from "./ProfileApartmentPreferences";
+import ProfileLifestyle from "./ProfileLifestyle";
 
 // Define the form schema with all necessary fields
 const formSchema = z.object({
@@ -29,10 +30,18 @@ const formSchema = z.object({
   occupation: z.string().optional(),
   profileImage: z.string().optional(),
   interests: z.array(z.string()).default([]),
-  newInterest: z.string().optional(),
   isProfileActive: z.boolean().default(true),
+  apartmentStatus: z.enum(['looking', 'have', 'not_looking']).default('not_looking'),
   sevilla_zona: z.string().optional(),
   companeros_count: z.string().optional(),
+  budget: z.string().optional(),
+  lifestyle: z.object({
+    schedule: z.enum(['morning_person', 'night_owl', 'flexible']).optional(),
+    cleanliness: z.enum(['very_clean', 'clean', 'moderate', 'relaxed']).optional(),
+    smoking: z.enum(['non_smoker', 'outdoor_only', 'smoker']).optional(),
+    pets: z.enum(['no_pets', 'has_pets', 'pets_welcome', 'no_pets_allowed']).optional(),
+    guests: z.enum(['rarely', 'occasionally', 'frequently', 'no_problem']).optional(),
+  }).optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -46,8 +55,8 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [isLookingForApartment, setIsLookingForApartment] = useState(false);
   const { user, refreshUser } = useAuth();
+  const [apartmentStatus, setApartmentStatus] = useState<'looking' | 'have' | 'not_looking'>('not_looking');
   
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -63,10 +72,18 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
       occupation: "",
       profileImage: "",
       interests: [],
-      newInterest: "",
       isProfileActive: true,
+      apartmentStatus: 'not_looking',
       sevilla_zona: "",
       companeros_count: "",
+      budget: "",
+      lifestyle: {
+        schedule: undefined,
+        cleanliness: undefined,
+        smoking: undefined,
+        pets: undefined,
+        guests: undefined,
+      },
     },
   });
 
@@ -91,8 +108,16 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
           
           console.log("Raw profile data from Supabase:", profileData);
           
-          // Check if user is looking for apartment in Sevilla
-          setIsLookingForApartment(!!profileData.sevilla_zona && profileData.sevilla_zona !== 'no_busco');
+          // Determine apartment status
+          let currentApartmentStatus: 'looking' | 'have' | 'not_looking' = 'not_looking';
+          if (profileData.sevilla_zona) {
+            if (profileData.sevilla_zona === 'tengo_piso') {
+              currentApartmentStatus = 'have';
+            } else if (profileData.sevilla_zona !== 'no_busco') {
+              currentApartmentStatus = 'looking';
+            }
+          }
+          setApartmentStatus(currentApartmentStatus);
           
           // Set form data with the fetched profile
           form.reset({
@@ -107,10 +132,18 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
             occupation: profileData.ocupacion || "",
             profileImage: profileData.profile_image || "",
             interests: profileData.interests || [],
-            newInterest: "",
             isProfileActive: profileData.is_profile_active !== false,
+            apartmentStatus: currentApartmentStatus,
             sevilla_zona: profileData.sevilla_zona || "",
             companeros_count: profileData.companeros_count || "",
+            budget: profileData.lifestyle?.budget || "",
+            lifestyle: {
+              schedule: profileData.lifestyle?.schedule,
+              cleanliness: profileData.lifestyle?.cleanliness,
+              smoking: profileData.lifestyle?.smoking,
+              pets: profileData.lifestyle?.pets,
+              guests: profileData.lifestyle?.guests,
+            },
           });
           
           console.log("Profile data loaded into form:", form.getValues());
@@ -129,10 +162,18 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
             occupation: "",
             profileImage: "",
             interests: [],
-            newInterest: "",
             isProfileActive: true,
+            apartmentStatus: 'not_looking',
             sevilla_zona: "",
             companeros_count: "",
+            budget: "",
+            lifestyle: {
+              schedule: undefined,
+              cleanliness: undefined,
+              smoking: undefined,
+              pets: undefined,
+              guests: undefined,
+            },
           });
         } finally {
           setIsLoading(false);
@@ -150,24 +191,36 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
     console.log("Form submitted with values:", values);
     
     try {
-      // Filter out the newInterest field which is only for UI
-      const { newInterest, ...dataToSave } = values;
+      // Prepare sevilla_zona based on apartment status
+      let sevilla_zona = values.sevilla_zona;
+      if (values.apartmentStatus === 'not_looking') {
+        sevilla_zona = 'no_busco';
+      } else if (values.apartmentStatus === 'have') {
+        sevilla_zona = 'tengo_piso';
+      }
+      
+      // Prepare lifestyle data
+      const lifestyle = {
+        ...values.lifestyle,
+        budget: values.budget
+      };
       
       // Prepare data for update
       const updateData = {
-        first_name: dataToSave.firstName,
-        last_name: dataToSave.lastName,
-        username: dataToSave.username,
-        bio: dataToSave.bio || '',
-        edad: dataToSave.age || '',
-        ubicacion: dataToSave.location || '',
-        universidad: dataToSave.university || '',
-        ocupacion: dataToSave.occupation || '',
-        profile_image: dataToSave.profileImage || '',
-        interests: dataToSave.interests,
-        is_profile_active: dataToSave.isProfileActive,
-        sevilla_zona: dataToSave.sevilla_zona || '',
-        companeros_count: dataToSave.companeros_count || '',
+        first_name: values.firstName,
+        last_name: values.lastName,
+        username: values.username,
+        bio: values.bio || '',
+        edad: values.age || '',
+        ubicacion: values.location || '',
+        universidad: values.university || '',
+        ocupacion: values.occupation || '',
+        profile_image: values.profileImage || '',
+        interests: values.interests,
+        is_profile_active: values.isProfileActive,
+        sevilla_zona: sevilla_zona,
+        companeros_count: values.apartmentStatus === 'looking' ? values.companeros_count : '',
+        lifestyle: lifestyle,
         updated_at: new Date().toISOString()
       };
       
@@ -215,8 +268,9 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
     form.setValue('isProfileActive', active);
   };
   
-  const handleApartmentSearchToggle = (val: string) => {
-    setIsLookingForApartment(!!val && val !== 'no_busco');
+  const handleApartmentStatusChange = (status: 'looking' | 'have' | 'not_looking') => {
+    setApartmentStatus(status);
+    form.setValue('apartmentStatus', status);
   };
 
   if (isLoading) {
@@ -257,14 +311,17 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
           {/* Basic info section */}
           <ProfileBasicInfo form={form} />
           
-          {/* Interests section */}
+          {/* Interests section with predefined options */}
           <ProfileInterests form={form} />
+          
+          {/* Lifestyle preferences section */}
+          <ProfileLifestyle form={form} />
           
           {/* Apartment preferences section */}
           <ProfileApartmentPreferences 
             form={form} 
-            isLookingForApartment={isLookingForApartment}
-            onApartmentSearchToggle={handleApartmentSearchToggle}
+            apartmentStatus={apartmentStatus}
+            onApartmentStatusChange={handleApartmentStatusChange}
           />
         </div>
 
