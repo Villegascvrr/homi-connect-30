@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from "@/context/AuthContext";
@@ -7,7 +8,7 @@ import Navbar from "../layout/Navbar";
 import Footer from "../layout/Footer";
 import { useToast } from "@/hooks/use-toast";
 import { Card } from "@/components/ui/card";
-import { AtSign, MapPin, GraduationCap, Briefcase, Edit, User, Heart, Tag } from 'lucide-react';
+import { AtSign, MapPin, GraduationCap, Briefcase, Edit, User, Heart, Tag, Clock, Trash2, Cigarette, PawPrint, Users } from 'lucide-react';
 import ProfileForm from "./ProfileForm";
 
 const ProfilePage = () => {
@@ -155,7 +156,7 @@ const ProfilePage = () => {
     );
   }
 
-  const requiredFields = ['first_name', 'last_name', 'username', 'bio', 'edad', 'ubicacion', 'universidad', 'ocupacion', 'profile_image', 'interests'];
+  const requiredFields = ['first_name', 'last_name', 'username', 'bio', 'edad', 'universidad', 'ocupacion', 'profile_image', 'interests'];
   const completedFields = requiredFields.filter(field => {
     if (field === 'interests') {
       return profile.interests && Array.isArray(profile.interests) && profile.interests.length > 0;
@@ -163,6 +164,49 @@ const ProfilePage = () => {
     return profile[field] && String(profile[field]).trim() !== '';
   });
   const completionPercentage = Math.round((completedFields.length / requiredFields.length) * 100);
+
+  // Parse lifestyle data
+  const lifestyleData = typeof profile.lifestyle === 'object' && profile.lifestyle !== null
+    ? profile.lifestyle
+    : {};
+
+  // Map lifestyle values to human-readable text
+  const getLifestyleText = (key: string, value: string | undefined) => {
+    if (!value) return "No especificado";
+    
+    const lifestyleLabels: Record<string, Record<string, string>> = {
+      schedule: {
+        'morning_person': 'Persona madrugadora',
+        'night_owl': 'Persona nocturna',
+        'flexible': 'Horario flexible'
+      },
+      cleanliness: {
+        'very_clean': 'Muy limpio',
+        'clean': 'Limpio',
+        'moderate': 'Moderado',
+        'relaxed': 'Relajado'
+      },
+      smoking: {
+        'non_smoker': 'No fumador',
+        'outdoor_only': 'Solo en exteriores',
+        'smoker': 'Fumador'
+      },
+      pets: {
+        'no_pets': 'No tiene mascotas',
+        'has_pets': 'Tiene mascotas',
+        'pets_welcome': 'Acepta mascotas',
+        'no_pets_allowed': 'No acepta mascotas'
+      },
+      guests: {
+        'rarely': 'Raramente',
+        'occasionally': 'Ocasionalmente',
+        'frequently': 'Frecuentemente',
+        'no_problem': 'Sin problema'
+      }
+    };
+    
+    return lifestyleLabels[key]?.[value] || value;
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -236,23 +280,21 @@ const ProfilePage = () => {
                   </div>
                 </Card>
 
-                {profile.sevilla_zona && (
-                  <Card className="mt-4 p-4">
-                    <h3 className="font-medium text-sm mb-2 flex items-center gap-1">
-                      <Heart size={16} className="text-homi-purple" /> Estado de búsqueda
-                    </h3>
-                    {profile.sevilla_zona === 'tengo_piso' ? (
-                      <p className="text-sm">Ya tienes piso y buscas compañeros</p>
-                    ) : (
-                      <div className="text-sm">
-                        <p className="mb-1">Buscando en: <span className="font-medium">{profile.sevilla_zona}</span></p>
-                        {profile.companeros_count && (
-                          <p>Compañeros: <span className="font-medium">{profile.companeros_count}</span></p>
-                        )}
-                      </div>
-                    )}
-                  </Card>
-                )}
+                <Card className="mt-4 p-4">
+                  <h3 className="font-medium text-sm mb-2 flex items-center gap-1">
+                    <Heart size={16} className="text-homi-purple" /> Estado de búsqueda
+                  </h3>
+                  {profile.sevilla_zona === 'tengo_piso' ? (
+                    <p className="text-sm">Ya tienes piso y buscas compañeros</p>
+                  ) : (
+                    <div className="text-sm">
+                      <p className="mb-1">Buscando en: <span className="font-medium">{profile.sevilla_zona}</span></p>
+                      {profile.companeros_count && (
+                        <p>Compañeros: <span className="font-medium">{profile.companeros_count}</span></p>
+                      )}
+                    </div>
+                  )}
+                </Card>
               </div>
               
               <div className="md:col-span-2">
@@ -267,16 +309,6 @@ const ProfilePage = () => {
                       <div>
                         <p className="text-sm text-muted-foreground">Edad</p>
                         <p className="font-medium">{profile.edad || 'No especificado'}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start gap-3">
-                      <div className="bg-homi-ultraLightPurple p-2 rounded-md text-homi-purple mt-1">
-                        <MapPin size={18} />
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Ubicación</p>
-                        <p className="font-medium">{profile.ubicacion || 'No especificado'}</p>
                       </div>
                     </div>
                     
@@ -331,18 +363,98 @@ const ProfilePage = () => {
                   </div>
                 </Card>
                 
+                {/* Combine housing preferences and lifestyle preferences in one card */}
                 <Card className="p-6 mt-6">
-                  <h2 className="text-xl font-semibold mb-4">Preferencias de vivienda</h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm text-muted-foreground">Zona preferida en Sevilla</p>
-                      <p className="font-medium">{profile.sevilla_zona && profile.sevilla_zona !== 'no_busco' 
-                        ? profile.sevilla_zona 
-                        : 'No especificado'}</p>
+                  <h2 className="text-xl font-semibold mb-4">Preferencias</h2>
+                  
+                  {/* Housing preferences section */}
+                  <div className="mb-6 border-b pb-4">
+                    <h3 className="font-medium mb-3 flex items-center gap-1">
+                      <MapPin size={16} className="text-homi-purple" /> Vivienda
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {profile.sevilla_zona && profile.sevilla_zona !== 'tengo_piso' && (
+                        <div>
+                          <p className="text-sm text-muted-foreground">Zona preferida</p>
+                          <p className="font-medium">{profile.sevilla_zona || 'No especificado'}</p>
+                        </div>
+                      )}
+                      <div>
+                        <p className="text-sm text-muted-foreground">Compañeros</p>
+                        <p className="font-medium">{profile.companeros_count || 'No especificado'}</p>
+                      </div>
+                      {lifestyleData.budget && (
+                        <div>
+                          <p className="text-sm text-muted-foreground">Presupuesto</p>
+                          <p className="font-medium">{lifestyleData.budget}</p>
+                        </div>
+                      )}
                     </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Número de compañeros</p>
-                      <p className="font-medium">{profile.companeros_count || 'No especificado'}</p>
+                  </div>
+                  
+                  {/* Lifestyle preferences section */}
+                  <div>
+                    <h3 className="font-medium mb-3">Estilo de vida</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-6">
+                      {lifestyleData.schedule && (
+                        <div className="flex items-start gap-2">
+                          <Clock size={16} className="text-homi-purple mt-0.5" />
+                          <div>
+                            <p className="text-sm text-muted-foreground">Horario</p>
+                            <p className="font-medium">{getLifestyleText('schedule', lifestyleData.schedule)}</p>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {lifestyleData.cleanliness && (
+                        <div className="flex items-start gap-2">
+                          <Trash2 size={16} className="text-homi-purple mt-0.5" />
+                          <div>
+                            <p className="text-sm text-muted-foreground">Limpieza</p>
+                            <p className="font-medium">{getLifestyleText('cleanliness', lifestyleData.cleanliness)}</p>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {lifestyleData.smoking && (
+                        <div className="flex items-start gap-2">
+                          <Cigarette size={16} className="text-homi-purple mt-0.5" />
+                          <div>
+                            <p className="text-sm text-muted-foreground">Fumar</p>
+                            <p className="font-medium">{getLifestyleText('smoking', lifestyleData.smoking)}</p>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {lifestyleData.pets && (
+                        <div className="flex items-start gap-2">
+                          <PawPrint size={16} className="text-homi-purple mt-0.5" />
+                          <div>
+                            <p className="text-sm text-muted-foreground">Mascotas</p>
+                            <p className="font-medium">{getLifestyleText('pets', lifestyleData.pets)}</p>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {lifestyleData.guests && (
+                        <div className="flex items-start gap-2">
+                          <Users size={16} className="text-homi-purple mt-0.5" />
+                          <div>
+                            <p className="text-sm text-muted-foreground">Invitados</p>
+                            <p className="font-medium">{getLifestyleText('guests', lifestyleData.guests)}</p>
+                          </div>
+                        </div>
+                      )}
+
+                      {!lifestyleData.schedule && 
+                       !lifestyleData.cleanliness && 
+                       !lifestyleData.smoking && 
+                       !lifestyleData.pets && 
+                       !lifestyleData.guests && (
+                        <p className="text-gray-500 italic text-sm col-span-2">
+                          No has especificado preferencias de estilo de vida.
+                        </p>
+                      )}
                     </div>
                   </div>
                 </Card>

@@ -3,7 +3,6 @@ import React from 'react';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { MapPin, Users, Euro } from "lucide-react";
 
@@ -25,6 +24,17 @@ const sevillaZones = [
 
 // Número de compañeros options
 const companeroOptions = ["1", "2", "3", "4", "5+"];
+
+// Presupuesto ranges
+const budgetRanges = [
+  "Menos de 200€",
+  "200€ - 300€",
+  "300€ - 400€",
+  "400€ - 500€",
+  "500€ - 600€",
+  "600€ - 700€",
+  "Más de 700€"
+];
 
 interface ProfileApartmentPreferencesProps {
   form: any;
@@ -159,7 +169,7 @@ const ProfileApartmentPreferences = ({
             )}
           />
           
-          {/* Budget field */}
+          {/* Budget field - now a select with ranges */}
           {apartmentStatus === 'looking' && (
             <FormField
               control={form.control}
@@ -168,15 +178,23 @@ const ProfileApartmentPreferences = ({
                 <FormItem>
                   <FormLabel className="flex items-center gap-2">
                     <Euro className="text-homi-purple" size={18} />
-                    Presupuesto mensual (€)
+                    Presupuesto mensual
                   </FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number" 
-                      placeholder="Ej: 300"
-                      {...field}
-                    />
-                  </FormControl>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value || ""}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecciona un rango" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {budgetRanges.map((range) => (
+                        <SelectItem key={range} value={range}>{range}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormDescription>
                     Presupuesto mensual que puedes pagar por una habitación
                   </FormDescription>
