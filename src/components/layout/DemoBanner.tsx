@@ -2,6 +2,7 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 interface DemoBannerProps {
   message?: string;
@@ -14,6 +15,7 @@ const DemoBanner = ({
 }: DemoBannerProps) => {
   const { user } = useAuth();
   const [justRegistered, setJustRegistered] = useState(false);
+  const location = useLocation();
   
   // Check if user just registered based on URL parameter
   useEffect(() => {
@@ -23,11 +25,20 @@ const DemoBanner = ({
     }
   }, [user]);
 
-  // Message for different user states
+  // Message for different user states and pages
   const getMessage = () => {
     if (justRegistered) {
       return "¡Gracias por registrarte en Homi! Completa tu perfil y síguenos en @homimatch para recibir todas las novedades.";
     } 
+    
+    // Page-specific messages
+    if (location.pathname === '/chat') {
+      return "Estás viendo una demostración de la función de chat. Pronto podrás conectar con compañeros de piso compatibles.";
+    }
+    
+    if (location.pathname === '/matching') {
+      return "Estás viendo una demostración de la función de matching. Pronto podrás encontrar compañeros de piso compatibles.";
+    }
     
     if (user) {
       return customMessage || "Estás viendo una demostración de Homi. La aplicación completa estará disponible próximamente.";

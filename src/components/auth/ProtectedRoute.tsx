@@ -1,3 +1,4 @@
+
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import DemoBanner from "../layout/DemoBanner";
@@ -59,8 +60,8 @@ const ProtectedRoute = ({
     console.log("User authenticated, showing protected content");
     return (
       <>
-        <DemoBanner customMessage={demoMessage || "Estás viendo una demostración de Homi. La aplicación completa estará disponible próximamente."} />
-        <div className="pt-0">
+        <DemoBanner />
+        <div className="pt-16 mt-0">
           {children}
         </div>
       </>
@@ -71,7 +72,7 @@ const ProtectedRoute = ({
     return (
       <>
         <DemoBanner />
-        <div className="pt-0">
+        <div className="pt-16 mt-0">
           {previewComponent}
         </div>
       </>
@@ -82,7 +83,7 @@ const ProtectedRoute = ({
     return (
       <>
         <DemoBanner />
-        <div className="pt-0">
+        <div className="pt-16 mt-0">
           {children}
         </div>
       </>

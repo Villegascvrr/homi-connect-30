@@ -1,11 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import ChatList from '@/components/chat/ChatList';
 import ChatWindow from '@/components/chat/ChatWindow';
-import DemoBanner from '@/components/layout/DemoBanner';
 import { useAuth } from '@/context/AuthContext';
 
 // Define a mock chat match for demo purposes
@@ -104,13 +102,8 @@ const ChatPage = ({ isPreview = false }: ChatPageProps) => {
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
       
-      {/* Demo banner */}
-      <DemoBanner 
-        customMessage="Estás viendo una demostración de la función de chat. Pronto podrás conectar con compañeros de piso compatibles." 
-      />
-      
       {/* Content container with proper spacing */}
-      <main className="flex-grow flex flex-col">
+      <main className="flex-grow flex flex-col pt-16">
         <div className="h-full flex flex-col">
           <div className="flex h-[calc(100vh-8rem)]">
             <div className="w-full sm:w-1/3 md:w-1/4 border-r overflow-y-auto">
