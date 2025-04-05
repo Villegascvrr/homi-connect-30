@@ -26,47 +26,43 @@ const ScrollToTop = () => {
     
     prevPathRef.current = pathname;
     
-    // Handle scroll logic immediately to prevent UI flicker
-    if (!hash) {
+    // Handle scroll logic with a slight delay to ensure DOM is updated
+    setTimeout(() => {
       try {
-        window.scrollTo({
-          top: 0,
-          left: 0,
-          behavior: 'instant' // Use 'instant' for immediate scroll without animation
-        });
-        
-        // Then try document elements for better compatibility
-        document.documentElement.scrollTop = 0;
-        document.body.scrollTop = 0;
-        
-        console.log("Scrolled to top for path:", pathname);
-      } catch (e) {
-        // Fallback method if the above fails
-        window.scrollTo(0, 0);
-        console.log("Used fallback scroll method for path:", pathname);
-      }
-    } else {
-      // For hash links, wait a tiny bit to ensure DOM is fully rendered
-      setTimeout(() => {
-        try {
+        if (!hash) {
+          // Use modern smooth scrolling for better UX
+          window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'instant'
+          });
+          
+          // Then ensure scroll position is reset for better compatibility
+          document.documentElement.scrollTop = 0;
+          document.body.scrollTop = 0;
+          
+          console.log("Scrolled to top for path:", pathname);
+        } else {
+          // For hash links, find and scroll to the element
           const elementId = hash.replace('#', '');
           const element = document.getElementById(elementId);
           
           if (element) {
-            element.scrollIntoView({ behavior: 'instant' });
+            element.scrollIntoView({ behavior: 'smooth' });
             console.log(`Scrolled to element with id: ${elementId}`);
           } else {
             // If element not found, scroll to top
             window.scrollTo(0, 0);
             console.log(`Element with id ${elementId} not found, scrolled to top`);
           }
-        } catch (e) {
-          // Fallback for hash navigation errors
-          window.scrollTo(0, 0);
-          console.log("Hash navigation error, used fallback scroll");
         }
-      }, 10);
-    }
+      } catch (e) {
+        console.error("Scroll error:", e);
+        // Fallback method if the above fails
+        window.scrollTo(0, 0);
+        console.log("Used fallback scroll method for path:", pathname);
+      }
+    }, 10); // Small delay to ensure DOM updates first
   }, [pathname, hash]);
 
   return null;
