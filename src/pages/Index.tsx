@@ -93,24 +93,24 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col overflow-x-hidden w-full">
-      <div className="pt-16">
+      <div className="pt-16 w-full">
         <Navbar />
       </div>
       
-      <main className="flex-grow overflow-x-hidden">
+      <main className="flex-grow overflow-x-hidden w-full">
         <Hero />
         
-        <div id="features" className="overflow-x-hidden">
+        <div id="features" className="overflow-x-hidden w-full">
           <Features />
         </div>
         
-        <div id="how-it-works" className="overflow-x-hidden">
+        <div id="how-it-works" className="overflow-x-hidden w-full">
           <HowItWorks />
         </div>
         
-        <section className="py-20 overflow-x-hidden">
-          <div className="container mx-auto px-4">
-            <div className="text-center max-w-3xl mx-auto mb-16 animate-on-scroll">
+        <section className="py-16 md:py-20 overflow-x-hidden w-full">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="text-center max-w-3xl mx-auto mb-12 md:mb-16 animate-on-scroll">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
                 Encuentra tu <span className="homi-gradient-text">compañero ideal</span>
               </h2>
@@ -120,7 +120,7 @@ const Index = () => {
               </p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-12">
               {featuredProfiles.map(profile => <div key={profile.id} className="animate-on-scroll">
                   <ProfileCard {...profile} onLike={id => console.log('Liked:', id)} onMessage={id => window.location.href = '/chat'} onView={id => window.location.href = '/profile'} />
                 </div>)}
@@ -146,9 +146,9 @@ const Index = () => {
           </div>
         </section>
         
-        <section className="py-20 bg-muted overflow-x-hidden">
-          <div className="container mx-auto px-4">
-            <div className="text-center max-w-3xl mx-auto mb-16 animate-on-scroll">
+        <section className="py-16 md:py-20 bg-muted overflow-x-hidden w-full">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="text-center max-w-3xl mx-auto mb-12 md:mb-16 animate-on-scroll">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
                 Conecta de <span className="homi-gradient-text">forma inteligente</span>
               </h2>
@@ -157,7 +157,7 @@ const Index = () => {
               </p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
               <div className="glass-card p-6 animate-on-scroll">
                 <div className="w-12 h-12 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple mb-4">
                   <span className="text-xl">🧠</span>
@@ -200,8 +200,8 @@ const Index = () => {
           </div>
         </section>
         
-        <section className="py-20 bg-homi-purple text-white overflow-x-hidden">
-          <div className="container mx-auto px-4">
+        <section className="py-16 md:py-20 bg-homi-purple text-white overflow-x-hidden w-full">
+          <div className="container mx-auto px-4 md:px-6">
             <div className="max-w-3xl mx-auto text-center animate-on-scroll">
               <h2 className="text-3xl md:text-4xl font-bold mb-6">
                 ¿Listo para encontrar a tu compañero ideal?

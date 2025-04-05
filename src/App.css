@@ -2,8 +2,16 @@
 #root {
   margin: 0 auto;
   text-align: center;
+  width: 100vw;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+body, html {
+  overflow-x: hidden;
   width: 100%;
-  overflow-x: hidden; /* Prevenir scroll horizontal */
+  max-width: 100vw;
+  position: relative;
 }
 
 @media (max-width: 768px) {
@@ -103,6 +111,7 @@ section[class*="bg-muted"],
     overflow-x: hidden;
     width: 100%;
     position: relative;
+    max-width: 100vw;
   }
 }
 

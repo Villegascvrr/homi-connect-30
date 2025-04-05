@@ -66,10 +66,10 @@ const Navbar = () => {
 
   return (
     <header className={cn(
-      "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+      "fixed top-0 left-0 right-0 z-50 transition-all duration-300 w-full",
       isScrolled ? "bg-white/80 dark:bg-background/80 backdrop-blur-md shadow-sm" : "bg-transparent"
     )}>
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 w-full">
         <div className="flex items-center justify-between h-16 md:h-20">
           <Link to="/" className="flex items-center">
             <span className="text-xl md:text-2xl font-bold homi-gradient-text">Homi</span>
@@ -114,7 +114,7 @@ const Navbar = () => {
       </div>
 
       {isMenuOpen && (
-        <div className="md:hidden bg-white dark:bg-card shadow-lg">
+        <div className="md:hidden bg-white dark:bg-card shadow-lg w-full">
           <div className="px-2 pt-2 pb-3 space-y-1">
             {navLinks.map((link) => (
               <Link

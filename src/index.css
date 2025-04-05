@@ -77,10 +77,25 @@
     @apply bg-background text-foreground;
     overflow-x: hidden; /* Prevenir scroll horizontal en toda la página */
     width: 100%;
+    max-width: 100vw;
   }
   html {
     overflow-x: hidden;
     width: 100%;
+    max-width: 100vw;
+  }
+
+  #root {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  /* Asegurar que los containers no exceden el ancho disponible */
+  .container {
+    width: 100%;
+    max-width: 100vw !important;
+    overflow-x: hidden;
   }
 }
 
