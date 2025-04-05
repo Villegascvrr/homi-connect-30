@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Check, Instagram } from 'lucide-react';
@@ -7,28 +6,27 @@ import EmailSignup from './EmailSignup';
 import WelcomeMessage from './WelcomeMessage';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/context/AuthContext';
-
 const Hero = () => {
   const [email, setEmail] = useState('');
   const [showSignupForm, setShowSignupForm] = useState(false);
   const [justRegistered, setJustRegistered] = useState(false);
   const isMobile = useIsMobile();
-  const { user } = useAuth();
+  const {
+    user
+  } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-
   useEffect(() => {
     // Check if the user just registered using URL parameter
     const urlParams = new URLSearchParams(window.location.search);
     const isRegistered = urlParams.get('registered') === 'true';
-    
-    console.log("Checking registration status:", { 
-      isRegistered, 
-      userExists: !!user, 
+    console.log("Checking registration status:", {
+      isRegistered,
+      userExists: !!user,
       currentJustRegistered: justRegistered,
       searchParams: urlParams.toString()
     });
-    
+
     // Key change: Remove the condition requiring user to show welcome message
     // This was causing the issue as the auth state might not be ready yet
     if (isRegistered) {
@@ -40,22 +38,16 @@ const Hero = () => {
       console.log("User state:", user ? "logged in" : "not logged in", "Just registered:", justRegistered);
     }
   }, [user, location.search]);
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Subscribed with email:', email);
     setEmail('');
   };
-
   const handleRegisterClick = () => {
     // Navigate to the register page instead of showing the form
     navigate('/register');
   };
-
-  return (
-    <section 
-      className="relative overflow-visible py-12 lg:py-16"
-    >
+  return <section className="relative overflow-visible py-12 lg:py-[47px]">
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-0 left-0 w-64 md:w-96 h-64 md:h-96 bg-homi-ultraLightPurple rounded-full opacity-50 blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
         <div className="absolute bottom-0 right-0 w-64 md:w-96 h-64 md:h-96 bg-homi-ultraLightPurple rounded-full opacity-50 blur-3xl translate-x-1/3 translate-y-1/3"></div>
@@ -63,8 +55,7 @@ const Hero = () => {
 
       <div className="container mx-auto px-4 md:px-6">
         <div className="max-w-4xl mx-auto text-center">
-          {!user && !justRegistered ? (
-            <>
+          {!user && !justRegistered ? <>
               <div className="inline-block px-4 py-1.5 mb-4 rounded-full bg-homi-ultraLightPurple text-homi-purple text-xs md:text-sm font-medium animate-pulse-soft">
                 ¡Ayúdanos a alcanzar los 1000 usuarios!
               </div>
@@ -88,19 +79,11 @@ const Hero = () => {
               </div>
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4">
-                <Button 
-                  size={isMobile ? "default" : "lg"} 
-                  className="rounded-full bg-gradient-to-r from-homi-purple to-homi-lightPurple hover:from-homi-lightPurple hover:to-homi-purple text-white font-bold shadow-lg shadow-purple-500/30 transform hover:scale-105 transition-all duration-300 w-full sm:w-auto" 
-                  onClick={handleRegisterClick}
-                >
+                <Button size={isMobile ? "default" : "lg"} className="rounded-full bg-gradient-to-r from-homi-purple to-homi-lightPurple hover:from-homi-lightPurple hover:to-homi-purple text-white font-bold shadow-lg shadow-purple-500/30 transform hover:scale-105 transition-all duration-300 w-full sm:w-auto" onClick={handleRegisterClick}>
                   ¡Regístrate ahora!
                 </Button>
               </div>
-            </>
-          ) : justRegistered ? (
-            <WelcomeMessage firstName={user?.user_metadata?.firstName || user?.user_metadata?.first_name} />
-          ) : (
-            <>
+            </> : justRegistered ? <WelcomeMessage firstName={user?.user_metadata?.firstName || user?.user_metadata?.first_name} /> : <>
               <div className="inline-block px-4 py-1.5 mb-3 rounded-full bg-green-100 text-green-700 text-xs md:text-sm font-medium">
                 <Check className="inline-block mr-1 h-4 w-4" /> Usuario registrado
               </div>
@@ -115,19 +98,10 @@ const Hero = () => {
               </p>
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 mb-6">
-                <Button 
-                  size={isMobile ? "default" : "lg"} 
-                  className="rounded-full bg-gradient-to-r from-homi-purple to-homi-lightPurple hover:from-homi-lightPurple hover:to-homi-purple text-white font-bold shadow-lg shadow-purple-500/30 transform hover:scale-105 transition-all duration-300 w-full sm:w-auto" 
-                  asChild
-                >
+                <Button size={isMobile ? "default" : "lg"} className="rounded-full bg-gradient-to-r from-homi-purple to-homi-lightPurple hover:from-homi-lightPurple hover:to-homi-purple text-white font-bold shadow-lg shadow-purple-500/30 transform hover:scale-105 transition-all duration-300 w-full sm:w-auto" asChild>
                   <Link to="/profile">Completar mi perfil</Link>
                 </Button>
-                <Button 
-                  size={isMobile ? "default" : "lg"} 
-                  variant="outline" 
-                  className="rounded-full w-full sm:w-auto" 
-                  asChild
-                >
+                <Button size={isMobile ? "default" : "lg"} variant="outline" className="rounded-full w-full sm:w-auto" asChild>
                   <Link to="/matching">Explorar perfiles</Link>
                 </Button>
               </div>
@@ -136,21 +110,14 @@ const Hero = () => {
                 <p className="text-sm text-muted-foreground mb-2">
                   Síguenos en Instagram para enterarte de las últimas novedades:
                 </p>
-                <Button 
-                  variant="outline" 
-                  className="rounded-full gap-2"
-                  onClick={() => window.open('https://instagram.com/homimatch', '_blank')}
-                >
+                <Button variant="outline" className="rounded-full gap-2" onClick={() => window.open('https://instagram.com/homimatch', '_blank')}>
                   <Instagram size={18} />
                   @homimatch
                 </Button>
               </div>
-            </>
-          )}
+            </>}
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default Hero;
