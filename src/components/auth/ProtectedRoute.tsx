@@ -60,9 +60,11 @@ const ProtectedRoute = ({
     console.log("User authenticated, showing protected content");
     return (
       <>
-        <DemoBanner />
-        <div className="pt-16 mt-0">
-          {children}
+        <div className="pt-16">
+          <DemoBanner />
+          <div className="mt-0">
+            {children}
+          </div>
         </div>
       </>
     );
@@ -71,9 +73,11 @@ const ProtectedRoute = ({
   if (allowPreview && previewComponent) {
     return (
       <>
-        <DemoBanner />
-        <div className="pt-16 mt-0">
-          {previewComponent}
+        <div className="pt-16">
+          <DemoBanner />
+          <div className="mt-0">
+            {previewComponent}
+          </div>
         </div>
       </>
     );
@@ -82,9 +86,11 @@ const ProtectedRoute = ({
   if (allowPreview) {
     return (
       <>
-        <DemoBanner />
-        <div className="pt-16 mt-0">
-          {children}
+        <div className="pt-16">
+          <DemoBanner />
+          <div className="mt-0">
+            {children}
+          </div>
         </div>
       </>
     );

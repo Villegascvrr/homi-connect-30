@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
@@ -103,7 +104,7 @@ const ChatPage = ({ isPreview = false }: ChatPageProps) => {
       <Navbar />
       
       {/* Content container with proper spacing */}
-      <main className="flex-grow flex flex-col pt-16">
+      <main className="flex-grow flex flex-col">
         <div className="h-full flex flex-col">
           <div className="flex h-[calc(100vh-8rem)]">
             <div className="w-full sm:w-1/3 md:w-1/4 border-r overflow-y-auto">
