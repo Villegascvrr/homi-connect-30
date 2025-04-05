@@ -676,9 +676,9 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
       
       {isPreview && <DemoBanner />}
       
-      <main className="flex-grow pt-16 mt-8 pb-12 bg-transparent">
+      <main className="flex-grow pt-0 pb-12 bg-transparent">
         <div className="container mx-auto px-4">
-          <div className="mb-8">
+          <div className="mb-6">
             <h1 className="text-2xl md:text-3xl font-bold mb-2">
               <span className="homi-gradient-text">Encuentra compañeros</span>
             </h1>
