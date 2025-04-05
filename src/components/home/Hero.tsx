@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Check, Instagram } from 'lucide-react';
@@ -48,7 +47,7 @@ const Hero = () => {
     // Navigate to the register page instead of showing the form
     navigate('/register');
   };
-  return <section className="relative overflow-visible py-12 lg:py-[47px]">
+  return <section className="relative overflow-visible lg:py-[47px] py-[5px]">
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-0 left-0 w-64 md:w-96 h-64 md:h-96 bg-homi-ultraLightPurple rounded-full opacity-50 blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
         <div className="absolute bottom-0 right-0 w-64 md:w-96 h-64 md:h-96 bg-homi-ultraLightPurple rounded-full opacity-50 blur-3xl translate-x-1/3 translate-y-1/3"></div>
