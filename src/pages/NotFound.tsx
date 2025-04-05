@@ -11,14 +11,12 @@ const NotFound = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.error(
-      "404 Error: User attempted to access non-existent route:",
-      location.pathname
-    );
+    console.log("404 Error: User attempted to access non-existent route:", location.pathname);
     
-    // Explicitly force scroll to top with a different method
+    // Force scroll to top immediately
+    window.scrollTo(0, 0);
     document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0; // For Safari
+    document.body.scrollTop = 0;
   }, [location.pathname]);
 
   const handleGoBack = () => {
