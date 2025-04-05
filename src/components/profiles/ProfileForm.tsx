@@ -25,9 +25,9 @@ const formSchema = z.object({
   email: z.string().email("Por favor introduce un email válido"),
   bio: z.string().optional(),
   age: z.string().optional(),
-  location: z.string().optional(),
-  university: z.string().optional(),
   occupation: z.string().optional(),
+  occupationType: z.enum(['student', 'professional', 'entrepreneur', 'other']).optional(),
+  university: z.string().optional(),
   profileImage: z.string().optional(),
   interests: z.array(z.string()).default([]),
   isProfileActive: z.boolean().default(true),
@@ -57,6 +57,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const { user, refreshUser } = useAuth();
   const [apartmentStatus, setApartmentStatus] = useState<'looking' | 'have'>('looking');
+  const [showUniversityField, setShowUniversityField] = useState(false);
   
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -67,9 +68,9 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
       email: "",
       bio: "",
       age: "",
-      location: "",
-      university: "",
       occupation: "",
+      occupationType: undefined,
+      university: "",
       profileImage: "",
       interests: [],
       isProfileActive: true,
@@ -86,6 +87,12 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
       },
     },
   });
+
+  // Watch occupation type to show/hide university field
+  useEffect(() => {
+    const occupationType = form.watch("occupationType");
+    setShowUniversityField(occupationType === "student");
+  }, [form.watch("occupationType")]);
 
   // Fetch user profile data when component mounts
   useEffect(() => {
@@ -119,8 +126,22 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
           }
           setApartmentStatus(currentApartmentStatus);
           
-          // Parse lifestyle data correctly
-          const lifestyleData = typeof profileData.lifestyle === 'object' ? profileData.lifestyle : {};
+          // Parse lifestyle data correctly - ensure it's an object
+          const lifestyleData = typeof profileData.lifestyle === 'object' && profileData.lifestyle !== null
+            ? profileData.lifestyle as Record<string, unknown>
+            : {};
+          
+          // Set occupation type based on existing data
+          let occupationType = "other";
+          if (profileData.ocupacion === "Estudiante") {
+            occupationType = "student";
+          } else if (profileData.ocupacion === "Profesional") {
+            occupationType = "professional";
+          } else if (profileData.ocupacion === "Emprendedor") {
+            occupationType = "entrepreneur";
+          }
+          
+          setShowUniversityField(occupationType === "student");
           
           // Set form data with the fetched profile
           form.reset({
@@ -130,22 +151,22 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
             email: user.email || "",
             bio: profileData.bio || "",
             age: profileData.edad || "",
-            location: profileData.ubicacion || "",
-            university: profileData.universidad || "",
             occupation: profileData.ocupacion || "",
+            occupationType: occupationType as any,
+            university: profileData.universidad || "",
             profileImage: profileData.profile_image || "",
             interests: profileData.interests || [],
             isProfileActive: profileData.is_profile_active !== false,
             apartmentStatus: currentApartmentStatus,
             sevilla_zona: profileData.sevilla_zona || "",
             companeros_count: profileData.companeros_count || "",
-            budget: lifestyleData?.budget || "",
+            budget: lifestyleData.budget as string || "",
             lifestyle: {
-              schedule: lifestyleData?.schedule,
-              cleanliness: lifestyleData?.cleanliness,
-              smoking: lifestyleData?.smoking,
-              pets: lifestyleData?.pets,
-              guests: lifestyleData?.guests,
+              schedule: lifestyleData.schedule as any,
+              cleanliness: lifestyleData.cleanliness as any,
+              smoking: lifestyleData.smoking as any,
+              pets: lifestyleData.pets as any,
+              guests: lifestyleData.guests as any,
             },
           });
           
@@ -160,9 +181,9 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
             email: user.email || "",
             bio: "",
             age: "",
-            location: "",
-            university: "",
             occupation: "",
+            occupationType: "other" as any,
+            university: "",
             profileImage: "",
             interests: [],
             isProfileActive: true,
@@ -200,6 +221,18 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
         sevilla_zona = 'tengo_piso';
       }
       
+      // Map occupation type to actual occupation value
+      let occupation = values.occupation;
+      if (values.occupationType === "student") {
+        occupation = "Estudiante";
+      } else if (values.occupationType === "professional") {
+        occupation = "Profesional";
+      } else if (values.occupationType === "entrepreneur") {
+        occupation = "Emprendedor";
+      } else if (values.occupationType === "other" && !values.occupation) {
+        occupation = "Otro";
+      }
+      
       // Prepare lifestyle data
       const lifestyle = {
         ...(values.lifestyle || {}),
@@ -213,9 +246,8 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
         username: values.username,
         bio: values.bio || '',
         edad: values.age || '',
-        ubicacion: values.location || '',
+        ocupacion: occupation || '',
         universidad: values.university || '',
-        ocupacion: values.occupation || '',
         profile_image: values.profileImage || '',
         interests: values.interests,
         is_profile_active: values.isProfileActive,
@@ -274,6 +306,11 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
     form.setValue('apartmentStatus', status);
   };
 
+  const handleOccupationTypeChange = (type: string) => {
+    form.setValue('occupationType', type as any);
+    setShowUniversityField(type === "student");
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-[400px] flex items-center justify-center">
@@ -310,7 +347,11 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
           </div>
           
           {/* Basic info section */}
-          <ProfileBasicInfo form={form} />
+          <ProfileBasicInfo 
+            form={form} 
+            showUniversityField={showUniversityField}
+            onOccupationTypeChange={handleOccupationTypeChange}
+          />
           
           {/* Interests section with predefined options */}
           <ProfileInterests form={form} />

@@ -4,13 +4,30 @@ import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/comp
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Briefcase, GraduationCap } from "lucide-react";
 
 interface ProfileBasicInfoProps {
   form: any;
+  showUniversityField?: boolean;
+  onOccupationTypeChange?: (type: string) => void;
 }
 
-const ProfileBasicInfo = ({ form }: ProfileBasicInfoProps) => {
+const occupationOptions = [
+  { value: "student", label: "Estudiante" },
+  { value: "professional", label: "Profesional" },
+  { value: "entrepreneur", label: "Emprendedor" },
+  { value: "other", label: "Otro" }
+];
+
+const ProfileBasicInfo = ({ form, showUniversityField = false, onOccupationTypeChange }: ProfileBasicInfoProps) => {
   const isMobile = useIsMobile();
+
+  const handleOccupationTypeChange = (value: string) => {
+    if (onOccupationTypeChange) {
+      onOccupationTypeChange(value);
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -86,44 +103,72 @@ const ProfileBasicInfo = ({ form }: ProfileBasicInfoProps) => {
         />
         <FormField
           control={form.control}
-          name="location"
+          name="occupationType"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Ubicación</FormLabel>
-              <FormControl>
-                <Input placeholder="Tu ciudad actual" {...field} />
-              </FormControl>
+              <FormLabel className="flex items-center gap-2">
+                <Briefcase className="text-homi-purple" size={18} />
+                Ocupación
+              </FormLabel>
+              <Select
+                onValueChange={(value) => {
+                  field.onChange(value);
+                  handleOccupationTypeChange(value);
+                }}
+                value={field.value || ""}
+              >
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecciona tu ocupación" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {occupationOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}
         />
         
-        <FormField
-          control={form.control}
-          name="university"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Universidad</FormLabel>
-              <FormControl>
-                <Input placeholder="Tu universidad" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="occupation"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Ocupación</FormLabel>
-              <FormControl>
-                <Input placeholder="Tu ocupación actual" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {/* Show university field only for students */}
+        {showUniversityField && (
+          <FormField
+            control={form.control}
+            name="university"
+            render={({ field }) => (
+              <FormItem className={isMobile ? "col-span-1" : "col-span-2"}>
+                <FormLabel className="flex items-center gap-2">
+                  <GraduationCap className="text-homi-purple" size={18} />
+                  Universidad
+                </FormLabel>
+                <FormControl>
+                  <Input placeholder="Tu universidad o centro de estudios" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
+        
+        {/* Custom occupation field for "other" option */}
+        {form.watch('occupationType') === 'other' && (
+          <FormField
+            control={form.control}
+            name="occupation"
+            render={({ field }) => (
+              <FormItem className={isMobile ? "col-span-1" : "col-span-2"}>
+                <FormLabel>Especificar ocupación</FormLabel>
+                <FormControl>
+                  <Input placeholder="Especifica tu ocupación" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
         
         <div className="col-span-full">
           <FormField

@@ -1,9 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { FormField, FormItem, FormLabel } from "@/components/ui/form";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { FormItem, FormLabel } from "@/components/ui/form";
 import { Heart } from "lucide-react";
 
 // Predefined list of interests
@@ -18,16 +16,15 @@ const INTERESTS_OPTIONS = [
   "Literatura",
   "Tecnología",
   "Moda",
-  "Fotografía",
+  "Fotografía", 
   "Naturaleza",
   "Fiesta",
-  "Yoga",
-  "Meditación",
   "Series",
   "Cocina",
   "Teatro",
   "Política",
-  "Activismo"
+  "Activismo",
+  "Emprendimiento"
 ];
 
 interface ProfileInterestsProps {
