@@ -26,12 +26,13 @@ const WelcomeMessage = ({ firstName }: WelcomeMessageProps) => {
   };
 
   const handleProfileClick = () => {
-    // Navigate directly to profile edit page instead of just profile page
-    navigate('/profile/edit');
+    // Navigate to profile edit page with a flag in the URL to indicate it's a new user
+    navigate('/profile/edit?new=true');
     
     toast({
       title: "Completa tu perfil",
       description: "Completa tu información para encontrar compañeros compatibles",
+      duration: 5000, // Longer duration for new users
     });
   }
 
@@ -61,7 +62,7 @@ const WelcomeMessage = ({ firstName }: WelcomeMessageProps) => {
       
       <p className="text-center text-muted-foreground mb-4">
         Te avisaremos cuando la aplicación esté completamente disponible.
-        Mientras tanto, puedes completar tu perfil para estar listo cuando lancemos.
+        Mientras tanto, completa tu perfil para estar listo cuando lancemos.
       </p>
       
       <div className="bg-homi-ultraLightPurple/50 p-3 rounded-xl mb-4 text-center">
@@ -76,7 +77,7 @@ const WelcomeMessage = ({ firstName }: WelcomeMessageProps) => {
           className="w-full bg-gradient-to-r from-homi-purple to-homi-lightPurple hover:from-homi-lightPurple hover:to-homi-purple text-white font-bold shadow-lg shadow-purple-500/30 transform hover:scale-105 transition-all duration-300 rounded-full"
         >
           <UserRound className="mr-2 h-4 w-4" />
-          Completar mi perfil
+          Completar mi perfil ahora
         </Button>
         
         <div className="text-center mt-4">

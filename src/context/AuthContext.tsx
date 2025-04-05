@@ -1,9 +1,7 @@
-
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Session, User } from "@supabase/supabase-js";
 import { useToast } from "@/hooks/use-toast";
-import { Tables } from "@/integrations/supabase/types";
 
 type ExtendedUser = User & {
   profile_image?: string | null;
@@ -36,13 +34,57 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { toast } = useToast();
 
   useEffect(() => {
+    console.log("AuthProvider initializing");
+    
     // First set up the auth state change listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, currentSession) => {
-        console.log("Auth state changed:", event);
+        console.log("Auth state changed:", event, currentSession ? "With session" : "No session");
         setSession(currentSession);
         
         if (currentSession?.user) {
+          const authUser = currentSession.user;
+          console.log("Session contains user, fetching profile data");
+          
+          try {
+            const { data: profileData, error } = await supabase
+              .from('profiles')
+              .select('profile_image, first_name, last_name')
+              .eq('id', authUser.id)
+              .single();
+            
+            if (!error && profileData) {
+              console.log("Profile data fetched successfully");
+              setUser({
+                ...authUser,
+                profile_image: profileData.profile_image
+              });
+            } else {
+              console.log("No profile data found or error", error);
+              setUser(authUser);
+            }
+          } catch (error) {
+            console.error("Error fetching profile data:", error);
+            setUser(authUser);
+          } finally {
+            setLoading(false);
+          }
+        } else {
+          console.log("No user in session");
+          setUser(null);
+          setLoading(false);
+        }
+      }
+    );
+
+    // Then check for an existing session
+    const checkExistingSession = async () => {
+      try {
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        console.log("Initial session check:", currentSession ? "Found session" : "No session");
+        
+        if (currentSession?.user) {
+          setSession(currentSession);
           const authUser = currentSession.user;
           
           try {
@@ -53,57 +95,31 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               .single();
             
             if (!error && profileData) {
+              console.log("Profile data fetched from existing session");
               setUser({
                 ...authUser,
                 profile_image: profileData.profile_image
               });
             } else {
+              console.log("Setting user from session without profile data");
               setUser(authUser);
             }
           } catch (error) {
             console.error("Error fetching profile data:", error);
             setUser(authUser);
-          } finally {
-            setLoading(false);
           }
         } else {
-          setUser(null);
-          setLoading(false);
+          console.log("No existing session found");
         }
-      }
-    );
-
-    // Then check for an existing session
-    supabase.auth.getSession().then(async ({ data: { session: currentSession } }) => {
-      console.log("Initial session check:", currentSession ? "Found session" : "No session");
-      setSession(currentSession);
-      
-      if (currentSession?.user) {
-        const authUser = currentSession.user;
         
-        try {
-          const { data: profileData, error } = await supabase
-            .from('profiles')
-            .select('profile_image')
-            .eq('id', authUser.id)
-            .single();
-          
-          if (!error && profileData) {
-            setUser({
-              ...authUser,
-              profile_image: profileData.profile_image
-            });
-          } else {
-            setUser(authUser);
-          }
-        } catch (error) {
-          console.error("Error fetching profile data:", error);
-          setUser(authUser);
-        }
+        setLoading(false);
+      } catch (error) {
+        console.error("Error checking session:", error);
+        setLoading(false);
       }
-      
-      setLoading(false);
-    });
+    };
+    
+    checkExistingSession();
 
     return () => {
       subscription.unsubscribe();
@@ -112,6 +128,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const refreshUser = async () => {
     try {
+      console.log("Refreshing user data");
       const { data: { user: refreshedUser }, error } = await supabase.auth.getUser();
       if (error) throw error;
       
@@ -123,11 +140,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           .single();
         
         if (!profileError && profileData) {
+          console.log("User refreshed with profile data");
           setUser({
             ...refreshedUser,
             profile_image: profileData.profile_image
           });
         } else {
+          console.log("User refreshed without profile data");
           setUser(refreshedUser);
         }
       }

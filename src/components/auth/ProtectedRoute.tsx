@@ -1,3 +1,4 @@
+
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import DemoBanner from "../layout/DemoBanner";
@@ -28,13 +29,13 @@ const ProtectedRoute = ({
       allowsPreview: allowPreview
     });
     
-    // Set a very short timeout to prevent infinite loading
+    // Set a shorter timeout to prevent infinite loading
     const timeoutId = setTimeout(() => {
       if (loading) {
         console.log("Auth check taking too long, forcing completion");
         setAuthCheckComplete(true);
       }
-    }, 300); // Reduced timeout to 300ms for faster user experience
+    }, 200); // Even shorter timeout for faster user experience
     
     return () => clearTimeout(timeoutId);
   }, [location.pathname, user, session, loading, allowPreview]);
@@ -46,11 +47,12 @@ const ProtectedRoute = ({
     }
   }, [loading]);
 
-  // Very minimal loading state
+  // Very minimal loading state with better visibility
   if (loading && !authCheckComplete) {
     return (
-      <div className="flex flex-col justify-center items-center h-[100px] bg-gray-50">
-        <div className="h-4 w-4 animate-spin rounded-full border-2 border-homi-purple border-t-transparent"></div>
+      <div className="flex flex-col justify-center items-center h-[200px] bg-gray-50">
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-homi-purple border-t-transparent"></div>
+        <p className="text-sm text-muted-foreground mt-2">Verificando sesión...</p>
       </div>
     );
   }

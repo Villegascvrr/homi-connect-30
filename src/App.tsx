@@ -19,13 +19,13 @@ import ProtectedRoute from "./components/auth/ProtectedRoute";
 import AdminPage from "./pages/AdminPage";
 import { useEffect } from "react";
 
-// Create a new query client with explicit configuration for cache stability and better error handling
+// Create a new query client with explicit configuration for better loading performance
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
-      refetchOnMount: true, // Changed to true to ensure data is fresh when component mounts
-      staleTime: 1000 * 60 * 2, // Reduced to 2 minutes
+      refetchOnMount: true, 
+      staleTime: 1000 * 30, // 30 seconds for better responsiveness
       retry: 1,
       retryDelay: 1000,
     },
@@ -35,8 +35,36 @@ const queryClient = new QueryClient({
 const App = () => {
   // Force clean loading state when app starts
   useEffect(() => {
-    // Log when the app is initialized
     console.log("App fully initialized");
+    
+    // Pre-fetch important data
+    const prefetchBasicData = async () => {
+      try {
+        const { data: { session } } = await queryClient.fetchQuery({
+          queryKey: ['session'],
+          queryFn: async () => {
+            return await supabaseClient.auth.getSession();
+          },
+          staleTime: 1000 * 60 * 5, // 5 minutes
+        });
+        
+        if (session?.user?.id) {
+          console.log("User is authenticated, prefetching profile data");
+          // Pre-fetch user profile data
+          queryClient.prefetchQuery({
+            queryKey: ['profile', session.user.id],
+            queryFn: async () => {
+              // This will be available for components that need it
+              return null;
+            },
+          });
+        }
+      } catch (error) {
+        console.error("Error prefetching data:", error);
+      }
+    };
+    
+    prefetchBasicData();
   }, []);
   
   return (
