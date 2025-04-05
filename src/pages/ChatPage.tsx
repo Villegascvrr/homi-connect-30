@@ -113,10 +113,11 @@ const ChatPage = ({ isPreview = false }: ChatPageProps) => {
         />
       )}
       
-      {/* Modified main content to prevent autoscroll issues */}
-      <main className="flex-grow flex flex-col">
-        <div className="flex w-full h-[calc(100vh-7rem)]" style={{ marginTop: '4rem' }}>
-          <div className="w-full sm:w-1/3 md:w-1/4 border-r">
+      {/* Fixed container layout with absolute positioning to prevent scroll issues */}
+      <main className="flex-grow flex flex-col relative">
+        <div className="pt-16"></div> {/* Spacer for navbar */}
+        <div className="fixed top-16 bottom-0 left-0 right-0 flex">
+          <div className="w-full sm:w-1/3 md:w-1/4 border-r overflow-y-auto">
             <ChatList 
               matches={mockChatMatches} 
               selectedChatId={selectedChatId} 

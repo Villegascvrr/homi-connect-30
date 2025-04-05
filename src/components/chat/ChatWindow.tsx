@@ -59,23 +59,27 @@ const ChatWindow = ({ chat }: ChatWindowProps) => {
   const [messages, setMessages] = useState(SAMPLE_MESSAGES);
   const [newMessage, setNewMessage] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [shouldScroll, setShouldScroll] = useState(false);
+  const [shouldAutoScroll, setShouldAutoScroll] = useState(false);
 
-  // Only scroll to bottom when new messages are added, not on initial load
+  // Complete disable of initial autoscroll but enable for new messages
   useEffect(() => {
-    if (shouldScroll && messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [messages, shouldScroll]);
-
-  // Set shouldScroll to true after a small delay to prevent initial scroll
-  useEffect(() => {
+    // Disable initial auto scroll on component mount
     const timer = setTimeout(() => {
-      setShouldScroll(true);
-    }, 500);
+      setShouldAutoScroll(true);
+    }, 1000); // Longer delay to ensure page is fully rendered
     
     return () => clearTimeout(timer);
   }, []);
+
+  // Only scroll on new messages, not on initial load
+  useEffect(() => {
+    if (shouldAutoScroll && messagesEndRef.current) {
+      // Don't scroll on initial render of messages
+      if (messages.length > SAMPLE_MESSAGES.length) {
+        messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  }, [messages, shouldAutoScroll]);
 
   const handleSendMessage = () => {
     if (newMessage.trim() === '') return;
@@ -149,7 +153,7 @@ const ChatWindow = ({ chat }: ChatWindowProps) => {
         </div>
       </div>
       
-      {/* Messages area - using ScrollArea component to better control scrolling */}
+      {/* Messages area with improved ScrollArea container */}
       <ScrollArea className="flex-1 py-2 px-3 max-h-[calc(100vh-16rem)]">
         <div className="space-y-2">
           {messages.map((message) => (
