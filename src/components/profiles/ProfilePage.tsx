@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from "@/context/AuthContext";
@@ -118,7 +117,6 @@ const ProfilePage = () => {
     );
   }
   
-  // If in edit mode, show the form
   if (isEditing) {
     return (
       <div className="min-h-screen flex flex-col">
@@ -126,7 +124,6 @@ const ProfilePage = () => {
         <main className="flex-grow pt-20 pb-12 bg-gray-50">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
-              {/* Header for edit mode */}
               <div className="bg-white rounded-lg shadow-md p-6 mb-6">
                 <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
                   <h1 className="text-2xl md:text-3xl font-bold">Editar Perfil</h1>
@@ -140,7 +137,6 @@ const ProfilePage = () => {
                 </div>
               </div>
               
-              {/* ProfileForm for editing */}
               <ProfileForm 
                 onSaved={() => {
                   setIsEditing(false);
@@ -159,7 +155,6 @@ const ProfilePage = () => {
     );
   }
 
-  // Calculate profile completion percentage
   const requiredFields = ['first_name', 'last_name', 'username', 'bio', 'edad', 'ubicacion', 'universidad', 'ocupacion', 'profile_image', 'interests'];
   const completedFields = requiredFields.filter(field => {
     if (field === 'interests') {
@@ -175,7 +170,6 @@ const ProfilePage = () => {
       <main className="flex-grow pt-20 pb-12 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
-            {/* Profile header with completion status */}
             <div className="bg-white rounded-lg shadow-md p-6 mb-6">
               <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-4">
                 <h1 className="text-2xl md:text-3xl font-bold">Tu Perfil</h1>
@@ -204,9 +198,7 @@ const ProfilePage = () => {
               </p>
             </div>
             
-            {/* Main profile content */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Left column - profile image and basic info */}
               <div className="md:col-span-1">
                 <Card className="overflow-hidden">
                   <div className="relative aspect-square bg-gradient-to-br from-purple-100 to-pink-50">
@@ -244,14 +236,13 @@ const ProfilePage = () => {
                   </div>
                 </Card>
 
-                {/* Status card */}
                 {profile.sevilla_zona && (
                   <Card className="mt-4 p-4">
                     <h3 className="font-medium text-sm mb-2 flex items-center gap-1">
                       <Heart size={16} className="text-homi-purple" /> Estado de búsqueda
                     </h3>
-                    {profile.sevilla_zona === 'no_busco' ? (
-                      <p className="text-sm">No estás buscando piso actualmente</p>
+                    {profile.sevilla_zona === 'tengo_piso' ? (
+                      <p className="text-sm">Ya tienes piso y buscas compañeros</p>
                     ) : (
                       <div className="text-sm">
                         <p className="mb-1">Buscando en: <span className="font-medium">{profile.sevilla_zona}</span></p>
@@ -264,7 +255,6 @@ const ProfilePage = () => {
                 )}
               </div>
               
-              {/* Right column - detailed information */}
               <div className="md:col-span-2">
                 <Card className="p-6">
                   <h2 className="text-xl font-semibold mb-4">Información Personal</h2>
@@ -318,7 +308,6 @@ const ProfilePage = () => {
                     </p>
                   </div>
                   
-                  {/* Interests/tags section */}
                   <div>
                     <h3 className="font-medium mb-2 flex items-center gap-1">
                       <Tag size={16} className="text-homi-purple" /> Intereses

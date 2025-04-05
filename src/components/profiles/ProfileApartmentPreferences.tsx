@@ -28,8 +28,8 @@ const companeroOptions = ["1", "2", "3", "4", "5+"];
 
 interface ProfileApartmentPreferencesProps {
   form: any;
-  apartmentStatus: 'looking' | 'have' | 'not_looking';
-  onApartmentStatusChange: (status: 'looking' | 'have' | 'not_looking') => void;
+  apartmentStatus: 'looking' | 'have';
+  onApartmentStatusChange: (status: 'looking' | 'have') => void;
 }
 
 const ProfileApartmentPreferences = ({ 
@@ -51,7 +51,7 @@ const ProfileApartmentPreferences = ({
           <FormLabel>¿Cuál es tu situación actual?</FormLabel>
           <RadioGroup 
             defaultValue={apartmentStatus} 
-            onValueChange={(value) => onApartmentStatusChange(value as 'looking' | 'have' | 'not_looking')}
+            onValueChange={(value) => onApartmentStatusChange(value as 'looking' | 'have')}
             className="flex flex-col space-y-1"
           >
             <FormItem className="flex items-center space-x-3 space-y-0">
@@ -66,98 +66,31 @@ const ProfileApartmentPreferences = ({
               </FormControl>
               <FormLabel className="font-normal">Ya tengo piso en Sevilla y busco compañeros</FormLabel>
             </FormItem>
-            <FormItem className="flex items-center space-x-3 space-y-0">
-              <FormControl>
-                <RadioGroupItem value="not_looking" />
-              </FormControl>
-              <FormLabel className="font-normal">No estoy buscando piso ni compañeros</FormLabel>
-            </FormItem>
           </RadioGroup>
         </FormItem>
         
         {/* Show different fields based on apartment status */}
-        {apartmentStatus !== 'not_looking' && (
-          <div className="space-y-4">
-            {/* Zone selection for those looking for apartment */}
-            {apartmentStatus === 'looking' && (
-              <FormField
-                control={form.control}
-                name="sevilla_zona"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>¿En qué zona de Sevilla estás buscando piso?</FormLabel>
-                    <Select 
-                      onValueChange={field.onChange}
-                      value={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecciona una zona" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {sevillaZones.map((zone) => (
-                          <SelectItem key={zone} value={zone}>{zone}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            )}
-            
-            {/* Zone for those with apartment looking for roommates */}
-            {apartmentStatus === 'have' && (
-              <FormField
-                control={form.control}
-                name="sevilla_zona"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>¿En qué zona de Sevilla está tu piso?</FormLabel>
-                    <Select 
-                      onValueChange={field.onChange}
-                      value={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecciona una zona" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {sevillaZones.map((zone) => (
-                          <SelectItem key={zone} value={zone}>{zone}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            )}
-            
-            {/* Companions count */}
+        <div className="space-y-4">
+          {/* Zone selection for those looking for apartment */}
+          {apartmentStatus === 'looking' && (
             <FormField
               control={form.control}
-              name="companeros_count"
+              name="sevilla_zona"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex items-center gap-2">
-                    <Users className="text-homi-purple" size={18} />
-                    ¿Cuántos compañeros de piso buscas?
-                  </FormLabel>
+                  <FormLabel>¿En qué zona de Sevilla estás buscando piso?</FormLabel>
                   <Select 
                     onValueChange={field.onChange}
-                    value={field.value || ""}
+                    value={field.value}
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Selecciona un número" />
+                        <SelectValue placeholder="Selecciona una zona" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {companeroOptions.map((option) => (
-                        <SelectItem key={option} value={option}>{option}</SelectItem>
+                      {sevillaZones.map((zone) => (
+                        <SelectItem key={zone} value={zone}>{zone}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -165,35 +98,94 @@ const ProfileApartmentPreferences = ({
                 </FormItem>
               )}
             />
-            
-            {/* Budget field */}
-            {apartmentStatus === 'looking' && (
-              <FormField
-                control={form.control}
-                name="budget"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="flex items-center gap-2">
-                      <Euro className="text-homi-purple" size={18} />
-                      Presupuesto mensual (€)
-                    </FormLabel>
+          )}
+          
+          {/* Zone for those with apartment looking for roommates */}
+          {apartmentStatus === 'have' && (
+            <FormField
+              control={form.control}
+              name="sevilla_zona"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>¿En qué zona de Sevilla está tu piso?</FormLabel>
+                  <Select 
+                    onValueChange={field.onChange}
+                    value={field.value}
+                  >
                     <FormControl>
-                      <Input
-                        type="number" 
-                        placeholder="Ej: 300"
-                        {...field}
-                      />
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecciona una zona" />
+                      </SelectTrigger>
                     </FormControl>
-                    <FormDescription>
-                      Presupuesto mensual que puedes pagar por una habitación
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                    <SelectContent>
+                      {sevillaZones.map((zone) => (
+                        <SelectItem key={zone} value={zone}>{zone}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+          
+          {/* Companions count */}
+          <FormField
+            control={form.control}
+            name="companeros_count"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="flex items-center gap-2">
+                  <Users className="text-homi-purple" size={18} />
+                  ¿Cuántos compañeros de piso buscas?
+                </FormLabel>
+                <Select 
+                  onValueChange={field.onChange}
+                  value={field.value || ""}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecciona un número" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {companeroOptions.map((option) => (
+                      <SelectItem key={option} value={option}>{option}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
             )}
-          </div>
-        )}
+          />
+          
+          {/* Budget field */}
+          {apartmentStatus === 'looking' && (
+            <FormField
+              control={form.control}
+              name="budget"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center gap-2">
+                    <Euro className="text-homi-purple" size={18} />
+                    Presupuesto mensual (€)
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number" 
+                      placeholder="Ej: 300"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Presupuesto mensual que puedes pagar por una habitación
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+        </div>
       </CardContent>
     </Card>
   );

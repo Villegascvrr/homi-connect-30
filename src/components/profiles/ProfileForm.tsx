@@ -31,7 +31,7 @@ const formSchema = z.object({
   profileImage: z.string().optional(),
   interests: z.array(z.string()).default([]),
   isProfileActive: z.boolean().default(true),
-  apartmentStatus: z.enum(['looking', 'have', 'not_looking']).default('not_looking'),
+  apartmentStatus: z.enum(['looking', 'have']).default('looking'),
   sevilla_zona: z.string().optional(),
   companeros_count: z.string().optional(),
   budget: z.string().optional(),
@@ -56,7 +56,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const { user, refreshUser } = useAuth();
-  const [apartmentStatus, setApartmentStatus] = useState<'looking' | 'have' | 'not_looking'>('not_looking');
+  const [apartmentStatus, setApartmentStatus] = useState<'looking' | 'have'>('looking');
   
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -73,7 +73,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
       profileImage: "",
       interests: [],
       isProfileActive: true,
-      apartmentStatus: 'not_looking',
+      apartmentStatus: 'looking',
       sevilla_zona: "",
       companeros_count: "",
       budget: "",
@@ -109,15 +109,18 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
           console.log("Raw profile data from Supabase:", profileData);
           
           // Determine apartment status
-          let currentApartmentStatus: 'looking' | 'have' | 'not_looking' = 'not_looking';
+          let currentApartmentStatus: 'looking' | 'have' = 'looking';
           if (profileData.sevilla_zona) {
             if (profileData.sevilla_zona === 'tengo_piso') {
               currentApartmentStatus = 'have';
-            } else if (profileData.sevilla_zona !== 'no_busco') {
+            } else {
               currentApartmentStatus = 'looking';
             }
           }
           setApartmentStatus(currentApartmentStatus);
+          
+          // Parse lifestyle data correctly
+          const lifestyleData = typeof profileData.lifestyle === 'object' ? profileData.lifestyle : {};
           
           // Set form data with the fetched profile
           form.reset({
@@ -136,13 +139,13 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
             apartmentStatus: currentApartmentStatus,
             sevilla_zona: profileData.sevilla_zona || "",
             companeros_count: profileData.companeros_count || "",
-            budget: profileData.lifestyle?.budget || "",
+            budget: lifestyleData?.budget || "",
             lifestyle: {
-              schedule: profileData.lifestyle?.schedule,
-              cleanliness: profileData.lifestyle?.cleanliness,
-              smoking: profileData.lifestyle?.smoking,
-              pets: profileData.lifestyle?.pets,
-              guests: profileData.lifestyle?.guests,
+              schedule: lifestyleData?.schedule,
+              cleanliness: lifestyleData?.cleanliness,
+              smoking: lifestyleData?.smoking,
+              pets: lifestyleData?.pets,
+              guests: lifestyleData?.guests,
             },
           });
           
@@ -163,7 +166,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
             profileImage: "",
             interests: [],
             isProfileActive: true,
-            apartmentStatus: 'not_looking',
+            apartmentStatus: 'looking',
             sevilla_zona: "",
             companeros_count: "",
             budget: "",
@@ -193,15 +196,13 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
     try {
       // Prepare sevilla_zona based on apartment status
       let sevilla_zona = values.sevilla_zona;
-      if (values.apartmentStatus === 'not_looking') {
-        sevilla_zona = 'no_busco';
-      } else if (values.apartmentStatus === 'have') {
+      if (values.apartmentStatus === 'have') {
         sevilla_zona = 'tengo_piso';
       }
       
       // Prepare lifestyle data
       const lifestyle = {
-        ...values.lifestyle,
+        ...(values.lifestyle || {}),
         budget: values.budget
       };
       
@@ -219,7 +220,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
         interests: values.interests,
         is_profile_active: values.isProfileActive,
         sevilla_zona: sevilla_zona,
-        companeros_count: values.apartmentStatus === 'looking' ? values.companeros_count : '',
+        companeros_count: values.companeros_count || '',
         lifestyle: lifestyle,
         updated_at: new Date().toISOString()
       };
@@ -268,7 +269,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
     form.setValue('isProfileActive', active);
   };
   
-  const handleApartmentStatusChange = (status: 'looking' | 'have' | 'not_looking') => {
+  const handleApartmentStatusChange = (status: 'looking' | 'have') => {
     setApartmentStatus(status);
     form.setValue('apartmentStatus', status);
   };
