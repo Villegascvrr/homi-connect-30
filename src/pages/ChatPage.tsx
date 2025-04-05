@@ -113,8 +113,9 @@ const ChatPage = ({ isPreview = false }: ChatPageProps) => {
         />
       )}
       
-      <main className="flex-grow flex flex-col pt-16">
-        <div className="flex w-full h-[calc(100vh-7rem)]">
+      {/* Modified main content to prevent autoscroll issues */}
+      <main className="flex-grow flex flex-col">
+        <div className="flex w-full h-[calc(100vh-7rem)]" style={{ marginTop: '4rem' }}>
           <div className="w-full sm:w-1/3 md:w-1/4 border-r">
             <ChatList 
               matches={mockChatMatches} 

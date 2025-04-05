@@ -2,6 +2,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Send, Image, Mic, Paperclip, Smile } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface ChatMatch {
   id: string;
@@ -58,11 +59,23 @@ const ChatWindow = ({ chat }: ChatWindowProps) => {
   const [messages, setMessages] = useState(SAMPLE_MESSAGES);
   const [newMessage, setNewMessage] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [shouldScroll, setShouldScroll] = useState(false);
 
-  // Auto scroll to bottom when messages change
+  // Only scroll to bottom when new messages are added, not on initial load
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+    if (shouldScroll && messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages, shouldScroll]);
+
+  // Set shouldScroll to true after a small delay to prevent initial scroll
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShouldScroll(true);
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleSendMessage = () => {
     if (newMessage.trim() === '') return;
@@ -136,8 +149,8 @@ const ChatWindow = ({ chat }: ChatWindowProps) => {
         </div>
       </div>
       
-      {/* Messages area - further reduced height */}
-      <div className="flex-1 py-2 px-3 overflow-y-auto max-h-[calc(100vh-16rem)]">
+      {/* Messages area - using ScrollArea component to better control scrolling */}
+      <ScrollArea className="flex-1 py-2 px-3 max-h-[calc(100vh-16rem)]">
         <div className="space-y-2">
           {messages.map((message) => (
             <div 
@@ -167,7 +180,7 @@ const ChatWindow = ({ chat }: ChatWindowProps) => {
           ))}
           <div ref={messagesEndRef} />
         </div>
-      </div>
+      </ScrollArea>
       
       {/* Message input - improved button distribution */}
       <div className="py-4 px-3 border-t border-border mt-auto">
