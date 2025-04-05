@@ -131,7 +131,7 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
   }
   
   return (
-    <div className="h-full relative">
+    <div className="h-full relative mt-2">
       {/* Match animation overlay */}
       {showMatch && (
         <div className="fixed inset-0 bg-black/70 flex flex-col items-center justify-center z-50 animate-fade-in">

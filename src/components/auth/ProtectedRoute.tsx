@@ -61,7 +61,7 @@ const ProtectedRoute = ({
       <>
         <div className="pt-16">
           <DemoBanner />
-          <div>
+          <div className="mt-3">
             {children}
           </div>
         </div>
@@ -74,7 +74,7 @@ const ProtectedRoute = ({
       <>
         <div className="pt-16">
           <DemoBanner />
-          <div>
+          <div className="mt-3">
             {previewComponent}
           </div>
         </div>
@@ -87,7 +87,7 @@ const ProtectedRoute = ({
       <>
         <div className="pt-16">
           <DemoBanner />
-          <div>
+          <div className="mt-3">
             {children}
           </div>
         </div>
