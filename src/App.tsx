@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -10,6 +9,7 @@ import Index from "./pages/Index";
 import MatchingPage from "./pages/MatchingPage";
 import ProfilePage from "./components/profiles/ProfilePage";
 import ProfileForm from "./components/profiles/ProfileForm";
+import ProfileEditPage from "./components/profiles/ProfileEditPage";
 import ProfileViewPage from "./components/profiles/ProfileViewPage";
 import ChatPage from "./pages/ChatPage";
 import SignInPage from "./pages/SignInPage";
@@ -116,7 +116,7 @@ const App = () => {
               } />
               <Route path="/profile/edit" element={
                 <ProtectedRoute>
-                  <ProfileForm />
+                  <ProfileEditPage />
                 </ProtectedRoute>
               } />
               <Route path="/chat" element={

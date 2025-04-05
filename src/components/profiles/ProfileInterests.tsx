@@ -11,12 +11,6 @@ interface ProfileInterestsProps {
   form: any;
 }
 
-// Define a type for our field items
-interface InterestFieldItem {
-  id: string;
-  value: string;
-}
-
 const ProfileInterests = ({ form }: ProfileInterestsProps) => {
   const { fields, append, remove } = useFieldArray({
     control: form.control,
