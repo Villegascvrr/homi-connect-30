@@ -6,6 +6,7 @@ import EmailSignup from './EmailSignup';
 import WelcomeMessage from './WelcomeMessage';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/context/AuthContext';
+
 const Hero = () => {
   const [email, setEmail] = useState('');
   const [showSignupForm, setShowSignupForm] = useState(false);
@@ -16,8 +17,8 @@ const Hero = () => {
   } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
   useEffect(() => {
-    // Check if the user just registered using URL parameter
     const urlParams = new URLSearchParams(window.location.search);
     const isRegistered = urlParams.get('registered') === 'true';
     console.log("Checking registration status:", {
@@ -27,77 +28,76 @@ const Hero = () => {
       searchParams: urlParams.toString()
     });
 
-    // Key change: Remove the condition requiring user to show welcome message
-    // This was causing the issue as the auth state might not be ready yet
     if (isRegistered) {
       console.log("User just registered, showing welcome message");
       setJustRegistered(true);
-      // Clean up URL parameter after detecting registration
       window.history.replaceState({}, document.title, window.location.pathname);
     } else {
       console.log("User state:", user ? "logged in" : "not logged in", "Just registered:", justRegistered);
     }
   }, [user, location.search]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Subscribed with email:', email);
     setEmail('');
   };
+
   const handleRegisterClick = () => {
-    // Navigate to the register page instead of showing the form
     navigate('/register');
   };
-  return <section className="relative overflow-visible lg:py-[47px] py-[5px]">
+
+  return <section className="relative overflow-visible lg:py-[40px] py-[5px]">
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-0 left-0 w-64 md:w-96 h-64 md:h-96 bg-homi-ultraLightPurple rounded-full opacity-50 blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
         <div className="absolute bottom-0 right-0 w-64 md:w-96 h-64 md:h-96 bg-homi-ultraLightPurple rounded-full opacity-50 blur-3xl translate-x-1/3 translate-y-1/3"></div>
       </div>
 
       <div className="container mx-auto px-4 md:px-6">
-        <div className="max-w-4xl mx-auto text-center space-y-8">
+        <div className="max-w-4xl mx-auto text-center space-y-6">
           {!user && !justRegistered ? <>
-              <div className="inline-block px-4 py-1.5 mb-4 rounded-full bg-homi-ultraLightPurple text-homi-purple text-xs md:text-sm font-medium animate-pulse-soft">
+              <div className="inline-block px-4 py-1.5 mb-3 rounded-full bg-homi-ultraLightPurple text-homi-purple text-xs md:text-sm font-medium animate-pulse-soft">
                 ¡Ayúdanos a alcanzar los 1000 usuarios!
               </div>
               
-              <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-8 animate-slide-up leading-tight">
+              <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6 animate-slide-up leading-tight">
                 Conecta con compañeros de piso <span className="homi-gradient-text">compatibles</span>
               </h1>
               
-              <p className="text-base md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+              <p className="text-base md:text-xl text-muted-foreground mb-6 max-w-2xl mx-auto">
                 Homi utiliza un sistema de matching inteligente para conectarte con compañeros 
                 de piso que comparten tus intereses, hábitos y estilo de vida.
               </p>
 
-              <div className="bg-homi-ultraLightPurple/50 p-4 md:p-6 rounded-xl mb-8 max-w-2xl mx-auto">
+              <div className="bg-homi-ultraLightPurple/50 p-4 md:p-5 rounded-xl mb-6 max-w-2xl mx-auto">
                 <p className="text-sm md:text-base font-medium text-homi-purple">
                   Homi estará disponible próximamente - ¡Regístrate ahora para ser de los primeros en usarlo!
-                  <span className="text-xs md:text-sm font-normal mt-2 block">
+                  <span className="text-xs md:text-sm font-normal mt-1 block">
                     Necesitamos alcanzar 1000 usuarios registrados para lanzar oficialmente la app.
                   </span>
                 </p>
               </div>
 
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-5 mt-8">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 mt-6">
                 <Button size={isMobile ? "default" : "lg"} className="rounded-full bg-gradient-to-r from-homi-purple to-homi-lightPurple hover:from-homi-lightPurple hover:to-homi-purple text-white font-bold shadow-lg shadow-purple-500/30 transform hover:scale-105 transition-all duration-300 w-full sm:w-auto" onClick={handleRegisterClick}>
                   ¡Regístrate ahora!
                 </Button>
               </div>
             </> : justRegistered ? <WelcomeMessage firstName={user?.user_metadata?.firstName || user?.user_metadata?.first_name} /> : <>
-              <div className="inline-block px-4 py-1.5 mb-6 rounded-full bg-green-100 text-green-700 text-xs md:text-sm font-medium">
+              <div className="inline-block px-4 py-1.5 mb-4 rounded-full bg-green-100 text-green-700 text-xs md:text-sm font-medium">
                 <Check className="inline-block mr-1 h-4 w-4" /> Usuario registrado
               </div>
               
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8 animate-slide-up leading-tight">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 animate-slide-up leading-tight">
                 ¡Bienvenido a <span className="homi-gradient-text">Homi</span>!
               </h1>
               
-              <p className="text-base md:text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
+              <p className="text-base md:text-lg text-muted-foreground mb-6 max-w-2xl mx-auto">
                 Gracias por registrarte. Te notificaremos cuando la aplicación esté completamente funcional.
                 Mientras tanto, puedes explorar algunas de las características disponibles o completar tu perfil.
               </p>
 
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-5 mb-10">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 mb-8">
                 <Button size={isMobile ? "default" : "lg"} className="rounded-full bg-gradient-to-r from-homi-purple to-homi-lightPurple hover:from-homi-lightPurple hover:to-homi-purple text-white font-bold shadow-lg shadow-purple-500/30 transform hover:scale-105 transition-all duration-300 w-full sm:w-auto" asChild>
                   <Link to="/profile">Completar mi perfil</Link>
                 </Button>
@@ -106,8 +106,8 @@ const Hero = () => {
                 </Button>
               </div>
               
-              <div className="mt-8">
-                <p className="text-sm text-muted-foreground mb-4">
+              <div className="mt-6">
+                <p className="text-sm text-muted-foreground mb-3">
                   Síguenos en Instagram para enterarte de las últimas novedades:
                 </p>
                 <Button variant="outline" className="rounded-full gap-2" onClick={() => window.open('https://instagram.com/homimatch', '_blank')}>
@@ -120,4 +120,5 @@ const Hero = () => {
       </div>
     </section>;
 };
+
 export default Hero;
