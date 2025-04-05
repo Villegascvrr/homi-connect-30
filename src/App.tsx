@@ -18,6 +18,7 @@ import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import AdminPage from "./pages/AdminPage";
 import { useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 // Create a new query client with explicit configuration for better loading performance
 const queryClient = new QueryClient({
@@ -43,7 +44,7 @@ const App = () => {
         const { data: { session } } = await queryClient.fetchQuery({
           queryKey: ['session'],
           queryFn: async () => {
-            return await supabaseClient.auth.getSession();
+            return await supabase.auth.getSession();
           },
           staleTime: 1000 * 60 * 5, // 5 minutes
         });
