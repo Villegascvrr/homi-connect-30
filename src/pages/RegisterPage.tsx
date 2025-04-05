@@ -125,8 +125,10 @@ const RegisterPage = () => {
       
       console.log("Registration successful, redirecting to home page with registered=true param");
       
-      // Force a hard redirect to ensure the page fully reloads with the parameter
-      window.location.replace('/?registered=true');
+      // Better approach: short timeout to ensure state updates before redirect
+      setTimeout(() => {
+        window.location.replace('/?registered=true');
+      }, 100);
     } catch (error) {
       console.error("Error during registration:", error);
       toast({

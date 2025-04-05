@@ -29,7 +29,9 @@ const Hero = () => {
       searchParams: urlParams.toString()
     });
     
-    if (isRegistered && user) {
+    // Key change: Remove the condition requiring user to show welcome message
+    // This was causing the issue as the auth state might not be ready yet
+    if (isRegistered) {
       console.log("User just registered, showing welcome message");
       setJustRegistered(true);
       // Clean up URL parameter after detecting registration
@@ -69,7 +71,7 @@ const Hero = () => {
           paddingTop: '25px',
           paddingBottom: '15px'
         }}>
-          {!user ? (
+          {!user && !justRegistered ? (
             <>
               <div className="inline-block px-4 py-1.5 mb-3 md:mb-4 rounded-full bg-homi-ultraLightPurple text-homi-purple text-xs md:text-sm font-medium animate-pulse-soft">
                 ¡Ayúdanos a alcanzar los 1000 usuarios!

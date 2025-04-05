@@ -107,8 +107,9 @@ const EmailSignup = () => {
       setIsSubmitted(true);
       setTimeout(() => {
         console.log("EmailSignup: Registration successful, redirecting to home with registered=true param");
+        // Short delay to ensure state updates before redirect
         window.location.replace("/?registered=true");
-      }, 500);
+      }, 100);
     } catch (error: any) {
       console.error("Error submitting form:", error);
       toast({
