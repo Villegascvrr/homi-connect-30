@@ -8,7 +8,7 @@ import Navbar from "../layout/Navbar";
 import Footer from "../layout/Footer";
 import { useToast } from "@/hooks/use-toast";
 import { Card } from "@/components/ui/card";
-import { AtSign, MapPin, GraduationCap, Briefcase, Edit, User } from 'lucide-react';
+import { AtSign, MapPin, GraduationCap, Briefcase, Edit, User, Heart, Tag } from 'lucide-react';
 
 const ProfilePage = () => {
   const { user, session } = useAuth();
@@ -117,8 +117,13 @@ const ProfilePage = () => {
   }
 
   // Calculate profile completion percentage
-  const requiredFields = ['first_name', 'last_name', 'username', 'bio', 'edad', 'ubicacion', 'universidad', 'ocupacion'];
-  const completedFields = requiredFields.filter(field => profile[field] && profile[field].trim() !== '');
+  const requiredFields = ['first_name', 'last_name', 'username', 'bio', 'edad', 'ubicacion', 'universidad', 'ocupacion', 'profile_image', 'interests'];
+  const completedFields = requiredFields.filter(field => {
+    if (field === 'interests') {
+      return profile.interests && Array.isArray(profile.interests) && profile.interests.length > 0;
+    }
+    return profile[field] && String(profile[field]).trim() !== '';
+  });
   const completionPercentage = Math.round((completedFields.length / requiredFields.length) * 100);
 
   return (
@@ -129,7 +134,7 @@ const ProfilePage = () => {
           <div className="max-w-4xl mx-auto">
             {/* Profile header with completion status */}
             <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-              <div className="flex justify-between items-center mb-4">
+              <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-4">
                 <h1 className="text-2xl md:text-3xl font-bold">Tu Perfil</h1>
                 <Button 
                   onClick={() => navigate('/profile/edit')}
@@ -188,8 +193,32 @@ const ProfilePage = () => {
                         {profile.username}
                       </p>
                     )}
+                    {!profile.is_profile_active && (
+                      <div className="mt-2 bg-amber-50 text-amber-600 p-2 rounded-md text-xs text-center">
+                        Tu perfil está actualmente oculto
+                      </div>
+                    )}
                   </div>
                 </Card>
+
+                {/* Status card */}
+                {profile.sevilla_zona && (
+                  <Card className="mt-4 p-4">
+                    <h3 className="font-medium text-sm mb-2 flex items-center gap-1">
+                      <Heart size={16} className="text-homi-purple" /> Estado de búsqueda
+                    </h3>
+                    {profile.sevilla_zona === 'no_busco' ? (
+                      <p className="text-sm">No estás buscando piso actualmente</p>
+                    ) : (
+                      <div className="text-sm">
+                        <p className="mb-1">Buscando en: <span className="font-medium">{profile.sevilla_zona}</span></p>
+                        {profile.companeros_count && (
+                          <p>Compañeros: <span className="font-medium">{profile.companeros_count}</span></p>
+                        )}
+                      </div>
+                    )}
+                  </Card>
+                )}
               </div>
               
               {/* Right column - detailed information */}
@@ -248,7 +277,9 @@ const ProfilePage = () => {
                   
                   {/* Interests/tags section */}
                   <div>
-                    <h3 className="font-medium mb-2">Intereses</h3>
+                    <h3 className="font-medium mb-2 flex items-center gap-1">
+                      <Tag size={16} className="text-homi-purple" /> Intereses
+                    </h3>
                     {profile.interests && profile.interests.length > 0 ? (
                       <div className="flex flex-wrap gap-2">
                         {profile.interests.map((interest: string, index: number) => (
@@ -273,7 +304,9 @@ const ProfilePage = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <p className="text-sm text-muted-foreground">Zona preferida en Sevilla</p>
-                      <p className="font-medium">{profile.sevilla_zona || 'No especificado'}</p>
+                      <p className="font-medium">{profile.sevilla_zona && profile.sevilla_zona !== 'no_busco' 
+                        ? profile.sevilla_zona 
+                        : 'No especificado'}</p>
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">Número de compañeros</p>
