@@ -52,6 +52,12 @@ const WelcomeMessage = ({ firstName }: WelcomeMessageProps) => {
         Mientras tanto, puedes completar tu perfil para estar listo cuando lancemos.
       </p>
       
+      <div className="bg-homi-ultraLightPurple/50 p-3 rounded-xl mb-4 text-center">
+        <p className="text-sm font-medium text-homi-purple">
+          Homi estará disponible próximamente - ¡Te notificaremos cuando esté listo!
+        </p>
+      </div>
+      
       <div className="flex flex-col gap-4 mt-6">
         <Button asChild className="w-full bg-gradient-to-r from-homi-purple to-homi-lightPurple hover:from-homi-lightPurple hover:to-homi-purple text-white font-bold shadow-lg shadow-purple-500/30 transform hover:scale-105 transition-all duration-300 rounded-full">
           <Link to="/profile">
@@ -60,9 +66,9 @@ const WelcomeMessage = ({ firstName }: WelcomeMessageProps) => {
           </Link>
         </Button>
         
-        <div className="text-center">
+        <div className="text-center mt-4">
           <p className="text-sm text-muted-foreground mb-2">
-            Síguenos en redes sociales para enterarte de las últimas novedades:
+            Síguenos en Instagram para enterarte de las últimas novedades:
           </p>
           <Button 
             variant="outline" 

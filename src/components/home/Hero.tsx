@@ -20,12 +20,17 @@ const Hero = () => {
   useEffect(() => {
     // Check if the user just registered using URL parameter
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('registered') === 'true' && user) {
+    const isRegistered = urlParams.get('registered') === 'true';
+    
+    if (isRegistered && user) {
+      console.log("User just registered, showing welcome message");
       setJustRegistered(true);
       // Clean up URL parameter after detecting registration
       window.history.replaceState({}, document.title, window.location.pathname);
+    } else {
+      console.log("User state:", user ? "logged in" : "not logged in", "Just registered:", justRegistered);
     }
-  }, [user, location]);
+  }, [user, location.search]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

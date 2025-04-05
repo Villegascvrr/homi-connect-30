@@ -123,8 +123,10 @@ const RegisterPage = () => {
         variant: "default",
       });
       
-      navigate('/?registered=true');
+      // Use replace instead of navigate to ensure a clean navigation without back history
+      window.location.href = '/?registered=true';
     } catch (error) {
+      console.error("Error during registration:", error);
       toast({
         title: "Error",
         description: "Ocurrió un error al procesar tu registro. Inténtalo de nuevo.",

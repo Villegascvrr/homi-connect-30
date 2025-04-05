@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -53,7 +52,6 @@ const EmailSignup = () => {
     }
   });
 
-  // Scroll form into view
   useEffect(() => {
     if (formContainerRef.current) {
       window.scrollTo(0, 0);
@@ -97,7 +95,6 @@ const EmailSignup = () => {
     setIsLoading(true);
     
     try {
-      // Solo enviamos los datos básicos necesarios para el registro
       await signUp({
         email: values.email,
         password: values.password,
@@ -108,8 +105,7 @@ const EmailSignup = () => {
       
       setIsSubmitted(true);
       setTimeout(() => {
-        // Redirect to home with registered parameter
-        navigate("/?registered=true");
+        window.location.href = "/?registered=true";
       }, 500);
     } catch (error: any) {
       console.error("Error submitting form:", error);
