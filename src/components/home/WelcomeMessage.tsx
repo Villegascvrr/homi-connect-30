@@ -1,9 +1,9 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Instagram, UserRound } from 'lucide-react';
-import { toast } from '@/hooks/use-toast';
+import { useToast } from '@/hooks/use-toast';
 
 interface WelcomeMessageProps {
   firstName?: string;
@@ -11,6 +11,8 @@ interface WelcomeMessageProps {
 
 const WelcomeMessage = ({ firstName }: WelcomeMessageProps) => {
   const [followed, setFollowed] = useState(false);
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleInstagramClick = () => {
     window.open('https://instagram.com/homimatch', '_blank');
@@ -22,6 +24,10 @@ const WelcomeMessage = ({ firstName }: WelcomeMessageProps) => {
       });
     }
   };
+
+  const handleProfileClick = () => {
+    navigate('/profile');
+  }
 
   return (
     <div className="bg-white dark:bg-card border border-border rounded-xl p-6 shadow-md animate-fade-in max-w-3xl mx-auto">
@@ -59,11 +65,12 @@ const WelcomeMessage = ({ firstName }: WelcomeMessageProps) => {
       </div>
       
       <div className="flex flex-col gap-4 mt-6">
-        <Button asChild className="w-full bg-gradient-to-r from-homi-purple to-homi-lightPurple hover:from-homi-lightPurple hover:to-homi-purple text-white font-bold shadow-lg shadow-purple-500/30 transform hover:scale-105 transition-all duration-300 rounded-full">
-          <Link to="/profile">
-            <UserRound className="mr-2 h-4 w-4" />
-            Completar mi perfil
-          </Link>
+        <Button 
+          onClick={handleProfileClick} 
+          className="w-full bg-gradient-to-r from-homi-purple to-homi-lightPurple hover:from-homi-lightPurple hover:to-homi-purple text-white font-bold shadow-lg shadow-purple-500/30 transform hover:scale-105 transition-all duration-300 rounded-full"
+        >
+          <UserRound className="mr-2 h-4 w-4" />
+          Completar mi perfil
         </Button>
         
         <div className="text-center mt-4">
