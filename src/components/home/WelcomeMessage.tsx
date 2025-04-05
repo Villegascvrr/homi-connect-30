@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Instagram, UserRound } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -26,7 +26,13 @@ const WelcomeMessage = ({ firstName }: WelcomeMessageProps) => {
   };
 
   const handleProfileClick = () => {
-    navigate('/profile');
+    // Navigate directly to profile edit page instead of just profile page
+    navigate('/profile/edit');
+    
+    toast({
+      title: "Completa tu perfil",
+      description: "Completa tu información para encontrar compañeros compatibles",
+    });
   }
 
   return (

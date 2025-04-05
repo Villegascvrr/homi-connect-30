@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { MessageSquare, Share, Heart, Home, Briefcase, GraduationCap, UserCheck, AtSign } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -35,6 +35,7 @@ const ProfileViewPage = () => {
   const [profile, setProfile] = useState<any>(null);
   const [liked, setLiked] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
   
@@ -42,13 +43,15 @@ const ProfileViewPage = () => {
     const fetchProfile = async () => {
       try {
         setLoading(true);
+        setError(null);
         
         if (!id) {
+          setError("No se ha proporcionado un ID de perfil");
           setLoading(false);
           return;
         }
         
-        // Fetch the profile data from Supabase
+        // Fetch the profile data from Supabase with error handling
         const { data, error } = await supabase
           .from('profiles')
           .select('*')
@@ -57,6 +60,7 @@ const ProfileViewPage = () => {
         
         if (error) {
           console.error('Error fetching profile:', error);
+          setError("No se pudo cargar el perfil. Por favor, inténtalo de nuevo.");
           setLoading(false);
           return;
         }
@@ -69,59 +73,67 @@ const ProfileViewPage = () => {
           // Parse lifestyle JSON if it exists
           let lifestyleObj: ProfileLifestyle = {};
           
-          if (data.lifestyle) {
-            // Handle the case when lifestyle is a string or JSON object
-            if (typeof data.lifestyle === 'string') {
-              try {
-                lifestyleObj = JSON.parse(data.lifestyle);
-              } catch (e) {
-                console.error('Error parsing lifestyle JSON:', e);
+          try {
+            if (data.lifestyle) {
+              // Handle the case when lifestyle is a string or JSON object
+              if (typeof data.lifestyle === 'string') {
+                try {
+                  lifestyleObj = JSON.parse(data.lifestyle);
+                } catch (e) {
+                  console.error('Error parsing lifestyle JSON:', e);
+                }
+              } else {
+                // If it's already an object, use it directly
+                lifestyleObj = data.lifestyle as ProfileLifestyle;
               }
-            } else {
-              // If it's already an object, use it directly
-              lifestyleObj = data.lifestyle as ProfileLifestyle;
             }
+            
+            console.log("Parsed lifestyle object:", lifestyleObj);
+            
+            const formattedProfile = {
+              id: data.id,
+              name: `${data.first_name || ''} ${data.last_name || ''}`.trim() || 'Usuario',
+              username: data.username || '',
+              age: data.edad || 'No especificado',
+              location: data.ubicacion || 'No especificado',
+              university: data.universidad || 'No especificado',
+              occupation: data.ocupacion || 'No especificado',
+              bio: data.bio || 'Sin descripción disponible',
+              imgUrl: data.profile_image || 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7',
+              tags: data.interests ? data.interests.map((interest: string, index: number) => ({
+                id: index + 1,
+                name: interest
+              })) : [],
+              verified: true,
+              preferences: {
+                budget: lifestyleObj?.preferences?.budget || 'No especificado',
+                location: data.sevilla_zona || 'No especificado',
+                roommates: data.companeros_count || 'No especificado',
+                moveInDate: lifestyleObj?.preferences?.moveInDate || 'No especificado'
+              },
+              lifestyle: {
+                cleanliness: lifestyleObj?.details?.cleanliness || 'No especificado',
+                guests: lifestyleObj?.details?.guests || 'No especificado',
+                smoking: lifestyleObj?.details?.smoking || 'No especificado',
+                pets: lifestyleObj?.details?.pets || 'No especificado',
+                schedule: lifestyleObj?.details?.schedule || 'No especificado'
+              }
+            };
+            
+            console.log("Formatted profile:", formattedProfile);
+            setProfile(formattedProfile);
+          } catch (e) {
+            console.error('Error processing profile data:', e);
+            setError("Error al procesar los datos del perfil");
           }
-          
-          console.log("Parsed lifestyle object:", lifestyleObj);
-          
-          const formattedProfile = {
-            id: data.id,
-            name: `${data.first_name || ''} ${data.last_name || ''}`.trim(),
-            username: data.username || '',
-            age: data.edad || 'No especificado',
-            location: data.ubicacion || 'No especificado',
-            university: data.universidad || 'No especificado',
-            occupation: data.ocupacion || 'No especificado',
-            bio: data.bio || 'Sin descripción disponible',
-            imgUrl: data.profile_image || 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7',
-            tags: data.interests ? data.interests.map((interest: string, index: number) => ({
-              id: index + 1,
-              name: interest
-            })) : [],
-            verified: true,
-            preferences: {
-              budget: lifestyleObj?.preferences?.budget || 'No especificado',
-              location: data.sevilla_zona || 'No especificado',
-              roommates: data.companeros_count || 'No especificado',
-              moveInDate: lifestyleObj?.preferences?.moveInDate || 'No especificado'
-            },
-            lifestyle: {
-              cleanliness: lifestyleObj?.details?.cleanliness || 'No especificado',
-              guests: lifestyleObj?.details?.guests || 'No especificado',
-              smoking: lifestyleObj?.details?.smoking || 'No especificado',
-              pets: lifestyleObj?.details?.pets || 'No especificado',
-              schedule: lifestyleObj?.details?.schedule || 'No especificado'
-            }
-          };
-          
-          console.log("Formatted profile:", formattedProfile);
-          setProfile(formattedProfile);
+        } else {
+          setError("No se encontró el perfil solicitado");
         }
         
         setLoading(false);
-      } catch (error) {
-        console.error('Error in fetchProfile:', error);
+      } catch (e) {
+        console.error('Error in fetchProfile:', e);
+        setError("Error al cargar el perfil");
         setLoading(false);
       }
     };
@@ -165,10 +177,10 @@ const ProfileViewPage = () => {
     return (
       <div className="min-h-screen flex flex-col">
         <Navbar />
-        <main className="flex-grow flex items-center justify-center">
-          <div className="animate-pulse">
-            <div className="h-8 w-64 bg-gray-200 rounded mb-4"></div>
-            <div className="h-4 w-44 bg-gray-200 rounded"></div>
+        <main className="flex-grow flex items-center justify-center pt-16">
+          <div className="flex flex-col items-center">
+            <div className="h-10 w-10 animate-spin rounded-full border-4 border-homi-purple border-t-transparent mb-4"></div>
+            <p className="text-sm text-muted-foreground">Cargando perfil...</p>
           </div>
         </main>
         <Footer />
@@ -176,14 +188,14 @@ const ProfileViewPage = () => {
     );
   }
 
-  if (!profile) {
+  if (error || !profile) {
     return (
       <div className="min-h-screen flex flex-col">
         <Navbar />
-        <main className="flex-grow flex items-center justify-center">
-          <div className="text-center">
+        <main className="flex-grow flex items-center justify-center pt-16">
+          <div className="text-center max-w-md px-4">
             <h1 className="text-2xl font-bold mb-4">Perfil no encontrado</h1>
-            <p className="text-muted-foreground mb-6">No hemos podido encontrar el perfil que buscas.</p>
+            <p className="text-muted-foreground mb-6">{error || "No hemos podido encontrar el perfil que buscas."}</p>
             <Button onClick={() => navigate(-1)}>Volver atrás</Button>
           </div>
         </main>

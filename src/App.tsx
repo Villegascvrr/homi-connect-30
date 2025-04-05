@@ -24,10 +24,10 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
-      refetchOnMount: false,
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      retry: 1, // Only retry once to avoid excessive loading states
-      retryDelay: 1000, // Wait 1 second before retrying
+      refetchOnMount: true, // Changed to true to ensure data is fresh when component mounts
+      staleTime: 1000 * 60 * 2, // Reduced to 2 minutes
+      retry: 1,
+      retryDelay: 1000,
     },
   },
 });
@@ -35,12 +35,8 @@ const queryClient = new QueryClient({
 const App = () => {
   // Force clean loading state when app starts
   useEffect(() => {
-    // This helps React Router to fully initialize
-    const timeoutId = setTimeout(() => {
-      console.log("App fully initialized");
-    }, 100);
-    
-    return () => clearTimeout(timeoutId);
+    // Log when the app is initialized
+    console.log("App fully initialized");
   }, []);
   
   return (
