@@ -4,11 +4,17 @@ import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/comp
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Plus, X } from "lucide-react";
-import { useFieldArray } from "react-hook-form";
+import { useFieldArray, Control } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface ProfileInterestsProps {
   form: any;
+}
+
+// Define a type for our field items
+interface InterestFieldItem {
+  id: string;
+  value: string;
 }
 
 const ProfileInterests = ({ form }: ProfileInterestsProps) => {
@@ -70,7 +76,7 @@ const ProfileInterests = ({ form }: ProfileInterestsProps) => {
                 key={field.id} 
                 className="bg-homi-ultraLightPurple text-homi-purple rounded-full px-3 py-1 text-sm flex items-center gap-1"
               >
-                <span>{field.value}</span>
+                <span>{form.watch(`interests.${index}`)}</span>
                 <button 
                   type="button" 
                   onClick={() => remove(index)}
