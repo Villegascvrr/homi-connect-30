@@ -35,42 +35,47 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     console.log("AuthProvider initializing");
+    setLoading(true);
     
     // First set up the auth state change listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, currentSession) => {
+      (event, currentSession) => {
         console.log("Auth state changed:", event, currentSession ? "With session" : "No session");
-        setSession(currentSession);
         
         if (currentSession?.user) {
+          setSession(currentSession);
           const authUser = currentSession.user;
-          console.log("Session contains user, fetching profile data");
+          console.log("Session contains user ID:", authUser.id);
           
-          try {
-            const { data: profileData, error } = await supabase
-              .from('profiles')
-              .select('profile_image, first_name, last_name')
-              .eq('id', authUser.id)
-              .single();
-            
-            if (!error && profileData) {
-              console.log("Profile data fetched successfully");
-              setUser({
-                ...authUser,
-                profile_image: profileData.profile_image
-              });
-            } else {
-              console.log("No profile data found or error", error);
+          // Use setTimeout to avoid lockup in auth state change callback
+          setTimeout(async () => {
+            try {
+              const { data: profileData, error } = await supabase
+                .from('profiles')
+                .select('profile_image, first_name, last_name')
+                .eq('id', authUser.id)
+                .maybeSingle();
+              
+              if (!error && profileData) {
+                console.log("Profile data fetched successfully");
+                setUser({
+                  ...authUser,
+                  profile_image: profileData.profile_image
+                });
+              } else {
+                console.log("No profile data found or error:", error);
+                setUser(authUser);
+              }
+            } catch (error) {
+              console.error("Error fetching profile data:", error);
               setUser(authUser);
+            } finally {
+              setLoading(false);
             }
-          } catch (error) {
-            console.error("Error fetching profile data:", error);
-            setUser(authUser);
-          } finally {
-            setLoading(false);
-          }
+          }, 0);
         } else {
           console.log("No user in session");
+          setSession(null);
           setUser(null);
           setLoading(false);
         }
@@ -92,7 +97,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               .from('profiles')
               .select('profile_image')
               .eq('id', authUser.id)
-              .single();
+              .maybeSingle();
             
             if (!error && profileData) {
               console.log("Profile data fetched from existing session");
@@ -137,7 +142,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           .from('profiles')
           .select('profile_image')
           .eq('id', refreshedUser.id)
-          .single();
+          .maybeSingle();
         
         if (!profileError && profileData) {
           console.log("User refreshed with profile data");
@@ -236,6 +241,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
+      
+      setUser(null);
+      setSession(null);
       
       toast({
         title: "Sesión cerrada",

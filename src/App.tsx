@@ -26,9 +26,9 @@ const queryClient = new QueryClient({
     queries: {
       refetchOnWindowFocus: false,
       refetchOnMount: true, 
-      staleTime: 1000 * 30, // 30 seconds for better responsiveness
+      staleTime: 1000 * 10, // 10 seconds for faster response
       retry: 1,
-      retryDelay: 1000,
+      retryDelay: 500, // Faster retry to improve UX
     },
   },
 });
@@ -55,9 +55,20 @@ const App = () => {
           queryClient.prefetchQuery({
             queryKey: ['profile', session.user.id],
             queryFn: async () => {
-              // This will be available for components that need it
-              return null;
+              // Handle any errors here to avoid blocking rendering
+              try {
+                const { data } = await supabase
+                  .from('profiles')
+                  .select('*')
+                  .eq('id', session.user.id)
+                  .maybeSingle();
+                return data;
+              } catch (error) {
+                console.error("Error prefetching profile:", error);
+                return null;
+              }
             },
+            staleTime: 1000 * 30, // 30 seconds
           });
         }
       } catch (error) {
@@ -85,7 +96,7 @@ const App = () => {
               {/* Routes with preview for non-authenticated users */}
               <Route path="/matching" element={
                 <ProtectedRoute allowPreview={true}>
-                  <MatchingPage isPreview={!queryClient.getQueryData(['user'])} />
+                  <MatchingPage isPreview={false} />
                 </ProtectedRoute>
               } />
               <Route path="/profile" element={
@@ -110,7 +121,7 @@ const App = () => {
               } />
               <Route path="/chat" element={
                 <ProtectedRoute allowPreview={true}>
-                  <ChatPage isPreview={!queryClient.getQueryData(['user'])} />
+                  <ChatPage isPreview={false} />
                 </ProtectedRoute>
               } />
               

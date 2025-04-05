@@ -1,4 +1,3 @@
-
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import DemoBanner from "../layout/DemoBanner";
@@ -20,7 +19,6 @@ const ProtectedRoute = ({
   const [authCheckComplete, setAuthCheckComplete] = useState(false);
   
   useEffect(() => {
-    // Log route access for debugging
     console.log("Protected route accessed:", {
       path: location.pathname,
       isAuthenticated: !!user,
@@ -35,7 +33,7 @@ const ProtectedRoute = ({
         console.log("Auth check taking too long, forcing completion");
         setAuthCheckComplete(true);
       }
-    }, 200); // Even shorter timeout for faster user experience
+    }, 100); // Even shorter timeout for faster user experience
     
     return () => clearTimeout(timeoutId);
   }, [location.pathname, user, session, loading, allowPreview]);
@@ -43,9 +41,10 @@ const ProtectedRoute = ({
   // Mark auth check as complete immediately when loading finishes
   useEffect(() => {
     if (!loading) {
+      console.log("Auth loading finished, status:", user ? "authenticated" : "not authenticated");
       setAuthCheckComplete(true);
     }
-  }, [loading]);
+  }, [loading, user]);
 
   // Very minimal loading state with better visibility
   if (loading && !authCheckComplete) {
