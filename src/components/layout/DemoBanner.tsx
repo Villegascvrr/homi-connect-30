@@ -23,15 +23,23 @@ const DemoBanner = ({
     }
   }, [user]);
 
+  // Message for different user states
+  const getMessage = () => {
+    if (justRegistered) {
+      return "¡Gracias por registrarte en Homi! Completa tu perfil y síguenos en @homimatch para recibir todas las novedades.";
+    } 
+    
+    if (user) {
+      return customMessage || "Estás viendo una demostración de Homi. La aplicación completa estará disponible próximamente.";
+    }
+    
+    return customMessage || message;
+  };
+
   return (
     <div className="bg-homi-purple/80 text-white py-2 px-4 text-center sticky top-16 left-0 right-0 z-30">
       <p className="text-sm font-medium max-w-4xl mx-auto">
-        {user 
-          ? justRegistered 
-            ? "¡Gracias por registrarte en Homi! Completa tu perfil y síguenos en @homimatch para recibir todas las novedades."
-            : "¡Gracias por registrarte en Homi! Te avisaremos cuando la aplicación esté completamente funcional."
-          : customMessage || message
-        }
+        {getMessage()}
         {!user && (
           <> <Link to="/register" className="underline font-bold hover:text-white/80 transition-colors">Regístrate</Link> para acceder a todas las funciones.</>
         )}

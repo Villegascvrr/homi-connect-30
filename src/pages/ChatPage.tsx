@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
@@ -104,14 +103,10 @@ const ChatPage = ({ isPreview = false }: ChatPageProps) => {
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
       
-      {isPreview && (
-        <DemoBanner 
-          customMessage={user 
-            ? "Estás viendo una demostración de la función de chat" 
-            : "Estás viendo una demostración de la función de chat"
-          }
-        />
-      )}
+      {/* Always show the demo banner, with a custom message for logged-in users */}
+      <DemoBanner 
+        customMessage="Estás viendo una demostración de la función de chat. Pronto podrás conectar con compañeros de piso compatibles." 
+      />
       
       {/* Fixed container layout with absolute positioning to prevent scroll issues */}
       <main className="flex-grow flex flex-col relative">

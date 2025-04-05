@@ -1,3 +1,4 @@
+
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import DemoBanner from "../layout/DemoBanner";
@@ -7,12 +8,14 @@ interface ProtectedRouteProps {
   children: React.ReactNode;
   allowPreview?: boolean;
   previewComponent?: React.ReactNode;
+  demoMessage?: string;
 }
 
 const ProtectedRoute = ({ 
   children, 
   allowPreview = false,
-  previewComponent 
+  previewComponent,
+  demoMessage
 }: ProtectedRouteProps) => {
   const { user, session, loading } = useAuth();
   const location = useLocation();
@@ -56,10 +59,15 @@ const ProtectedRoute = ({
     );
   }
 
-  // If the user is authenticated or session exists, show the actual content
+  // If the user is authenticated or session exists, show the actual content with demo banner
   if (user || session) {
     console.log("User authenticated, showing protected content");
-    return <>{children}</>;
+    return (
+      <>
+        <DemoBanner customMessage={demoMessage || "Estás viendo una demostración de Homi. La aplicación completa estará disponible próximamente."} />
+        {children}
+      </>
+    );
   }
 
   // If preview is allowed and a preview component is provided, show the preview
