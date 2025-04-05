@@ -92,23 +92,23 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col overflow-x-hidden w-full">
       <div className="pt-16">
         <Navbar />
       </div>
       
-      <main className="flex-grow">
+      <main className="flex-grow overflow-x-hidden">
         <Hero />
         
-        <div id="features">
+        <div id="features" className="overflow-x-hidden">
           <Features />
         </div>
         
-        <div id="how-it-works">
+        <div id="how-it-works" className="overflow-x-hidden">
           <HowItWorks />
         </div>
         
-        <section className="py-20">
+        <section className="py-20 overflow-x-hidden">
           <div className="container mx-auto px-4">
             <div className="text-center max-w-3xl mx-auto mb-16 animate-on-scroll">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -146,7 +146,7 @@ const Index = () => {
           </div>
         </section>
         
-        <section className="py-20 bg-muted">
+        <section className="py-20 bg-muted overflow-x-hidden">
           <div className="container mx-auto px-4">
             <div className="text-center max-w-3xl mx-auto mb-16 animate-on-scroll">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -200,7 +200,7 @@ const Index = () => {
           </div>
         </section>
         
-        <section className="py-20 bg-homi-purple text-white">
+        <section className="py-20 bg-homi-purple text-white overflow-x-hidden">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center animate-on-scroll">
               <h2 className="text-3xl md:text-4xl font-bold mb-6">

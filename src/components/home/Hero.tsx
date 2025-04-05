@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Check, Instagram } from 'lucide-react';
@@ -47,24 +48,26 @@ const Hero = () => {
     navigate('/register');
   };
 
-  return <section className="relative overflow-visible lg:py-[40px] py-[5px]">
+  return (
+    <section className="relative overflow-hidden lg:py-[40px] py-[5px]">
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-0 left-0 w-64 md:w-96 h-64 md:h-96 bg-homi-ultraLightPurple rounded-full opacity-50 blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
         <div className="absolute bottom-0 right-0 w-64 md:w-96 h-64 md:h-96 bg-homi-ultraLightPurple rounded-full opacity-50 blur-3xl translate-x-1/3 translate-y-1/3"></div>
       </div>
 
-      <div className="container mx-auto px-4 md:px-6">
+      <div className="container mx-auto px-4 md:px-6 overflow-x-hidden">
         <div className="max-w-4xl mx-auto text-center space-y-6">
-          {!user && !justRegistered ? <>
+          {!user && !justRegistered ? (
+            <>
               <div className="inline-block px-4 py-1.5 mb-3 rounded-full bg-homi-ultraLightPurple text-homi-purple text-xs md:text-sm font-medium animate-pulse-soft">
                 ¡Ayúdanos a alcanzar los 1000 usuarios!
               </div>
               
-              <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6 animate-slide-up leading-tight">
+              <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6 animate-slide-up leading-tight px-2">
                 Conecta con compañeros de piso <span className="homi-gradient-text">compatibles</span>
               </h1>
               
-              <p className="text-base md:text-xl text-muted-foreground mb-6 max-w-2xl mx-auto">
+              <p className="text-base md:text-xl text-muted-foreground mb-6 max-w-2xl mx-auto px-2">
                 Homi utiliza un sistema de matching inteligente para conectarte con compañeros 
                 de piso que comparten tus intereses, hábitos y estilo de vida.
               </p>
@@ -83,16 +86,20 @@ const Hero = () => {
                   ¡Regístrate ahora!
                 </Button>
               </div>
-            </> : justRegistered ? <WelcomeMessage firstName={user?.user_metadata?.firstName || user?.user_metadata?.first_name} /> : <>
+            </>
+          ) : justRegistered ? (
+            <WelcomeMessage firstName={user?.user_metadata?.firstName || user?.user_metadata?.first_name} />
+          ) : (
+            <>
               <div className="inline-block px-4 py-1.5 mb-4 rounded-full bg-green-100 text-green-700 text-xs md:text-sm font-medium">
                 <Check className="inline-block mr-1 h-4 w-4" /> Usuario registrado
               </div>
               
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 animate-slide-up leading-tight">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 animate-slide-up leading-tight px-2">
                 ¡Bienvenido a <span className="homi-gradient-text">Homi</span>!
               </h1>
               
-              <p className="text-base md:text-lg text-muted-foreground mb-6 max-w-2xl mx-auto">
+              <p className="text-base md:text-lg text-muted-foreground mb-6 max-w-2xl mx-auto px-2">
                 Gracias por registrarte. Te notificaremos cuando la aplicación esté completamente funcional.
                 Mientras tanto, puedes explorar algunas de las características disponibles o completar tu perfil.
               </p>
@@ -115,10 +122,12 @@ const Hero = () => {
                   @homimatch
                 </Button>
               </div>
-            </>}
+            </>
+          )}
         </div>
       </div>
-    </section>;
+    </section>
+  );
 };
 
 export default Hero;
