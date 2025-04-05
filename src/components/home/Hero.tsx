@@ -18,9 +18,11 @@ const Hero = () => {
   const location = useLocation();
 
   useEffect(() => {
+    // Check if the user just registered using URL parameter
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('registered') === 'true' && user) {
       setJustRegistered(true);
+      // Clean up URL parameter after detecting registration
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, [user, location]);
