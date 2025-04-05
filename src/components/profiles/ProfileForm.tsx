@@ -37,7 +37,12 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-const ProfileForm = () => {
+interface ProfileFormProps {
+  onSaved?: () => void;
+  cancelEdit?: () => void;
+}
+
+const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -189,6 +194,11 @@ const ProfileForm = () => {
         title: "Perfil actualizado",
         description: "Tu información de perfil ha sido guardada.",
       });
+      
+      // Call the onSaved callback if provided
+      if (onSaved) {
+        onSaved();
+      }
     } catch (error: any) {
       console.error("Error updating profile:", error);
       toast({
@@ -258,17 +268,29 @@ const ProfileForm = () => {
           />
         </div>
 
-        <Button 
-          type="submit" 
-          className="w-full mt-6 bg-homi-purple hover:bg-homi-purple/90" 
-          size="auto" 
-          wrap="normal" 
-          disabled={isSubmitting}
-        >
-          <span className="button-text-container">
-            {isSubmitting ? "Guardando..." : "Guardar cambios"}
-          </span>
-        </Button>
+        <div className="flex flex-col sm:flex-row gap-4 justify-end mt-6">
+          {cancelEdit && (
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={cancelEdit}
+              className="w-full sm:w-auto"
+            >
+              Cancelar
+            </Button>
+          )}
+          <Button 
+            type="submit" 
+            className="w-full sm:w-auto bg-homi-purple hover:bg-homi-purple/90" 
+            size="auto" 
+            wrap="normal" 
+            disabled={isSubmitting}
+          >
+            <span className="button-text-container">
+              {isSubmitting ? "Guardando..." : "Guardar cambios"}
+            </span>
+          </Button>
+        </div>
       </form>
     </Form>
   );

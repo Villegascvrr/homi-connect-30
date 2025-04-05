@@ -9,6 +9,7 @@ import Footer from "../layout/Footer";
 import { useToast } from "@/hooks/use-toast";
 import { Card } from "@/components/ui/card";
 import { AtSign, MapPin, GraduationCap, Briefcase, Edit, User, Heart, Tag } from 'lucide-react';
+import ProfileForm from "./ProfileForm";
 
 const ProfilePage = () => {
   const { user, session } = useAuth();
@@ -17,6 +18,7 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -115,6 +117,47 @@ const ProfilePage = () => {
       </div>
     );
   }
+  
+  // If in edit mode, show the form
+  if (isEditing) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <main className="flex-grow pt-20 pb-12 bg-gray-50">
+          <div className="container mx-auto px-4">
+            <div className="max-w-4xl mx-auto">
+              {/* Header for edit mode */}
+              <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+                <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+                  <h1 className="text-2xl md:text-3xl font-bold">Editar Perfil</h1>
+                  <Button 
+                    onClick={() => setIsEditing(false)}
+                    variant="outline"
+                    className="text-sm text-homi-purple hover:text-homi-purple/80"
+                  >
+                    Cancelar edición
+                  </Button>
+                </div>
+              </div>
+              
+              {/* ProfileForm for editing */}
+              <ProfileForm 
+                onSaved={() => {
+                  setIsEditing(false);
+                  toast({
+                    title: "Perfil actualizado",
+                    description: "Tu información de perfil ha sido guardada."
+                  });
+                }}
+                cancelEdit={() => setIsEditing(false)}
+              />
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   // Calculate profile completion percentage
   const requiredFields = ['first_name', 'last_name', 'username', 'bio', 'edad', 'ubicacion', 'universidad', 'ocupacion', 'profile_image', 'interests'];
@@ -137,7 +180,7 @@ const ProfilePage = () => {
               <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-4">
                 <h1 className="text-2xl md:text-3xl font-bold">Tu Perfil</h1>
                 <Button 
-                  onClick={() => navigate('/profile/edit')}
+                  onClick={() => setIsEditing(true)}
                   className="rounded-full bg-homi-purple hover:bg-homi-purple/90"
                 >
                   <Edit className="mr-2 h-4 w-4" /> Editar Perfil
