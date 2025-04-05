@@ -33,11 +33,6 @@ export function FormImageUpload<TFieldValues extends FieldValues>({
   // Get form context to log state for debugging
   const formContext = useFormContext();
   
-  console.log(`Form image upload rendering for field: ${name}`, { 
-    formValues: formContext?.getValues(),
-    fieldValue: formContext?.getValues(name as any)
-  });
-  
   // Make sure this component is only used within a form context
   if (!formContext) {
     console.error("FormImageUpload must be used within a Form component");
@@ -62,8 +57,6 @@ export function FormImageUpload<TFieldValues extends FieldValues>({
     <FormField
       name={name}
       render={({ field }) => {
-        console.log(`FormField render for ${name}:`, field.value);
-        
         return (
           <FormItem className={className}>
             {label && !hideLabel && (
@@ -76,7 +69,6 @@ export function FormImageUpload<TFieldValues extends FieldValues>({
               <ImageUpload
                 value={field.value || ''}
                 onChange={(value) => {
-                  console.log(`Image upload onChange for ${name}:`, value);
                   if (customOnChange) {
                     customOnChange(value);
                   } else {

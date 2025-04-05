@@ -1,3 +1,4 @@
+
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import DemoBanner from "../layout/DemoBanner";
@@ -61,7 +62,7 @@ const ProtectedRoute = ({
       <>
         <div className="pt-16">
           <DemoBanner />
-          <div className="mt-3">
+          <div className="mt-4">
             {children}
           </div>
         </div>
@@ -74,7 +75,7 @@ const ProtectedRoute = ({
       <>
         <div className="pt-16">
           <DemoBanner />
-          <div className="mt-3">
+          <div className="mt-4">
             {previewComponent}
           </div>
         </div>
@@ -87,7 +88,7 @@ const ProtectedRoute = ({
       <>
         <div className="pt-16">
           <DemoBanner />
-          <div className="mt-3">
+          <div className="mt-4">
             {children}
           </div>
         </div>

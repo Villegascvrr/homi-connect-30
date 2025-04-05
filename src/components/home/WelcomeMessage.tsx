@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { Instagram, UserRound } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/context/AuthContext';
 
 interface WelcomeMessageProps {
   firstName?: string;
@@ -13,6 +14,10 @@ const WelcomeMessage = ({ firstName }: WelcomeMessageProps) => {
   const [followed, setFollowed] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  
+  // Use firstName from props or from user if available
+  const displayName = firstName || (user?.user_metadata?.firstName || user?.user_metadata?.first_name || '');
 
   const handleInstagramClick = () => {
     window.open('https://instagram.com/homimatch', '_blank');
@@ -57,7 +62,7 @@ const WelcomeMessage = ({ firstName }: WelcomeMessageProps) => {
       </div>
       
       <h2 className="text-2xl font-bold text-center mb-2">
-        ¡Gracias por registrarte{firstName ? `, ${firstName}` : ''}!
+        ¡Gracias por registrarte{displayName ? `, ${displayName}` : ''}!
       </h2>
       
       <p className="text-center text-muted-foreground mb-4">
