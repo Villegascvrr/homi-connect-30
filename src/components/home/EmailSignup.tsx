@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -105,7 +106,8 @@ const EmailSignup = () => {
       
       setIsSubmitted(true);
       setTimeout(() => {
-        window.location.href = "/?registered=true";
+        console.log("EmailSignup: Registration successful, redirecting to home with registered=true param");
+        window.location.replace("/?registered=true");
       }, 500);
     } catch (error: any) {
       console.error("Error submitting form:", error);

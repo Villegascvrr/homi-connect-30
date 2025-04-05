@@ -22,6 +22,13 @@ const Hero = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const isRegistered = urlParams.get('registered') === 'true';
     
+    console.log("Checking registration status:", { 
+      isRegistered, 
+      userExists: !!user, 
+      currentJustRegistered: justRegistered,
+      searchParams: urlParams.toString()
+    });
+    
     if (isRegistered && user) {
       console.log("User just registered, showing welcome message");
       setJustRegistered(true);

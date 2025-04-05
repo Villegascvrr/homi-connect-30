@@ -123,8 +123,10 @@ const RegisterPage = () => {
         variant: "default",
       });
       
-      // Use replace instead of navigate to ensure a clean navigation without back history
-      window.location.href = '/?registered=true';
+      console.log("Registration successful, redirecting to home page with registered=true param");
+      
+      // Force a hard redirect to ensure the page fully reloads with the parameter
+      window.location.replace('/?registered=true');
     } catch (error) {
       console.error("Error during registration:", error);
       toast({
