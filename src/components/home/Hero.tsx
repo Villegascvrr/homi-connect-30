@@ -79,6 +79,9 @@ const Hero = () => {
               </div>
 
               <div className="mt-6 pt-6 border-t border-border/30">
+                <p className="text-sm font-medium mb-3 text-muted-foreground">
+                  Mientras tanto, encuentra compañeros de piso:
+                </p>
                 <div className="flex flex-wrap justify-center gap-8">
                   <div>
                     <p className="text-sm font-medium mb-3 text-muted-foreground">
