@@ -20,6 +20,7 @@ default_sender = "onboarding@resend.dev"
 
 [auth]
 enabled = true
+# Updated site_url to match the new domain
 site_url = "https://homi.lovable.dev"
 additional_redirect_urls = ["https://homi.lovable.dev/verified", "https://homi.lovable.dev"]
 jwt_expiry = 3600

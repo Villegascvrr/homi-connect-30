@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Check, Clock, AlertCircle } from 'lucide-react';
@@ -20,7 +19,6 @@ const VerifiedPage = () => {
   useEffect(() => {
     const checkVerification = async () => {
       try {
-        // Refrescar los datos del usuario para obtener el estado de verificación actualizado
         await refreshUser();
         setIsVerifying(false);
         setIsSuccess(isEmailVerified);
@@ -31,10 +29,7 @@ const VerifiedPage = () => {
             description: "Tu cuenta ha sido verificada con éxito.",
             variant: "default",
           });
-        }
-
-        // Redirect to homepage with registered=true after successful verification
-        if (isEmailVerified) {
+          
           setTimeout(() => {
             navigate('/?registered=true');
           }, 3000);
@@ -52,7 +47,6 @@ const VerifiedPage = () => {
       }
     };
 
-    // Esperar un momento para permitir que la sesión se actualice
     const timer = setTimeout(() => {
       checkVerification();
     }, 1500);
@@ -72,7 +66,6 @@ const VerifiedPage = () => {
     try {
       setIsResending(true);
       
-      // Reenviar el email de verificación usando la API de Supabase
       const { error } = await supabase.auth.resend({
         type: 'signup',
         email: user?.email || '',
