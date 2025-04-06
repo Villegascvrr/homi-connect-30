@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -16,7 +15,6 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Link } from 'react-router-dom';
 import DemoBanner from '@/components/layout/DemoBanner';
 
-// Make the mock profile type explicit so we can match it
 type MockProfile = {
   id: number;
   name: string;
@@ -723,8 +721,8 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                         <span className="hidden sm:inline">Filtros</span>
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="end" sideOffset={5}>
-                      <div className="overflow-auto max-h-[90vh] max-w-[90vw] w-[800px]">
+                    <PopoverContent className="w-auto p-0 z-50" align="end" sideOffset={5}>
+                      <div className="overflow-auto max-h-[80vh] max-w-[90vw] w-[800px] pb-6">
                         <MatchingFilters 
                           onApplyFilters={filters => {
                             handleApplyFilters(filters);
@@ -745,8 +743,8 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                         <span className="hidden sm:inline">Preferencias</span>
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="end" sideOffset={5}>
-                      <div className="overflow-auto max-h-[90vh] max-w-[90vw] w-[800px]">
+                    <PopoverContent className="w-auto p-0 z-50" align="end" sideOffset={5}>
+                      <div className="overflow-auto max-h-[80vh] max-w-[90vw] w-[800px] pb-6">
                         <MatchingFilters 
                           onApplyFilters={filters => {
                             handleApplyFilters(filters);
