@@ -158,7 +158,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
             interests: profileData.interests || [],
             isProfileActive: profileData.is_profile_active !== false,
             apartmentStatus: currentApartmentStatus,
-            sevilla_zona: profileData.sevilla_zona || "",
+            sevilla_zona: currentApartmentStatus === 'looking' ? profileData.sevilla_zona || "" : "",
             companeros_count: profileData.companeros_count || "",
             budget: lifestyleData.budget as string || "",
             lifestyle: {
@@ -215,10 +215,14 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
     console.log("Form submitted with values:", values);
     
     try {
-      // Prepare sevilla_zona based on apartment status
-      let sevilla_zona = values.sevilla_zona;
+      // Store the actual sevilla_zona based on apartment status
+      let sevilla_zona;
       if (values.apartmentStatus === 'have') {
-        sevilla_zona = 'tengo_piso';
+        // If user has an apartment, store the actual zone
+        sevilla_zona = values.sevilla_zona;
+      } else {
+        // If user is looking for an apartment, store the selected zone
+        sevilla_zona = values.sevilla_zona;
       }
       
       // Map occupation type to actual occupation value
