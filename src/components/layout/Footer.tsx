@@ -67,7 +67,7 @@ const Footer = () => {
             © {new Date().getFullYear()} Homi. Todos los derechos reservados.
           </p>
           <div className="mt-4 md:mt-0 flex items-center gap-4">
-            <a href="#" className="text-muted-foreground hover:text-homi-purple transition-colors">
+            <a href="https://instagram.com/homimatch" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-homi-purple transition-colors">
               Instagram
             </a>
             <a href="#" className="text-muted-foreground hover:text-homi-purple transition-colors">
