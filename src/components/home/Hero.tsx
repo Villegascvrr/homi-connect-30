@@ -6,6 +6,7 @@ import EmailSignup from './EmailSignup';
 import WelcomeMessage from './WelcomeMessage';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/context/AuthContext';
+
 const Hero = () => {
   const [email, setEmail] = useState('');
   const [showSignupForm, setShowSignupForm] = useState(false);
@@ -16,6 +17,7 @@ const Hero = () => {
   } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const isRegistered = urlParams.get('registered') === 'true';
@@ -33,14 +35,17 @@ const Hero = () => {
       console.log("User state:", user ? "logged in" : "not logged in", "Just registered:", justRegistered);
     }
   }, [user, location.search]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Subscribed with email:', email);
     setEmail('');
   };
+
   const handleRegisterClick = () => {
     navigate('/register');
   };
+
   return <section className="relative overflow-hidden w-full lg:py-[30px] py-[5px]">
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-0 left-0 w-64 md:w-96 h-64 md:h-96 bg-homi-ultraLightPurple rounded-full opacity-50 blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
@@ -48,45 +53,45 @@ const Hero = () => {
       </div>
 
       <div className="container mx-auto px-4 md:px-6">
-        <div className="max-w-4xl mx-auto text-center space-y-5">
+        <div className="max-w-4xl mx-auto text-center space-y-8">
           {!user && !justRegistered ? <>
-              <div className="inline-block px-4 py-1.5 mb-3 rounded-full bg-homi-ultraLightPurple text-homi-purple text-xs md:text-sm font-medium animate-pulse-soft">
+              <div className="inline-block px-4 py-1.5 mb-5 rounded-full bg-homi-ultraLightPurple text-homi-purple text-xs md:text-sm font-medium animate-pulse-soft">
                 ¡Ayúdanos a alcanzar los 1000 usuarios!
               </div>
               
-              <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 animate-slide-up leading-tight px-2">
+              <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6 animate-slide-up leading-tight px-2">
                 Conecta con compañeros de piso <span className="homi-gradient-text">compatibles</span>
               </h1>
               
-              <p className="text-base md:text-xl text-muted-foreground mb-4 max-w-2xl mx-auto px-2">Homi utiliza un sistema de matching inteligente para conectarte con compañeros de piso que comparten tus intereses y estilo de vida.</p>
+              <p className="text-base md:text-xl text-muted-foreground mb-6 max-w-2xl mx-auto px-2">Homi utiliza un sistema de matching inteligente para conectarte con compañeros de piso que comparten tus intereses y estilo de vida.</p>
 
-              <div className="bg-homi-ultraLightPurple/50 p-4 md:p-5 rounded-xl mb-4 max-w-2xl mx-auto">
+              <div className="bg-homi-ultraLightPurple/50 p-4 md:p-5 rounded-xl mb-6 max-w-2xl mx-auto">
                 <p className="text-sm md:text-base font-medium text-homi-purple">
                   Homi estará disponible próximamente - ¡Regístrate ahora para ser de los primeros en usarlo!
                   
                 </p>
               </div>
 
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-2 md:gap-3 mt-4">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 mt-6">
                 <Button size={isMobile ? "default" : "lg"} className="rounded-full bg-gradient-to-r from-homi-purple to-homi-lightPurple hover:from-homi-lightPurple hover:to-homi-purple text-white font-bold shadow-lg shadow-purple-500/30 transform hover:scale-105 transition-all duration-300 w-full sm:w-auto" onClick={handleRegisterClick}>
                   ¡Regístrate ahora!
                 </Button>
               </div>
             </> : justRegistered ? <WelcomeMessage firstName={user?.user_metadata?.firstName || user?.user_metadata?.first_name} /> : <>
-              <div className="inline-block px-4 py-1.5 mb-4 rounded-full bg-green-100 text-green-700 text-xs md:text-sm font-medium">
+              <div className="inline-block px-4 py-1.5 mb-6 rounded-full bg-green-100 text-green-700 text-xs md:text-sm font-medium">
                 <Check className="inline-block mr-1 h-4 w-4" /> Usuario registrado
               </div>
               
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 animate-slide-up leading-tight px-2">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 animate-slide-up leading-tight px-2">
                 ¡Bienvenido a <span className="homi-gradient-text">Homi</span>!
               </h1>
               
-              <p className="text-base md:text-lg text-muted-foreground mb-4 max-w-2xl mx-auto px-2">
+              <p className="text-base md:text-lg text-muted-foreground mb-6 max-w-2xl mx-auto px-2">
                 Gracias por registrarte. Te notificaremos cuando la aplicación esté completamente funcional.
                 Mientras tanto, puedes explorar algunas de las características disponibles o completar tu perfil.
               </p>
 
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-2 md:gap-3 mb-6">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 mb-8">
                 <Button size={isMobile ? "default" : "lg"} className="rounded-full bg-gradient-to-r from-homi-purple to-homi-lightPurple hover:from-homi-lightPurple hover:to-homi-purple text-white font-bold shadow-lg shadow-purple-500/30 transform hover:scale-105 transition-all duration-300 w-full sm:w-auto" asChild>
                   <Link to="/profile">Completar mi perfil</Link>
                 </Button>
@@ -95,8 +100,8 @@ const Hero = () => {
                 </Button>
               </div>
               
-              <div className="mt-4">
-                <p className="text-sm text-muted-foreground mb-2">
+              <div className="mt-6">
+                <p className="text-sm text-muted-foreground mb-3">
                   Síguenos en Instagram para enterarte de las últimas novedades:
                 </p>
                 <Button variant="outline" className="rounded-full gap-2" onClick={() => window.open('https://instagram.com/homimatch', '_blank')}>
@@ -109,4 +114,5 @@ const Hero = () => {
       </div>
     </section>;
 };
+
 export default Hero;
