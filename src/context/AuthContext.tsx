@@ -5,6 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 
 type ExtendedUser = User & {
   profile_image?: string | null;
+  is_email_verified?: boolean;
 };
 
 type AuthContextType = {
@@ -15,6 +16,7 @@ type AuthContextType = {
   signOut: () => Promise<void>;
   loading: boolean;
   refreshUser: () => Promise<void>;
+  isEmailVerified: boolean;
 };
 
 export interface UserSignUpData {
@@ -42,6 +44,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<ExtendedUser | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
   const { toast } = useToast();
 
   // Monitor and log session changes for debugging
@@ -74,6 +77,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             const authUser = currentSession.user;
             console.log("User ID from session:", authUser.id);
             
+            // Verificar si el correo electrónico está confirmado
+            setIsEmailVerified(authUser.email_confirmed_at !== null);
+            
             // Use setTimeout to avoid lockup in auth state change callback
             setTimeout(async () => {
               try {
@@ -87,15 +93,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                   console.log("Profile data fetched successfully");
                   setUser({
                     ...authUser,
-                    profile_image: profileData.profile_image
+                    profile_image: profileData.profile_image,
+                    is_email_verified: authUser.email_confirmed_at !== null
                   });
                 } else {
                   console.log("No profile data found or error:", error);
-                  setUser(authUser);
+                  setUser({
+                    ...authUser,
+                    is_email_verified: authUser.email_confirmed_at !== null
+                  });
                 }
               } catch (error) {
                 console.error("Error fetching profile data:", error);
-                setUser(authUser);
+                setUser({
+                  ...authUser,
+                  is_email_verified: authUser.email_confirmed_at !== null
+                });
               } finally {
                 setLoading(false);
               }
@@ -108,6 +121,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             localStorage.removeItem('homi-auth-session');
             setSession(null);
             setUser(null);
+            setIsEmailVerified(false);
           }
           setLoading(false);
         }
@@ -129,6 +143,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           saveSessionToLocalStorage(currentSession);
           
           const authUser = currentSession.user;
+          setIsEmailVerified(authUser.email_confirmed_at !== null);
           
           try {
             const { data: profileData, error } = await supabase
@@ -241,6 +256,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             lastName: userData.lastName,
             username: userData.username
           },
+          emailRedirectTo: window.location.origin + '/verified',
         },
       });
 
@@ -276,7 +292,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (authData.session) {
           console.log("Setting session from signup response");
           setSession(authData.session);
-          setUser(authData.user);
+          setUser({
+            ...authData.user,
+            is_email_verified: authData.user.email_confirmed_at !== null
+          });
           
           // Manually ensure session is stored in localStorage
           saveSessionToLocalStorage(authData.session);
@@ -287,7 +306,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       
       toast({
         title: "Cuenta creada con éxito",
-        description: "Tu cuenta ha sido registrada. Por favor completa tu perfil.",
+        description: "Por favor, verifica tu correo electrónico para activar tu cuenta.",
       });
       
       return { success: true };
@@ -397,7 +416,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     signUp,
     signOut,
     loading,
-    refreshUser
+    refreshUser,
+    isEmailVerified
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

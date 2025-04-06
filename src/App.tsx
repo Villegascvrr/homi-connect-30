@@ -15,6 +15,7 @@ import ProfileEditPage from "./components/profiles/ProfileEditPage";  // Fixed i
 import ChatPage from "./pages/ChatPage";
 import SignInPage from "./pages/SignInPage";
 import RegisterPage from "./pages/RegisterPage";
+import VerifiedPage from "./pages/VerifiedPage";
 import NotFound from "./pages/NotFound";
 import PrivacyPage from "./pages/PrivacyPage";
 import TermsPage from "./pages/TermsPage";
@@ -90,6 +91,7 @@ const App = () => {
               <Route path="/" element={<Index />} />
               <Route path="/signin" element={<SignInPage />} />
               <Route path="/register" element={<RegisterPage />} />
+              <Route path="/verified" element={<VerifiedPage />} />
               <Route path="/privacy" element={<PrivacyPage />} />
               <Route path="/terms" element={<TermsPage />} />
               <Route path="/cookies" element={<CookiesPage />} />
