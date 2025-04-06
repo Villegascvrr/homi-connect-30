@@ -35,3 +35,24 @@ export const hasStoredSession = (): boolean => {
     return false;
   }
 };
+
+/**
+ * Checks if a username is available (not already used by another user)
+ * @param username The username to check
+ * @returns Promise resolving to boolean indicating if username is available
+ */
+export const isUsernameAvailable = async (username: string): Promise<boolean> => {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('username')
+    .eq('username', username)
+    .single();
+  
+  if (error && error.code === 'PGRST116') {
+    // Error code for no rows returned - username is available
+    return true;
+  }
+  
+  // If we got data back, username exists
+  return !data;
+};

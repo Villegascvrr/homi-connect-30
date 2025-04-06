@@ -109,6 +109,20 @@ const RegisterPage = () => {
     setIsSubmitting(true);
     
     try {
+      // Comprobar si el nombre de usuario ya existe
+      const { isUsernameAvailable } = await import('@/integrations/supabase/client');
+      const usernameAvailable = await isUsernameAvailable(values.username);
+      
+      if (!usernameAvailable) {
+        form.setError("username", { 
+          type: "manual", 
+          message: "Este nombre de usuario ya está en uso. Por favor, elige otro." 
+        });
+        setIsSubmitting(false);
+        return;
+      }
+      
+      // Si el nombre de usuario está disponible, proceder con el registro
       await signUp({
         email: values.email,
         password: values.password,
@@ -129,13 +143,22 @@ const RegisterPage = () => {
       setTimeout(() => {
         window.location.replace('/?registered=true');
       }, 100);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error during registration:", error);
-      toast({
-        title: "Error",
-        description: "Ocurrió un error al procesar tu registro. Inténtalo de nuevo.",
-        variant: "destructive",
-      });
+      
+      // Verificar si el error es por correo electrónico duplicado
+      if (error.message?.includes('email')) {
+        form.setError("email", { 
+          type: "manual", 
+          message: "Este correo electrónico ya está registrado. Intenta iniciar sesión." 
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: error.message || "Ocurrió un error al procesar tu registro. Inténtalo de nuevo.",
+          variant: "destructive",
+        });
+      }
     } finally {
       setIsSubmitting(false);
     }
