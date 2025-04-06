@@ -7,7 +7,7 @@ import Navbar from "../layout/Navbar";
 import Footer from "../layout/Footer";
 import { useToast } from "@/hooks/use-toast";
 import { Card } from "@/components/ui/card";
-import { AtSign, MapPin, GraduationCap, Briefcase, Edit, User, Heart, Tag, Clock, Trash2, Cigarette, PawPrint, Users, Save } from 'lucide-react';
+import { AtSign, MapPin, GraduationCap, Briefcase, Edit, User, Heart, Tag, Clock, Trash2, Cigarette, PawPrint, Users } from 'lucide-react';
 import ProfileForm from "./ProfileForm";
 
 const ProfilePage = () => {
@@ -216,20 +216,12 @@ const ProfilePage = () => {
             <div className="bg-white rounded-lg shadow-md p-6 mb-6">
               <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-4">
                 <h1 className="text-2xl md:text-3xl font-bold">Tu Perfil</h1>
-                <div className="flex gap-2">
-                  <Button 
-                    onClick={() => setIsEditing(true)}
-                    className="rounded-full bg-homi-purple hover:bg-homi-purple/90"
-                  >
-                    <Edit className="mr-2 h-4 w-4" /> Editar Perfil
-                  </Button>
-                  <Button 
-                    onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                    className="rounded-full bg-green-500 hover:bg-green-600"
-                  >
-                    <Save className="mr-2 h-4 w-4" /> Guardar Cambios
-                  </Button>
-                </div>
+                <Button 
+                  onClick={() => setIsEditing(true)}
+                  className="rounded-full bg-homi-purple hover:bg-homi-purple/90"
+                >
+                  <Edit className="mr-2 h-4 w-4" /> Editar Perfil
+                </Button>
               </div>
               
               <div className="bg-gray-100 h-4 w-full rounded-full mb-2">
