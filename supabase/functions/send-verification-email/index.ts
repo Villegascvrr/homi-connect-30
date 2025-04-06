@@ -19,6 +19,7 @@ serve(async (req) => {
 
   try {
     const payload = await req.json();
+    console.log("Webhook received:", JSON.stringify(payload, null, 2));
     
     // Verificamos que el evento sea de tipo signup o email_change
     if (payload.type === "signup" || payload.type === "email_change") {
@@ -26,10 +27,28 @@ serve(async (req) => {
       
       // Extraemos información para el enlace de verificación
       const confirmationToken = data?.confirmation_token;
+      
+      if (!confirmationToken) {
+        console.error("No confirmation token found in payload:", payload);
+        return new Response(
+          JSON.stringify({
+            error: "No confirmation token found in payload",
+            payload: payload,
+          }),
+          {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          }
+        );
+      }
+      
       const confirmationUrl = `${Deno.env.get("SUPABASE_URL") || "https://salayaazmrghyqjddagm.supabase.co"}/auth/v1/verify?token=${confirmationToken}&type=signup&redirect_to=${encodeURIComponent("https://homi.lovable.dev/verified")}`;
       
       // Obtenemos datos adicionales del usuario si están disponibles
-      const firstName = data?.user_metadata?.first_name || data?.firstName || "";
+      const firstName = data?.user_metadata?.first_name || data?.user_metadata?.firstName || "";
+      
+      console.log("Sending verification email to:", email);
+      console.log("Confirmation URL:", confirmationUrl);
       
       // Enviamos el correo electrónico personalizado
       const emailResponse = await resend.emails.send({
@@ -79,6 +98,7 @@ serve(async (req) => {
     }
     
     // Si no es un evento que manejamos, simplemente devolvemos éxito
+    console.log("No action needed for this event type:", payload.type);
     return new Response(JSON.stringify({ success: true, noAction: true }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

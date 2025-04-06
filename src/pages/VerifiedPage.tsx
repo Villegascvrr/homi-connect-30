@@ -7,10 +7,12 @@ import Footer from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 const VerifiedPage = () => {
   const [isVerifying, setIsVerifying] = useState(true);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [isResending, setIsResending] = useState(false);
   const { refreshUser, isEmailVerified, user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -61,18 +63,29 @@ const VerifiedPage = () => {
 
   const handleResendVerification = async () => {
     try {
-      // Aquí iría la lógica para reenviar el email de verificación
+      setIsResending(true);
+      
+      // Reenviar el email de verificación usando la API de Supabase
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: user?.email || '',
+      });
+      
+      if (error) throw error;
+      
       toast({
         title: "Correo reenviado",
         description: "Hemos enviado un nuevo correo de verificación a tu dirección de email.",
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error resending verification email:", error);
       toast({
         title: "Error",
-        description: "No pudimos reenviar el correo. Inténtalo más tarde.",
+        description: error.message || "No pudimos reenviar el correo. Inténtalo más tarde.",
         variant: "destructive",
       });
+    } finally {
+      setIsResending(false);
     }
   };
 
@@ -119,8 +132,12 @@ const VerifiedPage = () => {
                   de verificación que te hemos enviado.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 w-full">
-                  <Button onClick={handleResendVerification} className="flex-1 rounded-full">
-                    Reenviar verificación
+                  <Button 
+                    onClick={handleResendVerification} 
+                    className="flex-1 rounded-full"
+                    disabled={isResending}
+                  >
+                    {isResending ? "Enviando..." : "Reenviar verificación"}
                   </Button>
                   <Button onClick={handleGoToHome} variant="outline" className="flex-1 rounded-full">
                     Volver al inicio
