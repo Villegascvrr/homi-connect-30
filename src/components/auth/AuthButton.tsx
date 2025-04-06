@@ -19,6 +19,7 @@ const AuthButton = () => {
   const { user, signOut, loading: authLoading } = useAuth();
   const isMobile = useIsMobile();
   const [loading, setLoading] = useState(true);
+  const [isSigningOut, setIsSigningOut] = useState(false);
 
   // Add a short timeout to ensure we don't get stuck in loading state
   useEffect(() => {
@@ -32,7 +33,18 @@ const AuthButton = () => {
   // Use local loading state that times out, or auth loading state
   const isLoading = loading && authLoading;
 
-  if (isLoading) {
+  const handleSignOut = async () => {
+    try {
+      setIsSigningOut(true);
+      await signOut();
+    } catch (error) {
+      console.error("Error during sign out:", error);
+    } finally {
+      setIsSigningOut(false);
+    }
+  };
+
+  if (isLoading || isSigningOut) {
     return (
       <Button variant="ghost" size="sm" disabled className="h-9 w-9 rounded-full">
         <div className="h-4 w-4 animate-spin rounded-full border-2 border-b-transparent"></div>
@@ -99,7 +111,7 @@ const AuthButton = () => {
         </DropdownMenuItem>
         <DropdownMenuItem
           className="text-red-600 focus:text-red-600 cursor-pointer"
-          onClick={() => signOut()}
+          onClick={handleSignOut}
         >
           <LogOut className="mr-2 h-4 w-4" />
           <span>Cerrar sesión</span>

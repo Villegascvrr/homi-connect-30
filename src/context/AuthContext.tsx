@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Session, User } from "@supabase/supabase-js";
@@ -346,25 +345,48 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signOut = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      
+      // First clear local state before attempting to sign out from Supabase
+      // This ensures the UI responds immediately regardless of API response
+      const currentUser = user;
       setUser(null);
       setSession(null);
       
       // Clear session from localStorage
       localStorage.removeItem('homi-auth-session');
       
-      toast({
-        title: "Sesión cerrada",
-        description: "Has cerrado sesión correctamente.",
-      });
+      // Attempt to sign out from Supabase
+      const { error } = await supabase.auth.signOut();
+      
+      // If there's an error but we've already cleared the local state,
+      // we can still consider it a "successful" sign out from the user's perspective
+      if (error) {
+        console.error("Error during API signout:", error);
+        // Only show error if it's likely to affect the user experience
+        if (error.message !== "Session not found") {
+          toast({
+            title: "Advertencia",
+            description: "Sesión cerrada localmente. " + error.message,
+            variant: "default",
+          });
+        }
+      } else {
+        toast({
+          title: "Sesión cerrada",
+          description: "Has cerrado sesión correctamente.",
+        });
+      }
     } catch (error: any) {
+      console.error("Exception during signout:", error);
       toast({
         title: "Error al cerrar sesión",
         description: error.message || "Ha ocurrido un error al cerrar sesión.",
         variant: "destructive",
       });
+      
+      // Even if there's an exception, we should ensure the user is logged out locally
+      setUser(null);
+      setSession(null);
+      localStorage.removeItem('homi-auth-session');
     }
   };
 
