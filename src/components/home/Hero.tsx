@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Check, Instagram, MessageCircle } from 'lucide-react';
@@ -7,7 +6,6 @@ import EmailSignup from './EmailSignup';
 import WelcomeMessage from './WelcomeMessage';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/context/AuthContext';
-
 const Hero = () => {
   const [email, setEmail] = useState('');
   const [showSignupForm, setShowSignupForm] = useState(false);
@@ -18,7 +16,6 @@ const Hero = () => {
   } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const isRegistered = urlParams.get('registered') === 'true';
@@ -36,17 +33,14 @@ const Hero = () => {
       console.log("User state:", user ? "logged in" : "not logged in", "Just registered:", justRegistered);
     }
   }, [user, location.search]);
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Subscribed with email:', email);
     setEmail('');
   };
-
   const handleRegisterClick = () => {
     navigate('/register');
   };
-
   return <section className="relative overflow-hidden w-full lg:py-[30px] py-[5px]">
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-0 left-0 w-64 md:w-96 h-64 md:h-96 bg-homi-ultraLightPurple rounded-full opacity-50 blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
@@ -79,19 +73,13 @@ const Hero = () => {
               </div>
 
               <div className="mt-6 pt-6 border-t border-border/30">
-                <p className="text-sm font-medium mb-3 text-muted-foreground">
-                  Mientras tanto, encuentra compañeros de piso:
-                </p>
+                <p className="text-sm font-medium mb-3 text-muted-foreground">Mientras tanto,</p>
                 <div className="flex flex-wrap justify-center gap-8">
                   <div>
                     <p className="text-sm font-medium mb-3 text-muted-foreground">
                       Busca compañeros y piso en nuestro grupo:
                     </p>
-                    <Button 
-                      variant="outline" 
-                      className="rounded-full gap-2 bg-green-50 text-green-600 border-green-200 hover:bg-green-100 hover:text-green-700"
-                      onClick={() => window.open('https://chat.whatsapp.com/FPqg8M2kGdm9G49j4YIAMB', '_blank')}
-                    >
+                    <Button variant="outline" className="rounded-full gap-2 bg-green-50 text-green-600 border-green-200 hover:bg-green-100 hover:text-green-700" onClick={() => window.open('https://chat.whatsapp.com/FPqg8M2kGdm9G49j4YIAMB', '_blank')}>
                       <MessageCircle size={18} />
                       Unirse al grupo de WhatsApp
                     </Button>
@@ -100,11 +88,7 @@ const Hero = () => {
                     <p className="text-sm font-medium mb-3 text-muted-foreground">
                       Entérate de las últimas novedades:
                     </p>
-                    <Button 
-                      variant="outline" 
-                      className="rounded-full gap-2 bg-purple-50 text-purple-600 border-purple-200 hover:bg-purple-100 hover:text-purple-700"
-                      onClick={() => window.open('https://instagram.com/homimatch', '_blank')}
-                    >
+                    <Button variant="outline" className="rounded-full gap-2 bg-purple-50 text-purple-600 border-purple-200 hover:bg-purple-100 hover:text-purple-700" onClick={() => window.open('https://instagram.com/homimatch', '_blank')}>
                       <Instagram size={18} />
                       Síguenos en Instagram
                     </Button>
@@ -148,11 +132,7 @@ const Hero = () => {
                   <p className="text-sm text-muted-foreground mb-3">
                     Busca compañeros y piso en nuestro grupo:
                   </p>
-                  <Button 
-                    variant="outline" 
-                    className="rounded-full gap-2 bg-green-50 text-green-600 border-green-200 hover:bg-green-100 hover:text-green-700"
-                    onClick={() => window.open('https://chat.whatsapp.com/FPqg8M2kGdm9G49j4YIAMB', '_blank')}
-                  >
+                  <Button variant="outline" className="rounded-full gap-2 bg-green-50 text-green-600 border-green-200 hover:bg-green-100 hover:text-green-700" onClick={() => window.open('https://chat.whatsapp.com/FPqg8M2kGdm9G49j4YIAMB', '_blank')}>
                     <MessageCircle size={18} />
                     Grupo de WhatsApp
                   </Button>
@@ -163,5 +143,4 @@ const Hero = () => {
       </div>
     </section>;
 };
-
 export default Hero;
