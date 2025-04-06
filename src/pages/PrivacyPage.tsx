@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -26,7 +27,7 @@ const PrivacyPage = () => {
                 
                 <div>
                   <h2 className="text-xl font-semibold mt-6 mb-3">1. Responsable del Tratamiento</h2>
-                  <p><strong>Identidad:</strong> Homi</p>
+                  <p><strong>Identidad:</strong> Homi (homimatch@gmail.com)</p>
                   
                   <p><strong>Correo electrónico:</strong> homimatch@gmail.com</p>
                 </div>
