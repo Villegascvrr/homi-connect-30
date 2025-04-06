@@ -61,43 +61,90 @@ serve(async (req) => {
       console.log("Confirmation URL:", confirmationUrl);
       console.log("User name:", fullName);
       
-      // Send customized verification email with more personalization
+      // Send customized verification email with improved spam score
       const emailResponse = await resend.emails.send({
-        from: "Homi <noreply@resend.dev>",
+        from: "Homi <no-reply@resend.dev>",
         to: [email],
-        subject: "Verifica tu correo electrónico en Homi",
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333333;">
-            <div style="background-color: #7e22ce; padding: 20px; text-align: center; border-top-left-radius: 8px; border-top-right-radius: 8px;">
-              <h1 style="color: white; margin: 0;">¡Bienvenido a Homi, ${firstName}!</h1>
-            </div>
-            <div style="background-color: #f9f9f9; padding: 20px; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;">
-              <p style="font-size: 16px; line-height: 1.5;">Hola ${fullName},</p>
-              <p style="font-size: 16px; line-height: 1.5;">Gracias por registrarte en Homi, tu plataforma para encontrar el compañero de piso perfecto.</p>
-              <p style="font-size: 16px; line-height: 1.5;">Para activar tu cuenta, por favor verifica tu correo electrónico haciendo clic en el siguiente botón:</p>
-              
-              <div style="text-align: center; margin: 30px 0;">
-                <a href="${confirmationUrl}" style="background-color: #7e22ce; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
-                  Verificar mi correo electrónico
-                </a>
-              </div>
-              
-              <p style="font-size: 14px; color: #666666;">Si no puedes hacer clic en el botón, copia y pega el siguiente enlace en tu navegador:</p>
-              <p style="font-size: 14px; color: #666666; word-break: break-all;">
-                <a href="${confirmationUrl}" style="color: #7e22ce;">${confirmationUrl}</a>
+        subject: "Verifica tu correo electrónico - Homi",
+        html: `<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verificación de correo electrónico</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; font-size: 16px; line-height: 1.6; color: #333333; background-color: #f9f9f9;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+    <tr>
+      <td style="padding: 20px 0;">
+        <table role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" align="center" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+          <!-- Header -->
+          <tr>
+            <td style="background-color: #7e22ce; padding: 30px; text-align: center;">
+              <h1 style="color: white; margin: 0; font-size: 24px;">¡Bienvenido a Homi, ${firstName}!</h1>
+            </td>
+          </tr>
+          <!-- Content -->
+          <tr>
+            <td style="padding: 30px 30px 20px;">
+              <p>Hola ${fullName},</p>
+              <p>Gracias por registrarte en Homi, tu plataforma para encontrar el compañero de piso perfecto.</p>
+              <p>Para activar tu cuenta, por favor verifica tu correo electrónico haciendo clic en el botón a continuación:</p>
+            </td>
+          </tr>
+          <!-- Button -->
+          <tr>
+            <td style="padding: 0 30px 30px; text-align: center;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center">
+                <tr>
+                  <td style="background-color: #7e22ce; border-radius: 5px;">
+                    <a href="${confirmationUrl}" target="_blank" style="display: block; padding: 12px 24px; color: #ffffff; text-decoration: none; font-weight: bold;">Verificar mi correo electrónico</a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <!-- Alternative link -->
+          <tr>
+            <td style="padding: 0 30px 20px;">
+              <p style="font-size: 14px; color: #666666;">Si el botón no funciona, copia y pega este enlace en tu navegador:</p>
+              <p style="font-size: 14px; word-break: break-all;">
+                <a href="${confirmationUrl}" style="color: #7e22ce; text-decoration: underline;">${confirmationUrl}</a>
               </p>
-              
-              <p style="font-size: 16px; line-height: 1.5; margin-top: 30px;">¿Tienes alguna pregunta? No dudes en contactarnos respondiendo a este correo.</p>
-              
-              <p style="font-size: 16px; line-height: 1.5;">¡Gracias por unirte a nuestra comunidad!</p>
-              <p style="font-size: 16px; line-height: 1.5; margin-bottom: 0;">El equipo de Homi</p>
-            </div>
-            <div style="text-align: center; padding: 20px; color: #999999; font-size: 12px;">
+            </td>
+          </tr>
+          <!-- Contact info -->
+          <tr>
+            <td style="padding: 20px 30px;">
+              <p style="margin-bottom: 0;">¡Gracias por unirte a nuestra comunidad!</p>
+              <p style="margin-top: 5px;">El equipo de Homi</p>
+            </td>
+          </tr>
+          <!-- Footer -->
+          <tr>
+            <td style="background-color: #f5f5f5; padding: 20px; text-align: center; font-size: 12px; color: #666666;">
               <p>Este correo fue enviado a ${email} porque te registraste en Homi.</p>
-              <p>&copy; ${new Date().getFullYear()} Homi. Todos los derechos reservados.</p>
-            </div>
-          </div>
-        `,
+              <p style="margin-bottom: 0;">&copy; ${new Date().getFullYear()} Homi. Todos los derechos reservados.</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`,
+        text: `Hola ${fullName},
+
+Gracias por registrarte en Homi, tu plataforma para encontrar el compañero de piso perfecto.
+
+Para activar tu cuenta, por favor verifica tu correo electrónico visitando el siguiente enlace:
+${confirmationUrl}
+
+¡Gracias por unirte a nuestra comunidad!
+El equipo de Homi
+
+Este correo fue enviado a ${email} porque te registraste en Homi.
+© ${new Date().getFullYear()} Homi. Todos los derechos reservados.`,
       });
 
       console.log("Email sent result:", emailResponse);
