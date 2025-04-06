@@ -1,6 +1,7 @@
+
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Check, Instagram, WhatsApp } from 'lucide-react';
+import { Check, Instagram, MessageCircle } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import EmailSignup from './EmailSignup';
 import WelcomeMessage from './WelcomeMessage';
@@ -86,7 +87,7 @@ const Hero = () => {
                   className="rounded-full gap-2 bg-green-50 text-green-600 border-green-200 hover:bg-green-100 hover:text-green-700"
                   onClick={() => window.open('https://chat.whatsapp.com/FPqg8M2kGdm9G49j4YIAMB', '_blank')}
                 >
-                  <WhatsApp size={18} />
+                  <MessageCircle size={18} />
                   Unirse al grupo de WhatsApp
                 </Button>
               </div>
@@ -132,7 +133,7 @@ const Hero = () => {
                     className="rounded-full gap-2 bg-green-50 text-green-600 border-green-200 hover:bg-green-100 hover:text-green-700"
                     onClick={() => window.open('https://chat.whatsapp.com/FPqg8M2kGdm9G49j4YIAMB', '_blank')}
                   >
-                    <WhatsApp size={18} />
+                    <MessageCircle size={18} />
                     Grupo de WhatsApp
                   </Button>
                 </div>

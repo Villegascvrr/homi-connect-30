@@ -1,5 +1,5 @@
 
-import { Info, WhatsApp } from 'lucide-react';
+import { Info, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const DevelopmentBanner = () => {
@@ -21,7 +21,7 @@ const DevelopmentBanner = () => {
             className="text-xs rounded-full gap-1 bg-white/20 backdrop-blur-sm hover:bg-white/30 border-white/20"
             onClick={() => window.open('https://chat.whatsapp.com/FPqg8M2kGdm9G49j4YIAMB', '_blank')}
           >
-            <WhatsApp size={14} />
+            <MessageCircle size={14} />
             Grupo de WhatsApp
           </Button>
         </div>

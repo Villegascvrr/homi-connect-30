@@ -1,6 +1,6 @@
 
 import { Link } from 'react-router-dom';
-import { Instagram, WhatsApp } from 'lucide-react';
+import { Instagram, MessageCircle } from 'lucide-react';
 
 const Footer = () => {
   return (
@@ -30,7 +30,7 @@ const Footer = () => {
                 </a>
               </div>
               <div className="flex items-center gap-2">
-                <WhatsApp className="w-5 h-5 text-green-600" />
+                <MessageCircle className="w-5 h-5 text-green-600" />
                 <p className="text-sm text-muted-foreground">
                   Mientras la app no esté disponible, busca piso y compañeros en nuestro 
                   <a 
@@ -101,7 +101,7 @@ const Footer = () => {
               Instagram
             </a>
             <a href="https://chat.whatsapp.com/FPqg8M2kGdm9G49j4YIAMB" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-green-600 transition-colors flex items-center gap-1">
-              <WhatsApp size={16} />
+              <MessageCircle size={16} />
               WhatsApp
             </a>
             <a href="#" className="text-muted-foreground hover:text-homi-purple transition-colors">
