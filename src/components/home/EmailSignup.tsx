@@ -120,36 +120,60 @@ const EmailSignup = () => {
         console.log("Registration successful, session should be established");
         setIsSubmitted(true);
         
-        // Check and verify session in localStorage
+        // Improved session verification and storage
         const verifySession = async () => {
           // Wait a moment to ensure session is stored
-          await new Promise(resolve => setTimeout(resolve, 200));
+          await new Promise(resolve => setTimeout(resolve, 300));
           
+          // First attempt
           const { data: sessionData } = await supabase.auth.getSession();
           console.log("Current session after signup:", sessionData?.session ? "Session exists" : "No session");
           
           if (sessionData?.session) {
-            // Force save to localStorage
-            localStorage.setItem('homi-auth-session', JSON.stringify(sessionData.session));
-            console.log("Session manually stored in localStorage");
-            setSessionStored(true);
+            // Force save to localStorage with explicit serialization
+            const sessionJson = JSON.stringify(sessionData.session);
+            localStorage.setItem('homi-auth-session', sessionJson);
+            console.log("Session manually stored in localStorage:", sessionJson.substring(0, 50) + "...");
+            
+            // Double check that it was actually stored
+            const storedSession = localStorage.getItem('homi-auth-session');
+            if (storedSession) {
+              console.log("Verified session is in localStorage");
+              setSessionStored(true);
+            } else {
+              console.warn("Failed to store session in localStorage, retrying...");
+              // Retry once more
+              localStorage.setItem('homi-auth-session', sessionJson);
+            }
           } else {
-            // Retry session fetch with longer timeout
-            console.log("Session not available, retrying with longer timeout...");
-            setTimeout(async () => {
+            // Retry session fetch with multiple attempts
+            console.log("Session not available in first attempt, retrying...");
+            
+            // Try up to 3 times with increasing delays
+            const retryDelays = [500, 1000, 2000];
+            
+            for (const delay of retryDelays) {
+              await new Promise(resolve => setTimeout(resolve, delay));
+              
               const { data: retrySessionData } = await supabase.auth.getSession();
               if (retrySessionData?.session) {
-                localStorage.setItem('homi-auth-session', JSON.stringify(retrySessionData.session));
+                const sessionJson = JSON.stringify(retrySessionData.session);
+                localStorage.setItem('homi-auth-session', sessionJson);
                 console.log("Session manually stored in localStorage after retry");
                 setSessionStored(true);
+                break;
               } else {
-                console.error("Failed to get session after signup");
-                // Even if no session, redirect to home page with registered flag
-                setTimeout(() => {
-                  window.location.href = "/?registered=true";
-                }, 300);
+                console.log(`No session after ${delay}ms retry`);
               }
-            }, 1000);
+            }
+            
+            // Even if no session, redirect to home page with registered flag
+            if (!sessionStored) {
+              console.warn("Could not get session after multiple attempts");
+              setTimeout(() => {
+                window.location.href = "/?registered=true";
+              }, 300);
+            }
           }
         };
         

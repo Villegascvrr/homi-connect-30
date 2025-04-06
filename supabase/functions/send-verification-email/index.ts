@@ -54,11 +54,14 @@ serve(async (req) => {
       
       // Get user metadata if available
       const firstName = data?.user_metadata?.firstName || data?.user_metadata?.first_name || "";
+      const lastName = data?.user_metadata?.lastName || data?.user_metadata?.last_name || "";
+      const fullName = firstName && lastName ? `${firstName} ${lastName}` : firstName || "Usuario de Homi";
       
       console.log("Sending verification email to:", email);
       console.log("Confirmation URL:", confirmationUrl);
+      console.log("User name:", fullName);
       
-      // Send customized verification email
+      // Send customized verification email with more personalization
       const emailResponse = await resend.emails.send({
         from: "Homi <noreply@resend.dev>",
         to: [email],
@@ -66,10 +69,10 @@ serve(async (req) => {
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333333;">
             <div style="background-color: #7e22ce; padding: 20px; text-align: center; border-top-left-radius: 8px; border-top-right-radius: 8px;">
-              <h1 style="color: white; margin: 0;">¡Bienvenido a Homi!</h1>
+              <h1 style="color: white; margin: 0;">¡Bienvenido a Homi, ${firstName}!</h1>
             </div>
             <div style="background-color: #f9f9f9; padding: 20px; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;">
-              <p style="font-size: 16px; line-height: 1.5;">Hola ${firstName ? firstName : ""},</p>
+              <p style="font-size: 16px; line-height: 1.5;">Hola ${fullName},</p>
               <p style="font-size: 16px; line-height: 1.5;">Gracias por registrarte en Homi, tu plataforma para encontrar el compañero de piso perfecto.</p>
               <p style="font-size: 16px; line-height: 1.5;">Para activar tu cuenta, por favor verifica tu correo electrónico haciendo clic en el siguiente botón:</p>
               

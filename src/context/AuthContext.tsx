@@ -32,8 +32,20 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 // Function to manually save session to localStorage
 const saveSessionToLocalStorage = (session: Session | null): void => {
   if (session) {
-    localStorage.setItem('homi-auth-session', JSON.stringify(session));
-    console.log("Session saved to localStorage");
+    try {
+      const sessionJson = JSON.stringify(session);
+      localStorage.setItem('homi-auth-session', sessionJson);
+      console.log("Session saved to localStorage:", sessionJson.substring(0, 50) + "...");
+      
+      // Verify storage was successful
+      const stored = localStorage.getItem('homi-auth-session');
+      if (!stored) {
+        console.warn("Failed to verify session storage, retrying...");
+        localStorage.setItem('homi-auth-session', sessionJson);
+      }
+    } catch (error) {
+      console.error("Error saving session to localStorage:", error);
+    }
   } else {
     localStorage.removeItem('homi-auth-session');
     console.log("Session removed from localStorage");
@@ -72,7 +84,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           // Set session immediately
           setSession(currentSession);
           
-          // Manually save session to localStorage 
+          // Manually save session to localStorage with aggressive verification
           saveSessionToLocalStorage(currentSession);
           
           if (currentSession.user) {
@@ -141,7 +153,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           console.log("Setting session from getSession call");
           setSession(currentSession);
           
-          // Ensure session is stored in localStorage
+          // Ensure session is stored in localStorage with verification
           saveSessionToLocalStorage(currentSession);
           
           const authUser = currentSession.user;
@@ -301,7 +313,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         
         console.log("Profile created successfully");
         
-        // Explicitly set session and user after signup
+        // Explicitly set session and user after signup with aggressive storage
         if (authData.session) {
           console.log("Setting session from signup response");
           setSession(authData.session);
@@ -310,25 +322,37 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             is_email_verified: authData.user.email_confirmed_at !== null
           });
           
-          // Force session storage in localStorage
+          // Force session storage in localStorage with verification
           saveSessionToLocalStorage(authData.session);
+          
+          // Double-check storage was successful
+          const verifyStorage = localStorage.getItem('homi-auth-session');
+          if (!verifyStorage) {
+            console.warn("Session storage verification failed, retrying...");
+            saveSessionToLocalStorage(authData.session);
+          }
         } else {
           console.warn("No session in signup response!");
         }
         
-        // Attempt to refresh the session to ensure we have the latest
-        setTimeout(async () => {
-          try {
-            const { data } = await supabase.auth.refreshSession();
-            if (data.session) {
-              console.log("Session refreshed after signup");
-              setSession(data.session);
-              saveSessionToLocalStorage(data.session);
+        // Multiple attempts to refresh the session
+        const refreshAttempts = [500, 1000, 2000]; // Increasing delays
+        
+        for (const delay of refreshAttempts) {
+          setTimeout(async () => {
+            try {
+              const { data } = await supabase.auth.refreshSession();
+              if (data.session) {
+                console.log(`Session refreshed after signup (delay: ${delay}ms)`);
+                setSession(data.session);
+                saveSessionToLocalStorage(data.session);
+                return; // Exit if successful
+              }
+            } catch (e) {
+              console.error(`Error refreshing session after signup (delay: ${delay}ms):`, e);
             }
-          } catch (e) {
-            console.error("Error refreshing session after signup:", e);
-          }
-        }, 500);
+          }, delay);
+        }
       }
       
       toast({
