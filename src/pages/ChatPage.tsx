@@ -51,6 +51,88 @@ const mockChatMatches = [
   }
 ];
 
+// Define sample messages for each chat
+const mockMessages = {
+  "1": [
+    {
+      id: '1-1',
+      senderId: 'other',
+      text: '¡Hola! Vi tu perfil y creo que podríamos ser buenos compañeros de piso. ¿Buscas algo cerca de la universidad?',
+      timestamp: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
+      read: true
+    }, 
+    {
+      id: '1-2',
+      senderId: 'me',
+      text: 'Hola Laura, sí estoy buscando cerca del campus. Me encantaría hablar más sobre ello.',
+      timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
+      read: true
+    },
+    {
+      id: '1-3',
+      senderId: 'other',
+      text: '¡Genial! Tengo un piso compartido a 10 minutos de la facultad. Es amplio y luminoso.',
+      timestamp: new Date(Date.now() - 1000 * 60 * 20).toISOString(),
+      read: false
+    }
+  ],
+  "2": [
+    {
+      id: '2-1',
+      senderId: 'other',
+      text: 'Me interesa el piso que comentaste cerca de la universidad. ¿Sigue disponible?',
+      timestamp: new Date(Date.now() - 1000 * 60 * 180).toISOString(),
+      read: true
+    },
+    {
+      id: '2-2',
+      senderId: 'me',
+      text: 'Sí, aún está disponible. ¿Te gustaría verlo esta semana?',
+      timestamp: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
+      read: true
+    }
+  ],
+  "3": [
+    {
+      id: '3-1',
+      senderId: 'me',
+      text: 'Hola Ana, vi que estás buscando compañeros de piso en la zona centro.',
+      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 13).toISOString(),
+      read: true
+    },
+    {
+      id: '3-2',
+      senderId: 'other',
+      text: 'Sí, estoy buscando en esa zona. ¿Cuándo podríamos quedar para ver el piso?',
+      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 12).toISOString(),
+      read: true
+    }
+  ],
+  "4": [
+    {
+      id: '4-1',
+      senderId: 'other',
+      text: '¿Te parece bien quedar mañana para ver el piso?',
+      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 25).toISOString(),
+      read: true
+    },
+    {
+      id: '4-2',
+      senderId: 'me',
+      text: 'Sí, perfecto. ¿A las 6 de la tarde?',
+      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24.5).toISOString(),
+      read: true
+    },
+    {
+      id: '4-3',
+      senderId: 'other',
+      text: 'Perfecto, entonces nos vemos mañana a las 6.',
+      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
+      read: false
+    }
+  ]
+};
+
 interface ChatPageProps {
   isPreview?: boolean;
 }
@@ -78,6 +160,7 @@ const ChatPage = ({ isPreview = false }: ChatPageProps) => {
   const handleSelectChat = (id: string) => {
     if (id === selectedChatId) return; // Skip if already selected
     setSelectedChatId(id);
+    console.log("Selected chat changed to:", id);
   };
   
   // Find the currently selected chat
@@ -124,6 +207,7 @@ const ChatPage = ({ isPreview = false }: ChatPageProps) => {
                     online: selectedChat.online,
                     typing: selectedChat.typing
                   }} 
+                  initialMessages={mockMessages[selectedChat.id as keyof typeof mockMessages] || []}
                 />
               )}
             </div>

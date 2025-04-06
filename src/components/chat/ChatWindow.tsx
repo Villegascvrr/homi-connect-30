@@ -13,10 +13,6 @@ interface ChatMatch {
   typing: boolean;
 }
 
-interface ChatWindowProps {
-  chat: ChatMatch;
-}
-
 interface Message {
   id: string;
   senderId: string;
@@ -25,46 +21,25 @@ interface Message {
   read: boolean;
 }
 
-// Sample messages for demonstration
-const SAMPLE_MESSAGES = [{
-  id: '1',
-  senderId: 'other',
-  text: '¡Hola! Vi tu perfil y creo que podríamos ser buenos compañeros de piso. ¿Buscas algo cerca de la universidad?',
-  timestamp: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
-  read: true
-}, {
-  id: '2',
-  senderId: 'me',
-  text: 'Hola, sí! Estoy buscando algo cerca del campus, máximo a 15 minutos en transporte público.',
-  timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
-  read: true
-}, {
-  id: '3',
-  senderId: 'other',
-  text: 'Perfecto, yo estoy igual. Tengo visto un piso a 10 minutos del campus que se ajusta a nuestro presupuesto. ¿Te interesaría verlo?',
-  timestamp: new Date(Date.now() - 1000 * 60 * 25).toISOString(),
-  read: true
-}, {
-  id: '4',
-  senderId: 'me',
-  text: '¡Claro que sí! Me gustaría saber más detalles. ¿Cuánto sería por persona?',
-  timestamp: new Date(Date.now() - 1000 * 60 * 20).toISOString(),
-  read: true
-}, {
-  id: '5',
-  senderId: 'other',
-  text: 'Estaríamos hablando de unos 450€ por persona, con todos los gastos incluidos. Es un piso de 3 habitaciones, con cocina equipada y sala de estar.',
-  timestamp: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
-  read: true
-}];
+interface ChatWindowProps {
+  chat: ChatMatch;
+  initialMessages?: Message[];
+}
 
 const ChatWindow = ({
-  chat
+  chat,
+  initialMessages = []
 }: ChatWindowProps) => {
-  const [messages, setMessages] = useState<Message[]>(SAMPLE_MESSAGES);
+  const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [newMessage, setNewMessage] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [shouldAutoScroll, setShouldAutoScroll] = useState(false);
+
+  // Reset messages when chat changes
+  useEffect(() => {
+    setMessages(initialMessages);
+    console.log(`Loading messages for chat ${chat.id}:`, initialMessages);
+  }, [chat.id, initialMessages]);
 
   // Complete disable of initial autoscroll but enable for new messages
   useEffect(() => {
@@ -80,13 +55,13 @@ const ChatWindow = ({
   useEffect(() => {
     if (shouldAutoScroll && messagesEndRef.current) {
       // Don't scroll on initial render of messages
-      if (messages.length > SAMPLE_MESSAGES.length) {
+      if (messages.length > initialMessages.length) {
         messagesEndRef.current.scrollIntoView({
           behavior: 'smooth'
         });
       }
     }
-  }, [messages, shouldAutoScroll]);
+  }, [messages, shouldAutoScroll, initialMessages.length]);
   
   const handleSendMessage = () => {
     if (newMessage.trim() === '') return;
@@ -107,7 +82,7 @@ const ChatWindow = ({
       const replyMessage = {
         id: (Date.now() + 1).toString(),
         senderId: 'other',
-        text: 'Gracias por tu mensaje! Te responderé lo antes posible.',
+        text: `Gracias por tu mensaje! Te responderé lo antes posible.`,
         timestamp: new Date().toISOString(),
         read: false
       };
