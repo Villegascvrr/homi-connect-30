@@ -80,16 +80,26 @@ const Hero = () => {
 
               <div className="mt-6 pt-6 border-t border-border/30">
                 <p className="text-sm font-medium mb-3 text-muted-foreground">
-                  Mientras tanto, encuentra compañeros de piso en nuestro grupo de WhatsApp:
+                  Mientras tanto, encuentra compañeros de piso:
                 </p>
-                <Button 
-                  variant="outline" 
-                  className="rounded-full gap-2 bg-green-50 text-green-600 border-green-200 hover:bg-green-100 hover:text-green-700"
-                  onClick={() => window.open('https://chat.whatsapp.com/FPqg8M2kGdm9G49j4YIAMB', '_blank')}
-                >
-                  <MessageCircle size={18} />
-                  Unirse al grupo de WhatsApp
-                </Button>
+                <div className="flex flex-wrap justify-center gap-3">
+                  <Button 
+                    variant="outline" 
+                    className="rounded-full gap-2 bg-green-50 text-green-600 border-green-200 hover:bg-green-100 hover:text-green-700"
+                    onClick={() => window.open('https://chat.whatsapp.com/FPqg8M2kGdm9G49j4YIAMB', '_blank')}
+                  >
+                    <MessageCircle size={18} />
+                    Unirse al grupo de WhatsApp
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    className="rounded-full gap-2 bg-purple-50 text-purple-600 border-purple-200 hover:bg-purple-100 hover:text-purple-700"
+                    onClick={() => window.open('https://instagram.com/homimatch', '_blank')}
+                  >
+                    <Instagram size={18} />
+                    Síguenos en Instagram
+                  </Button>
+                </div>
               </div>
             </> : justRegistered ? <WelcomeMessage firstName={user?.user_metadata?.firstName || user?.user_metadata?.first_name} /> : <>
               <div className="inline-block px-4 py-1.5 mb-6 rounded-full bg-green-100 text-green-700 text-xs md:text-sm font-medium">
