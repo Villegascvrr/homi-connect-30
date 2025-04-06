@@ -2,20 +2,16 @@ import { useState, useEffect } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { Card, CardContent } from '@/components/ui/card';
-
 const PrivacyPage = () => {
   const [currentDate] = useState(new Date().toLocaleDateString('es-ES', {
     day: 'numeric',
     month: 'long',
     year: 'numeric'
   }));
-
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
-  return (
-    <div className="min-h-screen flex flex-col">
+  return <div className="min-h-screen flex flex-col">
       <Navbar />
       
       <main className="flex-grow pt-20 pb-12">
@@ -35,7 +31,7 @@ const PrivacyPage = () => {
                 <div>
                   <h2 className="text-xl font-semibold mt-6 mb-3">1. Responsable del Tratamiento</h2>
                   <p><strong>Identidad:</strong> Homi</p>
-                  <p><strong>Dirección:</strong> C/ Principal 123, 28001 Madrid</p>
+                  
                   <p><strong>Correo electrónico:</strong> homimatch@gmail.com</p>
                 </div>
                 
@@ -148,8 +144,6 @@ const PrivacyPage = () => {
       </main>
       
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default PrivacyPage;
