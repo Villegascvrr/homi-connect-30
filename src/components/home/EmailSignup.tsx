@@ -123,18 +123,19 @@ const EmailSignup = () => {
         // Check and verify session in localStorage
         const verifySession = async () => {
           // Wait a moment to ensure session is stored
-          await new Promise(resolve => setTimeout(resolve, 100));
+          await new Promise(resolve => setTimeout(resolve, 200));
           
           const { data: sessionData } = await supabase.auth.getSession();
           console.log("Current session after signup:", sessionData?.session ? "Session exists" : "No session");
           
           if (sessionData?.session) {
+            // Force save to localStorage
             localStorage.setItem('homi-auth-session', JSON.stringify(sessionData.session));
             console.log("Session manually stored in localStorage");
             setSessionStored(true);
           } else {
-            // Retry session fetch if it's not available immediately
-            console.log("Session not available, retrying...");
+            // Retry session fetch with longer timeout
+            console.log("Session not available, retrying with longer timeout...");
             setTimeout(async () => {
               const { data: retrySessionData } = await supabase.auth.getSession();
               if (retrySessionData?.session) {
@@ -143,13 +144,23 @@ const EmailSignup = () => {
                 setSessionStored(true);
               } else {
                 console.error("Failed to get session after signup");
-                window.location.href = "/signin?error=session";
+                // Even if no session, redirect to home page with registered flag
+                setTimeout(() => {
+                  window.location.href = "/?registered=true";
+                }, 300);
               }
-            }, 500);
+            }, 1000);
           }
         };
         
         verifySession();
+        
+        // Show success notification about verification email
+        toast({
+          title: "Cuenta creada con éxito",
+          description: "Por favor, revisa tu correo electrónico para verificar tu cuenta.",
+          variant: "default"
+        });
       } else {
         toast({
           title: "Error",
@@ -188,6 +199,7 @@ const EmailSignup = () => {
         </p>
         <div className="text-sm text-muted-foreground">
           <p>Hemos enviado un correo de confirmación a <span className="font-semibold">{form.getValues('email')}</span></p>
+          <p className="mt-2">Por favor, revisa tu bandeja de entrada y verifica tu correo electrónico.</p>
         </div>
       </div>;
   }

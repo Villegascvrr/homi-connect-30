@@ -10,7 +10,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
-// Capturar y procesar los eventos de webhook de Supabase Auth
+// Process Supabase Auth Webhook events
 serve(async (req) => {
   // CORS preflight
   if (req.method === "OPTIONS") {
@@ -21,11 +21,18 @@ serve(async (req) => {
     const payload = await req.json();
     console.log("Webhook received:", JSON.stringify(payload, null, 2));
     
-    // Verificamos que el evento sea de tipo signup o email_change
+    // Log request headers to debug webhook issues
+    const headers = {};
+    req.headers.forEach((value, key) => {
+      headers[key] = value;
+    });
+    console.log("Request headers:", JSON.stringify(headers, null, 2));
+    
+    // Process signup or email change events that require verification
     if (payload.type === "signup" || payload.type === "email_change") {
       const { email, data } = payload;
       
-      // Extraemos información para el enlace de verificación
+      // Extract confirmation token
       const confirmationToken = data?.confirmation_token;
       
       if (!confirmationToken) {
@@ -42,17 +49,18 @@ serve(async (req) => {
         );
       }
       
+      // Create confirmation URL with proper redirect
       const confirmationUrl = `${Deno.env.get("SUPABASE_URL") || "https://salayaazmrghyqjddagm.supabase.co"}/auth/v1/verify?token=${confirmationToken}&type=signup&redirect_to=${encodeURIComponent("https://homi.lovable.dev/verified")}`;
       
-      // Obtenemos datos adicionales del usuario si están disponibles
-      const firstName = data?.user_metadata?.first_name || data?.user_metadata?.firstName || "";
+      // Get user metadata if available
+      const firstName = data?.user_metadata?.firstName || data?.user_metadata?.first_name || "";
       
       console.log("Sending verification email to:", email);
       console.log("Confirmation URL:", confirmationUrl);
       
-      // Enviamos el correo electrónico personalizado
+      // Send customized verification email
       const emailResponse = await resend.emails.send({
-        from: "Homi <noreply@resend.dev>", // Usar un dominio verificado en Resend
+        from: "Homi <noreply@resend.dev>",
         to: [email],
         subject: "Verifica tu correo electrónico en Homi",
         html: `
@@ -89,15 +97,15 @@ serve(async (req) => {
         `,
       });
 
-      console.log("Email sent:", emailResponse);
+      console.log("Email sent result:", emailResponse);
       
-      return new Response(JSON.stringify({ success: true }), {
+      return new Response(JSON.stringify({ success: true, emailSent: true }), {
         status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
     
-    // Si no es un evento que manejamos, simplemente devolvemos éxito
+    // If not a handled event type, return success but no action
     console.log("No action needed for this event type:", payload.type);
     return new Response(JSON.stringify({ success: true, noAction: true }), {
       status: 200,
@@ -110,6 +118,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({
         error: error.message || "Error processing webhook request",
+        stack: error.stack
       }),
       {
         status: 500,

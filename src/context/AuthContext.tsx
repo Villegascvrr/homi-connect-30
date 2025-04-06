@@ -60,24 +60,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     console.log("AuthProvider initializing");
     setLoading(true);
     
-    // Set up the auth state change listener
+    // Set up the auth state change listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, currentSession) => {
+      (event, currentSession) => {
         console.log("Auth state changed:", event, currentSession ? "With session" : "No session");
         
         if (currentSession) {
           console.log("Session received in auth state change:", 
             currentSession.access_token ? currentSession.access_token.substring(0, 10) + "..." : "No access token");
+          
+          // Set session immediately
           setSession(currentSession);
           
-          // Manually save session to localStorage as a backup
+          // Manually save session to localStorage 
           saveSessionToLocalStorage(currentSession);
           
           if (currentSession.user) {
             const authUser = currentSession.user;
             console.log("User ID from session:", authUser.id);
             
-            // Verificar si el correo electrónico está confirmado
+            // Check email verification status
             setIsEmailVerified(authUser.email_confirmed_at !== null);
             
             // Use setTimeout to avoid lockup in auth state change callback
@@ -184,6 +186,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 if (sessionData.user) {
                   console.log("Setting user from localStorage session");
                   setUser(sessionData.user);
+                  
+                  // Try to refresh the session with Supabase
+                  supabase.auth.refreshSession().then(({ data }) => {
+                    if (data.session) {
+                      console.log("Session refreshed successfully");
+                      setSession(data.session);
+                      saveSessionToLocalStorage(data.session);
+                    }
+                  }).catch(err => {
+                    console.error("Error refreshing session:", err);
+                  });
                 }
               } else {
                 console.log("Session in localStorage is expired");
@@ -297,11 +310,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             is_email_verified: authData.user.email_confirmed_at !== null
           });
           
-          // Manually ensure session is stored in localStorage
+          // Force session storage in localStorage
           saveSessionToLocalStorage(authData.session);
         } else {
           console.warn("No session in signup response!");
         }
+        
+        // Attempt to refresh the session to ensure we have the latest
+        setTimeout(async () => {
+          try {
+            const { data } = await supabase.auth.refreshSession();
+            if (data.session) {
+              console.log("Session refreshed after signup");
+              setSession(data.session);
+              saveSessionToLocalStorage(data.session);
+            }
+          } catch (e) {
+            console.error("Error refreshing session after signup:", e);
+          }
+        }, 500);
       }
       
       toast({
