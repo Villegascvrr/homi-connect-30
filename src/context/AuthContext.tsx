@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Session, User } from "@supabase/supabase-js";
@@ -11,7 +12,7 @@ type AuthContextType = {
   session: Session | null;
   user: ExtendedUser | null;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (userData: UserSignUpData) => Promise<void>;
+  signUp: (userData: UserSignUpData) => Promise<{ success: boolean; error?: any }>;
   signOut: () => Promise<void>;
   loading: boolean;
   refreshUser: () => Promise<void>;
@@ -164,6 +165,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const signUp = async (userData: UserSignUpData) => {
     setLoading(true);
     try {
+      // Sign up the user
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: userData.email,
         password: userData.password,
@@ -179,6 +181,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (authError) throw authError;
       
       if (authData.user) {
+        // Create the user profile
         const profileData = {
           id: authData.user.id,
           first_name: userData.firstName,
@@ -195,18 +198,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           console.error("Error creating profile:", profileError.message);
           throw profileError;
         }
+        
+        // Explicitly set session and user after signup
+        if (authData.session) {
+          setSession(authData.session);
+          setUser(authData.user);
+          console.log("Session set after signup:", authData.session.access_token.substring(0, 10) + "...");
+        }
       }
       
       toast({
         title: "Cuenta creada con éxito",
         description: "Tu cuenta ha sido registrada. Por favor verifica tu correo electrónico.",
       });
+      
+      return { success: true };
     } catch (error: any) {
+      console.error("SignUp error:", error);
       toast({
         title: "Error al crear la cuenta",
         description: error.message || "Ha ocurrido un error durante el registro.",
         variant: "destructive",
       });
+      return { success: false, error };
     } finally {
       setLoading(false);
     }
@@ -215,12 +229,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const signIn = async (email: string, password: string) => {
     setLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (error) throw error;
+      
+      // Explicitly set session and user after signin
+      if (data.session) {
+        console.log("Session set after signin:", data.session.access_token.substring(0, 10) + "...");
+        setSession(data.session);
+        setUser(data.user);
+      }
       
       toast({
         title: "Inicio de sesión exitoso",

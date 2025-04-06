@@ -30,12 +30,13 @@ const ProtectedRoute = ({
       allowsPreview: allowPreview
     });
     
+    // Set a more reasonable timeout for auth check
     const timeoutId = setTimeout(() => {
       if (loading) {
         console.log("Auth check taking too long, forcing completion");
         setAuthCheckComplete(true);
       }
-    }, 100);
+    }, 1500);
     
     return () => clearTimeout(timeoutId);
   }, [location.pathname, user, session, loading, allowPreview]);
@@ -46,6 +47,14 @@ const ProtectedRoute = ({
       setAuthCheckComplete(true);
     }
   }, [loading, user]);
+
+  // Check session storage for auth token to detect sessions that might not be fully loaded
+  useEffect(() => {
+    const hasStoredSession = !!localStorage.getItem('homi-auth-session');
+    if (hasStoredSession && !session && loading) {
+      console.log("Session found in storage but not loaded in context yet, waiting...");
+    }
+  }, [session, loading]);
 
   if (loading && !authCheckComplete) {
     return (

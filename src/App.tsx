@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -23,7 +22,6 @@ import AdminPage from "./pages/AdminPage";
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-// Create a new query client with explicit configuration for better loading performance
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -37,11 +35,9 @@ const queryClient = new QueryClient({
 });
 
 const App = () => {
-  // Force clean loading state when app starts
   useEffect(() => {
     console.log("App fully initialized");
     
-    // Pre-fetch important data
     const prefetchBasicData = async () => {
       try {
         const { data: { session } } = await queryClient.fetchQuery({
@@ -54,11 +50,9 @@ const App = () => {
         
         if (session?.user?.id) {
           console.log("User is authenticated, prefetching profile data");
-          // Pre-fetch user profile data
           queryClient.prefetchQuery({
             queryKey: ['profile', session.user.id],
             queryFn: async () => {
-              // Handle any errors here to avoid blocking rendering
               try {
                 const { data } = await supabase
                   .from('profiles')
@@ -91,7 +85,6 @@ const App = () => {
           <BrowserRouter>
             <ScrollToTop />
             <Routes>
-              {/* Public routes */}
               <Route path="/" element={<Index />} />
               <Route path="/signin" element={<SignInPage />} />
               <Route path="/register" element={<RegisterPage />} />
@@ -99,7 +92,6 @@ const App = () => {
               <Route path="/terms" element={<TermsPage />} />
               <Route path="/cookies" element={<CookiesPage />} />
               
-              {/* Routes with preview for non-authenticated users */}
               <Route path="/matching" element={
                 <ProtectedRoute allowPreview={true}>
                   <MatchingPage isPreview={false} />
@@ -122,7 +114,7 @@ const App = () => {
               } />
               <Route path="/profile/edit" element={
                 <ProtectedRoute>
-                  <ProfilePage />
+                  <ProfileEditPage />
                 </ProtectedRoute>
               } />
               <Route path="/chat" element={
@@ -131,17 +123,14 @@ const App = () => {
                 </ProtectedRoute>
               } />
               
-              {/* Admin route */}
               <Route path="/admin/profiles" element={
                 <ProtectedRoute>
                   <AdminPage />
                 </ProtectedRoute>
               } />
               
-              {/* Redirects */}
               <Route path="" element={<Navigate to="/" replace />} />
               
-              {/* Catch-all route */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

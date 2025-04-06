@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from "../layout/Navbar";
 import Footer from "../layout/Footer";
 import ProfileForm from "./ProfileForm";
@@ -7,11 +7,45 @@ import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 const ProfileEditPage = () => {
-  const { user } = useAuth();
+  const { user, session, loading } = useAuth();
   const navigate = useNavigate();
+  const [authCheckComplete, setAuthCheckComplete] = useState(false);
+  
+  useEffect(() => {
+    // Set a timeout to prevent infinite loading state
+    const timer = setTimeout(() => {
+      setAuthCheckComplete(true);
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, []);
+  
+  useEffect(() => {
+    if (!loading && !user && authCheckComplete) {
+      console.log("User not authenticated, redirecting to signin");
+      navigate("/signin", { state: { from: "/profile/edit" } });
+    }
+  }, [user, loading, navigate, authCheckComplete]);
 
-  if (!user) {
-    return null;
+  if (loading && !authCheckComplete) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <main className="flex-grow pt-20 pb-12 bg-gray-50">
+          <div className="container mx-auto px-4 flex justify-center items-center h-64">
+            <div className="text-center">
+              <div className="h-8 w-8 mx-auto mb-4 animate-spin rounded-full border-2 border-homi-purple border-t-transparent"></div>
+              <p className="text-muted-foreground">Verificando tu sesión...</p>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!user && authCheckComplete) {
+    return null; // Will be redirected by the useEffect
   }
 
   return (
