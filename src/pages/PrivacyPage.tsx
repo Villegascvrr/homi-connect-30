@@ -22,11 +22,7 @@ const PrivacyPage = () => {
               <p className="text-muted-foreground mb-6">Última actualización: {currentDate}</p>
               
               <div className="prose prose-slate max-w-none space-y-5">
-                <p>
-                  En Homi (en adelante, "nosotros" o "nuestro"), valoramos y respetamos la privacidad 
-                  de nuestros usuarios. Esta Política de Privacidad describe cómo recopilamos, utilizamos 
-                  y protegemos su información personal.
-                </p>
+                <p>En HomiMatch, valoramos y respetamos la privacidad de nuestros usuarios. Esta Política de Privacidad describe cómo recopilamos, utilizamos y protegemos su información personal.</p>
                 
                 <div>
                   <h2 className="text-xl font-semibold mt-6 mb-3">1. Responsable del Tratamiento</h2>
