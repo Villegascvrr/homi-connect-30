@@ -58,7 +58,7 @@ const RegisterPage = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const formContainerRef = useRef<HTMLDivElement>(null);
-  const { signUp } = useAuth();
+  const { signUp, signInWithGoogle } = useAuth();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -78,30 +78,15 @@ const RegisterPage = () => {
     mode: "onChange"
   });
 
-  const handleGoogleSignIn = () => {
+  const handleGoogleSignIn = async () => {
     setIsSigningWithGoogle(true);
-    
-    setTimeout(() => {
-      const mockGoogleData = {
-        firstName: "Usuario",
-        lastName: "Google",
-        email: "usuario@gmail.com",
-      };
-      
-      form.setValue("firstName", mockGoogleData.firstName);
-      form.setValue("lastName", mockGoogleData.lastName);
-      form.setValue("email", mockGoogleData.email);
-      
-      form.trigger(["firstName", "lastName", "email"]);
-      
+    try {
+      await signInWithGoogle();
+      // We'll be redirected to Google login page
+    } catch (error) {
+      console.error("Error during Google sign in:", error);
       setIsSigningWithGoogle(false);
-      
-      toast({
-        title: "Cuenta de Google conectada",
-        description: "Tu información básica se ha completado automáticamente. Por favor, completa el resto de datos.",
-        variant: "default",
-      });
-    }, 1000);
+    }
   };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {

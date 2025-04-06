@@ -32,7 +32,7 @@ double_confirm_changes = true
 enable_confirmations = true
 
 [auth.external.google]
-enabled = false
+enabled = true
 client_id = ""
 secret = ""
 

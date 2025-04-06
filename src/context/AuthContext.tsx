@@ -1,6 +1,7 @@
+
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Session, User } from "@supabase/supabase-js";
+import { Session, User, Provider } from "@supabase/supabase-js";
 import { useToast } from "@/hooks/use-toast";
 
 type ExtendedUser = User & {
@@ -12,6 +13,7 @@ type AuthContextType = {
   session: Session | null;
   user: ExtendedUser | null;
   signIn: (email: string, password: string) => Promise<void>;
+  signInWithGoogle: () => Promise<void>;
   signUp: (userData: UserSignUpData) => Promise<{ success: boolean; error?: any }>;
   signOut: () => Promise<void>;
   loading: boolean;
@@ -266,6 +268,39 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const signInWithGoogle = async () => {
+    setLoading(true);
+    try {
+      console.log("Starting Google sign-in process");
+      
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin + '/verified',
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          }
+        },
+      });
+
+      if (error) throw error;
+      
+      console.log("Redirecting to Google OAuth", data);
+      
+      // No need to set anything manually as the user will be redirected to Google
+      // and then back to our app where onAuthStateChange will handle the session
+    } catch (error: any) {
+      console.error("Google sign-in error:", error);
+      toast({
+        title: "Error al iniciar sesión con Google",
+        description: error.message || "Ha ocurrido un error durante el inicio de sesión con Google.",
+        variant: "destructive",
+      });
+      setLoading(false);
+    }
+  };
+
   const signUp = async (userData: UserSignUpData) => {
     setLoading(true);
     try {
@@ -464,6 +499,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     session,
     user,
     signIn,
+    signInWithGoogle,
     signUp,
     signOut,
     loading,
