@@ -48,6 +48,11 @@ const ProfileEditPage = () => {
     return null; // Will be redirected by the useEffect
   }
 
+  const handleProfileSaved = () => {
+    // Redirect to the profile page after successful save
+    navigate('/profile');
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -67,8 +72,11 @@ const ProfileEditPage = () => {
               </div>
             </div>
             
-            {/* Form */}
-            <ProfileForm />
+            {/* Form with onSaved callback to trigger navigation */}
+            <ProfileForm 
+              onSaved={handleProfileSaved}
+              cancelEdit={() => navigate('/profile')}
+            />
           </div>
         </div>
       </main>
