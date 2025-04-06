@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -50,7 +49,6 @@ const SignInPage = () => {
     },
   });
 
-  // Check for email verification success from URL
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const emailVerified = params.get('email_verified');
@@ -62,18 +60,15 @@ const SignInPage = () => {
         variant: "default",
       });
       
-      // Remove the query parameter
       navigate('/signin', { replace: true });
     }
     
-    // Check for verification reminder flag
     const needsVerification = params.get('needs_verification');
     if (needsVerification === 'true') {
       setShowEmailVerificationAlert(true);
     }
   }, [location, navigate, toast]);
   
-  // Redirect if already logged in
   useEffect(() => {
     if (user) {
       navigate('/');
@@ -84,10 +79,8 @@ const SignInPage = () => {
     setIsLoading(true);
     try {
       await signIn(values.email, values.password);
-      // SignIn function handles success toast
     } catch (error: any) {
       console.error("Error during sign in:", error);
-      // SignIn function handles error toast
     } finally {
       setIsLoading(false);
     }
@@ -97,7 +90,6 @@ const SignInPage = () => {
     setIsSigningWithGoogle(true);
     try {
       await signInWithGoogle();
-      // We'll be redirected to Google login page
     } catch (error) {
       console.error("Error during Google sign in:", error);
       setIsSigningWithGoogle(false);
@@ -105,7 +97,7 @@ const SignInPage = () => {
   };
 
   if (user) {
-    return null; // Will be redirected by useEffect
+    return null;
   }
 
   return (

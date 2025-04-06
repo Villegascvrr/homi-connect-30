@@ -276,7 +276,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: window.location.origin + '/verified',
+          redirectTo: `${window.location.origin}/verified`,
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
