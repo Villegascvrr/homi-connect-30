@@ -26,7 +26,6 @@ export type Database = {
           ocupacion: string | null
           profile_image: string | null
           sevilla_zona: string | null
-          ubicacion: string | null
           universidad: string | null
           updated_at: string
           username: string
@@ -47,7 +46,6 @@ export type Database = {
           ocupacion?: string | null
           profile_image?: string | null
           sevilla_zona?: string | null
-          ubicacion?: string | null
           universidad?: string | null
           updated_at?: string
           username: string
@@ -68,7 +66,6 @@ export type Database = {
           ocupacion?: string | null
           profile_image?: string | null
           sevilla_zona?: string | null
-          ubicacion?: string | null
           universidad?: string | null
           updated_at?: string
           username?: string

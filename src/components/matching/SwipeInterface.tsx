@@ -46,10 +46,12 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [showMatch, setShowMatch] = useState<SwipeProfile | null>(null);
   const [nextCardReady, setNextCardReady] = useState(false);
+  const [removedProfiles, setRemovedProfiles] = useState<Set<string>>(new Set());
   
-  const currentProfile = profiles[currentIndex];
-  const nextProfile = profiles[currentIndex + 1]; // Pre-load next profile
-  const hasMoreProfiles = currentIndex < profiles.length;
+  const filteredProfiles = profiles.filter(profile => !removedProfiles.has(profile.id));
+  const currentProfile = filteredProfiles[currentIndex];
+  const nextProfile = filteredProfiles[currentIndex + 1]; // Pre-load next profile
+  const hasMoreProfiles = currentIndex < filteredProfiles.length;
   
   // Pre-load next profile image
   useEffect(() => {
@@ -78,6 +80,9 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
     
     // Add to history
     setHistory(prev => [...prev, id]);
+    
+    // Add to removed profiles to prevent re-appearance
+    setRemovedProfiles(prev => new Set([...prev, id]));
     
     // Move to next profile with a slight delay for animation
     setTimeout(() => {
@@ -108,7 +113,17 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
     
     setIsTransitioning(true);
     
+    // Get the last ID from history to remove from removedProfiles
+    const lastId = history[history.length - 1];
+    
     setTimeout(() => {
+      // Remove from removed profiles to make it visible again
+      setRemovedProfiles(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(lastId);
+        return newSet;
+      });
+      
       setCurrentIndex(prev => prev - 1);
       // Remove the last action from history
       setHistory(prev => prev.slice(0, -1));
@@ -120,6 +135,7 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
     setCurrentIndex(0);
     setHistory([]);
     setDirection(null);
+    setRemovedProfiles(new Set()); // Clear all removed profiles
   };
   
   if (!hasMoreProfiles || !currentProfile) {
@@ -219,7 +235,7 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
       
       <div className="text-center mt-4 animate-fade-in">
         <p className="text-sm text-muted-foreground">
-          Perfil {currentIndex + 1} de {profiles.length}
+          Perfil {currentIndex + 1} de {profiles.length - removedProfiles.size + currentIndex}
         </p>
       </div>
     </div>
