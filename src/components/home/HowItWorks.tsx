@@ -30,7 +30,7 @@ const HowItWorks = () => {
       <div className="container mx-auto px-4">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            <span className="homi-gradient-text">Cómo funciona</span> Homi
+            <span className="homi-gradient-text">Cómo funciona</span> HomiMatch
           </h2>
           <p className="text-muted-foreground text-lg">
             Un proceso simple y efectivo para encontrar compañeros de piso compatibles

@@ -26,7 +26,7 @@ const Features = () => {
             <span className="homi-gradient-text"> al compañero ideal</span>
           </h2>
           <p className="text-muted-foreground text-lg">
-            Homi ofrece todas las herramientas necesarias para hacer de la búsqueda
+            HomiMatch ofrece todas las herramientas necesarias para hacer de la búsqueda
             de compañeros de piso una experiencia sencilla y efectiva.
           </p>
         </div>

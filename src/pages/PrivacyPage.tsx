@@ -19,7 +19,7 @@ const PrivacyPage = () => {
         <div className="container mx-auto px-4 py-8 max-w-4xl">
           <Card className="shadow-md">
             <CardContent className="p-6 md:p-8">
-              <h1 className="text-3xl font-bold mb-6 text-center">Política de Privacidad de Homi</h1>
+              <h1 className="text-3xl font-bold mb-6 text-center">Política de Privacidad de HomiMatch</h1>
               <p className="text-muted-foreground mb-6">Última actualización: {currentDate}</p>
               
               <div className="prose prose-slate max-w-none space-y-5">
@@ -27,7 +27,7 @@ const PrivacyPage = () => {
                 
                 <div>
                   <h2 className="text-xl font-semibold mt-6 mb-3">1. Responsable del Tratamiento</h2>
-                  <p><strong>Identidad:</strong> Homi (homimatch@gmail.com)</p>
+                  <p><strong>Identidad:</strong> HomiMatch (homimatch@gmail.com)</p>
                   
                   <p><strong>Correo electrónico:</strong> homimatch@gmail.com</p>
                 </div>

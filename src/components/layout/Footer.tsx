@@ -10,7 +10,7 @@ const Footer = () => {
           {/* Logo and description */}
           <div className="col-span-1 md:col-span-2">
             <Link to="/" className="inline-block">
-              <span className="text-2xl font-bold text-homi-purple">Homi</span>
+              <span className="text-2xl font-bold text-homi-purple">HomiMatch</span>
             </Link>
             <p className="mt-4 text-muted-foreground max-w-md">
               Conectamos estudiantes universitarios y jóvenes profesionales con compañeros 
@@ -93,7 +93,7 @@ const Footer = () => {
 
         <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center">
           <p className="text-muted-foreground text-sm">
-            © {new Date().getFullYear()} Homi. Todos los derechos reservados.
+            © {new Date().getFullYear()} HomiMatch. Todos los derechos reservados.
           </p>
           <div className="mt-4 md:mt-0 flex items-center gap-4">
             <a href="https://instagram.com/homimatch" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-homi-purple transition-colors flex items-center gap-1">

@@ -72,7 +72,7 @@ const Navbar = () => {
       <div className="container mx-auto px-4 w-full">
         <div className="flex items-center justify-between h-16 md:h-20">
           <Link to="/" className="flex items-center">
-            <span className="text-xl md:text-2xl font-bold homi-gradient-text">Homi</span>
+            <span className="text-xl md:text-2xl font-bold homi-gradient-text">HomiMatch</span>
           </Link>
 
           <nav className="hidden md:flex items-center space-x-1">
