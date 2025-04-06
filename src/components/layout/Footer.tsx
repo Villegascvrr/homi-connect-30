@@ -1,5 +1,6 @@
 
 import { Link } from 'react-router-dom';
+import { Instagram, WhatsApp } from 'lucide-react';
 
 const Footer = () => {
   return (
@@ -15,6 +16,34 @@ const Footer = () => {
               Conectamos estudiantes universitarios y jóvenes profesionales con compañeros 
               de piso compatibles mediante un sistema de matching inteligente.
             </p>
+
+            <div className="mt-6 flex flex-col gap-3">
+              <div className="flex items-center gap-2">
+                <Instagram className="w-5 h-5 text-homi-purple" />
+                <a 
+                  href="https://instagram.com/homimatch" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="text-muted-foreground hover:text-homi-purple transition-colors"
+                >
+                  @homimatch
+                </a>
+              </div>
+              <div className="flex items-center gap-2">
+                <WhatsApp className="w-5 h-5 text-green-600" />
+                <p className="text-sm text-muted-foreground">
+                  Mientras la app no esté disponible, busca piso y compañeros en nuestro 
+                  <a 
+                    href="https://chat.whatsapp.com/FPqg8M2kGdm9G49j4YIAMB" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="ml-1 text-green-600 hover:underline"
+                  >
+                    grupo de WhatsApp
+                  </a>
+                </p>
+              </div>
+            </div>
           </div>
 
           {/* Links */}
@@ -67,11 +96,13 @@ const Footer = () => {
             © {new Date().getFullYear()} Homi. Todos los derechos reservados.
           </p>
           <div className="mt-4 md:mt-0 flex items-center gap-4">
-            <a href="https://instagram.com/homimatch" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-homi-purple transition-colors">
+            <a href="https://instagram.com/homimatch" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-homi-purple transition-colors flex items-center gap-1">
+              <Instagram size={16} />
               Instagram
             </a>
-            <a href="#" className="text-muted-foreground hover:text-homi-purple transition-colors">
-              Twitter
+            <a href="https://chat.whatsapp.com/FPqg8M2kGdm9G49j4YIAMB" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-green-600 transition-colors flex items-center gap-1">
+              <WhatsApp size={16} />
+              WhatsApp
             </a>
             <a href="#" className="text-muted-foreground hover:text-homi-purple transition-colors">
               LinkedIn

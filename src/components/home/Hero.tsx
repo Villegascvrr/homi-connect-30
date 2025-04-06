@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Check, Instagram } from 'lucide-react';
+import { Check, Instagram, WhatsApp } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import EmailSignup from './EmailSignup';
 import WelcomeMessage from './WelcomeMessage';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/context/AuthContext';
+
 const Hero = () => {
   const [email, setEmail] = useState('');
   const [showSignupForm, setShowSignupForm] = useState(false);
@@ -16,6 +17,7 @@ const Hero = () => {
   } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const isRegistered = urlParams.get('registered') === 'true';
@@ -33,14 +35,17 @@ const Hero = () => {
       console.log("User state:", user ? "logged in" : "not logged in", "Just registered:", justRegistered);
     }
   }, [user, location.search]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Subscribed with email:', email);
     setEmail('');
   };
+
   const handleRegisterClick = () => {
     navigate('/register');
   };
+
   return <section className="relative overflow-hidden w-full lg:py-[30px] py-[5px]">
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-0 left-0 w-64 md:w-96 h-64 md:h-96 bg-homi-ultraLightPurple rounded-full opacity-50 blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
@@ -63,13 +68,26 @@ const Hero = () => {
               <div className="bg-homi-ultraLightPurple/50 p-4 md:p-5 rounded-xl mb-6 max-w-2xl mx-auto">
                 <p className="text-sm md:text-base font-medium text-homi-purple">
                   Homi estará disponible próximamente - ¡Regístrate ahora para ser de los primeros en usarlo!
-                  
                 </p>
               </div>
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 mt-6">
                 <Button size={isMobile ? "default" : "lg"} className="rounded-full bg-gradient-to-r from-homi-purple to-homi-lightPurple hover:from-homi-lightPurple hover:to-homi-purple text-white font-bold shadow-lg shadow-purple-500/30 transform hover:scale-105 transition-all duration-300 w-full sm:w-auto" onClick={handleRegisterClick}>
                   ¡Regístrate ahora!
+                </Button>
+              </div>
+
+              <div className="mt-6 pt-6 border-t border-border/30">
+                <p className="text-sm font-medium mb-3 text-muted-foreground">
+                  Mientras tanto, encuentra compañeros de piso en nuestro grupo de WhatsApp:
+                </p>
+                <Button 
+                  variant="outline" 
+                  className="rounded-full gap-2 bg-green-50 text-green-600 border-green-200 hover:bg-green-100 hover:text-green-700"
+                  onClick={() => window.open('https://chat.whatsapp.com/FPqg8M2kGdm9G49j4YIAMB', '_blank')}
+                >
+                  <WhatsApp size={18} />
+                  Unirse al grupo de WhatsApp
                 </Button>
               </div>
             </> : justRegistered ? <WelcomeMessage firstName={user?.user_metadata?.firstName || user?.user_metadata?.first_name} /> : <>
@@ -95,18 +113,34 @@ const Hero = () => {
                 </Button>
               </div>
               
-              <div className="mt-6">
-                <p className="text-sm text-muted-foreground mb-3">
-                  Síguenos en Instagram para enterarte de las últimas novedades:
-                </p>
-                <Button variant="outline" className="rounded-full gap-2" onClick={() => window.open('https://instagram.com/homimatch', '_blank')}>
-                  <Instagram size={18} />
-                  @homimatch
-                </Button>
+              <div className="mt-6 flex flex-wrap justify-center gap-4">
+                <div>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    Síguenos en Instagram para enterarte de las últimas novedades:
+                  </p>
+                  <Button variant="outline" className="rounded-full gap-2" onClick={() => window.open('https://instagram.com/homimatch', '_blank')}>
+                    <Instagram size={18} />
+                    @homimatch
+                  </Button>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    Únete al grupo de WhatsApp para buscar compañeros:
+                  </p>
+                  <Button 
+                    variant="outline" 
+                    className="rounded-full gap-2 bg-green-50 text-green-600 border-green-200 hover:bg-green-100 hover:text-green-700"
+                    onClick={() => window.open('https://chat.whatsapp.com/FPqg8M2kGdm9G49j4YIAMB', '_blank')}
+                  >
+                    <WhatsApp size={18} />
+                    Grupo de WhatsApp
+                  </Button>
+                </div>
               </div>
             </>}
         </div>
       </div>
     </section>;
 };
+
 export default Hero;
