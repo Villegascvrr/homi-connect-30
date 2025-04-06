@@ -25,18 +25,35 @@ const ProtectedRoute = ({
   
   // Check for local session on mount
   useEffect(() => {
-    const sessionStr = localStorage.getItem('homi-auth-session');
-    if (sessionStr) {
-      try {
-        const sessionData = JSON.parse(sessionStr);
-        const isExpired = sessionData.expires_at && new Date(sessionData.expires_at * 1000) < new Date();
-        setHasLocalSession(!isExpired);
-      } catch (e) {
-        console.error("Error parsing session from localStorage:", e);
+    const checkLocalSession = () => {
+      const sessionStr = localStorage.getItem('homi-auth-session');
+      if (sessionStr) {
+        try {
+          const sessionData = JSON.parse(sessionStr);
+          const isExpired = sessionData.expires_at && new Date(sessionData.expires_at * 1000) < new Date();
+          const hasValidSession = !isExpired;
+          
+          console.log("Local session check:", hasValidSession ? "Valid session found" : "Invalid or expired session");
+          setHasLocalSession(hasValidSession);
+          
+          // If we have a valid session in localStorage but no user/session in context
+          // trigger a session refresh
+          if (hasValidSession && !user && !session) {
+            console.log("Valid local session but no user in context, refreshing session");
+            supabase.auth.refreshSession();
+          }
+        } catch (e) {
+          console.error("Error parsing session from localStorage:", e);
+          setHasLocalSession(false);
+        }
+      } else {
+        console.log("No session found in localStorage");
         setHasLocalSession(false);
       }
-    }
-  }, []);
+    };
+    
+    checkLocalSession();
+  }, [user, session]);
   
   useEffect(() => {
     console.log("Protected route accessed:", {
@@ -93,7 +110,10 @@ const ProtectedRoute = ({
     );
   }
 
-  if (user || session) {
+  // Check if we have a user or session from any source
+  const isAuthenticated = !!user || !!session || hasLocalSession;
+
+  if (isAuthenticated) {
     console.log("User authenticated, showing protected content");
     return (
       <>

@@ -13,8 +13,25 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
   auth: {
     autoRefreshToken: true,
     persistSession: true,
-    storage: localStorage,
+    storage: typeof window !== 'undefined' ? localStorage : undefined,
     storageKey: 'homi-auth-session',
     detectSessionInUrl: true
   }
 });
+
+// Function to check if a session exists in localStorage
+export const hasStoredSession = (): boolean => {
+  if (typeof window === 'undefined') return false;
+  
+  const sessionStr = localStorage.getItem('homi-auth-session');
+  if (!sessionStr) return false;
+  
+  try {
+    const sessionData = JSON.parse(sessionStr);
+    const isExpired = sessionData.expires_at && new Date(sessionData.expires_at * 1000) < new Date();
+    return !isExpired;
+  } catch (e) {
+    console.error("Error parsing session from localStorage:", e);
+    return false;
+  }
+};

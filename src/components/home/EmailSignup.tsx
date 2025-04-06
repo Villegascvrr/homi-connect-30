@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -37,6 +38,7 @@ const EmailSignup = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSigningWithGoogle, setIsSigningWithGoogle] = useState(false);
+  const [sessionStored, setSessionStored] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
   const formContainerRef = useRef<HTMLDivElement>(null);
@@ -69,6 +71,16 @@ const EmailSignup = () => {
       }, 50);
     }
   }, []);
+
+  useEffect(() => {
+    // Handle redirect after successful signup and session storage
+    if (sessionStored) {
+      console.log("Session stored, proceeding with redirect");
+      setTimeout(() => {
+        window.location.href = "/?registered=true";
+      }, 300);
+    }
+  }, [sessionStored, navigate]);
 
   const handleGoogleSignIn = () => {
     setIsSigningWithGoogle(true);
@@ -106,15 +118,38 @@ const EmailSignup = () => {
       
       if (result.success) {
         console.log("Registration successful, session should be established");
-        
         setIsSubmitted(true);
         
-        const { data: sessionData } = await supabase.auth.getSession();
-        console.log("Current session after signup:", sessionData?.session ? "Session exists" : "No session");
+        // Check and verify session in localStorage
+        const verifySession = async () => {
+          // Wait a moment to ensure session is stored
+          await new Promise(resolve => setTimeout(resolve, 100));
+          
+          const { data: sessionData } = await supabase.auth.getSession();
+          console.log("Current session after signup:", sessionData?.session ? "Session exists" : "No session");
+          
+          if (sessionData?.session) {
+            localStorage.setItem('homi-auth-session', JSON.stringify(sessionData.session));
+            console.log("Session manually stored in localStorage");
+            setSessionStored(true);
+          } else {
+            // Retry session fetch if it's not available immediately
+            console.log("Session not available, retrying...");
+            setTimeout(async () => {
+              const { data: retrySessionData } = await supabase.auth.getSession();
+              if (retrySessionData?.session) {
+                localStorage.setItem('homi-auth-session', JSON.stringify(retrySessionData.session));
+                console.log("Session manually stored in localStorage after retry");
+                setSessionStored(true);
+              } else {
+                console.error("Failed to get session after signup");
+                window.location.href = "/signin?error=session";
+              }
+            }, 500);
+          }
+        };
         
-        setTimeout(() => {
-          window.location.replace("/?registered=true");
-        }, 300);
+        verifySession();
       } else {
         toast({
           title: "Error",
@@ -133,6 +168,16 @@ const EmailSignup = () => {
       setIsLoading(false);
     }
   };
+
+  if (isSubmitted && !sessionStored) {
+    return <div className="flex flex-col items-center justify-center p-8 bg-gradient-to-br from-homi-ultraLightPurple to-white dark:from-homi-purple/20 dark:to-background rounded-xl border border-homi-purple/20 shadow-md animate-fade-in">
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-homi-purple border-t-transparent mb-4"></div>
+        <h3 className="text-2xl font-bold mb-3">Preparando tu cuenta...</h3>
+        <p className="text-center text-lg mb-4">
+          Estamos configurando tu perfil en Homi.
+        </p>
+      </div>;
+  }
 
   if (isSubmitted) {
     return <div className="flex flex-col items-center justify-center p-8 bg-gradient-to-br from-homi-ultraLightPurple to-white dark:from-homi-purple/20 dark:to-background rounded-xl border border-homi-purple/20 shadow-md animate-fade-in">

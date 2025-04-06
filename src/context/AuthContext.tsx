@@ -28,11 +28,31 @@ export interface UserSignUpData {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Function to manually save session to localStorage
+const saveSessionToLocalStorage = (session: Session | null): void => {
+  if (session) {
+    localStorage.setItem('homi-auth-session', JSON.stringify(session));
+    console.log("Session saved to localStorage");
+  } else {
+    localStorage.removeItem('homi-auth-session');
+    console.log("Session removed from localStorage");
+  }
+};
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<ExtendedUser | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+
+  // Monitor and log session changes for debugging
+  useEffect(() => {
+    if (session) {
+      console.log("Session updated in state:", session.access_token.substring(0, 10) + "...");
+    } else {
+      console.log("Session cleared from state");
+    }
+  }, [session]);
 
   useEffect(() => {
     console.log("AuthProvider initializing");
@@ -40,48 +60,56 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     
     // Set up the auth state change listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, currentSession) => {
+      async (event, currentSession) => {
         console.log("Auth state changed:", event, currentSession ? "With session" : "No session");
         
-        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-          console.log("User signed in or token refreshed");
-        }
-        
-        if (currentSession?.user) {
+        if (currentSession) {
+          console.log("Session received in auth state change:", 
+            currentSession.access_token ? currentSession.access_token.substring(0, 10) + "..." : "No access token");
           setSession(currentSession);
-          const authUser = currentSession.user;
-          console.log("Session contains user ID:", authUser.id);
           
-          // Use setTimeout to avoid lockup in auth state change callback
-          setTimeout(async () => {
-            try {
-              const { data: profileData, error } = await supabase
-                .from('profiles')
-                .select('profile_image, first_name, last_name')
-                .eq('id', authUser.id)
-                .maybeSingle();
-              
-              if (!error && profileData) {
-                console.log("Profile data fetched successfully");
-                setUser({
-                  ...authUser,
-                  profile_image: profileData.profile_image
-                });
-              } else {
-                console.log("No profile data found or error:", error);
+          // Manually save session to localStorage as a backup
+          saveSessionToLocalStorage(currentSession);
+          
+          if (currentSession.user) {
+            const authUser = currentSession.user;
+            console.log("User ID from session:", authUser.id);
+            
+            // Use setTimeout to avoid lockup in auth state change callback
+            setTimeout(async () => {
+              try {
+                const { data: profileData, error } = await supabase
+                  .from('profiles')
+                  .select('profile_image, first_name, last_name')
+                  .eq('id', authUser.id)
+                  .maybeSingle();
+                
+                if (!error && profileData) {
+                  console.log("Profile data fetched successfully");
+                  setUser({
+                    ...authUser,
+                    profile_image: profileData.profile_image
+                  });
+                } else {
+                  console.log("No profile data found or error:", error);
+                  setUser(authUser);
+                }
+              } catch (error) {
+                console.error("Error fetching profile data:", error);
                 setUser(authUser);
+              } finally {
+                setLoading(false);
               }
-            } catch (error) {
-              console.error("Error fetching profile data:", error);
-              setUser(authUser);
-            } finally {
-              setLoading(false);
-            }
-          }, 0);
+            }, 0);
+          }
         } else {
-          console.log("No user in session");
-          setSession(null);
-          setUser(null);
+          console.log("No session in auth state change");
+          if (event === 'SIGNED_OUT') {
+            // Clear session from localStorage on sign out
+            localStorage.removeItem('homi-auth-session');
+            setSession(null);
+            setUser(null);
+          }
           setLoading(false);
         }
       }
@@ -90,11 +118,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Then check for an existing session
     const checkExistingSession = async () => {
       try {
+        // First try to get session from Supabase
         const { data: { session: currentSession } } = await supabase.auth.getSession();
         console.log("Initial session check:", currentSession ? "Found session" : "No session");
         
         if (currentSession?.user) {
+          console.log("Setting session from getSession call");
           setSession(currentSession);
+          
+          // Ensure session is stored in localStorage
+          saveSessionToLocalStorage(currentSession);
+          
           const authUser = currentSession.user;
           
           try {
@@ -119,7 +153,34 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             setUser(authUser);
           }
         } else {
-          console.log("No existing session found");
+          // If no session from Supabase, check localStorage as fallback
+          const sessionStr = localStorage.getItem('homi-auth-session');
+          console.log("Checking localStorage for session:", sessionStr ? "Found" : "Not found");
+          
+          if (sessionStr) {
+            try {
+              const sessionData = JSON.parse(sessionStr);
+              const isExpired = sessionData.expires_at && new Date(sessionData.expires_at * 1000) < new Date();
+              
+              if (!isExpired) {
+                console.log("Using session from localStorage");
+                // Set the session from localStorage
+                setSession(sessionData);
+                
+                if (sessionData.user) {
+                  console.log("Setting user from localStorage session");
+                  setUser(sessionData.user);
+                }
+              } else {
+                console.log("Session in localStorage is expired");
+                localStorage.removeItem('homi-auth-session');
+              }
+            } catch (error) {
+              console.error("Error parsing session from localStorage:", error);
+            }
+          } else {
+            console.log("No existing session found in localStorage");
+          }
         }
         
         setLoading(false);
@@ -218,8 +279,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setSession(authData.session);
           setUser(authData.user);
           
-          // Ensure session is stored in localStorage
-          localStorage.setItem('homi-auth-session', JSON.stringify(authData.session));
+          // Manually ensure session is stored in localStorage
+          saveSessionToLocalStorage(authData.session);
         } else {
           console.warn("No session in signup response!");
         }
@@ -264,8 +325,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setSession(data.session);
         setUser(data.user);
         
-        // Ensure session is stored in localStorage
-        localStorage.setItem('homi-auth-session', JSON.stringify(data.session));
+        // Manually ensure session is stored in localStorage
+        saveSessionToLocalStorage(data.session);
       }
       
       toast({
@@ -290,6 +351,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       
       setUser(null);
       setSession(null);
+      
+      // Clear session from localStorage
+      localStorage.removeItem('homi-auth-session');
       
       toast({
         title: "Sesión cerrada",
