@@ -1,17 +1,19 @@
 
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Check, Clock } from 'lucide-react';
+import { Check, Clock, AlertCircle } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 
 const VerifiedPage = () => {
   const [isVerifying, setIsVerifying] = useState(true);
   const [isSuccess, setIsSuccess] = useState(false);
   const { refreshUser, isEmailVerified, user } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   useEffect(() => {
     const checkVerification = async () => {
@@ -20,10 +22,24 @@ const VerifiedPage = () => {
         await refreshUser();
         setIsVerifying(false);
         setIsSuccess(isEmailVerified);
+        
+        if (isEmailVerified) {
+          toast({
+            title: "¡Email verificado!",
+            description: "Tu cuenta ha sido verificada con éxito.",
+            variant: "default",
+          });
+        }
       } catch (error) {
         console.error("Error checking verification status:", error);
         setIsVerifying(false);
         setIsSuccess(false);
+        
+        toast({
+          title: "Error de verificación",
+          description: "No pudimos verificar tu cuenta. Por favor, inténtalo de nuevo.",
+          variant: "destructive",
+        });
       }
     };
 
@@ -33,7 +49,7 @@ const VerifiedPage = () => {
     }, 1500);
 
     return () => clearTimeout(timer);
-  }, [refreshUser, isEmailVerified]);
+  }, [refreshUser, isEmailVerified, toast]);
 
   const handleGoToProfile = () => {
     navigate('/profile');
@@ -41,6 +57,23 @@ const VerifiedPage = () => {
 
   const handleGoToHome = () => {
     navigate('/');
+  };
+
+  const handleResendVerification = async () => {
+    try {
+      // Aquí iría la lógica para reenviar el email de verificación
+      toast({
+        title: "Correo reenviado",
+        description: "Hemos enviado un nuevo correo de verificación a tu dirección de email.",
+      });
+    } catch (error) {
+      console.error("Error resending verification email:", error);
+      toast({
+        title: "Error",
+        description: "No pudimos reenviar el correo. Inténtalo más tarde.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -77,7 +110,7 @@ const VerifiedPage = () => {
             ) : (
               <div className="flex flex-col items-center">
                 <div className="w-16 h-16 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mb-4">
-                  <Check className="w-8 h-8 text-red-500" />
+                  <AlertCircle className="w-8 h-8 text-red-500" />
                 </div>
                 <h1 className="text-2xl font-bold mb-4">Verificación pendiente</h1>
                 <p className="text-muted-foreground mb-8">
@@ -85,9 +118,14 @@ const VerifiedPage = () => {
                   Por favor, revisa tu bandeja de entrada y haz clic en el enlace 
                   de verificación que te hemos enviado.
                 </p>
-                <Button onClick={handleGoToHome} className="rounded-full">
-                  Volver al inicio
-                </Button>
+                <div className="flex flex-col sm:flex-row gap-4 w-full">
+                  <Button onClick={handleResendVerification} className="flex-1 rounded-full">
+                    Reenviar verificación
+                  </Button>
+                  <Button onClick={handleGoToHome} variant="outline" className="flex-1 rounded-full">
+                    Volver al inicio
+                  </Button>
+                </div>
               </div>
             )}
           </div>

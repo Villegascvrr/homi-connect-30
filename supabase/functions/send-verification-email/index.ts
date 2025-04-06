@@ -26,14 +26,14 @@ serve(async (req) => {
       
       // Extraemos información para el enlace de verificación
       const confirmationToken = data?.confirmation_token;
-      const confirmationUrl = `${Deno.env.get("SUPABASE_URL") || "https://salayaazmrghyqjddagm.supabase.co"}/auth/v1/verify?token=${confirmationToken}&type=signup&redirect_to=${encodeURIComponent("https://yourapp.com/verified")}`;
+      const confirmationUrl = `${Deno.env.get("SUPABASE_URL") || "https://salayaazmrghyqjddagm.supabase.co"}/auth/v1/verify?token=${confirmationToken}&type=signup&redirect_to=${encodeURIComponent("https://homi.lovable.dev/verified")}`;
       
       // Obtenemos datos adicionales del usuario si están disponibles
       const firstName = data?.user_metadata?.first_name || data?.firstName || "";
       
       // Enviamos el correo electrónico personalizado
       const emailResponse = await resend.emails.send({
-        from: "Homi <verificacion@tudominio.com>", // Cambia esto por tu dominio verificado en Resend
+        from: "Homi <noreply@resend.dev>", // Usar un dominio verificado en Resend
         to: [email],
         subject: "Verifica tu correo electrónico en Homi",
         html: `
