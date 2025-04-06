@@ -50,7 +50,7 @@ serve(async (req) => {
       }
       
       // Create confirmation URL with proper redirect
-      const confirmationUrl = `${Deno.env.get("SUPABASE_URL") || "https://salayaazmrghyqjddagm.supabase.co"}/auth/v1/verify?token=${confirmationToken}&type=signup&redirect_to=${encodeURIComponent("https://homi.lovable.dev/verified")}`;
+      const confirmationUrl = `${Deno.env.get("SUPABASE_URL") || "https://salayaazmrghyqjddagm.supabase.co"}/auth/v1/verify?token=${confirmationToken}&type=signup&redirect_to=${encodeURIComponent("https://homimatch.com/verified")}`;
       
       // Get user metadata if available
       const firstName = data?.user_metadata?.firstName || data?.user_metadata?.first_name || "";
