@@ -77,12 +77,32 @@ const ChatWindow = ({
     setMessages([...messages, message]);
     setNewMessage('');
 
-    // Simulate reply from the other person
+    // Simulate reply based on the current chat partner
     setTimeout(() => {
+      let replyText = '';
+      
+      // Generate appropriate responses based on chat contact
+      switch(chat.id) {
+        case "1":
+          replyText = "¡Genial! ¿Te gustaría ver el piso esta semana?";
+          break;
+        case "2":
+          replyText = "Sí, tengo disponibilidad para vernos. ¿Qué día te viene mejor?";
+          break;
+        case "3":
+          replyText = "Estoy buscando en esa zona. ¿Cuándo podríamos quedar para ver el piso?";
+          break;
+        case "4":
+          replyText = "Perfecto, entonces nos vemos mañana a las 6.";
+          break;
+        default:
+          replyText = "Gracias por tu mensaje. Te responderé lo antes posible.";
+      }
+      
       const replyMessage = {
         id: (Date.now() + 1).toString(),
         senderId: 'other',
-        text: `Gracias por tu mensaje! Te responderé lo antes posible.`,
+        text: replyText,
         timestamp: new Date().toISOString(),
         read: false
       };
