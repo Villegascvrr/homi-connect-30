@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Check, Instagram, MessageCircle } from 'lucide-react';
@@ -51,7 +52,7 @@ const Hero = () => {
         <div className="max-w-4xl mx-auto text-center space-y-8">
           {!user && !justRegistered ? <>
               <div className="inline-block px-4 py-1.5 mb-5 rounded-full bg-homi-ultraLightPurple text-homi-purple text-xs md:text-sm font-medium animate-pulse-soft">
-                ¡Ayúdanos a alcanzar los 1000 usuarios!
+                ¡Los primeros 1000 usuarios!
               </div>
               
               <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6 animate-slide-up leading-tight px-2 my-0">
