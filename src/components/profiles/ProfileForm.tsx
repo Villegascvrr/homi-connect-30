@@ -287,6 +287,13 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
       
       // Call the onSaved callback if provided
       if (onSaved) {
+        // Scroll to the top of the page before executing the callback
+        window.scrollTo({
+          top: 0,
+          left: 0,
+          behavior: 'instant'
+        });
+        
         onSaved();
       }
     } catch (error: any) {
@@ -400,3 +407,4 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
 };
 
 export default ProfileForm;
+
