@@ -1,4 +1,3 @@
-
 import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
@@ -115,8 +114,8 @@ const Index = () => {
                 Encuentra tu <span className="homi-gradient-text">compañero ideal</span>
               </h2>
               <p className="text-muted-foreground text-lg">
-                Miles de estudiantes y jóvenes profesionales ya están utilizando Homi
-                para encontrar compañeros de piso compatibles.
+                Homi está diseñado para ayudar a estudiantes y jóvenes profesionales a encontrar 
+                compañeros de piso compatibles. ¡Sé de los primeros en probarlo!
               </p>
             </div>
             
