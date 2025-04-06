@@ -61,6 +61,7 @@ const SwipeCard = ({
   const cardRef = useRef<HTMLDivElement>(null);
   const [showLike, setShowLike] = useState(false);
   const [showDislike, setShowDislike] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   
   // Reset indicators when swiping stops
   useEffect(() => {
@@ -93,14 +94,18 @@ const SwipeCard = ({
       setOffsetX(0);
       setShowLike(false);
       setShowDislike(false);
-    }, 500); // Match animation duration in CSS
+      setIsDragging(false);
+    }, 400); // Match animation duration in CSS
   };
   
+  // Touch handlers for mobile
   const handleTouchStart = (e: React.TouchEvent) => {
     setStartX(e.touches[0].clientX);
+    setIsDragging(true);
   };
   
   const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging) return;
     const currentX = e.touches[0].clientX;
     const diff = currentX - startX;
     setOffsetX(diff);
@@ -119,6 +124,7 @@ const SwipeCard = ({
   };
   
   const handleTouchEnd = () => {
+    setIsDragging(false);
     // Threshold for swipe (pixels)
     const threshold = 100;
     
@@ -127,12 +133,74 @@ const SwipeCard = ({
     } else if (offsetX < -threshold) {
       handleSwipe('left');
     } else {
-      // Reset if swipe wasn't decisive
+      // Reset if swipe wasn't decisive with a smooth animation
       setOffsetX(0);
       setShowLike(false);
       setShowDislike(false);
     }
   };
+  
+  // Mouse handlers for desktop
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setStartX(e.clientX);
+    setIsDragging(true);
+  };
+  
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+    const currentX = e.clientX;
+    const diff = currentX - startX;
+    setOffsetX(diff);
+    
+    if (diff > 50) {
+      setShowLike(true);
+      setShowDislike(false);
+    } else if (diff < -50) {
+      setShowLike(false);
+      setShowDislike(true);
+    } else {
+      setShowLike(false);
+      setShowDislike(false);
+    }
+  };
+  
+  const handleMouseUp = () => {
+    if (!isDragging) return;
+    
+    const threshold = 100;
+    
+    if (offsetX > threshold) {
+      handleSwipe('right');
+    } else if (offsetX < -threshold) {
+      handleSwipe('left');
+    } else {
+      // Reset with smooth animation
+      setOffsetX(0);
+      setIsDragging(false);
+      setShowLike(false);
+      setShowDislike(false);
+    }
+  };
+  
+  // Handle mouse leaving the document while dragging
+  useEffect(() => {
+    const handleMouseLeave = () => {
+      if (isDragging) {
+        setIsDragging(false);
+        setOffsetX(0);
+        setShowLike(false);
+        setShowDislike(false);
+      }
+    };
+    
+    document.addEventListener('mouseleave', handleMouseLeave);
+    document.addEventListener('mouseup', handleMouseUp);
+    
+    return () => {
+      document.removeEventListener('mouseleave', handleMouseLeave);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDragging]);
   
   // Calculate rotation and opacity based on swipe
   const rotation = offsetX / 20; // Less rotation for smoother effect
@@ -145,42 +213,58 @@ const SwipeCard = ({
       ? 'border-red-500' 
       : 'border-transparent';
   
+  // Calculate transform with spring-like effect for smoother feel
+  const getTransform = () => {
+    if (swipeDirection) {
+      return swipeDirection === 'right' 
+        ? 'translateX(120%) rotate(15deg)' 
+        : 'translateX(-120%) rotate(-15deg)';
+    }
+    return `translateX(${offsetX}px) rotate(${rotation}deg)`;
+  };
+  
   return (
     <div className="h-full flex flex-col items-center justify-center py-4">
       <div 
         ref={cardRef}
         className={cn(
-          "relative w-full max-w-xs mx-auto glass-card overflow-hidden rounded-xl shadow-lg transition-all duration-300 border-2",
+          "relative w-full max-w-xs mx-auto glass-card overflow-hidden rounded-xl shadow-lg border-2 transition-all",
           borderColor,
-          swipeDirection === 'right' ? 'animate-swipe-right' : 
-          swipeDirection === 'left' ? 'animate-swipe-left' : '',
+          swipeDirection ? "duration-400 ease-out" : "duration-300 ease-out",
           offsetX === 0 && !swipeDirection ? 'card-pulse' : ''
         )}
         style={{
-          transform: `translateX(${offsetX}px) rotate(${rotation}deg)`,
-          touchAction: 'pan-y'
+          transform: getTransform(),
+          touchAction: 'pan-y',
+          transition: isDragging ? 'none' : 'transform 0.3s ease-out',
         }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
       >
         {/* Like/Dislike Indicators */}
         {showLike && (
-          <div className={`absolute top-1/4 left-4 z-10 transform border-4 border-homi-purple rounded-lg px-2 py-1 animate-like`}>
+          <div className="absolute top-1/4 left-4 z-10 transform -rotate-12 border-4 border-homi-purple rounded-lg px-2 py-1 bg-white/80 transition-opacity duration-200" style={{ opacity: opacity }}>
             <span className="text-homi-purple text-2xl font-bold">LIKE</span>
           </div>
         )}
         {showDislike && (
-          <div className={`absolute top-1/4 right-4 z-10 transform border-4 border-red-500 rounded-lg px-2 py-1 animate-dislike`}>
+          <div className="absolute top-1/4 right-4 z-10 transform rotate-12 border-4 border-red-500 rounded-lg px-2 py-1 bg-white/80 transition-opacity duration-200" style={{ opacity: opacity }}>
             <span className="text-red-500 text-2xl font-bold">NOPE</span>
           </div>
         )}
         
+        {/* Profile Image Section */}
         <div className="relative aspect-[3/4] overflow-hidden bg-gray-100">
           <img
             src={imgUrl}
             alt={name}
-            className="w-full h-full object-cover"
+            className={cn(
+              "w-full h-full object-cover transition-transform",
+              showLike ? "scale-[1.02]" : showDislike ? "scale-[0.98]" : ""
+            )}
           />
           <div 
             className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4 text-white"
@@ -204,6 +288,7 @@ const SwipeCard = ({
           </div>
         </div>
         
+        {/* Profile Details Section */}
         <div className="p-4">
           <div className="flex justify-between items-center mb-3">
             <button 

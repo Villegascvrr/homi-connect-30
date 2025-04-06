@@ -45,13 +45,29 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
   const [direction, setDirection] = useState<'left' | 'right' | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [showMatch, setShowMatch] = useState<SwipeProfile | null>(null);
+  const [nextCardReady, setNextCardReady] = useState(false);
   
   const currentProfile = profiles[currentIndex];
+  const nextProfile = profiles[currentIndex + 1]; // Pre-load next profile
   const hasMoreProfiles = currentIndex < profiles.length;
+  
+  // Pre-load next profile image
+  useEffect(() => {
+    if (nextProfile) {
+      const img = new Image();
+      img.src = nextProfile.imgUrl;
+      img.onload = () => setNextCardReady(true);
+    }
+  }, [currentIndex, nextProfile]);
   
   // Reset animation state when profile changes
   useEffect(() => {
     setDirection(null);
+    // Short delay before allowing next swipe action
+    const timer = setTimeout(() => {
+      setIsTransitioning(false);
+    }, 300);
+    return () => clearTimeout(timer);
   }, [currentIndex]);
   
   const handleSwipeAction = (action: 'like' | 'pass', id: string) => {
@@ -63,7 +79,7 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
     // Add to history
     setHistory(prev => [...prev, id]);
     
-    // Move to next profile
+    // Move to next profile with a slight delay for animation
     setTimeout(() => {
       if (action === 'like') {
         // If it's a high compatibility match (over 85%), show match animation
@@ -84,8 +100,7 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
       
       setCurrentIndex(prev => prev + 1);
       setDirection(null);
-      setIsTransitioning(false);
-    }, 600); // Slightly longer than the animation duration
+    }, 400); // Match animation timing with SwipeCard
   };
   
   const handleUndo = () => {
@@ -132,12 +147,12 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
   
   return (
     <div className="h-full relative mt-2">
-      {/* Match animation overlay */}
+      {/* Match animation overlay with improved animation */}
       {showMatch && (
         <div className="fixed inset-0 bg-black/70 flex flex-col items-center justify-center z-50 animate-fade-in">
-          <div className="text-center p-6 max-w-sm">
+          <div className="text-center p-6 max-w-sm animate-scale-in">
             <div className="mb-6 relative">
-              <div className="w-24 h-24 mx-auto rounded-full overflow-hidden border-4 border-white">
+              <div className="w-24 h-24 mx-auto rounded-full overflow-hidden border-4 border-white animate-pulse">
                 <img 
                   src={showMatch.imgUrl} 
                   alt={showMatch.name} 
@@ -177,13 +192,30 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
         </div>
       )}
 
-      <SwipeCard
-        {...currentProfile}
-        onLike={(id) => handleSwipeAction('like', id)}
-        onPass={(id) => handleSwipeAction('pass', id)}
-        onView={onView}
-        onUndo={history.length > 0 ? handleUndo : undefined}
-      />
+      {/* Card stack effect - show next card behind current one */}
+      <div className="relative">
+        {nextProfile && nextCardReady && !isTransitioning && (
+          <div className="absolute inset-0 transform scale-[0.92] -translate-y-6 opacity-40 blur-sm pointer-events-none">
+            <div className="w-full max-w-xs mx-auto glass-card rounded-xl overflow-hidden">
+              <div className="aspect-[3/4] bg-gray-100">
+                <img 
+                  src={nextProfile.imgUrl} 
+                  alt="Next profile" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        <SwipeCard
+          {...currentProfile}
+          onLike={(id) => handleSwipeAction('like', id)}
+          onPass={(id) => handleSwipeAction('pass', id)}
+          onView={onView}
+          onUndo={history.length > 0 ? handleUndo : undefined}
+        />
+      </div>
       
       <div className="text-center mt-4 animate-fade-in">
         <p className="text-sm text-muted-foreground">
