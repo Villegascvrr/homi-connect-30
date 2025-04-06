@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -37,7 +36,7 @@ const PrivacyPage = () => {
                   <h2 className="text-xl font-semibold mt-6 mb-3">1. Responsable del Tratamiento</h2>
                   <p><strong>Identidad:</strong> Homi</p>
                   <p><strong>Dirección:</strong> C/ Principal 123, 28001 Madrid</p>
-                  <p><strong>Correo electrónico:</strong> privacidad@homimatch.com</p>
+                  <p><strong>Correo electrónico:</strong> homimatch@gmail.com</p>
                 </div>
                 
                 <div>
@@ -139,7 +138,7 @@ const PrivacyPage = () => {
                   <h2 className="text-xl font-semibold mt-6 mb-3">10. Contacto</h2>
                   <p>
                     Si tiene alguna pregunta o inquietud acerca de nuestra Política de Privacidad o el tratamiento de 
-                    sus datos, por favor contáctenos a través de privacidad@homimatch.com.
+                    sus datos, por favor contáctenos a través de homimatch@gmail.com.
                   </p>
                 </div>
               </div>
