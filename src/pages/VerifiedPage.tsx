@@ -32,6 +32,13 @@ const VerifiedPage = () => {
             variant: "default",
           });
         }
+
+        // Redirect to homepage with registered=true after successful verification
+        if (isEmailVerified) {
+          setTimeout(() => {
+            navigate('/?registered=true');
+          }, 3000);
+        }
       } catch (error) {
         console.error("Error checking verification status:", error);
         setIsVerifying(false);
@@ -51,7 +58,7 @@ const VerifiedPage = () => {
     }, 1500);
 
     return () => clearTimeout(timer);
-  }, [refreshUser, isEmailVerified, toast]);
+  }, [refreshUser, isEmailVerified, toast, navigate]);
 
   const handleGoToProfile = () => {
     navigate('/profile');

@@ -14,7 +14,8 @@ const Hero = () => {
   const [justRegistered, setJustRegistered] = useState(false);
   const isMobile = useIsMobile();
   const {
-    user
+    user,
+    isEmailVerified
   } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -25,17 +26,19 @@ const Hero = () => {
     console.log("Checking registration status:", {
       isRegistered,
       userExists: !!user,
+      isEmailVerified,
       currentJustRegistered: justRegistered,
       searchParams: urlParams.toString()
     });
+    
     if (isRegistered) {
-      console.log("User just registered, showing welcome message");
+      console.log("User just registered with verified email, showing welcome message");
       setJustRegistered(true);
       window.history.replaceState({}, document.title, window.location.pathname);
     } else {
       console.log("User state:", user ? "logged in" : "not logged in", "Just registered:", justRegistered);
     }
-  }, [user, location.search]);
+  }, [user, location.search, isEmailVerified, justRegistered]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

@@ -11,6 +11,7 @@ import { CheckCircle2, ArrowRight, User, Mail, AtSign, Lock } from 'lucide-react
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 const formSchema = z.object({
   firstName: z.string().min(2, {
@@ -37,8 +38,9 @@ const formSchema = z.object({
 const EmailSignup = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [needsVerification, setNeedsVerification] = useState(false);
+  const [isWelcomeShown, setIsWelcomeShown] = useState(false);
   const [isSigningWithGoogle, setIsSigningWithGoogle] = useState(false);
-  const [sessionStored, setSessionStored] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
   const formContainerRef = useRef<HTMLDivElement>(null);
@@ -71,16 +73,6 @@ const EmailSignup = () => {
       }, 50);
     }
   }, []);
-
-  useEffect(() => {
-    // Handle redirect after successful signup and session storage
-    if (sessionStored) {
-      console.log("Session stored, proceeding with redirect");
-      setTimeout(() => {
-        window.location.href = "/?registered=true";
-      }, 300);
-    }
-  }, [sessionStored, navigate]);
 
   const handleGoogleSignIn = () => {
     setIsSigningWithGoogle(true);
@@ -117,73 +109,38 @@ const EmailSignup = () => {
       });
       
       if (result.success) {
-        console.log("Registration successful, session should be established");
+        console.log("Registration successful");
+        
+        // First show verification needed message
+        setNeedsVerification(true);
         setIsSubmitted(true);
         
-        // Improved session verification and storage
-        const verifySession = async () => {
-          // Wait a moment to ensure session is stored
-          await new Promise(resolve => setTimeout(resolve, 300));
-          
-          // First attempt
+        // Force manual session storage with redundancy
+        try {
           const { data: sessionData } = await supabase.auth.getSession();
-          console.log("Current session after signup:", sessionData?.session ? "Session exists" : "No session");
-          
           if (sessionData?.session) {
-            // Force save to localStorage with explicit serialization
-            const sessionJson = JSON.stringify(sessionData.session);
-            localStorage.setItem('homi-auth-session', sessionJson);
-            console.log("Session manually stored in localStorage:", sessionJson.substring(0, 50) + "...");
+            console.log("Storing session manually");
+            localStorage.setItem('homi-auth-session', JSON.stringify(sessionData.session));
             
-            // Double check that it was actually stored
-            const storedSession = localStorage.getItem('homi-auth-session');
-            if (storedSession) {
-              console.log("Verified session is in localStorage");
-              setSessionStored(true);
+            // Double check storage worked
+            const stored = localStorage.getItem('homi-auth-session');
+            if (!stored) {
+              console.warn("Session storage failed, retrying");
+              localStorage.setItem('homi-auth-session', JSON.stringify(sessionData.session));
             } else {
-              console.warn("Failed to store session in localStorage, retrying...");
-              // Retry once more
-              localStorage.setItem('homi-auth-session', sessionJson);
-            }
-          } else {
-            // Retry session fetch with multiple attempts
-            console.log("Session not available in first attempt, retrying...");
-            
-            // Try up to 3 times with increasing delays
-            const retryDelays = [500, 1000, 2000];
-            
-            for (const delay of retryDelays) {
-              await new Promise(resolve => setTimeout(resolve, delay));
-              
-              const { data: retrySessionData } = await supabase.auth.getSession();
-              if (retrySessionData?.session) {
-                const sessionJson = JSON.stringify(retrySessionData.session);
-                localStorage.setItem('homi-auth-session', sessionJson);
-                console.log("Session manually stored in localStorage after retry");
-                setSessionStored(true);
-                break;
-              } else {
-                console.log(`No session after ${delay}ms retry`);
-              }
-            }
-            
-            // Even if no session, redirect to home page with registered flag
-            if (!sessionStored) {
-              console.warn("Could not get session after multiple attempts");
-              setTimeout(() => {
-                window.location.href = "/?registered=true";
-              }, 300);
+              console.log("Session stored successfully");
             }
           }
-        };
+        } catch (err) {
+          console.error("Error storing session:", err);
+        }
         
-        verifySession();
-        
-        // Show success notification about verification email
+        // Show verification message
         toast({
           title: "Cuenta creada con éxito",
           description: "Por favor, revisa tu correo electrónico para verificar tu cuenta.",
-          variant: "default"
+          variant: "default",
+          duration: 8000,
         });
       } else {
         toast({
@@ -204,17 +161,36 @@ const EmailSignup = () => {
     }
   };
 
-  if (isSubmitted && !sessionStored) {
+  if (isSubmitted && needsVerification) {
     return <div className="flex flex-col items-center justify-center p-8 bg-gradient-to-br from-homi-ultraLightPurple to-white dark:from-homi-purple/20 dark:to-background rounded-xl border border-homi-purple/20 shadow-md animate-fade-in">
-        <div className="h-12 w-12 animate-spin rounded-full border-4 border-homi-purple border-t-transparent mb-4"></div>
-        <h3 className="text-2xl font-bold mb-3">Preparando tu cuenta...</h3>
+        <div className="h-16 w-16 bg-orange-100 rounded-full flex items-center justify-center text-orange-500 mb-4">
+          <Mail className="h-8 w-8" />
+        </div>
+        <h3 className="text-2xl font-bold mb-3">¡Verifica tu correo electrónico!</h3>
         <p className="text-center text-lg mb-4">
-          Estamos configurando tu perfil en Homi.
+          Hemos enviado un enlace de verificación a tu correo electrónico.
         </p>
+        <Alert className="mb-4 max-w-md">
+          <AlertTitle>Importante:</AlertTitle>
+          <AlertDescription>
+            Debes verificar tu correo electrónico antes de poder iniciar sesión en Homi. Por favor, revisa tu bandeja de entrada.
+          </AlertDescription>
+        </Alert>
+        <div className="text-sm text-muted-foreground text-center">
+          <p>Hemos enviado un correo de verificación a <span className="font-semibold">{form.getValues('email')}</span></p>
+          <p className="mt-2">Una vez verificado, podrás iniciar sesión con tus credenciales.</p>
+          <Button 
+            variant="link" 
+            onClick={() => navigate('/signin')} 
+            className="mt-4"
+          >
+            Ir a iniciar sesión
+          </Button>
+        </div>
       </div>;
   }
 
-  if (isSubmitted) {
+  if (isSubmitted && isWelcomeShown) {
     return <div className="flex flex-col items-center justify-center p-8 bg-gradient-to-br from-homi-ultraLightPurple to-white dark:from-homi-purple/20 dark:to-background rounded-xl border border-homi-purple/20 shadow-md animate-fade-in">
         <CheckCircle2 className="h-16 w-16 text-green-500 mb-4" />
         <h3 className="text-2xl font-bold mb-3">¡Gracias por registrarte!</h3>
@@ -222,8 +198,7 @@ const EmailSignup = () => {
           Hemos creado tu cuenta en Homi. Ahora puedes completar tu perfil.
         </p>
         <div className="text-sm text-muted-foreground">
-          <p>Hemos enviado un correo de confirmación a <span className="font-semibold">{form.getValues('email')}</span></p>
-          <p className="mt-2">Por favor, revisa tu bandeja de entrada y verifica tu correo electrónico.</p>
+          <p>Ya puedes comenzar a usar todas las funcionalidades de Homi.</p>
         </div>
       </div>;
   }
