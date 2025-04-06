@@ -95,7 +95,8 @@ const ProfileViewPage = () => {
               name: `${data.first_name || ''} ${data.last_name || ''}`.trim() || 'Usuario',
               username: data.username || '',
               age: data.edad || 'No especificado',
-              location: data.ubicacion || 'No especificado',
+              // Fix: use sevilla_zona as the location instead of ubicacion
+              location: data.sevilla_zona || 'No especificado',
               university: data.universidad || 'No especificado',
               occupation: data.ocupacion || 'No especificado',
               bio: data.bio || 'Sin descripción disponible',

@@ -57,7 +57,9 @@ const ProfilesTable = () => {
               email: profile.email || '',
               bio: profile.bio || '',
               edad: profile.edad || '',
-              ubicacion: profile.ubicacion || '',
+              // Change this line to fix the TypeScript error
+              // Using location data from the correct field
+              location: profile.universidad || '', // Use universidad as a fallback for location
               universidad: profile.universidad || '',
               ocupacion: profile.ocupacion || '',
               sevilla_zona: profile.sevilla_zona || '',
