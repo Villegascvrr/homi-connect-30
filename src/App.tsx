@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -10,6 +11,7 @@ import MatchingPage from "./pages/MatchingPage";
 import ProfilePage from "./components/profiles/ProfilePage";
 import ProfileForm from "./components/profiles/ProfileForm";
 import ProfileViewPage from "./components/profiles/ProfileViewPage";
+import ProfileEditPage from "./components/profiles/ProfileEditPage";  // Fixed import
 import ChatPage from "./pages/ChatPage";
 import SignInPage from "./pages/SignInPage";
 import RegisterPage from "./pages/RegisterPage";
