@@ -354,16 +354,6 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-between mt-6 bg-white p-4 rounded-lg shadow-sm">
-          <Button 
-            type="submit" 
-            className="w-full sm:w-auto bg-green-500 hover:bg-green-600 rounded-full" 
-            size="default" 
-            disabled={isSubmitting}
-          >
-            <Save className="mr-2 h-4 w-4" />
-            {isSubmitting ? "Guardando..." : "Guardar Cambios"}
-          </Button>
-          
           <div className="flex flex-col sm:flex-row gap-4">
             {cancelEdit && (
               <Button 
