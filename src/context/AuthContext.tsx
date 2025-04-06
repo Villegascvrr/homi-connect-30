@@ -38,10 +38,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     console.log("AuthProvider initializing");
     setLoading(true);
     
-    // First set up the auth state change listener
+    // Set up the auth state change listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, currentSession) => {
         console.log("Auth state changed:", event, currentSession ? "With session" : "No session");
+        
+        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+          console.log("User signed in or token refreshed");
+        }
         
         if (currentSession?.user) {
           setSession(currentSession);
@@ -165,6 +169,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const signUp = async (userData: UserSignUpData) => {
     setLoading(true);
     try {
+      console.log("Starting signup process for:", userData.email);
+      
       // Sign up the user
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: userData.email,
@@ -178,7 +184,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         },
       });
 
-      if (authError) throw authError;
+      if (authError) {
+        console.error("Auth error during signup:", authError);
+        throw authError;
+      }
+      
+      console.log("Auth signup successful, user created:", authData.user?.id);
       
       if (authData.user) {
         // Create the user profile
@@ -199,17 +210,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           throw profileError;
         }
         
+        console.log("Profile created successfully");
+        
         // Explicitly set session and user after signup
         if (authData.session) {
+          console.log("Setting session from signup response");
           setSession(authData.session);
           setUser(authData.user);
-          console.log("Session set after signup:", authData.session.access_token.substring(0, 10) + "...");
+          
+          // Ensure session is stored in localStorage
+          localStorage.setItem('homi-auth-session', JSON.stringify(authData.session));
+        } else {
+          console.warn("No session in signup response!");
         }
       }
       
       toast({
         title: "Cuenta creada con éxito",
-        description: "Tu cuenta ha sido registrada. Por favor verifica tu correo electrónico.",
+        description: "Tu cuenta ha sido registrada. Por favor completa tu perfil.",
       });
       
       return { success: true };
@@ -229,6 +247,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const signIn = async (email: string, password: string) => {
     setLoading(true);
     try {
+      console.log("Attempting to sign in user:", email);
+      
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -236,11 +256,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       if (error) throw error;
       
+      console.log("Sign-in successful, session:", data.session ? "Exists" : "Missing");
+      
       // Explicitly set session and user after signin
       if (data.session) {
         console.log("Session set after signin:", data.session.access_token.substring(0, 10) + "...");
         setSession(data.session);
         setUser(data.user);
+        
+        // Ensure session is stored in localStorage
+        localStorage.setItem('homi-auth-session', JSON.stringify(data.session));
       }
       
       toast({

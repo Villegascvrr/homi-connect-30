@@ -3,6 +3,7 @@ import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import DemoBanner from "../layout/DemoBanner";
 import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -20,12 +21,29 @@ const ProtectedRoute = ({
   const { user, session, loading } = useAuth();
   const location = useLocation();
   const [authCheckComplete, setAuthCheckComplete] = useState(false);
+  const [hasLocalSession, setHasLocalSession] = useState(false);
+  
+  // Check for local session on mount
+  useEffect(() => {
+    const sessionStr = localStorage.getItem('homi-auth-session');
+    if (sessionStr) {
+      try {
+        const sessionData = JSON.parse(sessionStr);
+        const isExpired = sessionData.expires_at && new Date(sessionData.expires_at * 1000) < new Date();
+        setHasLocalSession(!isExpired);
+      } catch (e) {
+        console.error("Error parsing session from localStorage:", e);
+        setHasLocalSession(false);
+      }
+    }
+  }, []);
   
   useEffect(() => {
     console.log("Protected route accessed:", {
       path: location.pathname,
       isAuthenticated: !!user,
       hasSession: !!session,
+      hasLocalSession: hasLocalSession,
       isLoading: loading,
       allowsPreview: allowPreview
     });
@@ -36,27 +54,37 @@ const ProtectedRoute = ({
         console.log("Auth check taking too long, forcing completion");
         setAuthCheckComplete(true);
       }
-    }, 1500);
+    }, 2000); // Increased timeout to give more time for auth check
     
     return () => clearTimeout(timeoutId);
-  }, [location.pathname, user, session, loading, allowPreview]);
+  }, [location.pathname, user, session, loading, allowPreview, hasLocalSession]);
   
   useEffect(() => {
-    if (!loading) {
-      console.log("Auth loading finished, status:", user ? "authenticated" : "not authenticated");
-      setAuthCheckComplete(true);
-    }
-  }, [loading, user]);
+    const checkSession = async () => {
+      if (!user && !session && hasLocalSession) {
+        console.log("No user or session in context, but found in localStorage. Refreshing session...");
+        try {
+          const { data } = await supabase.auth.getSession();
+          if (data.session) {
+            console.log("Session refreshed from localStorage");
+          } else {
+            console.log("Failed to refresh session from localStorage");
+            setAuthCheckComplete(true);
+          }
+        } catch (error) {
+          console.error("Error refreshing session:", error);
+          setAuthCheckComplete(true);
+        }
+      } else if (!loading) {
+        console.log("Auth loading finished, status:", user ? "authenticated" : "not authenticated");
+        setAuthCheckComplete(true);
+      }
+    };
+    
+    checkSession();
+  }, [loading, user, session, hasLocalSession]);
 
-  // Check session storage for auth token to detect sessions that might not be fully loaded
-  useEffect(() => {
-    const hasStoredSession = !!localStorage.getItem('homi-auth-session');
-    if (hasStoredSession && !session && loading) {
-      console.log("Session found in storage but not loaded in context yet, waiting...");
-    }
-  }, [session, loading]);
-
-  if (loading && !authCheckComplete) {
+  if ((loading && !authCheckComplete) || (!user && hasLocalSession && !authCheckComplete)) {
     return (
       <div className="flex flex-col justify-center items-center h-[200px] bg-gray-50">
         <div className="h-6 w-6 animate-spin rounded-full border-2 border-homi-purple border-t-transparent"></div>

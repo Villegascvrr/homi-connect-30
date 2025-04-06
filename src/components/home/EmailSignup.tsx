@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -10,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { CheckCircle2, ArrowRight, User, Mail, AtSign, Lock } from 'lucide-react';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useAuth } from '@/context/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 
 const formSchema = z.object({
   firstName: z.string().min(2, {
@@ -96,7 +96,7 @@ const EmailSignup = () => {
     setIsLoading(true);
     
     try {
-      await signUp({
+      const result = await signUp({
         email: values.email,
         password: values.password,
         firstName: values.firstName,
@@ -104,12 +104,24 @@ const EmailSignup = () => {
         username: values.username
       });
       
-      setIsSubmitted(true);
-      setTimeout(() => {
-        console.log("EmailSignup: Registration successful, redirecting to home with registered=true param");
-        // Short delay to ensure state updates before redirect
-        window.location.replace("/?registered=true");
-      }, 100);
+      if (result.success) {
+        console.log("Registration successful, session should be established");
+        
+        setIsSubmitted(true);
+        
+        const { data: sessionData } = await supabase.auth.getSession();
+        console.log("Current session after signup:", sessionData?.session ? "Session exists" : "No session");
+        
+        setTimeout(() => {
+          window.location.replace("/?registered=true");
+        }, 300);
+      } else {
+        toast({
+          title: "Error",
+          description: result.error?.message || "Ha ocurrido un error al crear tu cuenta. Inténtalo de nuevo.",
+          variant: "destructive"
+        });
+      }
     } catch (error: any) {
       console.error("Error submitting form:", error);
       toast({
