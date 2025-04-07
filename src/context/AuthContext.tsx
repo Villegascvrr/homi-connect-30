@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Session, User } from "@supabase/supabase-js";
 import { useToast } from "@/hooks/use-toast";
+import { signInWithGoogleOAuth } from "@/integrations/supabase/client";
 
 type ExtendedUser = User & {
   profile_image?: string | null;
@@ -328,7 +329,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       console.log("Iniciando proceso unificado de autenticación con Google");
       
-      // Usamos la función optimizada para el manejo unificado de inicio de sesión/registro con Google
+      // Usar la función optimizada para el manejo unificado de inicio de sesión/registro con Google
       await signInWithGoogleOAuth();
       
       // No necesitamos hacer nada más aquí, la redirección ocurrirá automáticamente

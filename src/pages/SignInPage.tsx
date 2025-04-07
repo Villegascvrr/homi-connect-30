@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -20,6 +21,7 @@ import {
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/context/AuthContext';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { signInWithGoogleOAuth } from '@/integrations/supabase/client';
 
 const formSchema = z.object({
   email: z.string().email({
@@ -38,7 +40,7 @@ const SignInPage = () => {
   const isMobile = useIsMobile();
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-  const { user, signIn, signInWithGoogle } = useAuth();
+  const { user, signIn } = useAuth();
   const [showEmailVerificationAlert, setShowEmailVerificationAlert] = useState(false);
   const [loginError, setLoginError] = useState('');
 
@@ -95,9 +97,9 @@ const SignInPage = () => {
   const handleGoogleSignIn = async () => {
     try {
       setIsGoogleLoading(true);
-      await signInWithGoogle();
+      await signInWithGoogleOAuth();
     } catch (error: any) {
-      console.error("Error during Google sign in:", error);
+      console.error("Error durante la autenticación con Google:", error);
       setLoginError(error.message || 'Error al iniciar sesión con Google.');
       setIsGoogleLoading(false);
     }
