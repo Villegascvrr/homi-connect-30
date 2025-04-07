@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Session, User } from "@supabase/supabase-js";
@@ -119,7 +120,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                       first_name: firstName,
                       last_name: lastName,
                       username: `google_${authUser.id.substring(0, 8)}`,
-                      email: authUser.email
+                      email: authUser.email,
+                      profile_image: null // Add profile_image field with null value
                     };
                     
                     console.log("Creating profile for Google user:", newProfile);
