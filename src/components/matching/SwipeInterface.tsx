@@ -40,52 +40,27 @@ interface SwipeInterfaceProps {
 
 const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProps) => {
   const updatedProfiles = profiles.map(profile => {
-    if (profile.name === 'Elena') {
-      return {
-        ...profile,
-        imgUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1000'
-      };
-    } else if (profile.name === 'Laura') {
-      return {
-        ...profile,
-        imgUrl: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1000'
-      };
-    } else if (profile.name === 'Maria') {
-      return {
-        ...profile,
-        imgUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1000'
-      };
-    } else if (profile.name === 'Ana' || profile.name === 'Isabel') { 
-      return {
-        ...profile,
-        imgUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1000'
-      };
-    } else if (profile.name === 'Sofia' || profile.name === 'Paula') {
-      return {
-        ...profile,
-        imgUrl: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=1000'
-      };
-    } else if (profile.name === 'Carlos' || profile.name === 'David') {
-      return {
-        ...profile,
-        imgUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=1000'
-      };
-    } else if (profile.name === 'Miguel' || profile.name === 'Juan') {
-      return {
-        ...profile,
-        imgUrl: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?q=80&w=1000'
-      };
-    } else if (profile.name === 'Pedro' || profile.name === 'Javier') {
-      return {
-        ...profile,
-        imgUrl: 'https://images.unsplash.com/photo-1542327897-d73f4005b533?q=80&w=1000'
-      };
-    } else {
-      return {
-        ...profile,
-        imgUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1000'
-      };
-    }
+    const profileId = parseInt(profile.id) || Math.floor(Math.random() * 10);
+    
+    const imageIndex = profileId % 10;
+    
+    const imageUrls = [
+      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1000',
+      'https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1000',
+      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1000',
+      'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1000',
+      'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=1000',
+      'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=1000',
+      'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?q=80&w=1000',
+      'https://images.unsplash.com/photo-1542327897-d73f4005b533?q=80&w=1000',
+      'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1000',
+      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000'
+    ];
+    
+    return {
+      ...profile,
+      imgUrl: imageUrls[imageIndex]
+    };
   });
 
   const [currentIndex, setCurrentIndex] = useState(0);

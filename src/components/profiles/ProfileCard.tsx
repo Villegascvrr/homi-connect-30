@@ -78,7 +78,8 @@ const ProfileCard = ({
     </div>
   );
   
-  return <>
+  return (
+    <>
       <div className="glass-card overflow-hidden transition-all duration-300 hover:shadow-hover h-full rounded-xl">
         <div className="relative">
           <div className="absolute top-0 left-0 w-full h-8 flex justify-center items-center z-10 pt-2">
@@ -172,7 +173,8 @@ const ProfileCard = ({
           </DrawerContent>
         </Drawer>
       )}
-    </>;
+    </>
+  );
 };
 
 export default ProfileCard;
