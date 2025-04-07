@@ -22,9 +22,11 @@ import TermsPage from "./pages/TermsPage";
 import CookiesPage from "./pages/CookiesPage";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import AdminPage from "./pages/AdminPage";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { Loader2 } from "lucide-react";
 
+// Create QueryClient with optimized settings
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -37,12 +39,22 @@ const queryClient = new QueryClient({
   },
 });
 
+// Loader component for route transitions
+const PageLoader = () => (
+  <div className="flex flex-col justify-center items-center h-[60vh]">
+    <Loader2 className="h-8 w-8 animate-spin text-homi-purple" />
+    <p className="text-sm text-muted-foreground mt-4">Cargando...</p>
+  </div>
+);
+
 const App = () => {
   // Use a key to force re-render of AuthProvider when auth state changes
   const [authProviderKey, setAuthProviderKey] = useState('initial');
+  const [isAppReady, setIsAppReady] = useState(false);
   
+  // Initialize app and set up listeners
   useEffect(() => {
-    console.log("App fully initialized");
+    console.log("App initializing...");
     
     // Set up listener for auth state changes to force AuthProvider re-initialization
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
@@ -55,6 +67,7 @@ const App = () => {
       }
     });
     
+    // Pre-fetch basic data for performance
     const prefetchBasicData = async () => {
       try {
         const { data: { session } } = await queryClient.fetchQuery({
@@ -85,17 +98,33 @@ const App = () => {
             staleTime: 1000 * 30, // 30 seconds
           });
         }
+        
+        // Mark app as ready after initial data fetch
+        setIsAppReady(true);
       } catch (error) {
         console.error("Error prefetching data:", error);
+        // Even on error, mark app as ready to prevent indefinite loading
+        setIsAppReady(true);
       }
     };
     
     prefetchBasicData();
     
+    // Clean up subscription on unmount
     return () => {
       subscription.unsubscribe();
     };
   }, []);
+  
+  // Show loading screen while app is initializing
+  if (!isAppReady) {
+    return (
+      <div className="flex flex-col justify-center items-center h-screen bg-background">
+        <Loader2 className="h-10 w-10 animate-spin text-homi-purple" />
+        <p className="text-muted-foreground mt-4">Iniciando aplicación...</p>
+      </div>
+    );
+  }
   
   return (
     <QueryClientProvider client={queryClient}>
@@ -105,62 +134,64 @@ const App = () => {
           <Sonner />
           <BrowserRouter>
             <ScrollToTop />
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/signin" element={<SignInPage />} />
-              <Route path="/register" element={<RegisterPage />} />
-              <Route path="/verified" element={<VerifiedPage />} />
-              <Route path="/privacy" element={<PrivacyPage />} />
-              <Route path="/terms" element={<TermsPage />} />
-              <Route path="/cookies" element={<CookiesPage />} />
-              
-              {/* Auth callback routes - Ensure we catch all possible callback paths */}
-              <Route path="/auth/callback" element={<VerifiedPage />} />
-              <Route path="/callback" element={<VerifiedPage />} />
-              
-              <Route path="/matching" element={
-                <ProtectedRoute allowPreview={true}>
-                  <MatchingPage isPreview={false} />
-                </ProtectedRoute>
-              } />
-              <Route path="/profile" element={
-                <ProtectedRoute>
-                  <ProfilePage />
-                </ProtectedRoute>
-              } />
-              <Route path="/profile/:id" element={
-                <ProtectedRoute>
-                  <ProfileViewPage />
-                </ProtectedRoute>
-              } />
-              <Route path="/profile/create" element={
-                <ProtectedRoute>
-                  <ProfileForm />
-                </ProtectedRoute>
-              } />
-              <Route path="/profile/edit" element={
-                <ProtectedRoute>
-                  <ProfileEditPage />
-                </ProtectedRoute>
-              } />
-              <Route path="/chat" element={
-                <ProtectedRoute allowPreview={true}>
-                  <ChatPage isPreview={false} />
-                </ProtectedRoute>
-              } />
-              
-              <Route path="/admin/profiles" element={
-                <ProtectedRoute>
-                  <AdminPage />
-                </ProtectedRoute>
-              } />
-              
-              {/* Handle empty routes */}
-              <Route path="" element={<Navigate to="/" replace />} />
-              
-              {/* Catch all other routes with NotFound page */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <Suspense fallback={<PageLoader />}>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/signin" element={<SignInPage />} />
+                <Route path="/register" element={<RegisterPage />} />
+                <Route path="/verified" element={<VerifiedPage />} />
+                <Route path="/privacy" element={<PrivacyPage />} />
+                <Route path="/terms" element={<TermsPage />} />
+                <Route path="/cookies" element={<CookiesPage />} />
+                
+                {/* Auth callback routes - Ensure we catch all possible callback paths */}
+                <Route path="/auth/callback" element={<VerifiedPage />} />
+                <Route path="/callback" element={<VerifiedPage />} />
+                
+                <Route path="/matching" element={
+                  <ProtectedRoute allowPreview={true}>
+                    <MatchingPage isPreview={false} />
+                  </ProtectedRoute>
+                } />
+                <Route path="/profile" element={
+                  <ProtectedRoute>
+                    <ProfilePage />
+                  </ProtectedRoute>
+                } />
+                <Route path="/profile/:id" element={
+                  <ProtectedRoute>
+                    <ProfileViewPage />
+                  </ProtectedRoute>
+                } />
+                <Route path="/profile/create" element={
+                  <ProtectedRoute>
+                    <ProfileForm />
+                  </ProtectedRoute>
+                } />
+                <Route path="/profile/edit" element={
+                  <ProtectedRoute>
+                    <ProfileEditPage />
+                  </ProtectedRoute>
+                } />
+                <Route path="/chat" element={
+                  <ProtectedRoute allowPreview={true}>
+                    <ChatPage isPreview={false} />
+                  </ProtectedRoute>
+                } />
+                
+                <Route path="/admin/profiles" element={
+                  <ProtectedRoute>
+                    <AdminPage />
+                  </ProtectedRoute>
+                } />
+                
+                {/* Handle empty routes */}
+                <Route path="" element={<Navigate to="/" replace />} />
+                
+                {/* Catch all other routes with NotFound page */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
           </BrowserRouter>
         </TooltipProvider>
       </AuthProvider>

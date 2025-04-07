@@ -15,6 +15,7 @@ interface ProtectedRouteProps {
 
 /**
  * Improved ProtectedRoute component with more stable auth state handling
+ * and smoother transitions between authenticated states
  */
 const ProtectedRoute = ({ 
   children, 
@@ -29,6 +30,7 @@ const ProtectedRoute = ({
   const [hasLocalSession, setHasLocalSession] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
   const [isNavigating, setIsNavigating] = useState(false);
+  const [renderKey] = useState(() => `protected-route-${Math.random().toString(36).substring(2, 9)}`);
   
   // Check for local session on mount - this happens quickly to avoid flicker
   useEffect(() => {
@@ -113,6 +115,7 @@ const ProtectedRoute = ({
   }, [isNavigating]);
 
   // Show loading state only if we're still checking authentication
+  // Use a more controlled approach to avoid flickering
   if ((loading || !authCheckComplete) && !localCheckComplete) {
     return (
       <div className="flex flex-col justify-center items-center h-screen bg-background">
@@ -128,46 +131,51 @@ const ProtectedRoute = ({
   if (isAuthenticated) {
     console.log("User authenticated, showing protected content");
     return (
-      <>
-        <div className="pt-16">
-          <DemoBanner />
-          <div className="mt-4">
-            {children}
-          </div>
+      <div key={renderKey} className="pt-16">
+        <DemoBanner />
+        <div className="mt-4">
+          {children}
         </div>
-      </>
+      </div>
     );
   }
 
   if (allowPreview && previewComponent) {
     return (
-      <>
-        <div className="pt-16">
-          <DemoBanner />
-          <div className="mt-4">
-            {previewComponent}
-          </div>
+      <div key={renderKey} className="pt-16">
+        <DemoBanner />
+        <div className="mt-4">
+          {previewComponent}
         </div>
-      </>
+      </div>
     );
   }
 
   if (allowPreview) {
     return (
-      <>
-        <div className="pt-16">
-          <DemoBanner />
-          <div className="mt-4">
-            {children}
-          </div>
+      <div key={renderKey} className="pt-16">
+        <DemoBanner />
+        <div className="mt-4">
+          {children}
         </div>
-      </>
+      </div>
     );
   }
 
-  console.log("Redirecting to signin from:", location.pathname);
-  setIsNavigating(true);
-  return <Navigate to="/signin" state={{ from: location.pathname }} replace />;
+  // Only navigate if not already navigating to prevent loops
+  if (!isNavigating) {
+    console.log("Redirecting to signin from:", location.pathname);
+    setIsNavigating(true);
+    return <Navigate to="/signin" state={{ from: location.pathname }} replace />;
+  }
+  
+  // Fallback while navigating to prevent flickering
+  return (
+    <div className="flex flex-col justify-center items-center h-screen bg-background">
+      <Loader2 className="h-8 w-8 animate-spin text-homi-purple" />
+      <p className="text-sm text-muted-foreground mt-4">Redirigiendo...</p>
+    </div>
+  );
 };
 
 export default ProtectedRoute;
