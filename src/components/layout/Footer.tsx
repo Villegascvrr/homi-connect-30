@@ -104,9 +104,7 @@ const Footer = () => {
               <MessageCircle size={16} />
               WhatsApp
             </a>
-            <a href="#" className="text-muted-foreground hover:text-homi-purple transition-colors">
-              LinkedIn
-            </a>
+            {/* LinkedIn link has been removed */}
           </div>
         </div>
       </div>
