@@ -9,6 +9,7 @@ import HowItWorks from '@/components/home/HowItWorks';
 import { Button } from '@/components/ui/button';
 import ProfileCard from '@/components/profiles/ProfileCard';
 import { useAuth } from '@/context/AuthContext';
+import MatchCard from '@/components/matching/MatchCard'; // Import MatchCard instead of ProfileCard
 
 const Index = () => {
   const { user } = useAuth();
@@ -120,10 +121,19 @@ const Index = () => {
               </p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-12">
-              {featuredProfiles.map(profile => <div key={profile.id} className="animate-on-scroll">
-                  <ProfileCard {...profile} onLike={id => console.log('Liked:', id)} onMessage={id => window.location.href = '/chat'} onView={id => window.location.href = '/profile'} />
-                </div>)}
+            {/* Replace ProfileCard with MatchCard and use compact prop */}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6 mb-12">
+              {featuredProfiles.map(profile => (
+                <div key={profile.id} className="animate-on-scroll">
+                  <MatchCard 
+                    {...profile}
+                    compact={true}
+                    onLike={id => console.log('Liked:', id)} 
+                    onPass={id => console.log('Passed:', id)}
+                    onView={id => navigate('/profile')} 
+                  />
+                </div>
+              ))}
             </div>
             
             <div className="text-center">
