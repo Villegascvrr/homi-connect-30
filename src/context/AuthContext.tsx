@@ -345,28 +345,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  // Esta función ya no se utiliza directamente, se usa signInWithGoogleOAuth desde client.ts
-  const signInWithGoogleOAuth = async () => {
-    const redirectUrl = `${window.location.origin}/verified`;
-    console.log("URL de redirección configurada:", redirectUrl);
-    
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: redirectUrl,
-        queryParams: {
-          access_type: 'offline',
-          prompt: 'consent',
-        },
-        scopes: 'email profile'
-      },
-    });
-
-    if (error) throw error;
-    
-    console.log("Redirección a autenticación de Google iniciada:", data);
-  };
-
   const signUp = async (userData: UserSignUpData) => {
     setLoading(true);
     try {
@@ -524,35 +502,39 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signOut = async () => {
     try {
-      // First clear local state before attempting to sign out from Supabase
-      // This ensures the UI responds immediately regardless of API response
-      const currentUser = user;
-      setUser(null);
-      setSession(null);
+      console.log("Starting sign out process...");
       
-      // Clear session from localStorage
-      localStorage.removeItem('homi-auth-session');
+      // First, clear local state. This ensures UI responds immediately.
+      setLoading(true);
       
-      // Attempt to sign out from Supabase
+      // Tell Supabase to sign out
       const { error } = await supabase.auth.signOut();
       
-      // If there's an error but we've already cleared the local state,
-      // we can still consider it a "successful" sign out from the user's perspective
       if (error) {
         console.error("Error during API signout:", error);
-        // Only show error if it's likely to affect the user experience
-        if (error.message !== "Session not found") {
-          toast({
-            title: "Advertencia",
-            description: "Sesión cerrada localmente. " + error.message,
-            variant: "default",
-          });
-        }
+        toast({
+          title: "Error al cerrar sesión",
+          description: error.message,
+          variant: "destructive",
+        });
       } else {
+        // Clear application state
+        setUser(null);
+        setSession(null);
+        // Clear session from localStorage
+        localStorage.removeItem('homi-auth-session');
+        
         toast({
           title: "Sesión cerrada",
           description: "Has cerrado sesión correctamente.",
         });
+        
+        // Force reload the page to ensure a clean state
+        // This helps reset any lingering state issues
+        console.log("Reloading page to ensure clean state");
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 300);
       }
     } catch (error: any) {
       console.error("Exception during signout:", error);
@@ -561,11 +543,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         description: error.message || "Ha ocurrido un error al cerrar sesión.",
         variant: "destructive",
       });
-      
-      // Even if there's an exception, we should ensure the user is logged out locally
-      setUser(null);
-      setSession(null);
-      localStorage.removeItem('homi-auth-session');
+    } finally {
+      setLoading(false);
     }
   };
 
