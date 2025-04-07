@@ -72,10 +72,13 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
   const [nextCardReady, setNextCardReady] = useState(false);
   const [removedProfiles, setRemovedProfiles] = useState<Set<string>>(new Set());
   
-  const filteredProfiles = updatedProfiles.filter(profile => !removedProfiles.has(profile.id));
-  const currentProfile = filteredProfiles[currentIndex];
-  const nextProfile = filteredProfiles[currentIndex + 1]; // Pre-load next profile
-  const hasMoreProfiles = currentIndex < filteredProfiles.length;
+  // Fix: Move this outside so we can reference it for total count
+  const availableProfiles = updatedProfiles.filter(profile => !removedProfiles.has(profile.id));
+  const currentProfile = availableProfiles[currentIndex];
+  const nextProfile = availableProfiles[currentIndex + 1]; // Pre-load next profile
+  
+  // Fix: Changed this to check if we still have profiles in availableProfiles
+  const hasMoreProfiles = currentIndex < availableProfiles.length;
   
   useEffect(() => {
     if (nextProfile) {
@@ -117,13 +120,14 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
         onPass(id);
       }
       
-      setCurrentIndex(prev => prev + 1);
+      // This stays at 0 now instead of incrementing
+      setCurrentIndex(0);
       setDirection(null);
     }, 400);
   };
   
   const handleUndo = () => {
-    if (history.length === 0 || currentIndex === 0 || isTransitioning) return;
+    if (history.length === 0 || isTransitioning) return;
     
     setIsTransitioning(true);
     
@@ -136,7 +140,6 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
         return newSet;
       });
       
-      setCurrentIndex(prev => prev - 1);
       setHistory(prev => prev.slice(0, -1));
       setIsTransitioning(false);
     }, 300);
@@ -158,7 +161,7 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
             Has visto todos los perfiles disponibles con tus criterios actuales.
           </p>
           
-          {currentIndex > 0 && (
+          {updatedProfiles.length > 0 && (
             <Button 
               className="rounded-full bg-homi-purple hover:bg-homi-purple/90 button-glow"
               onClick={handleReset}
@@ -243,7 +246,7 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
       
       <div className="text-center mt-4 animate-fade-in">
         <p className="text-sm text-muted-foreground">
-          Perfil {currentIndex + 1} de {updatedProfiles.length - removedProfiles.size + currentIndex}
+          Perfil {currentIndex + 1} de {availableProfiles.length}
         </p>
       </div>
     </div>
