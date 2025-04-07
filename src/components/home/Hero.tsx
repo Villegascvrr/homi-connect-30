@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Check, Instagram, MessageCircle } from 'lucide-react';
@@ -35,11 +36,11 @@ const Hero = () => {
       window.history.replaceState({}, document.title, window.location.pathname);
     } else {
       // Reset justRegistered if user is not authenticated
-      if (!user && justRegistered) {
+      if (!user) {
         setJustRegistered(false);
       }
     }
-  }, [user, location.search, isEmailVerified, justRegistered]);
+  }, [user, location.search]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

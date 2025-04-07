@@ -17,7 +17,7 @@ const WelcomeMessage = ({ firstName, showWelcomeToast = false }: WelcomeMessageP
   const navigate = useNavigate();
   const { user } = useAuth();
   
-  // Only show welcome toast if explicitly requested via props
+  // Only show welcome toast if explicitly requested via props AND user is authenticated
   useEffect(() => {
     if (user && showWelcomeToast) {
       toast({
