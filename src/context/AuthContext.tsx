@@ -268,6 +268,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const refreshUser = async () => {
     try {
       console.log("Refreshing user data");
+      
+      // First refresh the session to ensure we have the latest token
+      const { data: sessionData, error: sessionError } = await supabase.auth.refreshSession();
+      if (sessionError) {
+        console.error("Error refreshing session:", sessionError);
+      } else if (sessionData.session) {
+        console.log("Session refreshed during user refresh");
+        setSession(sessionData.session);
+        saveSessionToLocalStorage(sessionData.session);
+      }
+      
+      // Now get the latest user data
       const { data: { user: refreshedUser }, error } = await supabase.auth.getUser();
       if (error) throw error;
       

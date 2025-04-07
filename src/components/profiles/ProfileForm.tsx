@@ -218,8 +218,8 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
       // Store the actual sevilla_zona based on apartment status
       let sevilla_zona;
       if (values.apartmentStatus === 'have') {
-        // If user has an apartment, store the actual zone
-        sevilla_zona = values.sevilla_zona;
+        // If user has an apartment, store 'tengo_piso' as the zone
+        sevilla_zona = 'tengo_piso';
       } else {
         // If user is looking for an apartment, store the selected zone
         sevilla_zona = values.sevilla_zona;
@@ -277,24 +277,43 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
       
       console.log("Update successful, returned data:", data);
       
-      // Refresh the user data in the global context
-      await refreshUser();
+      // Refresh the user data in the global context with better error handling
+      try {
+        await refreshUser();
+        console.log("User refreshed successfully after profile update");
+      } catch (refreshError) {
+        console.error("Error refreshing user after profile update:", refreshError);
+        // We continue anyway since the data was saved successfully
+      }
       
       toast({
         title: "Perfil actualizado",
         description: "Tu información de perfil ha sido guardada.",
       });
       
+      // Force a session refresh to ensure latest data is available
+      try {
+        const { data: sessionData } = await supabase.auth.refreshSession();
+        if (sessionData && sessionData.session) {
+          console.log("Session refreshed after profile update");
+        }
+      } catch (sessionError) {
+        console.error("Error refreshing session after profile update:", sessionError);
+      }
+      
       // Call the onSaved callback if provided
       if (onSaved) {
-        // Scroll to the top of the page before executing the callback
-        window.scrollTo({
-          top: 0,
-          left: 0,
-          behavior: 'instant'
-        });
-        
-        onSaved();
+        // To prevent navigation issues, use a small delay to ensure state is updated
+        setTimeout(() => {
+          // Scroll to the top of the page before executing the callback
+          window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'instant'
+          });
+          
+          onSaved();
+        }, 100);
       }
     } catch (error: any) {
       console.error("Error updating profile:", error);
@@ -407,4 +426,3 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
 };
 
 export default ProfileForm;
-

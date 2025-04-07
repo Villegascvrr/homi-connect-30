@@ -7,7 +7,7 @@ import { useLocation } from 'react-router-dom';
  * with improved performance for smooth transitions
  */
 const ScrollToTop = () => {
-  const { pathname, hash } = useLocation();
+  const { pathname, hash, key } = useLocation();
   const prevPathRef = useRef('');
   const isFirstRender = useRef(true);
 
@@ -25,39 +25,41 @@ const ScrollToTop = () => {
     
     prevPathRef.current = pathname;
     
-    // Handle scroll logic immediately for faster transitions
-    try {
-      if (!hash) {
-        // Use fastest scrolling method
-        window.scrollTo({
-          top: 0,
-          left: 0,
-          behavior: 'auto' // Use 'auto' instead of 'smooth' for faster transitions
-        });
-        
-        console.log("Scrolled to top for path:", pathname);
-      } else {
-        // For hash links, find and scroll to the element
-        const elementId = hash.replace('#', '');
-        const element = document.getElementById(elementId);
-        
-        if (element) {
-          element.scrollIntoView({
-            behavior: 'auto' // Use 'auto' for faster transitions
+    // Use requestAnimationFrame to ensure scroll happens after renders
+    requestAnimationFrame(() => {
+      try {
+        if (!hash) {
+          // Use fastest scrolling method
+          window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'auto' // Use 'auto' instead of 'smooth' for faster transitions
           });
-          console.log(`Scrolled to element with id: ${elementId}`);
+          
+          console.log("Scrolled to top for path:", pathname);
         } else {
-          // If element not found, scroll to top
-          window.scrollTo(0, 0);
-          console.log(`Element with id ${elementId} not found, scrolled to top`);
+          // For hash links, find and scroll to the element
+          const elementId = hash.replace('#', '');
+          const element = document.getElementById(elementId);
+          
+          if (element) {
+            element.scrollIntoView({
+              behavior: 'auto' // Use 'auto' for faster transitions
+            });
+            console.log(`Scrolled to element with id: ${elementId}`);
+          } else {
+            // If element not found, scroll to top
+            window.scrollTo(0, 0);
+            console.log(`Element with id ${elementId} not found, scrolled to top`);
+          }
         }
+      } catch (e) {
+        console.error("Scroll error:", e);
+        // Fallback method if the above fails
+        window.scrollTo(0, 0);
       }
-    } catch (e) {
-      console.error("Scroll error:", e);
-      // Fallback method if the above fails
-      window.scrollTo(0, 0);
-    }
-  }, [pathname, hash]);
+    });
+  }, [pathname, hash, key]); // Added key to dependencies to ensure scroll on same-path but different-key navigation
 
   return null;
 };
