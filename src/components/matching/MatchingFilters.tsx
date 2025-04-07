@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { 
@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface FilterValues {
   presupuesto?: [number, number];
@@ -67,6 +68,14 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
   const [mascotas, setMascotas] = useState<string>('si');
   
   const [mostrarPreferencias, setMostrarPreferencias] = useState(false);
+  const isMobile = useIsMobile();
+  
+  // Asegurar que el componente se renderice correctamente cuando cambie activeTab
+  useEffect(() => {
+    // Reiniciar estados de visualización cuando cambia la pestaña activa
+    setShowFilters(false);
+    setMostrarPreferencias(false);
+  }, [activeTab]);
   
   const toggleFilter = () => {
     setShowFilters(!showFilters);
@@ -127,9 +136,9 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
   
   return (
     <div className={className}>
-      <div className="space-y-4">
+      <div className="space-y-4 relative">
         {activeTab === 'filtros' && (
-          <Card>
+          <Card className="w-full">
             <CardHeader className="pb-3">
               <CardTitle className="text-xl">Filtros de búsqueda</CardTitle>
             </CardHeader>
@@ -139,13 +148,13 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                   <div className="space-y-2">
                     <Label className="text-sm font-medium">Ubicación</Label>
                     <Select value={ubicacion} onValueChange={setUbicacion}>
-                      <SelectTrigger className="w-full">
+                      <SelectTrigger className="w-full bg-background">
                         <div className="flex items-center gap-2">
                           <Home className="h-4 w-4" />
                           <SelectValue placeholder="Todas las ciudades" />
                         </div>
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent position="popper" className="bg-background z-50 min-w-[200px]">
                         <SelectItem value="todas">Todas las ciudades</SelectItem>
                         <SelectItem value="Madrid">Madrid</SelectItem>
                         <SelectItem value="Barcelona">Barcelona</SelectItem>
@@ -161,13 +170,13 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                   <div className="space-y-2">
                     <Label className="text-sm font-medium">Rango de edad</Label>
                     <Select value={rangoEdad} onValueChange={setRangoEdad}>
-                      <SelectTrigger className="w-full">
+                      <SelectTrigger className="w-full bg-background">
                         <div className="flex items-center gap-2">
                           <User className="h-4 w-4" />
                           <SelectValue placeholder="Todas las edades" />
                         </div>
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent position="popper" className="bg-background z-50 min-w-[200px]">
                         <SelectItem value="todas">Todas las edades</SelectItem>
                         <SelectItem value="18-25">18-25 años</SelectItem>
                         <SelectItem value="26-30">26-30 años</SelectItem>
@@ -180,13 +189,13 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                   <div className="space-y-2">
                     <Label className="text-sm font-medium">Fecha de mudanza</Label>
                     <Select value={fechaMudanza} onValueChange={setFechaMudanza}>
-                      <SelectTrigger className="w-full">
+                      <SelectTrigger className="w-full bg-background">
                         <div className="flex items-center gap-2">
                           <Calendar className="h-4 w-4" />
                           <SelectValue placeholder="Cualquier fecha" />
                         </div>
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent position="popper" className="bg-background z-50 min-w-[200px]">
                         <SelectItem value="cualquiera">Cualquier fecha</SelectItem>
                         <SelectItem value="inmediata">Inmediata</SelectItem>
                         <SelectItem value="1-mes">Próximo mes</SelectItem>
@@ -262,7 +271,7 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
         )}
         
         {activeTab === 'preferencias' && (
-          <Card>
+          <Card className="w-full">
             <CardHeader className="pb-3">
               <CardTitle className="text-xl flex items-center gap-2">
                 <HeartHandshake className="h-5 w-5 text-homi-purple" />
@@ -281,10 +290,10 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                     <div className="space-y-1.5">
                       <Label className="text-sm">Nivel de limpieza</Label>
                       <Select value={nivelLimpieza} onValueChange={setNivelLimpieza}>
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-background">
                           <SelectValue placeholder="Selecciona nivel de limpieza" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent position="popper" className="bg-background z-50 min-w-[200px]">
                           <SelectItem value="alta">Alta - Me gusta tener todo muy limpio</SelectItem>
                           <SelectItem value="media">Media - Limpio con regularidad</SelectItem>
                           <SelectItem value="baja">Baja - No soy muy estricto con la limpieza</SelectItem>
@@ -295,10 +304,10 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                     <div className="space-y-1.5">
                       <Label className="text-sm">Nivel de ruido</Label>
                       <Select value={nivelRuido} onValueChange={setNivelRuido}>
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-background">
                           <SelectValue placeholder="Selecciona nivel de ruido" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent position="popper" className="bg-background z-50 min-w-[200px]">
                           <SelectItem value="bajo">Bajo - Prefiero ambiente tranquilo</SelectItem>
                           <SelectItem value="moderado">Moderado - Algo de ruido no me molesta</SelectItem>
                           <SelectItem value="alto">Alto - No me importa el ruido</SelectItem>
@@ -309,10 +318,10 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                     <div className="space-y-1.5">
                       <Label className="text-sm">Horario habitual</Label>
                       <Select value={horarioHabitual} onValueChange={setHorarioHabitual}>
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-background">
                           <SelectValue placeholder="Selecciona tu horario habitual" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent position="popper" className="bg-background z-50 min-w-[200px]">
                           <SelectItem value="madrugador">Madrugador - Me levanto temprano</SelectItem>
                           <SelectItem value="normal">Normal - Horarios estándar</SelectItem>
                           <SelectItem value="nocturno">Nocturno - Soy más de noche</SelectItem>
@@ -328,10 +337,10 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                     <div className="space-y-1.5">
                       <Label className="text-sm">Invitados</Label>
                       <Select value={invitados} onValueChange={setInvitados}>
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-background">
                           <SelectValue placeholder="Frecuencia de invitados" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent position="popper" className="bg-background z-50 min-w-[200px]">
                           <SelectItem value="frecuente">Frecuente - Me gusta invitar amigos</SelectItem>
                           <SelectItem value="ocasional">Ocasional - De vez en cuando</SelectItem>
                           <SelectItem value="raro">Raro - Casi nunca tengo invitados</SelectItem>
@@ -343,10 +352,10 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                     <div className="space-y-1.5">
                       <Label className="text-sm">Fumar</Label>
                       <Select value={fumar} onValueChange={setFumar}>
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-background">
                           <SelectValue placeholder="Preferencia sobre fumar" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent position="popper" className="bg-background z-50 min-w-[200px]">
                           <SelectItem value="no">No - Prefiero ambientes sin humo</SelectItem>
                           <SelectItem value="exterior">Exterior - Solo en terrazas o balcones</SelectItem>
                           <SelectItem value="si">Sí - No me importa</SelectItem>
@@ -357,10 +366,10 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                     <div className="space-y-1.5">
                       <Label className="text-sm">Mascotas</Label>
                       <Select value={mascotas} onValueChange={setMascotas}>
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-background">
                           <SelectValue placeholder="Preferencia sobre mascotas" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent position="popper" className="bg-background z-50 min-w-[200px]">
                           <SelectItem value="si">Me encantan - No hay problema</SelectItem>
                           <SelectItem value="algunas">Algunas - Depende del tipo</SelectItem>
                           <SelectItem value="no">No - Prefiero sin mascotas</SelectItem>
