@@ -25,9 +25,9 @@ const WelcomeMessage = ({ firstName, showWelcomeToast = false }: WelcomeMessageP
         toast({
           title: "¡Bienvenido a HomiMatch!",
           description: "Tu cuenta ha sido creada correctamente.",
-          duration: 6000,
+          duration: 8000, // Aumentado para asegurar visibilidad
         });
-      }, 500);
+      }, 800); // Tiempo aumentado para evitar problemas de timing
       
       return () => clearTimeout(timer);
     }
