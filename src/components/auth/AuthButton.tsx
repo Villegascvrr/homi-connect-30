@@ -32,7 +32,7 @@ const AuthButton = () => {
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [sessionVerified, setSessionVerified] = useState(false);
   const [isGoogleSignIn, setIsGoogleSignIn] = useState(false);
-  const [renderKey, setRenderKey] = useState('initial'); // Key to force re-render
+  const [renderKey, setRenderKey] = useState('initial');
 
   // Add a short timeout to ensure we don't get stuck in loading state
   useEffect(() => {
@@ -75,7 +75,7 @@ const AuthButton = () => {
     try {
       setIsSigningOut(true);
       await signOut();
-      // The page navigation will now be handled in the signOut function
+      // La navegación ahora se maneja en la función signOut
     } catch (error) {
       console.error("Error during sign out:", error);
       setIsSigningOut(false);
@@ -181,7 +181,6 @@ const AuthButton = () => {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-9 w-9 rounded-full p-0">
           <Avatar className="h-9 w-9">
-            {/* Cast user to any to avoid typescript error with profile_image */}
             <AvatarImage src={(user as any).profile_image || ""} alt="Profile" />
             <AvatarFallback className="bg-homi-purple text-white">
               {user.email?.charAt(0).toUpperCase() || "U"}

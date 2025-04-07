@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -76,11 +77,11 @@ const EmailSignup = () => {
   const handleGoogleSignIn = async () => {
     setIsSigningWithGoogle(true);
     try {
-      console.log("Initiating Google sign in from EmailSignup component");
+      console.log("Iniciando Google sign in desde EmailSignup component");
       await signInWithGoogle();
-      // No need to set states here as we'll be redirected to Google
+      // La redirección la maneja el flujo OAuth
     } catch (error: any) {
-      console.error("Error during Google sign in:", error);
+      console.error("Error durante Google sign in:", error);
       toast({
         title: "Error al iniciar sesión con Google",
         description: error.message || "Ha ocurrido un error durante el inicio de sesión con Google.",
@@ -90,6 +91,18 @@ const EmailSignup = () => {
     }
   };
 
+  // Validación de email debounced
+  useEffect(() => {
+    const email = form.watch("email");
+    if (!email || !email.includes('@')) return;
+    
+    const timer = setTimeout(() => {
+      validateEmailNotInUse(email);
+    }, 800);
+    
+    return () => clearTimeout(timer);
+  }, [form.watch("email")]);
+  
   const validateEmailNotInUse = async (email: string) => {
     if (!email || !email.includes('@')) return;
     
@@ -111,21 +124,11 @@ const EmailSignup = () => {
     }
   };
 
-  useEffect(() => {
-    const email = form.watch("email");
-    if (!email) return;
-    
-    const timer = setTimeout(() => {
-      validateEmailNotInUse(email);
-    }, 800);
-    
-    return () => clearTimeout(timer);
-  }, [form.watch("email")]);
-
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
     
     try {
+      // Verificación final antes del registro
       const emailExists = await checkEmailExists(values.email);
       if (emailExists) {
         form.setError("email", {
@@ -174,6 +177,7 @@ const EmailSignup = () => {
           variant: "default",
         });
         
+        // Redirección consistente con el flujo de OAuth
         setTimeout(() => {
           navigate('/?registered=true');
         }, 2000);

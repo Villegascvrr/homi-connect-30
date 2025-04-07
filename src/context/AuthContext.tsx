@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Session, User } from "@supabase/supabase-js";
@@ -62,9 +63,15 @@ const extractUsernameFromEmail = (email: string): string => {
 };
 
 const cleanupAuthStorage = (): void => {
+  // Función mejorada para limpiar completamente la sesión
   localStorage.removeItem('homi-auth-session');
   localStorage.removeItem('supabase.auth.token');
   localStorage.removeItem('auth.token');
+  
+  // Eliminar todas las cookies relacionadas con autenticación
+  document.cookie.split(";").forEach(function(c) {
+    document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+  });
 
   try {
     const localStorageKeys = Object.keys(localStorage);
@@ -335,10 +342,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  // Mejorada para usar correctamente el RPC
   const checkEmailExists = async (email: string): Promise<boolean> => {
     try {
       console.log("Checking if email exists:", email);
       
+      // Primero verificamos en la tabla profiles
       const { data, error } = await supabase
         .from('profiles')
         .select('email')
@@ -350,25 +359,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return true;
       }
       
-      type CheckEmailResponse = {
-        data: number | null;
-        error: any;
-      };
-      
+      // Después verificamos en auth.users usando la función RPC
       const { data: countResult, error: countError } = await supabase
-        .rpc('check_email_exists', { email_to_check: email }) as CheckEmailResponse;
+        .rpc('check_email_exists', { email_to_check: email });
         
       if (countError) {
         console.error("Error checking email in auth:", countError);
-        return false; // Default to false on error to prevent blocking registration
+        return false; // Fallback seguro
       }
       
-      const exists = countResult && countResult > 0;
-      console.log(`Email exists in auth system: ${exists ? "yes" : "no"}, count: ${countResult}`);
-      return exists;
+      console.log(`Email exists in auth system: ${countResult ? "yes" : "no"}`);
+      return !!countResult;
     } catch (error) {
       console.error("Error checking if email exists:", error);
-      return false; // Default to false on error to prevent blocking registration
+      return false; // Fallback seguro
     }
   };
 
@@ -377,6 +381,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       console.log("Starting signup process for:", userData.email);
       
+      // Verificamos primero si el email ya existe
       const emailExists = await checkEmailExists(userData.email);
       if (emailExists) {
         console.log("Email already exists, cannot register:", userData.email);
@@ -468,6 +473,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         description: "Ya puedes comenzar a usar tu cuenta.",
       });
       
+      // Aseguramos redirección consistente
       window.location.href = '/?registered=true';
       
       return { success: true };
@@ -516,6 +522,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         
         saveSessionToLocalStorage(data.session);
         
+        // Usamos redirección consistente como con Google
         setTimeout(() => {
           window.location.href = '/?loggedIn=true';
         }, 500);
@@ -545,12 +552,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       
       setLoading(true);
       
-      cleanupAuthStorage();
+      // Guarda una copia temporal del estado actual
+      const wasAuthenticated = !!user;
       
+      // Limpia el estado primero para evitar flasheos de UI
       setUser(null);
       setSession(null);
       
-      const { error } = await supabase.auth.signOut();
+      // Limpia todas las cookies y localStorage
+      cleanupAuthStorage();
+      
+      // Ahora realiza la llamada API para cerrar sesión
+      const { error } = await supabase.auth.signOut({ scope: 'global' });
       
       if (error) {
         console.error("Error during API signout:", error);
@@ -565,9 +578,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           description: "Has cerrado sesión correctamente.",
         });
         
+        // Forzar reinicialización del proveedor de autenticación
         setAuthKey('signed-out-' + Date.now());
         
-        window.location.href = '/';
+        // Sólo redirigir si realmente estábamos autenticados
+        if (wasAuthenticated) {
+          // Retrasamos un poco para permitir que el toast se muestre
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 300);
+        }
       }
     } catch (error: any) {
       console.error("Exception during signout:", error);

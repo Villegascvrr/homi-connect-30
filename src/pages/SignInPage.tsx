@@ -102,10 +102,10 @@ const SignInPage = () => {
     
     try {
       await signIn(values.email, values.password);
+      // La redirección se maneja en signIn para mantener consistencia
     } catch (error: any) {
       console.error("Error during sign in:", error);
       setLoginError(error.message || 'Error al iniciar sesión. Verifica tus credenciales.');
-    } finally {
       setIsLoading(false);
     }
   };
@@ -115,6 +115,7 @@ const SignInPage = () => {
       setIsGoogleLoading(true);
       setLoginError('');
       await signInWithGoogleOAuth();
+      // La redirección se maneja automáticamente por el flujo OAuth
     } catch (error: any) {
       console.error("Error durante la autenticación con Google:", error);
       setLoginError(error.message || 'Error al iniciar sesión con Google.');

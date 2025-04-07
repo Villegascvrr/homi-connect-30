@@ -84,7 +84,7 @@ export const signInWithGoogleOAuth = async (): Promise<void> => {
           prompt: 'consent',
         },
         scopes: 'email profile',
-        skipBrowserRedirect: false, // Asegura que el navegador redirige correctamente
+        skipBrowserRedirect: false,
       },
     });
     
@@ -94,7 +94,6 @@ export const signInWithGoogleOAuth = async (): Promise<void> => {
     }
     
     console.log("[Google Auth] OAuth flow initiated successfully. User will be redirected to Google.");
-    // No devolvemos datos, solo dejamos que la función complete y la redirección ocurra
   } catch (error) {
     console.error("[Google Auth] Exception during Google OAuth:", error);
     throw error;
