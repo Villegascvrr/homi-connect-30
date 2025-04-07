@@ -22,7 +22,7 @@ const ProfileAuthGate = () => {
 
       <div className="space-y-4">
         <Button 
-          className="w-full bg-homi-purple hover:bg-homi-purple/90 flex items-center justify-center gap-2"
+          className="w-full bg-homi-purple hover:bg-homi-purple/90 flex items-center justify-center gap-2 rounded-full"
           onClick={() => signInWithGoogleOAuth()}
         >
           <svg className="h-5 w-5" viewBox="0 0 24 24">
@@ -59,7 +59,7 @@ const ProfileAuthGate = () => {
         <Link to="/signin" className="w-full block">
           <Button 
             variant="outline" 
-            className="w-full flex items-center justify-center gap-2"
+            className="w-full flex items-center justify-center gap-2 rounded-full"
           >
             <Mail className="h-4 w-4" />
             Iniciar sesión con email
