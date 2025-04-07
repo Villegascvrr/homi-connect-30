@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -70,9 +69,7 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
   const [mostrarPreferencias, setMostrarPreferencias] = useState(false);
   const isMobile = useIsMobile();
   
-  // Asegurar que el componente se renderice correctamente cuando cambie activeTab
   useEffect(() => {
-    // Reiniciar estados de visualización cuando cambia la pestaña activa
     setShowFilters(false);
     setMostrarPreferencias(false);
   }, [activeTab]);
@@ -148,9 +145,9 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                   <div className="space-y-1">
                     <Label className="text-xs font-medium">Ubicación</Label>
                     <Select value={ubicacion} onValueChange={setUbicacion}>
-                      <SelectTrigger className="w-full bg-background h-8 text-xs">
+                      <SelectTrigger className="w-full bg-background h-9 text-sm">
                         <div className="flex items-center gap-1.5">
-                          <Home className="h-3 w-3" />
+                          <Home className="h-4 w-4" />
                           <SelectValue placeholder="Todas las ciudades" />
                         </div>
                       </SelectTrigger>
@@ -170,9 +167,9 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                   <div className="space-y-1">
                     <Label className="text-xs font-medium">Rango de edad</Label>
                     <Select value={rangoEdad} onValueChange={setRangoEdad}>
-                      <SelectTrigger className="w-full bg-background h-8 text-xs">
+                      <SelectTrigger className="w-full bg-background h-9 text-sm">
                         <div className="flex items-center gap-1.5">
-                          <User className="h-3 w-3" />
+                          <User className="h-4 w-4" />
                           <SelectValue placeholder="Todas las edades" />
                         </div>
                       </SelectTrigger>
@@ -189,9 +186,9 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                   <div className="space-y-1">
                     <Label className="text-xs font-medium">Fecha de mudanza</Label>
                     <Select value={fechaMudanza} onValueChange={setFechaMudanza}>
-                      <SelectTrigger className="w-full bg-background h-8 text-xs">
+                      <SelectTrigger className="w-full bg-background h-9 text-sm">
                         <div className="flex items-center gap-1.5">
-                          <Calendar className="h-3 w-3" />
+                          <Calendar className="h-4 w-4" />
                           <SelectValue placeholder="Cualquier fecha" />
                         </div>
                       </SelectTrigger>
@@ -208,7 +205,7 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                 
                 <div className="space-y-1">
                   <Label className="text-xs font-medium flex items-center gap-1.5">
-                    <DollarSign className="h-3 w-3" />
+                    <DollarSign className="h-4 w-4" />
                     Presupuesto: {presupuesto[0]}€ - {presupuesto[1]}€
                   </Label>
                   <div className="px-2 py-2">
@@ -258,10 +255,10 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                 </div>
                 
                 <div className="flex justify-end gap-2 pt-1">
-                  <Button variant="outline" onClick={handleClearFilters} size="xs">
+                  <Button variant="outline" onClick={handleClearFilters} size="md">
                     Limpiar
                   </Button>
-                  <Button onClick={handleApplyFilters} size="xs" className="bg-violet-600 hover:bg-violet-700">
+                  <Button onClick={handleApplyFilters} size="md" className="bg-violet-600 hover:bg-violet-700">
                     Aplicar
                   </Button>
                 </div>
@@ -274,7 +271,7 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
           <Card className="w-full">
             <CardHeader className="pb-2">
               <CardTitle className="text-lg flex items-center gap-1.5">
-                <HeartHandshake className="h-4 w-4 text-homi-purple" />
+                <HeartHandshake className="h-5 w-5 text-homi-purple" />
                 Mis preferencias de convivencia
               </CardTitle>
               <CardDescription className="text-xs">
@@ -290,7 +287,7 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                     <div className="space-y-1">
                       <Label className="text-xs">Nivel de limpieza</Label>
                       <Select value={nivelLimpieza} onValueChange={setNivelLimpieza}>
-                        <SelectTrigger className="bg-background h-8 text-xs">
+                        <SelectTrigger className="bg-background h-9 text-sm">
                           <SelectValue placeholder="Selecciona nivel de limpieza" />
                         </SelectTrigger>
                         <SelectContent position="popper" className="bg-background z-50">
@@ -304,7 +301,7 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                     <div className="space-y-1">
                       <Label className="text-xs">Nivel de ruido</Label>
                       <Select value={nivelRuido} onValueChange={setNivelRuido}>
-                        <SelectTrigger className="bg-background h-8 text-xs">
+                        <SelectTrigger className="bg-background h-9 text-sm">
                           <SelectValue placeholder="Selecciona nivel de ruido" />
                         </SelectTrigger>
                         <SelectContent position="popper" className="bg-background z-50">
@@ -318,7 +315,7 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                     <div className="space-y-1">
                       <Label className="text-xs">Horario habitual</Label>
                       <Select value={horarioHabitual} onValueChange={setHorarioHabitual}>
-                        <SelectTrigger className="bg-background h-8 text-xs">
+                        <SelectTrigger className="bg-background h-9 text-sm">
                           <SelectValue placeholder="Selecciona tu horario habitual" />
                         </SelectTrigger>
                         <SelectContent position="popper" className="bg-background z-50">
@@ -337,7 +334,7 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                     <div className="space-y-1">
                       <Label className="text-xs">Invitados</Label>
                       <Select value={invitados} onValueChange={setInvitados}>
-                        <SelectTrigger className="bg-background h-8 text-xs">
+                        <SelectTrigger className="bg-background h-9 text-sm">
                           <SelectValue placeholder="Frecuencia de invitados" />
                         </SelectTrigger>
                         <SelectContent position="popper" className="bg-background z-50">
@@ -352,7 +349,7 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                     <div className="space-y-1">
                       <Label className="text-xs">Fumar</Label>
                       <Select value={fumar} onValueChange={setFumar}>
-                        <SelectTrigger className="bg-background h-8 text-xs">
+                        <SelectTrigger className="bg-background h-9 text-sm">
                           <SelectValue placeholder="Preferencia sobre fumar" />
                         </SelectTrigger>
                         <SelectContent position="popper" className="bg-background z-50">
@@ -366,7 +363,7 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                     <div className="space-y-1">
                       <Label className="text-xs">Mascotas</Label>
                       <Select value={mascotas} onValueChange={setMascotas}>
-                        <SelectTrigger className="bg-background h-8 text-xs">
+                        <SelectTrigger className="bg-background h-9 text-sm">
                           <SelectValue placeholder="Preferencia sobre mascotas" />
                         </SelectTrigger>
                         <SelectContent position="popper" className="bg-background z-50">
@@ -381,7 +378,7 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                 
                 <div className="space-y-1">
                   <Label className="text-xs font-medium flex items-center gap-1.5">
-                    <DollarSign className="h-3 w-3" />
+                    <DollarSign className="h-4 w-4" />
                     Presupuesto: {presupuesto[0]}€ - {presupuesto[1]}€
                   </Label>
                   <div className="px-2 py-2">
@@ -427,10 +424,10 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                 </div>
                 
                 <div className="flex justify-end gap-2 pt-1">
-                  <Button variant="outline" onClick={handleClearFilters} size="xs">
+                  <Button variant="outline" onClick={handleClearFilters} size="md">
                     Restaurar
                   </Button>
-                  <Button onClick={handleApplyFilters} size="xs" className="bg-violet-600 hover:bg-violet-700">
+                  <Button onClick={handleApplyFilters} size="md" className="bg-violet-600 hover:bg-violet-700">
                     Guardar
                   </Button>
                 </div>

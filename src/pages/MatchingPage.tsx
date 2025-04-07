@@ -705,10 +705,10 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                 <div className="flex gap-2">
                   {isMobile && (
                     <div className="flex items-center mr-auto">
-                      <Button variant="ghost" size="xs" className={`rounded-l-full ${viewMode === 'grid' ? 'bg-muted' : ''}`} onClick={() => setViewMode('grid')}>
+                      <Button variant="ghost" size="sm" className={`rounded-l-full ${viewMode === 'grid' ? 'bg-muted' : ''}`} onClick={() => setViewMode('grid')}>
                         <LayoutGrid size={16} />
                       </Button>
-                      <Button variant="ghost" size="xs" className={`rounded-r-full ${viewMode === 'swipe' ? 'bg-muted' : ''}`} onClick={() => setViewMode('swipe')}>
+                      <Button variant="ghost" size="sm" className={`rounded-r-full ${viewMode === 'swipe' ? 'bg-muted' : ''}`} onClick={() => setViewMode('swipe')}>
                         <SwatchBook size={16} />
                       </Button>
                     </div>
@@ -716,13 +716,13 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                   
                   <Popover open={openSearchFilters} onOpenChange={setOpenSearchFilters}>
                     <PopoverTrigger asChild>
-                      <Button variant="outline" size="xs" className="flex items-center gap-1.5" onClick={() => setOpenSearchFilters(!openSearchFilters)}>
-                        <Filter className="h-3.5 w-3.5" />
-                        <span className="hidden sm:inline text-xs">Filtros</span>
+                      <Button variant="outline" size="md" className="flex items-center gap-1.5" onClick={() => setOpenSearchFilters(!openSearchFilters)}>
+                        <Filter className="h-4 w-4" />
+                        <span className="hidden sm:inline text-sm">Filtros</span>
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="p-0 z-50" align="end" sideOffset={5} compact>
-                      <div className="overflow-auto max-h-[80vh] max-w-[90vw] w-[450px] pb-3">
+                      <div className="overflow-auto max-h-[80vh] max-w-[90vw] w-[500px] pb-3">
                         <MatchingFilters 
                           onApplyFilters={filters => {
                             handleApplyFilters(filters);
@@ -738,13 +738,13 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                   
                   <Popover open={openPreferences} onOpenChange={setOpenPreferences}>
                     <PopoverTrigger asChild>
-                      <Button variant="outline" size="xs" className="flex items-center gap-1.5" onClick={() => setOpenPreferences(!openPreferences)}>
-                        <Settings className="h-3.5 w-3.5" />
-                        <span className="hidden sm:inline text-xs">Preferencias</span>
+                      <Button variant="outline" size="md" className="flex items-center gap-1.5" onClick={() => setOpenPreferences(!openPreferences)}>
+                        <Settings className="h-4 w-4" />
+                        <span className="hidden sm:inline text-sm">Preferencias</span>
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="p-0 z-50" align="end" sideOffset={5} compact>
-                      <div className="overflow-auto max-h-[80vh] max-w-[90vw] w-[450px] pb-3">
+                      <div className="overflow-auto max-h-[80vh] max-w-[90vw] w-[500px] pb-3">
                         <MatchingFilters 
                           onApplyFilters={filters => {
                             handleApplyFilters(filters);
@@ -760,7 +760,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                 </div>
               )}
             </div>
-          
+            
             <TabsContent value="discover" className="mt-0">
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
                 <div className="lg:col-span-2">
