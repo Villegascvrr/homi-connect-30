@@ -11,7 +11,7 @@ import MatchingPage from "./pages/MatchingPage";
 import ProfilePage from "./components/profiles/ProfilePage";
 import ProfileForm from "./components/profiles/ProfileForm";
 import ProfileViewPage from "./components/profiles/ProfileViewPage";
-import ProfileEditPage from "./components/profiles/ProfileEditPage";  // Fixed import
+import ProfileEditPage from "./components/profiles/ProfileEditPage";
 import ChatPage from "./pages/ChatPage";
 import SignInPage from "./pages/SignInPage";
 import RegisterPage from "./pages/RegisterPage";
@@ -96,6 +96,10 @@ const App = () => {
               <Route path="/terms" element={<TermsPage />} />
               <Route path="/cookies" element={<CookiesPage />} />
               
+              {/* Auth callback routes - Ensure we catch all possible callback paths */}
+              <Route path="/auth/callback" element={<VerifiedPage />} />
+              <Route path="/callback" element={<VerifiedPage />} />
+              
               <Route path="/matching" element={
                 <ProtectedRoute allowPreview={true}>
                   <MatchingPage isPreview={false} />
@@ -133,8 +137,10 @@ const App = () => {
                 </ProtectedRoute>
               } />
               
+              {/* Handle empty routes */}
               <Route path="" element={<Navigate to="/" replace />} />
               
+              {/* Catch all other routes with NotFound page */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

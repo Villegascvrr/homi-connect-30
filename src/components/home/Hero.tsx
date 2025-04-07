@@ -6,6 +6,7 @@ import EmailSignup from './EmailSignup';
 import WelcomeMessage from './WelcomeMessage';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/context/AuthContext';
+
 const Hero = () => {
   const [email, setEmail] = useState('');
   const [showSignupForm, setShowSignupForm] = useState(false);
@@ -19,6 +20,7 @@ const Hero = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isSigningWithGoogle, setIsSigningWithGoogle] = useState(false);
+
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const isRegistered = urlParams.get('registered') === 'true';
@@ -30,35 +32,47 @@ const Hero = () => {
       searchParams: urlParams.toString(),
       rawURL: window.location.href
     });
+    
+    const error = urlParams.get('error');
+    const errorDescription = urlParams.get('error_description');
+    
+    if (error || errorDescription) {
+      console.error("Auth error detected in URL:", error, errorDescription);
+    }
+    
     if (isRegistered && user) {
       console.log("Usuario recién registrado con email verificado, mostrando mensaje de bienvenida");
       setJustRegistered(true);
-      // Limpiamos la URL para que no se muestre el parámetro
       window.history.replaceState({}, document.title, window.location.pathname);
     } else {
       console.log("Estado del usuario:", user ? "conectado" : "no conectado", "Recién registrado:", justRegistered);
     }
   }, [user, location.search, isEmailVerified, justRegistered]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Subscribed with email:', email);
     setEmail('');
   };
+
   const handleRegisterClick = () => {
     navigate('/register');
   };
+
   const handleGoogleSignIn = async () => {
     setIsSigningWithGoogle(true);
     try {
       console.log("Iniciando autenticación con Google desde Hero component");
-      // Redirección explícita a la página principal después de la autenticación
       await signInWithGoogle();
-      // No necesitamos hacer nada más aquí, la redirección se maneja en AuthContext
+      console.log("Google auth inicializado correctamente");
     } catch (error) {
       console.error("Error durante la autenticación con Google:", error);
       setIsSigningWithGoogle(false);
+    } finally {
+      setTimeout(() => setIsSigningWithGoogle(false), 5000);
     }
   };
+
   return <section className="relative overflow-hidden w-full lg:py-[30px] py-[5px]">
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-0 left-0 w-64 md:w-96 h-64 md:h-96 bg-homi-ultraLightPurple rounded-full opacity-50 blur-3xl -translate-x-1/2 -translate-y-1/2"></div>

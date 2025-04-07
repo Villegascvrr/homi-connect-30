@@ -1,17 +1,34 @@
 
 import { useLocation, Link, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, AlertCircle } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const NotFound = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const [errorDetails, setErrorDetails] = useState("");
 
   useEffect(() => {
     console.log("404 Error: User attempted to access non-existent route:", location.pathname);
+    
+    // Check if there's an error in the state or search params
+    const searchParams = new URLSearchParams(location.search);
+    const errorMessage = searchParams.get('error');
+    const errorDescription = searchParams.get('error_description');
+    
+    if (errorMessage || errorDescription) {
+      setErrorDetails(`Error: ${errorMessage || ''} ${errorDescription || ''}`);
+      console.error("Auth error detected:", errorMessage, errorDescription);
+    }
+
+    // Check for authentication redirects that might have failed
+    if (location.pathname.includes('/callback') || location.pathname.includes('/auth/callback')) {
+      console.error("Possible failed auth callback detected at:", location.pathname);
+    }
     
     // Force scroll to top immediately with no delay
     window.scrollTo({
@@ -19,10 +36,14 @@ const NotFound = () => {
       left: 0,
       behavior: 'auto'
     });
-  }, [location.pathname]);
+  }, [location.pathname, location.search]);
 
   const handleGoBack = () => {
     navigate(-1);
+  };
+
+  const handleGoHome = () => {
+    navigate('/');
   };
 
   return (
@@ -39,6 +60,15 @@ const NotFound = () => {
             <p className="text-muted-foreground text-sm">
               Lo sentimos, la página que estás buscando no existe o ha sido movida.
             </p>
+            
+            {errorDetails && (
+              <Alert className="mt-4 bg-amber-50 text-amber-800 border border-amber-200">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  {errorDetails}
+                </AlertDescription>
+              </Alert>
+            )}
           </div>
           
           <div className="flex flex-col md:flex-row gap-3 justify-center">
@@ -53,10 +83,10 @@ const NotFound = () => {
             </Button>
             <Button 
               className="bg-homi-purple hover:bg-homi-purple/90"
-              asChild
+              onClick={handleGoHome}
               size="sm"
             >
-              <Link to="/">Ir al inicio</Link>
+              Ir al inicio
             </Button>
           </div>
         </div>
