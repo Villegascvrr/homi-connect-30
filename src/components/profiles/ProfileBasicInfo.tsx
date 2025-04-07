@@ -1,9 +1,9 @@
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useWindowSize } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Briefcase, GraduationCap } from "lucide-react";
 
@@ -21,19 +21,7 @@ const occupationOptions = [
 ];
 
 const ProfileBasicInfo = ({ form, showUniversityField = false, onOccupationTypeChange }: ProfileBasicInfoProps) => {
-  const { width } = useWindowSize();
-  const [isMobile, setIsMobile] = useState(false);
-  
-  // Calculate isMobile based on width directly to avoid dependency on other hooks
-  useEffect(() => {
-    if (width === undefined) return;
-    
-    const newIsMobile = width < 768; // md breakpoint
-    if (newIsMobile !== isMobile) {
-      console.log(`ProfileBasicInfo: Mobile state changed to ${newIsMobile} (width: ${width})`);
-      setIsMobile(newIsMobile);
-    }
-  }, [width, isMobile]);
+  const isMobile = useIsMobile();
 
   const handleOccupationTypeChange = (value: string) => {
     if (onOccupationTypeChange) {
@@ -107,7 +95,7 @@ const ProfileBasicInfo = ({ form, showUniversityField = false, onOccupationTypeC
             <FormItem>
               <FormLabel>Edad</FormLabel>
               <FormControl>
-                <Input placeholder="Tu edad" type="number" min="16" max="100" {...field} />
+                <Input placeholder="Tu edad" {...field} />
               </FormControl>
               <FormDescription>
                 Debes tener al menos 16 años para utilizar la plataforma
@@ -131,7 +119,6 @@ const ProfileBasicInfo = ({ form, showUniversityField = false, onOccupationTypeC
                   handleOccupationTypeChange(value);
                 }}
                 value={field.value || ""}
-                defaultValue={field.value || ""}
               >
                 <FormControl>
                   <SelectTrigger>
