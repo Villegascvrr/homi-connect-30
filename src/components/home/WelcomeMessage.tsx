@@ -18,12 +18,15 @@ const WelcomeMessage = ({ firstName }: WelcomeMessageProps) => {
   
   // Añadimos un efecto para mostrar un toast de bienvenida
   useEffect(() => {
-    toast({
-      title: "¡Bienvenido a HomiMatch!",
-      description: "Tu cuenta ha sido creada correctamente.",
-      duration: 6000,
-    });
-  }, []);
+    // Only show welcome toast if user is authenticated
+    if (user) {
+      toast({
+        title: "¡Bienvenido a HomiMatch!",
+        description: "Tu cuenta ha sido creada correctamente.",
+        duration: 6000,
+      });
+    }
+  }, [user, toast]);
   
   // Use firstName from props or from user if available
   const displayName = firstName || (user?.user_metadata?.firstName || user?.user_metadata?.first_name || '');

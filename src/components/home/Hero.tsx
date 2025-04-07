@@ -48,6 +48,7 @@ const Hero = () => {
       });
     }
     
+    // Only set justRegistered if user is authenticated AND registered parameter is true
     if (isRegistered && user) {
       console.log("Usuario recién registrado con email verificado, mostrando mensaje de bienvenida");
       setJustRegistered(true);
@@ -156,7 +157,7 @@ const Hero = () => {
                   </div>
                 </div>
               </div>
-            </> : justRegistered ? <WelcomeMessage firstName={user?.user_metadata?.firstName || user?.user_metadata?.first_name || user?.user_metadata?.name || user?.user_metadata?.full_name} /> : <>
+            </> : justRegistered && user ? <WelcomeMessage firstName={user?.user_metadata?.firstName || user?.user_metadata?.first_name || user?.user_metadata?.name || user?.user_metadata?.full_name} /> : <>
               <div className="inline-block px-4 py-1.5 mb-6 rounded-full bg-green-100 text-green-700 text-xs md:text-sm font-medium">
                 <Check className="inline-block mr-1 h-4 w-4" /> Usuario registrado
               </div>
