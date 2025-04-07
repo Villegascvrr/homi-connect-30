@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from "@/context/AuthContext";
@@ -67,6 +66,10 @@ const ProfilePage = () => {
       setLoading(false);
     }
   }, [user, navigate]);
+
+  const handleEditClick = () => {
+    navigate('/profile/edit');
+  };
 
   if (loading) {
     return (
@@ -218,7 +221,7 @@ const ProfilePage = () => {
               <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-4">
                 <h1 className="text-2xl md:text-3xl font-bold">Tu Perfil</h1>
                 <Button 
-                  onClick={() => setIsEditing(true)}
+                  onClick={handleEditClick}
                   className="rounded-full bg-homi-purple hover:bg-homi-purple/90"
                 >
                   <Edit className="mr-2 h-4 w-4" /> Editar Perfil
@@ -363,11 +366,9 @@ const ProfilePage = () => {
                   </div>
                 </Card>
                 
-                {/* Combine housing preferences and lifestyle preferences in one card */}
                 <Card className="p-6 mt-6">
                   <h2 className="text-xl font-semibold mb-4">Preferencias</h2>
                   
-                  {/* Housing preferences section */}
                   <div className="mb-6 border-b pb-4">
                     <h3 className="font-medium mb-3 flex items-center gap-1">
                       <MapPin size={16} className="text-homi-purple" /> Vivienda
@@ -392,7 +393,6 @@ const ProfilePage = () => {
                     </div>
                   </div>
                   
-                  {/* Lifestyle preferences section */}
                   <div>
                     <h3 className="font-medium mb-3">Estilo de vida</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-6">

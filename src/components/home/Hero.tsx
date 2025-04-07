@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Check, Instagram, MessageCircle } from 'lucide-react';
@@ -25,7 +24,6 @@ const Hero = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Solo procesar si hay un usuario autenticado
     if (user) {
       const urlParams = new URLSearchParams(window.location.search);
       const isRegistered = urlParams.get('registered') === 'true';
@@ -37,11 +35,9 @@ const Hero = () => {
         // Limpiar parámetros URL después de procesarlos
         window.history.replaceState({}, document.title, window.location.pathname);
       } else {
-        // Si el usuario está autenticado pero no es recién registrado
         setJustRegistered(false);
       }
     } else {
-      // Si no hay usuario autenticado, no mostrar mensaje de bienvenida
       setJustRegistered(false);
     }
   }, [user, location.search]);
@@ -76,9 +72,7 @@ const Hero = () => {
     }
   };
 
-  // Determine what view to show based on user state
   const renderContent = () => {
-    // Si hay un usuario autenticado Y acaba de registrarse, mostrar mensaje de bienvenida
     if (user && justRegistered) {
       return <WelcomeMessage 
         firstName={user?.user_metadata?.firstName || user?.user_metadata?.first_name || user?.user_metadata?.name || user?.user_metadata?.full_name}
@@ -86,7 +80,6 @@ const Hero = () => {
       />;
     }
     
-    // Si hay un usuario autenticado pero NO acaba de registrarse
     if (user && !justRegistered) {
       return (
         <>
@@ -136,7 +129,6 @@ const Hero = () => {
       );
     }
     
-    // Para usuarios no autenticados, mostrar opciones de registro pero SIN mensaje de bienvenida personalizado
     return (
       <>
         <div className="inline-block px-4 py-1.5 mb-1 md:mb-2 rounded-full bg-homi-ultraLightPurple text-homi-purple text-xs md:text-sm font-medium animate-pulse-soft">

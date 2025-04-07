@@ -20,14 +20,14 @@ const WelcomeMessage = ({ firstName, showWelcomeToast = false }: WelcomeMessageP
   // Solo muestra el toast de bienvenida si se solicita explícitamente a través de props Y el usuario está autenticado
   useEffect(() => {
     if (showWelcomeToast && user) {
-      // Usar un pequeño timeout para asegurar que el componente esté completamente montado
+      // Usar un timeout más largo para asegurar que el componente esté completamente montado
       const timer = setTimeout(() => {
         toast({
           title: "¡Bienvenido a HomiMatch!",
           description: "Tu cuenta ha sido creada correctamente.",
           duration: 6000,
         });
-      }, 300);
+      }, 500);
       
       return () => clearTimeout(timer);
     }
