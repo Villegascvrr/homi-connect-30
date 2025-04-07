@@ -73,7 +73,7 @@ const Hero = () => {
       <div className="container mx-auto px-4 md:px-6">
         <div className="max-w-4xl mx-auto text-center space-y-8">
           {!user && !justRegistered ? <>
-              <div className="inline-block px-4 py-1.5 mb-2 rounded-full bg-homi-ultraLightPurple text-homi-purple text-xs md:text-sm font-medium animate-pulse-soft">
+              <div className="inline-block px-4 py-1.5 mb-1 md:mb-2 rounded-full bg-homi-ultraLightPurple text-homi-purple text-xs md:text-sm font-medium animate-pulse-soft">
                 ¡Ayúdanos a alcanzar los primeros 1000 usuarios!
               </div>
               
