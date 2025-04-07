@@ -76,7 +76,7 @@ const Hero = () => {
                 Conecta con compañeros de piso <span className="homi-gradient-text">compatibles</span>
               </h1>
               
-              <p className="text-base md:text-xl text-muted-foreground mb-6 max-w-2xl mx-auto px-2">HomiMatch utilizas un sistema de matching inteligente para conectarte con compañeros de piso que comparten tus intereses y estilo de vida.</p>
+              <p className="text-base md:text-xl text-muted-foreground mb-6 max-w-2xl mx-auto px-2">HomiMatch utiliza un sistema de matching inteligente para conectarte con compañeros de piso que comparten tus intereses y estilo de vida.</p>
 
               <div className="bg-homi-ultraLightPurple/50 p-4 md:p-5 rounded-xl mb-6 max-w-2xl mx-auto">
                 <p className="text-sm md:text-base font-medium text-homi-purple">
