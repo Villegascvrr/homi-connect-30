@@ -64,6 +64,7 @@ export const isUsernameAvailable = async (username: string): Promise<boolean> =>
 /**
  * Signs in with Google OAuth
  * This function handles the Google authentication flow and ensures redirects work properly
+ * Works for both new and existing users
  */
 export const signInWithGoogleOAuth = async (): Promise<void> => {
   // Always use the window.location.origin to ensure the redirect is correct
@@ -72,24 +73,30 @@ export const signInWithGoogleOAuth = async (): Promise<void> => {
   
   console.log(`[Google Auth] Starting Google OAuth flow with redirect to: ${redirectTo}`);
   
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: {
-      redirectTo: redirectTo,
-      queryParams: {
-        access_type: 'offline',
-        prompt: 'consent',
+  try {
+    // Use signInWithOAuth which will handle both new and existing users
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: redirectTo,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        },
+        scopes: 'email profile',
+        skipBrowserRedirect: false, // Asegura que el navegador redirige correctamente
       },
-      scopes: 'email profile'
-    },
-  });
-  
-  if (error) {
-    console.error("[Google Auth] Error starting Google OAuth flow:", error);
+    });
+    
+    if (error) {
+      console.error("[Google Auth] Error starting Google OAuth flow:", error);
+      throw error;
+    }
+    
+    console.log("[Google Auth] OAuth flow initiated successfully. User will be redirected to Google.");
+    // No devolvemos datos, solo dejamos que la función complete y la redirección ocurra
+  } catch (error) {
+    console.error("[Google Auth] Exception during Google OAuth:", error);
     throw error;
   }
-  
-  console.log("[Google Auth] OAuth flow initiated successfully. User will be redirected to Google.");
-  // Don't return the data, just let the function complete
 }
-

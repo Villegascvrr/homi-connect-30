@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Session, User } from "@supabase/supabase-js";
@@ -325,9 +326,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const signInWithGoogle = async () => {
     setLoading(true);
     try {
-      console.log("Iniciando proceso de autenticación con Google");
+      console.log("Iniciando proceso unificado de autenticación con Google");
       
-      // Usamos la nueva función optimizada para el inicio de sesión con Google
+      // Usamos la función optimizada para el manejo unificado de inicio de sesión/registro con Google
       await signInWithGoogleOAuth();
       
       // No necesitamos hacer nada más aquí, la redirección ocurrirá automáticamente
@@ -335,14 +336,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } catch (error: any) {
       console.error("Error en autenticación con Google:", error);
       toast({
-        title: "Error al iniciar sesión con Google",
-        description: error.message || "Ha ocurrido un error durante el inicio de sesión con Google.",
+        title: "Error al autenticar con Google",
+        description: error.message || "Ha ocurrido un error durante la autenticación con Google.",
         variant: "destructive",
       });
       setLoading(false);
     }
   };
 
+  // Esta función ya no se utiliza directamente, se usa signInWithGoogleOAuth desde client.ts
   const signInWithGoogleOAuth = async () => {
     const redirectUrl = `${window.location.origin}/verified`;
     console.log("URL de redirección configurada:", redirectUrl);
