@@ -29,8 +29,11 @@ const ProfileBasicInfo = ({ form, showUniversityField = false, onOccupationTypeC
     }
   };
 
+  // Force remount on mobile state change to ensure proper layout
+  const mobileRenderKey = isMobile ? 'mobile-form' : 'desktop-form';
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" key={mobileRenderKey}>
       <h2 className="text-xl font-semibold">Información Personal</h2>
       
       <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-2 gap-6'}`}>
@@ -95,7 +98,7 @@ const ProfileBasicInfo = ({ form, showUniversityField = false, onOccupationTypeC
             <FormItem>
               <FormLabel>Edad</FormLabel>
               <FormControl>
-                <Input placeholder="Tu edad" {...field} />
+                <Input placeholder="Tu edad" type="number" min="16" max="100" {...field} />
               </FormControl>
               <FormDescription>
                 Debes tener al menos 16 años para utilizar la plataforma

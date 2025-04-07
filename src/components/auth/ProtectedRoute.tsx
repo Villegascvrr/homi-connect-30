@@ -116,7 +116,7 @@ const ProtectedRoute = ({
 
   // Show loading state only if we're still checking authentication
   // Use a more controlled approach to avoid flickering
-  if ((loading || !authCheckComplete) && !localCheckComplete) {
+  if ((loading || !authCheckComplete) && hasLocalSession) {
     return (
       <div className="flex flex-col justify-center items-center h-screen bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-homi-purple" />
@@ -131,33 +131,27 @@ const ProtectedRoute = ({
   if (isAuthenticated) {
     console.log("User authenticated, showing protected content");
     return (
-      <div key={renderKey} className="pt-16">
+      <div key={renderKey}>
         <DemoBanner />
-        <div className="mt-4">
-          {children}
-        </div>
+        {children}
       </div>
     );
   }
 
   if (allowPreview && previewComponent) {
     return (
-      <div key={renderKey} className="pt-16">
+      <div key={renderKey}>
         <DemoBanner />
-        <div className="mt-4">
-          {previewComponent}
-        </div>
+        {previewComponent}
       </div>
     );
   }
 
   if (allowPreview) {
     return (
-      <div key={renderKey} className="pt-16">
+      <div key={renderKey}>
         <DemoBanner />
-        <div className="mt-4">
-          {children}
-        </div>
+        {children}
       </div>
     );
   }

@@ -11,6 +11,17 @@ const ScrollToTop = () => {
   const prevPathRef = useRef('');
   const isFirstRender = useRef(true);
   const scrollTimeoutRef = useRef<number | null>(null);
+  const isMounted = useRef(true);
+
+  useEffect(() => {
+    // Set up cleanup function
+    return () => {
+      isMounted.current = false;
+      if (scrollTimeoutRef.current) {
+        window.clearTimeout(scrollTimeoutRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     // Skip the effect on first render to avoid unnecessary scroll
@@ -33,13 +44,16 @@ const ScrollToTop = () => {
     
     // Defer scrolling slightly to ensure DOM has updated
     scrollTimeoutRef.current = window.setTimeout(() => {
+      // Check if component is still mounted
+      if (!isMounted.current) return;
+      
       try {
         if (!hash) {
           // Use fastest scrolling method
           window.scrollTo({
             top: 0,
             left: 0,
-            behavior: 'instant' // Most modern browsers support this now
+            behavior: 'auto' // Changed from 'instant' for better cross-browser support
           });
           
           console.log("Scrolled to top for path:", pathname);
@@ -50,7 +64,7 @@ const ScrollToTop = () => {
           
           if (element) {
             element.scrollIntoView({
-              behavior: 'instant' 
+              behavior: 'auto' // Changed from 'instant' for better cross-browser support
             });
             console.log(`Scrolled to element with id: ${elementId}`);
           } else {
@@ -66,11 +80,6 @@ const ScrollToTop = () => {
       }
     }, 10); // Short timeout to ensure render has completed
     
-    return () => {
-      if (scrollTimeoutRef.current) {
-        window.clearTimeout(scrollTimeoutRef.current);
-      }
-    };
   }, [pathname, hash, key]); // Added key to dependencies to ensure scroll on same-path but different-key navigation
 
   return null;

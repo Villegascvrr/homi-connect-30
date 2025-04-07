@@ -19,9 +19,7 @@ type BreakpointKey = keyof typeof BREAKPOINTS
  * @returns boolean que indica si la pantalla es menor que el breakpoint
  */
 export function useIsMobile(breakpoint: BreakpointKey = "md") {
-  const [isMobile, setIsMobile] = React.useState<boolean>(
-    typeof window !== 'undefined' ? window.innerWidth < BREAKPOINTS[breakpoint] : false
-  )
+  const [isMobile, setIsMobile] = React.useState<boolean>(false)
 
   React.useEffect(() => {
     if (typeof window === 'undefined') return
@@ -52,8 +50,8 @@ export function useWindowSize() {
     width: number | undefined
     height: number | undefined
   }>({
-    width: typeof window !== 'undefined' ? window.innerWidth : undefined,
-    height: typeof window !== 'undefined' ? window.innerHeight : undefined,
+    width: undefined,
+    height: undefined,
   })
 
   React.useEffect(() => {
