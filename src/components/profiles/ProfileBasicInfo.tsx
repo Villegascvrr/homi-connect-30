@@ -1,9 +1,9 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useWindowSize } from "@/hooks/use-mobile";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Briefcase, GraduationCap } from "lucide-react";
 
@@ -21,12 +21,19 @@ const occupationOptions = [
 ];
 
 const ProfileBasicInfo = ({ form, showUniversityField = false, onOccupationTypeChange }: ProfileBasicInfoProps) => {
-  const isMobile = useIsMobile();
+  const { width } = useWindowSize();
+  const [isMobile, setIsMobile] = useState(false);
   
+  // Calculate isMobile based on width directly to avoid dependency on other hooks
   useEffect(() => {
-    // Log mobile status to help with debugging
-    console.log(`ProfileBasicInfo rendering with isMobile: ${isMobile}`);
-  }, [isMobile]);
+    if (width === undefined) return;
+    
+    const newIsMobile = width < 768; // md breakpoint
+    if (newIsMobile !== isMobile) {
+      console.log(`ProfileBasicInfo: Mobile state changed to ${newIsMobile} (width: ${width})`);
+      setIsMobile(newIsMobile);
+    }
+  }, [width, isMobile]);
 
   const handleOccupationTypeChange = (value: string) => {
     if (onOccupationTypeChange) {
@@ -34,12 +41,8 @@ const ProfileBasicInfo = ({ form, showUniversityField = false, onOccupationTypeC
     }
   };
 
-  // Force remount on mobile state change to ensure proper layout
-  // Added a timestamp to ensure uniqueness even if isMobile hasn't changed
-  const mobileRenderKey = `${isMobile ? 'mobile' : 'desktop'}-form-${Date.now()}`;
-
   return (
-    <div className="space-y-4" key={mobileRenderKey}>
+    <div className="space-y-4">
       <h2 className="text-xl font-semibold">Información Personal</h2>
       
       <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-2 gap-6'}`}>

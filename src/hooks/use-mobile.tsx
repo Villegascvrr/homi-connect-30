@@ -23,58 +23,65 @@ export function useIsMobile(breakpoint: BreakpointKey = "md") {
   const [initialized, setInitialized] = React.useState<boolean>(false)
 
   React.useEffect(() => {
-    if (typeof window === 'undefined') return
+    // Handle SSR case
+    if (typeof window === 'undefined') return;
     
     // Create a memoized check function to avoid recreating it on each render
     const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < BREAKPOINTS[breakpoint])
+      const newIsMobile = window.innerWidth < BREAKPOINTS[breakpoint];
+      setIsMobile(newIsMobile);
       
-      // Mark as initialized after first check
       if (!initialized) {
-        setInitialized(true)
+        console.log(`Initial mobile detection: ${newIsMobile} (width: ${window.innerWidth}, breakpoint: ${BREAKPOINTS[breakpoint]})`);
+        setInitialized(true);
       }
     }
     
     // Check on initial render
-    checkIfMobile()
+    checkIfMobile();
     
     // Add event listener for window resize with debounce
-    let timeoutId: number | undefined
+    let timeoutId: number | undefined;
     
     const handleResize = () => {
       if (timeoutId) {
-        window.clearTimeout(timeoutId)
+        window.clearTimeout(timeoutId);
       }
       
       timeoutId = window.setTimeout(() => {
-        checkIfMobile()
-      }, 100) // Small debounce for performance
+        const newIsMobile = window.innerWidth < BREAKPOINTS[breakpoint];
+        if (newIsMobile !== isMobile) {
+          console.log(`Mobile state changed: ${newIsMobile} (width: ${window.innerWidth}, breakpoint: ${BREAKPOINTS[breakpoint]})`);
+        }
+        setIsMobile(newIsMobile);
+      }, 100); // Small debounce for performance
     }
     
-    window.addEventListener("resize", handleResize)
+    window.addEventListener("resize", handleResize);
     
     // Clean up
     return () => {
-      window.removeEventListener("resize", handleResize)
+      window.removeEventListener("resize", handleResize);
       if (timeoutId) {
-        window.clearTimeout(timeoutId)
+        window.clearTimeout(timeoutId);
       }
     }
-  }, [breakpoint, initialized])
+  }, [breakpoint, initialized]);
 
   // During SSR or before initialization, make an educated guess based on user agent
   React.useEffect(() => {
-    if (!initialized && typeof navigator !== 'undefined') {
-      const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera
-      const mobileRegex = /(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i
+    if (!initialized && typeof window !== 'undefined' && typeof navigator !== 'undefined') {
+      const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
+      const mobileRegex = /(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i;
       
       if (mobileRegex.test(userAgent)) {
-        setIsMobile(true)
+        console.log("Mobile device detected based on user agent");
+        setIsMobile(true);
       }
     }
-  }, [initialized])
+  }, [initialized]);
 
-  return isMobile
+  return isMobile;
 }
 
 /**
