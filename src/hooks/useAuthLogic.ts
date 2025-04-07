@@ -24,7 +24,7 @@ const saveSessionToLocalStorage = (session: Session | null): void => {
     try {
       const sessionJson = JSON.stringify(session);
       localStorage.setItem('homi-auth-session', sessionJson);
-      console.log("Session saved to localStorage:", sessionJson.substring(0, 50) + "...");
+      console.log("Session saved to localStorage");
       
       const stored = localStorage.getItem('homi-auth-session');
       if (!stored) {
@@ -56,14 +56,17 @@ const extractUsernameFromEmail = (email: string): string => {
  * Cleanup auth storage (used during sign out)
  */
 const cleanupAuthStorage = (): void => {
+  // Clear all possible auth-related storage
   localStorage.removeItem('homi-auth-session');
   localStorage.removeItem('supabase.auth.token');
   localStorage.removeItem('auth.token');
   
+  // Clear cookies
   document.cookie.split(";").forEach(function(c) {
     document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
   });
 
+  // Clear any other potential auth storage
   try {
     const localStorageKeys = Object.keys(localStorage);
     localStorageKeys.forEach(key => {
@@ -86,6 +89,7 @@ export const useAuthLogic = () => {
   const [isEmailVerified, setIsEmailVerified] = useState(true);
   const [authKey, setAuthKey] = useState<string>('initial');
   const { toast } = useToast();
+  const [isInternalAction, setIsInternalAction] = useState(false);
 
   /**
    * Refreshes the current user data
@@ -93,6 +97,7 @@ export const useAuthLogic = () => {
   const refreshUser = useCallback(async () => {
     try {
       console.log("Refreshing user data");
+      setIsInternalAction(true);
       
       const { data: sessionData, error: sessionError } = await supabase.auth.refreshSession();
       if (sessionError) {
@@ -124,9 +129,11 @@ export const useAuthLogic = () => {
           setUser(refreshedUser);
         }
       }
+      setIsInternalAction(false);
       return;
     } catch (error: any) {
       console.error("Error refreshing user:", error.message);
+      setIsInternalAction(false);
     }
   }, []);
 
@@ -135,6 +142,7 @@ export const useAuthLogic = () => {
    */
   const signInWithGoogle = useCallback(async () => {
     setLoading(true);
+    setIsInternalAction(true);
     try {
       console.log("Iniciando proceso unificado de autenticación con Google");
       
@@ -159,6 +167,7 @@ export const useAuthLogic = () => {
         variant: "destructive",
       });
       setLoading(false);
+      setIsInternalAction(false);
     }
   }, [toast]);
 
@@ -168,6 +177,7 @@ export const useAuthLogic = () => {
   const validateEmailNotInUse = useCallback(async (email: string): Promise<boolean> => {
     try {
       console.log("Checking if email exists:", email);
+      setIsInternalAction(true);
       
       // First check in profiles table
       const { data, error } = await supabase
@@ -178,16 +188,19 @@ export const useAuthLogic = () => {
       
       if (data) {
         console.log("Email exists in profiles table:", email);
+        setIsInternalAction(false);
         return false;
       }
       
-      // Then check in auth.users using our RPC function
+      // Then check in auth.users using our secure method
       const emailExists = await checkEmailExists(email);
       console.log(`Email exists in auth system: ${emailExists ? "yes" : "no"}`);
+      setIsInternalAction(false);
       return !emailExists;
       
     } catch (error) {
       console.error("Error checking if email exists:", error);
+      setIsInternalAction(false);
       return false; // Safe fallback, prevent registration if unsure
     }
   }, []);
@@ -197,6 +210,7 @@ export const useAuthLogic = () => {
    */
   const signUp = useCallback(async (userData: UserSignUpData) => {
     setLoading(true);
+    setIsInternalAction(true);
     try {
       console.log("Starting signup process for:", userData.email);
       
@@ -208,6 +222,8 @@ export const useAuthLogic = () => {
           description: "Todos los campos son obligatorios para crear una cuenta.",
           variant: "destructive",
         });
+        setLoading(false);
+        setIsInternalAction(false);
         return { success: false, error: { message: "Missing required fields" } };
       }
       
@@ -220,6 +236,8 @@ export const useAuthLogic = () => {
           description: "Este correo electrónico ya está registrado. Por favor, inicia sesión o usa otro correo.",
           variant: "destructive",
         });
+        setLoading(false);
+        setIsInternalAction(false);
         return { success: false, error: { message: "Email already registered" } };
       }
       
@@ -232,12 +250,13 @@ export const useAuthLogic = () => {
             lastName: userData.lastName,
             username: userData.username
           },
-          emailRedirectTo: window.location.origin,
+          emailRedirectTo: window.location.origin + '/verified',
         },
       });
 
       if (authError) {
         console.error("Auth error during signup:", authError);
+        setIsInternalAction(false);
         throw authError;
       }
       
@@ -269,32 +288,8 @@ export const useAuthLogic = () => {
           setUser(authData.user);
           
           saveSessionToLocalStorage(authData.session);
-          
-          const verifyStorage = localStorage.getItem('homi-auth-session');
-          if (!verifyStorage) {
-            console.warn("Session storage verification failed, retrying...");
-            saveSessionToLocalStorage(authData.session);
-          }
         } else {
           console.warn("No session in signup response!");
-        }
-        
-        const refreshAttempts = [500, 1000, 2000];
-        
-        for (const delay of refreshAttempts) {
-          setTimeout(async () => {
-            try {
-              const { data } = await supabase.auth.refreshSession();
-              if (data.session) {
-                console.log(`Session refreshed after signup (delay: ${delay}ms)`);
-                setSession(data.session);
-                saveSessionToLocalStorage(data.session);
-                return;
-              }
-            } catch (e) {
-              console.error(`Error refreshing session after signup (delay: ${delay}ms):`, e);
-            }
-          }, delay);
         }
       }
       
@@ -303,8 +298,12 @@ export const useAuthLogic = () => {
         description: "Ya puedes comenzar a usar tu cuenta.",
       });
       
-      window.location.href = '/?registered=true';
+      // Allow the UI to update before redirecting
+      setTimeout(() => {
+        window.location.href = '/?registered=true';
+      }, 500);
       
+      setIsInternalAction(false);
       return { success: true };
     } catch (error: any) {
       console.error("SignUp error:", error);
@@ -321,6 +320,7 @@ export const useAuthLogic = () => {
           variant: "destructive",
         });
       }
+      setIsInternalAction(false);
       return { success: false, error };
     } finally {
       setLoading(false);
@@ -332,6 +332,7 @@ export const useAuthLogic = () => {
    */
   const signIn = useCallback(async (email: string, password: string) => {
     setLoading(true);
+    setIsInternalAction(true);
     try {
       console.log("Attempting to sign in user:", email);
       
@@ -341,6 +342,8 @@ export const useAuthLogic = () => {
           description: "El email y la contraseña son obligatorios.",
           variant: "destructive",
         });
+        setLoading(false);
+        setIsInternalAction(false);
         return;
       }
       
@@ -351,36 +354,43 @@ export const useAuthLogic = () => {
 
       if (error) {
         console.error("Login error:", error);
+        setIsInternalAction(false);
         throw error;
       }
       
       console.log("Sign-in successful, session:", data.session ? "Exists" : "Missing");
       
       if (data.session) {
-        console.log("Session set after signin:", data.session.access_token.substring(0, 10) + "...");
+        console.log("Session set after signin");
         setSession(data.session);
         setUser(data.user);
         
         saveSessionToLocalStorage(data.session);
         
+        toast({
+          title: "Inicio de sesión exitoso",
+          description: "Has iniciado sesión en tu cuenta.",
+        });
+        
+        // Allow the UI to update before redirecting
         setTimeout(() => {
           window.location.href = '/?loggedIn=true';
-        }, 500);
+        }, 300);
       } else {
         throw new Error("No session returned after login");
       }
       
-      toast({
-        title: "Inicio de sesión exitoso",
-        description: "Has iniciado sesión en tu cuenta.",
-      });
     } catch (error: any) {
       console.error("Sign in error:", error);
       toast({
         title: "Error al iniciar sesión",
-        description: error.message || "Credenciales incorrectas.",
+        description: error.message === "Invalid login credentials" 
+          ? "Credenciales inválidas. Verifica tu email y contraseña."
+          : (error.message || "Ha ocurrido un error durante el inicio de sesión."),
         variant: "destructive",
       });
+      setIsInternalAction(false);
+      throw error;
     } finally {
       setLoading(false);
     }
@@ -394,14 +404,18 @@ export const useAuthLogic = () => {
       console.log("Starting sign out process...");
       
       setLoading(true);
+      setIsInternalAction(true);
       
       const wasAuthenticated = !!user;
       
+      // First, clear our local state
       setUser(null);
       setSession(null);
       
+      // Then clean up all storage
       cleanupAuthStorage();
       
+      // Finally, call the API to sign out
       const { error } = await supabase.auth.signOut({ scope: 'global' });
       
       if (error) {
@@ -420,11 +434,13 @@ export const useAuthLogic = () => {
         setAuthKey('signed-out-' + Date.now());
         
         if (wasAuthenticated) {
+          // Allow the UI to update before redirecting
           setTimeout(() => {
             window.location.href = '/';
           }, 300);
         }
       }
+      setIsInternalAction(false);
     } catch (error: any) {
       console.error("Exception during signout:", error);
       toast({
@@ -432,6 +448,7 @@ export const useAuthLogic = () => {
         description: error.message || "Ha ocurrido un error al cerrar sesión.",
         variant: "destructive",
       });
+      setIsInternalAction(false);
     } finally {
       setLoading(false);
     }
@@ -440,35 +457,51 @@ export const useAuthLogic = () => {
   // Set up auth state listener and check for existing session
   useEffect(() => {
     console.log("AuthLogic initializing with key:", authKey);
+    let isMounted = true;
     setLoading(true);
     
     // 1. Set up auth state change listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, currentSession) => {
+        // Skip internal auth actions to prevent re-rendering loops
+        if (isInternalAction) {
+          console.log("Skipping auth event due to internal action:", event);
+          return;
+        }
+        
         console.log("Auth state changed:", event, currentSession ? "With session" : "No session");
         
+        if (!isMounted) {
+          console.log("Component unmounted, skipping auth state update");
+          return;
+        }
+        
         if (currentSession) {
-          console.log("Session received in auth state change:", 
-            currentSession.access_token ? currentSession.access_token.substring(0, 10) + "..." : "No access token");
+          console.log("Session received in auth state change");
           
-          setSession(currentSession);
+          if (isMounted) {
+            setSession(currentSession);
+            saveSessionToLocalStorage(currentSession);
+          }
           
-          saveSessionToLocalStorage(currentSession);
-          
-          if (currentSession.user) {
+          if (currentSession.user && isMounted) {
             const authUser = currentSession.user;
             console.log("User ID from session:", authUser.id);
             
             setIsEmailVerified(true);
             
-            // Use setTimeout to avoid potential deadlock with Supabase auth state
+            // Using setTimeout to avoid potential deadlock with Supabase auth state
             setTimeout(async () => {
+              if (!isMounted) return;
+              
               try {
                 let { data: profileData, error } = await supabase
                   .from('profiles')
                   .select('profile_image, first_name, last_name')
                   .eq('id', authUser.id)
                   .maybeSingle();
+                
+                if (!isMounted) return;
                 
                 if (error || !profileData) {
                   console.log("Profile not found or error, checking if we should create one for Google user");
@@ -497,6 +530,8 @@ export const useAuthLogic = () => {
                       .from('profiles')
                       .upsert(newProfile, { onConflict: 'id' });
                     
+                    if (!isMounted) return;
+                    
                     if (!insertError) {
                       profileData = newProfile;
                       console.log("Created new profile for Google user");
@@ -506,33 +541,39 @@ export const useAuthLogic = () => {
                   }
                 }
                 
-                if (profileData) {
+                if (profileData && isMounted) {
                   console.log("Profile data fetched successfully");
                   setUser({
                     ...authUser,
                     profile_image: profileData.profile_image
                   });
-                } else {
+                } else if (isMounted) {
                   console.log("No profile data found or error:", error);
                   setUser(authUser);
                 }
               } catch (error) {
                 console.error("Error fetching profile data:", error);
-                setUser(authUser);
+                if (isMounted) {
+                  setUser(authUser);
+                }
               } finally {
-                setLoading(false);
+                if (isMounted) {
+                  setLoading(false);
+                }
               }
             }, 0);
           }
         } else {
           console.log("No session in auth state change");
-          if (event === 'SIGNED_OUT') {
+          if (event === 'SIGNED_OUT' && isMounted) {
             cleanupAuthStorage();
             setSession(null);
             setUser(null);
             setIsEmailVerified(false);
           }
-          setLoading(false);
+          if (isMounted) {
+            setLoading(false);
+          }
         }
       }
     );
@@ -542,6 +583,8 @@ export const useAuthLogic = () => {
       try {
         const { data: { session: currentSession } } = await supabase.auth.getSession();
         console.log("Initial session check:", currentSession ? "Found session" : "No session");
+        
+        if (!isMounted) return;
         
         if (currentSession?.user) {
           console.log("Setting session from getSession call");
@@ -559,6 +602,8 @@ export const useAuthLogic = () => {
               .eq('id', authUser.id)
               .maybeSingle();
             
+            if (!isMounted) return;
+            
             if (!error && profileData) {
               console.log("Profile data fetched from existing session");
               setUser({
@@ -571,13 +616,15 @@ export const useAuthLogic = () => {
             }
           } catch (error) {
             console.error("Error fetching profile data:", error);
-            setUser(authUser);
+            if (isMounted) {
+              setUser(authUser);
+            }
           }
         } else {
           const sessionStr = localStorage.getItem('homi-auth-session');
           console.log("Checking localStorage for session:", sessionStr ? "Found" : "Not found");
           
-          if (sessionStr) {
+          if (sessionStr && isMounted) {
             try {
               const sessionData = JSON.parse(sessionStr);
               const isExpired = sessionData.expires_at && new Date(sessionData.expires_at * 1000) < new Date();
@@ -589,7 +636,9 @@ export const useAuthLogic = () => {
                 if (sessionData.user) {
                   setUser(sessionData.user);
                   
+                  // Try to refresh the session
                   supabase.auth.refreshSession().then(({ data }) => {
+                    if (!isMounted) return;
                     if (data.session) {
                       console.log("Session refreshed successfully");
                       setSession(data.session);
@@ -611,19 +660,33 @@ export const useAuthLogic = () => {
           }
         }
         
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       } catch (error) {
         console.error("Error checking session:", error);
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
     
     checkExistingSession();
 
+    // Set timeout to prevent infinite loading state
+    const loadingTimeout = setTimeout(() => {
+      if (isMounted && loading) {
+        console.log("Auth loading timeout reached, forcing completion");
+        setLoading(false);
+      }
+    }, 3000);
+
     return () => {
+      isMounted = false;
       subscription.unsubscribe();
+      clearTimeout(loadingTimeout);
     };
-  }, [authKey]);
+  }, [authKey, isInternalAction]);
 
   return {
     user,

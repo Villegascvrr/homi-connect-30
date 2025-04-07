@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -39,6 +40,7 @@ const EmailSignup = () => {
   const [isWelcomeShown, setIsWelcomeShown] = useState(false);
   const [isSigningWithGoogle, setIsSigningWithGoogle] = useState(false);
   const [isCheckingEmail, setIsCheckingEmail] = useState(false);
+  const [isNavigatingAway, setIsNavigatingAway] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
   const formContainerRef = useRef<HTMLDivElement>(null);
@@ -74,6 +76,8 @@ const EmailSignup = () => {
   }, []);
 
   const handleGoogleSignIn = async () => {
+    if (isSigningWithGoogle) return; // Prevent multiple clicks
+    
     setIsSigningWithGoogle(true);
     try {
       console.log("Iniciando Google sign in desde EmailSignup component");
@@ -124,6 +128,9 @@ const EmailSignup = () => {
   };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    // Prevent multiple submissions or submission while checking email
+    if (isLoading || isCheckingEmail) return;
+    
     setIsLoading(true);
     
     try {
@@ -157,14 +164,6 @@ const EmailSignup = () => {
           if (sessionData?.session) {
             console.log("Storing session manually");
             localStorage.setItem('homi-auth-session', JSON.stringify(sessionData.session));
-            
-            const stored = localStorage.getItem('homi-auth-session');
-            if (!stored) {
-              console.warn("Session storage failed, retrying");
-              localStorage.setItem('homi-auth-session', JSON.stringify(sessionData.session));
-            } else {
-              console.log("Session stored successfully");
-            }
           }
         } catch (err) {
           console.error("Error storing session:", err);
@@ -176,10 +175,15 @@ const EmailSignup = () => {
           variant: "default",
         });
         
-        // Redirección consistente con el flujo de OAuth
-        setTimeout(() => {
-          navigate('/?registered=true');
-        }, 2000);
+        // Prevent multiple redirections
+        if (!isNavigatingAway) {
+          setIsNavigatingAway(true);
+          
+          // Redirección consistente con el flujo de OAuth
+          setTimeout(() => {
+            navigate('/?registered=true');
+          }, 1000);
+        }
       } else {
         toast({
           title: "Error",
@@ -209,10 +213,11 @@ const EmailSignup = () => {
         <div className="text-sm text-muted-foreground">
           <p>Ya puedes comenzar a usar todas las funcionalidades de Homi.</p>
           <Button 
-            onClick={() => navigate('/')} 
+            onClick={() => !isNavigatingAway && navigate('/')} 
             className="mt-4"
+            disabled={isNavigatingAway}
           >
-            Ir al inicio
+            {isNavigatingAway ? "Redirigiendo..." : "Ir al inicio"}
           </Button>
         </div>
       </div>;
@@ -232,7 +237,7 @@ const EmailSignup = () => {
             type="button" 
             variant="outline" 
             onClick={handleGoogleSignIn} 
-            disabled={isSigningWithGoogle} 
+            disabled={isSigningWithGoogle || isLoading || isCheckingEmail} 
             className="w-full flex items-center justify-center gap-2 py-5 border-2 relative rounded-full"
           >
             {isSigningWithGoogle ? (
@@ -269,7 +274,13 @@ const EmailSignup = () => {
                     <FormLabel>Nombre *</FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <Input id="firstName" placeholder="Tu nombre" className="pl-10 rounded-full" {...field} />
+                        <Input 
+                          id="firstName" 
+                          placeholder="Tu nombre" 
+                          className="pl-10 rounded-full" 
+                          disabled={isLoading || isSigningWithGoogle}
+                          {...field} 
+                        />
                         <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                       </div>
                     </FormControl>
@@ -282,7 +293,13 @@ const EmailSignup = () => {
                     <FormLabel>Apellidos *</FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <Input id="lastName" placeholder="Tus apellidos" className="pl-10 rounded-full" {...field} />
+                        <Input 
+                          id="lastName" 
+                          placeholder="Tus apellidos" 
+                          className="pl-10 rounded-full" 
+                          disabled={isLoading || isSigningWithGoogle}
+                          {...field} 
+                        />
                         <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                       </div>
                     </FormControl>
@@ -296,7 +313,13 @@ const EmailSignup = () => {
                   <FormLabel>Nombre de usuario *</FormLabel>
                   <FormControl>
                     <div className="relative">
-                      <Input id="username" placeholder="tu_usuario" className="pl-10 rounded-full" {...field} />
+                      <Input 
+                        id="username" 
+                        placeholder="tu_usuario" 
+                        className="pl-10 rounded-full" 
+                        disabled={isLoading || isSigningWithGoogle}
+                        {...field} 
+                      />
                       <AtSign className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                     </div>
                   </FormControl>
@@ -314,6 +337,7 @@ const EmailSignup = () => {
                         type="email" 
                         placeholder="tu@email.com" 
                         className={`pl-10 rounded-full ${isCheckingEmail ? 'pr-10' : ''}`}
+                        disabled={isLoading || isSigningWithGoogle}
                         {...field}
                       />
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
@@ -333,7 +357,14 @@ const EmailSignup = () => {
                   <FormLabel>Contraseña *</FormLabel>
                   <FormControl>
                     <div className="relative">
-                      <Input id="password" type="password" placeholder="••••••••" className="pl-10 rounded-full" {...field} />
+                      <Input 
+                        id="password" 
+                        type="password" 
+                        placeholder="••••••••" 
+                        className="pl-10 rounded-full" 
+                        disabled={isLoading || isSigningWithGoogle}
+                        {...field} 
+                      />
                       <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                     </div>
                   </FormControl>
@@ -342,7 +373,7 @@ const EmailSignup = () => {
             
             <Button 
               type="submit" 
-              disabled={isLoading || isCheckingEmail} 
+              disabled={isLoading || isCheckingEmail || isSigningWithGoogle} 
               className="w-full mt-6 rounded-full"
             >
               {isLoading ? (

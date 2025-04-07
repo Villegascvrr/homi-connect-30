@@ -108,11 +108,11 @@ export const signInWithGoogleOAuth = async (): Promise<void> => {
  */
 export const checkEmailExists = async (email: string): Promise<boolean> => {
   try {
-    // Use explicit typing for RPC call
-    const { data, error } = await supabase
-      .rpc<boolean, { email_to_check: string }>('check_email_exists', { 
+    // Fix TypeScript error by using type assertion
+    const { data, error } = await (supabase
+      .rpc('check_email_exists', { 
         email_to_check: email 
-      });
+      }) as unknown as Promise<{ data: boolean | null; error: any }>);
       
     if (error) {
       console.error("Error checking email in auth:", error);

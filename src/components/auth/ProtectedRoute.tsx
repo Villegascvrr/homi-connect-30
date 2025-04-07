@@ -4,6 +4,7 @@ import { useAuth } from "@/context/AuthContext";
 import DemoBanner from "../layout/DemoBanner";
 import { useEffect, useState } from "react";
 import { hasStoredSession } from "@/integrations/supabase/client";
+import { Loader2 } from "lucide-react";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -12,6 +13,9 @@ interface ProtectedRouteProps {
   demoMessage?: string;
 }
 
+/**
+ * Improved ProtectedRoute component with more stable auth state handling
+ */
 const ProtectedRoute = ({ 
   children, 
   allowPreview = false,
@@ -24,8 +28,9 @@ const ProtectedRoute = ({
   const [localCheckComplete, setLocalCheckComplete] = useState(false);
   const [hasLocalSession, setHasLocalSession] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
+  const [isNavigating, setIsNavigating] = useState(false);
   
-  // Check for local session on mount
+  // Check for local session on mount - this happens quickly to avoid flicker
   useEffect(() => {
     const localSessionExists = hasStoredSession();
     setHasLocalSession(localSessionExists);
@@ -36,31 +41,44 @@ const ProtectedRoute = ({
   
   // Try to refresh session if we have a local session but no user in context
   useEffect(() => {
+    let isMounted = true;
+    
     const attemptSessionRefresh = async () => {
       if (hasLocalSession && !user && !session && localCheckComplete && !loading) {
         console.log("Has local session but no user in context, attempting to refresh session");
         try {
           await refreshUser();
-          setAuthCheckComplete(true);
+          if (isMounted) {
+            setAuthCheckComplete(true);
+          }
         } catch (error) {
           console.error("Error refreshing session:", error);
           // Increment retry count to limit retries
-          setRetryCount(prev => prev + 1);
+          if (isMounted) {
+            setRetryCount(prev => prev + 1);
           
-          if (retryCount >= 2) {
-            // Mark auth check as complete even if we failed after multiple retries
-            setAuthCheckComplete(true);
+            if (retryCount >= 2) {
+              // Mark auth check as complete even if we failed after multiple retries
+              setAuthCheckComplete(true);
+            }
           }
         }
       } else if (!loading) {
         // If not loading, mark auth check as complete
-        setAuthCheckComplete(true);
+        if (isMounted) {
+          setAuthCheckComplete(true);
+        }
       }
     };
     
     attemptSessionRefresh();
+    
+    return () => {
+      isMounted = false;
+    };
   }, [user, session, loading, hasLocalSession, localCheckComplete, refreshUser, retryCount]);
 
+  // For debugging
   useEffect(() => {
     console.log("Protected route accessed:", {
       path: location.pathname,
@@ -71,7 +89,8 @@ const ProtectedRoute = ({
       authCheckComplete: authCheckComplete,
       localCheckComplete: localCheckComplete,
       allowsPreview: allowPreview,
-      retryCount: retryCount
+      retryCount: retryCount,
+      isNavigating: isNavigating
     });
     
     // Set a timeout to prevent infinite loading state
@@ -80,18 +99,25 @@ const ProtectedRoute = ({
         console.log("Auth check taking too long, forcing completion");
         setAuthCheckComplete(true);
       }
-    }, 3000);
+    }, 2000); // Reduced from 3000ms to 2000ms for better UX
     
     return () => clearTimeout(timeoutId);
   }, [location.pathname, user, session, loading, allowPreview, hasLocalSession, 
-      authCheckComplete, localCheckComplete, retryCount]);
+      authCheckComplete, localCheckComplete, retryCount, isNavigating]);
+
+  // Prevent re-renders during navigation
+  useEffect(() => {
+    if (isNavigating) {
+      return;
+    }
+  }, [isNavigating]);
 
   // Show loading state only if we're still checking authentication
   if ((loading || !authCheckComplete) && !localCheckComplete) {
     return (
-      <div className="flex flex-col justify-center items-center h-[200px] bg-gray-50">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-homi-purple border-t-transparent"></div>
-        <p className="text-sm text-muted-foreground mt-2">Verificando sesión...</p>
+      <div className="flex flex-col justify-center items-center h-screen bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-homi-purple" />
+        <p className="text-sm text-muted-foreground mt-4">Verificando sesión...</p>
       </div>
     );
   }
@@ -140,6 +166,7 @@ const ProtectedRoute = ({
   }
 
   console.log("Redirecting to signin from:", location.pathname);
+  setIsNavigating(true);
   return <Navigate to="/signin" state={{ from: location.pathname }} replace />;
 };
 

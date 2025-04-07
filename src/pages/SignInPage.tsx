@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -51,8 +50,8 @@ const SignInPage = () => {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [showEmailVerificationAlert, setShowEmailVerificationAlert] = useState(false);
   const [loginError, setLoginError] = useState('');
+  const [isNavigatingAway, setIsNavigatingAway] = useState(false);
   
-  // Add a key to force re-render of the component on route changes
   const [pageKey] = useState(`signin-${Date.now()}`);
   
   const { user, signIn } = useAuth();
@@ -87,22 +86,24 @@ const SignInPage = () => {
     setLoginError('');
   }, [location, navigate, toast]);
   
-  // Use multiple useEffects for different concerns
   useEffect(() => {
-    console.log("SignInPage: Checking user state:", user ? "User exists" : "No user");
-    if (user) {
+    if (user && !isNavigatingAway) {
       console.log("SignInPage: User is authenticated, redirecting to home");
-      navigate('/');
+      setIsNavigatingAway(true);
+      setTimeout(() => {
+        navigate('/', { replace: true });
+      }, 0);
     }
-  }, [user, navigate]);
+  }, [user, navigate, isNavigatingAway]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    if (isLoading) return;
+    
     setIsLoading(true);
     setLoginError('');
     
     try {
       await signIn(values.email, values.password);
-      // La redirección se maneja en signIn para mantener consistencia
     } catch (error: any) {
       console.error("Error during sign in:", error);
       setLoginError(error.message || 'Error al iniciar sesión. Verifica tus credenciales.');
@@ -111,11 +112,12 @@ const SignInPage = () => {
   };
 
   const handleGoogleSignIn = async () => {
+    if (isGoogleLoading) return;
+    
     try {
       setIsGoogleLoading(true);
       setLoginError('');
       await signInWithGoogleOAuth();
-      // La redirección se maneja automáticamente por el flujo OAuth
     } catch (error: any) {
       console.error("Error durante la autenticación con Google:", error);
       setLoginError(error.message || 'Error al iniciar sesión con Google.');
@@ -123,10 +125,13 @@ const SignInPage = () => {
     }
   };
 
-  // Early return if user is already authenticated
-  if (user) {
-    console.log("SignInPage: Early return due to authenticated user");
-    return null;
+  if (user && isNavigatingAway) {
+    return (
+      <div className="flex flex-col justify-center items-center h-screen bg-background">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-dotted border-homi-purple"></div>
+        <p className="text-sm text-muted-foreground mt-4">Redirigiendo...</p>
+      </div>
+    );
   }
 
   return (
@@ -166,7 +171,7 @@ const SignInPage = () => {
                 type="button"
                 variant="outline"
                 onClick={handleGoogleSignIn}
-                disabled={isGoogleLoading}
+                disabled={isGoogleLoading || isLoading}
                 className="w-full flex items-center justify-center gap-2 py-5 border-2 relative rounded-full mb-6"
               >
                 {isGoogleLoading ? (
@@ -203,6 +208,7 @@ const SignInPage = () => {
                               type="email" 
                               className="pl-10 rounded-full" 
                               {...field} 
+                              disabled={isLoading}
                             />
                             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                           </div>
@@ -228,7 +234,8 @@ const SignInPage = () => {
                             <Input 
                               placeholder="••••••••" 
                               type={showPassword ? "text" : "password"} 
-                              className="pl-10 rounded-full" 
+                              className="pl-10 rounded-full"
+                              disabled={isLoading}
                               {...field} 
                             />
                             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
@@ -236,6 +243,7 @@ const SignInPage = () => {
                               type="button"
                               onClick={() => setShowPassword(!showPassword)}
                               className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                              disabled={isLoading}
                             >
                               {showPassword ? (
                                 <EyeOff className="h-5 w-5" />
