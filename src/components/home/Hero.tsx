@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Check, Instagram, MessageCircle } from 'lucide-react';
@@ -6,6 +7,7 @@ import EmailSignup from './EmailSignup';
 import WelcomeMessage from './WelcomeMessage';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/context/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 
 const Hero = () => {
   const [email, setEmail] = useState('');
@@ -20,6 +22,7 @@ const Hero = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isSigningWithGoogle, setIsSigningWithGoogle] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -38,16 +41,22 @@ const Hero = () => {
     
     if (error || errorDescription) {
       console.error("Auth error detected in URL:", error, errorDescription);
+      toast({
+        title: "Error de autenticación",
+        description: errorDescription || error || "Hubo un problema con la autenticación",
+        variant: "destructive",
+      });
     }
     
     if (isRegistered && user) {
       console.log("Usuario recién registrado con email verificado, mostrando mensaje de bienvenida");
       setJustRegistered(true);
+      // Clean up URL parameters after processing
       window.history.replaceState({}, document.title, window.location.pathname);
     } else {
       console.log("Estado del usuario:", user ? "conectado" : "no conectado", "Recién registrado:", justRegistered);
     }
-  }, [user, location.search, isEmailVerified, justRegistered]);
+  }, [user, location.search, isEmailVerified, justRegistered, toast]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,8 +76,14 @@ const Hero = () => {
       console.log("Google auth inicializado correctamente");
     } catch (error) {
       console.error("Error durante la autenticación con Google:", error);
+      toast({
+        title: "Error de autenticación",
+        description: "No se pudo iniciar sesión con Google. Por favor, inténtalo de nuevo.",
+        variant: "destructive",
+      });
       setIsSigningWithGoogle(false);
     } finally {
+      // Reset state after a certain time even if successful (prevents UI getting stuck)
       setTimeout(() => setIsSigningWithGoogle(false), 5000);
     }
   };
@@ -87,7 +102,7 @@ const Hero = () => {
               </div>
               
               <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6 animate-slide-up leading-tight px-2 my-0">
-                Conecta con compañeros de piso <span className="homi-gradient-text">compatibles</span>
+                ¡Bienvenido a <span className="homi-gradient-text">HomiMatch</span>!
               </h1>
               
               <p className="text-base md:text-xl text-muted-foreground mb-6 max-w-2xl mx-auto px-2">HomiMatch utiliza un sistema de matching inteligente para conectarte con compañeros de piso que comparten tus intereses y estilo de vida.</p>

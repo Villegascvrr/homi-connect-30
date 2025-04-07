@@ -4,11 +4,12 @@ import Navbar from "../layout/Navbar";
 import Footer from "../layout/Footer";
 import ProfileForm from "./ProfileForm";
 import { useAuth } from "@/context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const ProfileEditPage = () => {
   const { user, session, loading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [authCheckComplete, setAuthCheckComplete] = useState(false);
   
   useEffect(() => {
@@ -26,6 +27,24 @@ const ProfileEditPage = () => {
       navigate("/signin", { state: { from: "/profile/edit" } });
     }
   }, [user, loading, navigate, authCheckComplete]);
+
+  // Add handler for beforeunload to prevent blank page on form submission
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      // Only prevent unload if the form is in a dirty state
+      const isFormDirty = document.querySelector('form[data-dirty="true"]');
+      if (isFormDirty) {
+        e.preventDefault();
+        e.returnValue = '';
+        return '';
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
 
   if (loading && !authCheckComplete) {
     return (
@@ -49,8 +68,11 @@ const ProfileEditPage = () => {
   }
 
   const handleProfileSaved = () => {
-    // Redirect to the profile page after successful save
-    navigate('/profile');
+    // Set a small delay to ensure state updates are processed
+    setTimeout(() => {
+      // Redirect to the profile page after successful save
+      navigate('/profile', { replace: true });
+    }, 100);
   };
 
   return (

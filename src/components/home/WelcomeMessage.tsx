@@ -71,7 +71,7 @@ const WelcomeMessage = ({ firstName }: WelcomeMessageProps) => {
       </div>
       
       <h2 className="text-2xl md:text-3xl font-bold text-center mb-4 homi-gradient-text">
-        ¡Gracias por registrarte{displayName ? `, ${displayName}` : ''}!
+        ¡Bienvenido a HomiMatch{displayName ? `, ${displayName}` : ''}!
       </h2>
       
       <p className="text-center text-muted-foreground mb-6">
