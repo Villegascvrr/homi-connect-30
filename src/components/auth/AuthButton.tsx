@@ -68,18 +68,6 @@ const AuthButton = () => {
     }
   };
 
-  const handleGoogleSignIn = async () => {
-    try {
-      setIsGoogleSignIn(true);
-      console.log("Iniciando autenticación con Google desde AuthButton");
-      await signInWithGoogleOAuth();
-      // La redirección ocurrirá automáticamente
-    } catch (error) {
-      console.error("Error durante la autenticación con Google:", error);
-      setIsGoogleSignIn(false);
-    }
-  };
-
   if (isLoading) {
     return (
       <Button variant="ghost" size="sm" disabled className="h-9 w-9 rounded-full">
