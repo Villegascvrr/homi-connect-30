@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -69,6 +70,7 @@ const SignInPage = () => {
       setShowEmailVerificationAlert(true);
     }
 
+    // Clear any previous login errors when the component mounts
     setLoginError('');
   }, [location, navigate, toast]);
   
@@ -84,6 +86,7 @@ const SignInPage = () => {
     
     try {
       await signIn(values.email, values.password);
+      // The redirect is now handled in the AuthContext
     } catch (error: any) {
       console.error("Error during sign in:", error);
       setLoginError(error.message || 'Error al iniciar sesión. Verifica tus credenciales.');
@@ -97,6 +100,7 @@ const SignInPage = () => {
     try {
       console.log("Iniciando autenticación con Google desde SignInPage");
       await signInWithGoogle();
+      // La redirección ocurrirá automáticamente
     } catch (error) {
       console.error("Error durante la autenticación con Google:", error);
       setIsSigningWithGoogle(false);
