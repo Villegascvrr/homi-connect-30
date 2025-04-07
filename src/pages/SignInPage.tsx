@@ -41,6 +41,7 @@ const SignInPage = () => {
   const [isSigningWithGoogle, setIsSigningWithGoogle] = useState(false);
   const { user, signIn, signInWithGoogle } = useAuth();
   const [showEmailVerificationAlert, setShowEmailVerificationAlert] = useState(false);
+  const [loginError, setLoginError] = useState('');
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -68,6 +69,9 @@ const SignInPage = () => {
     if (needsVerification === 'true') {
       setShowEmailVerificationAlert(true);
     }
+
+    // Clear any previous login errors when the component mounts
+    setLoginError('');
   }, [location, navigate, toast]);
   
   useEffect(() => {
@@ -78,10 +82,14 @@ const SignInPage = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
+    setLoginError('');
+    
     try {
       await signIn(values.email, values.password);
+      // The redirect is now handled in the AuthContext
     } catch (error: any) {
       console.error("Error during sign in:", error);
+      setLoginError(error.message || 'Error al iniciar sesión. Verifica tus credenciales.');
     } finally {
       setIsLoading(false);
     }
@@ -124,6 +132,14 @@ const SignInPage = () => {
                 <Alert className="mb-6 bg-amber-50 text-amber-800 border border-amber-200">
                   <AlertDescription>
                     Por favor, verifica tu correo electrónico antes de iniciar sesión. Revisa tu bandeja de entrada y spam.
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              {loginError && (
+                <Alert className="mb-6 bg-red-50 text-red-800 border border-red-200">
+                  <AlertDescription>
+                    {loginError}
                   </AlertDescription>
                 </Alert>
               )}

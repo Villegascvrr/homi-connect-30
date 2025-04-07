@@ -43,6 +43,8 @@ const saveSessionToLocalStorage = (session: Session | null): void => {
       if (!stored) {
         console.warn("Failed to verify session storage, retrying...");
         localStorage.setItem('homi-auth-session', sessionJson);
+      } else {
+        console.log("Session stored successfully");
       }
     } catch (error) {
       console.error("Error saving session to localStorage:", error);
@@ -459,7 +461,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         password,
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Login error:", error);
+        throw error;
+      }
       
       console.log("Sign-in successful, session:", data.session ? "Exists" : "Missing");
       
@@ -471,6 +476,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         
         // Manually ensure session is stored in localStorage
         saveSessionToLocalStorage(data.session);
+        
+        // Navigate to home after successful login
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 500);
+      } else {
+        throw new Error("No session returned after login");
       }
       
       toast({
@@ -478,6 +490,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         description: "Has iniciado sesión en tu cuenta.",
       });
     } catch (error: any) {
+      console.error("Sign in error:", error);
       toast({
         title: "Error al iniciar sesión",
         description: error.message || "Credenciales incorrectas.",
