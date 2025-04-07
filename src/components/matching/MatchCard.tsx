@@ -72,10 +72,10 @@ const MatchCard = ({
   if (compact) {
     return (
       <div 
-        className="relative glass-card overflow-hidden transition-all duration-300 hover:shadow-md cursor-pointer h-full"
+        className="relative glass-card overflow-hidden transition-all duration-300 hover:shadow-md cursor-pointer h-full rounded-xl"
         onClick={() => onView(id)}
       >
-        <div className="relative aspect-square overflow-hidden bg-gray-100">
+        <div className="relative aspect-square overflow-hidden bg-gray-100 rounded-t-xl">
           <img
             src={imgUrl}
             alt={name}
@@ -148,10 +148,10 @@ const MatchCard = ({
     );
   }
 
-  // Original full-size card design - now with reduced height and more compact layout
+  // Original full-size card design - now with increased rounded corners
   return (
     <div 
-      className={`relative max-w-md w-full mx-auto glass-card overflow-hidden transition-all duration-300 shadow-lg ${
+      className={`relative max-w-md w-full mx-auto glass-card overflow-hidden transition-all duration-300 shadow-lg rounded-xl ${
         swiping === 'right' ? 'animate-swipe-right' : 
         swiping === 'left' ? 'animate-swipe-left' : ''
       }`}
