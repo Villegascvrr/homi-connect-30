@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Session, User } from "@supabase/supabase-js";
@@ -52,6 +53,17 @@ const saveSessionToLocalStorage = (session: Session | null): void => {
     localStorage.removeItem('homi-auth-session');
     console.log("Session removed from localStorage");
   }
+};
+
+// Function to extract username from email
+const extractUsernameFromEmail = (email: string): string => {
+  if (!email) return '';
+  
+  // Get the part before @ symbol
+  const username = email.split('@')[0];
+  
+  // Remove any special characters that might not be allowed in usernames
+  return username.replace(/[^a-zA-Z0-9_]/g, '').toLowerCase();
 };
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -116,11 +128,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                     const firstName = nameParts[0] || '';
                     const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
                     
+                    // Create a username from the email
+                    const usernameFromEmail = extractUsernameFromEmail(authUser.email || '');
+                    
                     const newProfile = {
                       id: authUser.id,
                       first_name: firstName,
                       last_name: lastName,
-                      username: `google_${authUser.id.substring(0, 8)}`,
+                      username: usernameFromEmail, // Use the username extracted from email
                       email: authUser.email,
                       profile_image: null // Add profile_image field with null value
                     };
