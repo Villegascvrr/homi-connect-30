@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Session, User } from "@supabase/supabase-js";
@@ -384,8 +385,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
       
       // If not in profiles, check auth.users table without creating an account
-      // This uses a separate API call that won't create a user
-      const { count, error: countError } = await supabase
+      // This uses the RPC function with proper type handling
+      const { data: count, error: countError } = await supabase
         .rpc('check_email_exists', { email_to_check: email });
         
       if (countError) {
@@ -394,7 +395,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return true;
       }
       
-      const exists = count ? count > 0 : false;
+      const exists = count && count > 0;
       console.log(`Email exists in auth system: ${exists ? "yes" : "no"}`);
       return exists;
     } catch (error) {
