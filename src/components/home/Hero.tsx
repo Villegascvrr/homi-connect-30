@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Check, Instagram, MessageCircle } from 'lucide-react';
@@ -7,7 +6,6 @@ import EmailSignup from './EmailSignup';
 import WelcomeMessage from './WelcomeMessage';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/context/AuthContext';
-
 const Hero = () => {
   const [email, setEmail] = useState('');
   const [showSignupForm, setShowSignupForm] = useState(false);
@@ -21,11 +19,9 @@ const Hero = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isSigningWithGoogle, setIsSigningWithGoogle] = useState(false);
-
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const isRegistered = urlParams.get('registered') === 'true';
-    
     console.log("Verificando estado de registro:", {
       isRegistered,
       userExists: !!user,
@@ -34,7 +30,6 @@ const Hero = () => {
       searchParams: urlParams.toString(),
       rawURL: window.location.href
     });
-    
     if (isRegistered && user) {
       console.log("Usuario recién registrado con email verificado, mostrando mensaje de bienvenida");
       setJustRegistered(true);
@@ -44,17 +39,14 @@ const Hero = () => {
       console.log("Estado del usuario:", user ? "conectado" : "no conectado", "Recién registrado:", justRegistered);
     }
   }, [user, location.search, isEmailVerified, justRegistered]);
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Subscribed with email:', email);
     setEmail('');
   };
-
   const handleRegisterClick = () => {
     navigate('/register');
   };
-
   const handleGoogleSignIn = async () => {
     setIsSigningWithGoogle(true);
     try {
@@ -67,7 +59,6 @@ const Hero = () => {
       setIsSigningWithGoogle(false);
     }
   };
-
   return <section className="relative overflow-hidden w-full lg:py-[30px] py-[5px]">
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-0 left-0 w-64 md:w-96 h-64 md:h-96 bg-homi-ultraLightPurple rounded-full opacity-50 blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
@@ -85,7 +76,7 @@ const Hero = () => {
                 Conecta con compañeros de piso <span className="homi-gradient-text">compatibles</span>
               </h1>
               
-              <p className="text-base md:text-xl text-muted-foreground mb-6 max-w-2xl mx-auto px-2">HomiMatch utiliza un sistema de matching inteligente para conectarte con compañeros de piso que comparten tus intereses y estilo de vida.</p>
+              <p className="text-base md:text-xl text-muted-foreground mb-6 max-w-2xl mx-auto px-2">HomiMatch utilizas un sistema de matching inteligente para conectarte con compañeros de piso que comparten tus intereses y estilo de vida.</p>
 
               <div className="bg-homi-ultraLightPurple/50 p-4 md:p-5 rounded-xl mb-6 max-w-2xl mx-auto">
                 <p className="text-sm md:text-base font-medium text-homi-purple">
@@ -94,27 +85,14 @@ const Hero = () => {
               </div>
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 mt-6">
-                <Button 
-                  size={isMobile ? "default" : "lg"} 
-                  className="rounded-full bg-gradient-to-r from-homi-purple to-homi-lightPurple hover:from-homi-lightPurple hover:to-homi-purple text-white font-bold shadow-lg shadow-purple-500/30 transform hover:scale-105 transition-all duration-300 w-full sm:w-auto" 
-                  onClick={handleRegisterClick}
-                >
+                <Button size={isMobile ? "default" : "lg"} className="rounded-full bg-gradient-to-r from-homi-purple to-homi-lightPurple hover:from-homi-lightPurple hover:to-homi-purple text-white font-bold shadow-lg shadow-purple-500/30 transform hover:scale-105 transition-all duration-300 w-full sm:w-auto" onClick={handleRegisterClick}>
                   ¡Regístrate ahora!
                 </Button>
-                <Button 
-                  size={isMobile ? "default" : "lg"} 
-                  variant="outline" 
-                  className="rounded-full w-full sm:w-auto flex items-center gap-2"
-                  onClick={handleGoogleSignIn}
-                  disabled={isSigningWithGoogle}
-                >
-                  {isSigningWithGoogle ? (
-                    <>
+                <Button size={isMobile ? "default" : "lg"} variant="outline" className="rounded-full w-full sm:w-auto flex items-center gap-2" onClick={handleGoogleSignIn} disabled={isSigningWithGoogle}>
+                  {isSigningWithGoogle ? <>
                       <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-homi-purple"></div>
                       <span>Conectando...</span>
-                    </>
-                  ) : (
-                    <>
+                    </> : <>
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
                         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
                         <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
@@ -122,8 +100,7 @@ const Hero = () => {
                         <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
                       </svg>
                       <span>Continuar con Google</span>
-                    </>
-                  )}
+                    </>}
                 </Button>
               </div>
 
@@ -198,5 +175,4 @@ const Hero = () => {
       </div>
     </section>;
 };
-
 export default Hero;
