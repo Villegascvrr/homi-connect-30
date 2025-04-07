@@ -83,8 +83,8 @@ export const signInWithGoogleOAuth = async (): Promise<void> => {
           access_type: 'offline',
           prompt: 'consent',
         },
-        // Fixed: Use correct type for scopes
-        scopes: 'email profile',
+        // Fix: Replace string with an array of strings for scopes
+        scopes: ['email', 'profile'],
       },
     });
     
