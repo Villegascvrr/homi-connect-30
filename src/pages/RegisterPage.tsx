@@ -76,13 +76,16 @@ const RegisterPage = () => {
       confirmPassword: '',
       terms: false,
     },
-    mode: "onChange"
+    mode: "onBlur" // Changed from onChange to onBlur to validate when user moves away from field
   });
   
   // Add debounce to avoid too many API calls
   useEffect(() => {
     const email = form.watch("email");
-    if (!email || !email.includes('@')) return;
+    if (!email || !email.includes('@')) {
+      setIsCheckingEmail(false);
+      return;
+    }
     
     setIsCheckingEmail(true);
     const timer = setTimeout(async () => {
@@ -104,7 +107,10 @@ const RegisterPage = () => {
       }
     }, 800);
     
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      setIsCheckingEmail(false);
+    };
   }, [form.watch("email")]);
 
   const handleGoogleSignIn = async () => {

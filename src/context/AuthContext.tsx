@@ -370,34 +370,33 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       console.log("Checking if email exists:", email);
       
-      // First check in auth.users table via the signUp API with dummy credentials
-      const { error } = await supabase.auth.signUp({
-        email,
-        password: `temp-password-${Date.now()}`, // Temporary password that won't be used
-        options: { emailRedirectTo: window.location.origin }
-      });
-      
-      // If we get a "User already registered" error, the email exists
-      if (error && (error.message.includes('already registered') || error.message.includes('already exists'))) {
-        console.log("Email exists in auth system:", email);
-        return true;
-      }
-      
-      // Also check profiles table as a fallback
-      const { data: profileData } = await supabase
+      // FIXED: Use a dedicated API endpoint instead of the sign-up endpoint
+      // that was inadvertently creating accounts
+      const { data, error } = await supabase
         .from('profiles')
         .select('email')
         .eq('email', email)
         .maybeSingle();
       
-      if (profileData) {
+      if (data) {
         console.log("Email exists in profiles table:", email);
         return true;
       }
       
-      // Email doesn't exist
-      console.log("Email does not exist:", email);
-      return false;
+      // If not in profiles, check auth.users table without creating an account
+      // This uses a separate API call that won't create a user
+      const { count, error: countError } = await supabase
+        .rpc('check_email_exists', { email_to_check: email });
+        
+      if (countError) {
+        console.error("Error checking email in auth:", countError);
+        // Better to assume it exists in case of error (safer approach)
+        return true;
+      }
+      
+      const exists = count ? count > 0 : false;
+      console.log(`Email exists in auth system: ${exists ? "yes" : "no"}`);
+      return exists;
     } catch (error) {
       console.error("Error checking if email exists:", error);
       // Better to assume it exists in case of error (safer approach)

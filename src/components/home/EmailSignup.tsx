@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -53,7 +52,8 @@ const EmailSignup = () => {
       username: '',
       email: '',
       password: '',
-    }
+    },
+    mode: "onBlur"
   });
 
   useEffect(() => {
@@ -90,7 +90,6 @@ const EmailSignup = () => {
     }
   };
 
-  // Email validation on change to give early feedback
   const validateEmailNotInUse = async (email: string) => {
     if (!email || !email.includes('@')) return;
     
@@ -103,7 +102,6 @@ const EmailSignup = () => {
           message: "Este correo electrónico ya está registrado. Por favor, usa otro o inicia sesión."
         });
       } else {
-        // Clear the error if email is available
         form.clearErrors("email");
       }
     } catch (error) {
@@ -113,7 +111,6 @@ const EmailSignup = () => {
     }
   };
 
-  // Add debounce to avoid too many API calls
   useEffect(() => {
     const email = form.watch("email");
     if (!email) return;
@@ -129,7 +126,6 @@ const EmailSignup = () => {
     setIsLoading(true);
     
     try {
-      // Check email existence again right before submission
       const emailExists = await checkEmailExists(values.email);
       if (emailExists) {
         form.setError("email", {
@@ -151,18 +147,15 @@ const EmailSignup = () => {
       if (result.success) {
         console.log("Registration successful");
         
-        // Show welcome message and redirect
         setIsWelcomeShown(true);
         setIsSubmitted(true);
         
-        // Force manual session storage with redundancy
         try {
           const { data: sessionData } = await supabase.auth.getSession();
           if (sessionData?.session) {
             console.log("Storing session manually");
             localStorage.setItem('homi-auth-session', JSON.stringify(sessionData.session));
             
-            // Double check storage worked
             const stored = localStorage.getItem('homi-auth-session');
             if (!stored) {
               console.warn("Session storage failed, retrying");
@@ -175,14 +168,12 @@ const EmailSignup = () => {
           console.error("Error storing session:", err);
         }
         
-        // Show success message
         toast({
           title: "Cuenta creada con éxito",
           description: "Ya puedes comenzar a usar tu cuenta.",
           variant: "default",
         });
         
-        // Redirect to home page after short delay
         setTimeout(() => {
           navigate('/?registered=true');
         }, 2000);
@@ -325,7 +316,7 @@ const EmailSignup = () => {
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                       {isCheckingEmail && (
                         <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-homi-purple border-b-transparent"></div>
+                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-b-transparent"></div>
                         </div>
                       )}
                     </div>
