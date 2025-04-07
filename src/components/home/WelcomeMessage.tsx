@@ -16,7 +16,7 @@ const WelcomeMessage = ({ firstName }: WelcomeMessageProps) => {
   const navigate = useNavigate();
   const { user } = useAuth();
   
-  // Añadimos un efecto para mostrar un toast de bienvenida
+  // Mostramos el toast de bienvenida solo si el usuario está autenticado y solo una vez
   useEffect(() => {
     // Only show welcome toast if user is authenticated
     if (user) {

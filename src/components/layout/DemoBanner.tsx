@@ -20,14 +20,20 @@ const DemoBanner = ({
   // Check if user just registered based on URL parameter
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
+    // Only set justRegistered if user is authenticated AND registered parameter is true
     if (urlParams.get('registered') === 'true' && user) {
       setJustRegistered(true);
+      // Clean URL parameters after processing
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (!user) {
+      // Reset justRegistered if no user is authenticated
+      setJustRegistered(false);
     }
-  }, [user]);
+  }, [user, location.search]);
 
   // Message for different user states and pages
   const getMessage = () => {
-    if (justRegistered) {
+    if (justRegistered && user) {
       return "¡Gracias por registrarte en Homi! Completa tu perfil y síguenos en @homimatch para recibir todas las novedades.";
     } 
     
