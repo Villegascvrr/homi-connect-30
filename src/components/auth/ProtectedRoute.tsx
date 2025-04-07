@@ -5,6 +5,7 @@ import DemoBanner from "../layout/DemoBanner";
 import { useEffect, useState } from "react";
 import { hasStoredSession } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -31,6 +32,7 @@ const ProtectedRoute = ({
   const [retryCount, setRetryCount] = useState(0);
   const [isNavigating, setIsNavigating] = useState(false);
   const [renderKey] = useState(() => `protected-route-${Math.random().toString(36).substring(2, 9)}`);
+  const isMobile = useIsMobile();
   
   // Check for local session on mount - this happens quickly to avoid flicker
   useEffect(() => {
@@ -92,7 +94,8 @@ const ProtectedRoute = ({
       localCheckComplete: localCheckComplete,
       allowsPreview: allowPreview,
       retryCount: retryCount,
-      isNavigating: isNavigating
+      isNavigating: isNavigating,
+      isMobile: isMobile
     });
     
     // Set a timeout to prevent infinite loading state
@@ -101,11 +104,11 @@ const ProtectedRoute = ({
         console.log("Auth check taking too long, forcing completion");
         setAuthCheckComplete(true);
       }
-    }, 2000); // Reduced from 3000ms to 2000ms for better UX
+    }, 1500); // Further reduced from 2000ms to 1500ms for better UX, especially on mobile
     
     return () => clearTimeout(timeoutId);
   }, [location.pathname, user, session, loading, allowPreview, hasLocalSession, 
-      authCheckComplete, localCheckComplete, retryCount, isNavigating]);
+      authCheckComplete, localCheckComplete, retryCount, isNavigating, isMobile]);
 
   // Prevent re-renders during navigation
   useEffect(() => {
@@ -114,19 +117,19 @@ const ProtectedRoute = ({
     }
   }, [isNavigating]);
 
+  // Check if we have a user or session from any source
+  const isAuthenticated = !!user || !!session || hasLocalSession;
+
   // Show loading state only if we're still checking authentication
   // Use a more controlled approach to avoid flickering
   if ((loading || !authCheckComplete) && hasLocalSession) {
     return (
-      <div className="flex flex-col justify-center items-center h-screen bg-background">
+      <div className={`flex flex-col justify-center items-center ${isMobile ? 'h-[100dvh]' : 'h-screen'} bg-background`}>
         <Loader2 className="h-8 w-8 animate-spin text-homi-purple" />
         <p className="text-sm text-muted-foreground mt-4">Verificando sesión...</p>
       </div>
     );
   }
-
-  // Check if we have a user or session from any source
-  const isAuthenticated = !!user || !!session || hasLocalSession;
 
   if (isAuthenticated) {
     console.log("User authenticated, showing protected content");
@@ -165,7 +168,7 @@ const ProtectedRoute = ({
   
   // Fallback while navigating to prevent flickering
   return (
-    <div className="flex flex-col justify-center items-center h-screen bg-background">
+    <div className={`flex flex-col justify-center items-center ${isMobile ? 'h-[100dvh]' : 'h-screen'} bg-background`}>
       <Loader2 className="h-8 w-8 animate-spin text-homi-purple" />
       <p className="text-sm text-muted-foreground mt-4">Redirigiendo...</p>
     </div>

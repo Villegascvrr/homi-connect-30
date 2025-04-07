@@ -1,7 +1,7 @@
 
 import * as React from "react"
 
-// Definimos los breakpoints en un objeto para mayor flexibilidad
+// Define the breakpoints in an object for greater flexibility
 const BREAKPOINTS = {
   xs: 480,
   sm: 640,
@@ -14,36 +14,72 @@ const BREAKPOINTS = {
 type BreakpointKey = keyof typeof BREAKPOINTS
 
 /**
- * Hook para detectar si la pantalla está en tamaño móvil
- * @param breakpoint - El breakpoint para considerar como "móvil" (default: md = 768px)
- * @returns boolean que indica si la pantalla es menor que el breakpoint
+ * Hook to detect if the screen is mobile size
+ * @param breakpoint - The breakpoint to consider as "mobile" (default: md = 768px)
+ * @returns boolean that indicates if the screen is smaller than the breakpoint
  */
 export function useIsMobile(breakpoint: BreakpointKey = "md") {
   const [isMobile, setIsMobile] = React.useState<boolean>(false)
+  const [initialized, setInitialized] = React.useState<boolean>(false)
 
   React.useEffect(() => {
     if (typeof window === 'undefined') return
     
+    // Create a memoized check function to avoid recreating it on each render
     const checkIfMobile = () => {
       setIsMobile(window.innerWidth < BREAKPOINTS[breakpoint])
+      
+      // Mark as initialized after first check
+      if (!initialized) {
+        setInitialized(true)
+      }
     }
     
     // Check on initial render
     checkIfMobile()
     
-    // Add event listener for window resize
-    window.addEventListener("resize", checkIfMobile)
+    // Add event listener for window resize with debounce
+    let timeoutId: number | undefined
+    
+    const handleResize = () => {
+      if (timeoutId) {
+        window.clearTimeout(timeoutId)
+      }
+      
+      timeoutId = window.setTimeout(() => {
+        checkIfMobile()
+      }, 100) // Small debounce for performance
+    }
+    
+    window.addEventListener("resize", handleResize)
     
     // Clean up
-    return () => window.removeEventListener("resize", checkIfMobile)
-  }, [breakpoint])
+    return () => {
+      window.removeEventListener("resize", handleResize)
+      if (timeoutId) {
+        window.clearTimeout(timeoutId)
+      }
+    }
+  }, [breakpoint, initialized])
+
+  // During SSR or before initialization, make an educated guess based on user agent
+  React.useEffect(() => {
+    if (!initialized && typeof navigator !== 'undefined') {
+      const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera
+      const mobileRegex = /(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i
+      
+      if (mobileRegex.test(userAgent)) {
+        setIsMobile(true)
+      }
+    }
+  }, [initialized])
 
   return isMobile
 }
 
 /**
- * Hook para obtener el tamaño actual de la pantalla
- * @returns El ancho y alto actuales de la ventana
+ * Hook to get the current window size
+ * @returns The current width and height of the window
  */
 export function useWindowSize() {
   const [windowSize, setWindowSize] = React.useState<{
@@ -53,6 +89,7 @@ export function useWindowSize() {
     width: undefined,
     height: undefined,
   })
+  const [initialized, setInitialized] = React.useState(false)
 
   React.useEffect(() => {
     if (typeof window === 'undefined') return
@@ -62,20 +99,42 @@ export function useWindowSize() {
         width: window.innerWidth,
         height: window.innerHeight,
       })
+      
+      if (!initialized) {
+        setInitialized(true)
+      }
     }
 
-    window.addEventListener("resize", handleResize)
+    // Add event listener with debounce
+    let timeoutId: number | undefined
+    
+    const debouncedResize = () => {
+      if (timeoutId) {
+        window.clearTimeout(timeoutId)
+      }
+      
+      timeoutId = window.setTimeout(handleResize, 100)
+    }
+    
+    window.addEventListener("resize", debouncedResize)
+    
+    // Call handler right away to update initial state
     handleResize()
     
-    return () => window.removeEventListener("resize", handleResize)
-  }, [])
+    return () => {
+      window.removeEventListener("resize", debouncedResize)
+      if (timeoutId) {
+        window.clearTimeout(timeoutId)
+      }
+    }
+  }, [initialized])
 
   return windowSize
 }
 
 /**
- * Hook para detectar el breakpoint actual
- * @returns El breakpoint actual (xs, sm, md, lg, xl, 2xl)
+ * Hook to detect the current breakpoint
+ * @returns The current breakpoint (xs, sm, md, lg, xl, 2xl)
  */
 export function useBreakpoint() {
   const { width } = useWindowSize()

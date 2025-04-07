@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -22,6 +22,11 @@ const occupationOptions = [
 
 const ProfileBasicInfo = ({ form, showUniversityField = false, onOccupationTypeChange }: ProfileBasicInfoProps) => {
   const isMobile = useIsMobile();
+  
+  useEffect(() => {
+    // Log mobile status to help with debugging
+    console.log(`ProfileBasicInfo rendering with isMobile: ${isMobile}`);
+  }, [isMobile]);
 
   const handleOccupationTypeChange = (value: string) => {
     if (onOccupationTypeChange) {
@@ -30,7 +35,8 @@ const ProfileBasicInfo = ({ form, showUniversityField = false, onOccupationTypeC
   };
 
   // Force remount on mobile state change to ensure proper layout
-  const mobileRenderKey = isMobile ? 'mobile-form' : 'desktop-form';
+  // Added a timestamp to ensure uniqueness even if isMobile hasn't changed
+  const mobileRenderKey = `${isMobile ? 'mobile' : 'desktop'}-form-${Date.now()}`;
 
   return (
     <div className="space-y-4" key={mobileRenderKey}>
@@ -122,6 +128,7 @@ const ProfileBasicInfo = ({ form, showUniversityField = false, onOccupationTypeC
                   handleOccupationTypeChange(value);
                 }}
                 value={field.value || ""}
+                defaultValue={field.value || ""}
               >
                 <FormControl>
                   <SelectTrigger>
