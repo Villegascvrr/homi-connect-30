@@ -355,7 +355,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
       
       const { data: countResult, error: countError } = await supabase
-        .rpc<boolean>('check_email_exists', { 
+        .rpc<boolean, { email_to_check: string }>('check_email_exists', { 
           email_to_check: email 
         });
         
