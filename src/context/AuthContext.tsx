@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Session, User } from "@supabase/supabase-js";
@@ -354,10 +355,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return true;
       }
       
+      // Use type assertion to work around the TypeScript error
       const { data: countResult, error: countError } = await supabase
-        .rpc<boolean, { email_to_check: string }>('check_email_exists', { 
+        .rpc('check_email_exists', { 
           email_to_check: email 
-        });
+        }) as { data: boolean | null; error: Error | null };
         
       if (countError) {
         console.error("Error checking email in auth:", countError);
