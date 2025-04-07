@@ -109,9 +109,9 @@ export const signInWithGoogleOAuth = async (): Promise<void> => {
  */
 export const checkEmailExists = async (email: string): Promise<boolean> => {
   try {
-    // Fix: Use proper generic type for RPC call (boolean)
+    // Fix: Remove the generic type parameter
     const { data, error } = await supabase
-      .rpc<'check_email_exists'>('check_email_exists', { 
+      .rpc('check_email_exists', { 
         email_to_check: email 
       });
       
