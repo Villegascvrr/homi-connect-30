@@ -350,20 +350,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return true;
       }
       
-      const { data: count, error: countError } = await supabase
-        .rpc('check_email_exists', { email_to_check: email }) as { data: number | null, error: any };
+      const { data: countResult, error: countError } = await supabase
+        .rpc('check_email_exists', { email_to_check: email });
         
       if (countError) {
         console.error("Error checking email in auth:", countError);
-        return true;
+        return false; // Default to false on error to prevent blocking registration
       }
       
-      const exists = count && count > 0;
-      console.log(`Email exists in auth system: ${exists ? "yes" : "no"}`);
+      const exists = countResult && countResult > 0;
+      console.log(`Email exists in auth system: ${exists ? "yes" : "no"}, count: ${countResult}`);
       return exists;
     } catch (error) {
       console.error("Error checking if email exists:", error);
-      return true;
+      return false; // Default to false on error to prevent blocking registration
     }
   };
 
