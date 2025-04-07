@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import SwipeCard from './SwipeCard';
 import { Button } from '@/components/ui/button';
 import { RefreshCw, Heart } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 interface Tag {
   id: number;
@@ -40,6 +41,7 @@ interface SwipeInterfaceProps {
 }
 
 const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProps) => {
+  const { toast } = useToast();
   const updatedProfiles = profiles.map(profile => {
     const profileId = parseInt(profile.id) || Math.floor(Math.random() * 10);
     
@@ -72,12 +74,20 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
   const [nextCardReady, setNextCardReady] = useState(false);
   const [removedProfiles, setRemovedProfiles] = useState<Set<string>>(new Set());
   
-  // Fix: Filter available profiles first, then check if we have any left
+  // Filter available profiles using removedProfiles set
   const availableProfiles = updatedProfiles.filter(profile => !removedProfiles.has(profile.id));
-  const currentProfile = availableProfiles.length > 0 ? availableProfiles[currentIndex] : null;
+  const currentProfile = availableProfiles.length > currentIndex ? availableProfiles[currentIndex] : null;
   const nextProfile = availableProfiles.length > currentIndex + 1 ? availableProfiles[currentIndex + 1] : null;
   
   const hasMoreProfiles = availableProfiles.length > 0 && currentProfile !== null;
+  
+  // Debug log the current state
+  useEffect(() => {
+    console.log("Available profiles:", availableProfiles.length);
+    console.log("Current index:", currentIndex);
+    console.log("Current profile:", currentProfile?.name);
+    console.log("Removed profiles:", Array.from(removedProfiles));
+  }, [availableProfiles, currentIndex, currentProfile, removedProfiles]);
   
   useEffect(() => {
     if (nextProfile) {
@@ -101,15 +111,17 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
     setIsTransitioning(true);
     setDirection(action === 'like' ? 'right' : 'left');
     
+    // Add to history before removing
     setHistory(prev => [...prev, id]);
     
-    // Fix: Make sure we add the profile to removed profiles
+    // Mark this profile as removed
     setRemovedProfiles(prev => {
       const newSet = new Set(prev);
       newSet.add(id);
       return newSet;
     });
     
+    // Process the swipe after animation
     setTimeout(() => {
       if (action === 'like') {
         const matchedProfile = updatedProfiles.find(p => p.id === id);
@@ -121,12 +133,20 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
         }
         
         onLike(id);
+        toast({
+          title: "¡Te gusta este perfil!",
+          description: "Se ha añadido a tus matches potenciales."
+        });
       } else {
         onPass(id);
+        toast({
+          title: "Has pasado este perfil",
+          description: "No te preocupes, hay más perfiles por descubrir."
+        });
       }
       
-      setCurrentIndex(0);
-      setDirection(null);
+      // Don't change currentIndex - just let the filter handle it
+      setIsTransitioning(false);
     }, 400);
   };
   
@@ -137,16 +157,19 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
     
     const lastId = history[history.length - 1];
     
-    setTimeout(() => {
-      setRemovedProfiles(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(lastId);
-        return newSet;
-      });
-      
-      setHistory(prev => prev.slice(0, -1));
-      setIsTransitioning(false);
-    }, 300);
+    setRemovedProfiles(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(lastId);
+      return newSet;
+    });
+    
+    setHistory(prev => prev.slice(0, -1));
+    setIsTransitioning(false);
+    
+    toast({
+      title: "Acción deshecha",
+      description: "Has recuperado el último perfil."
+    });
   };
   
   const handleReset = () => {
@@ -155,6 +178,11 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
     setDirection(null);
     setRemovedProfiles(new Set());
     setNextCardReady(false);
+    
+    toast({
+      title: "Perfiles reiniciados",
+      description: "Puedes ver todos los perfiles de nuevo."
+    });
   };
   
   if (!hasMoreProfiles) {
@@ -215,7 +243,7 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
               </Button>
               <Button 
                 variant="outline" 
-                className="w-full text-white border-white hover:bg-white/20 hover:text-white focus:text-white"
+                className="w-full bg-transparent text-white border-white hover:bg-white/20 hover:text-white focus:text-white"
                 onClick={() => setShowMatch(null)}
               >
                 Seguir buscando
@@ -242,6 +270,7 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
 
         {currentProfile && (
           <SwipeCard
+            key={currentProfile.id}
             {...currentProfile}
             onLike={(id) => handleSwipeAction('like', id)}
             onPass={(id) => handleSwipeAction('pass', id)}
