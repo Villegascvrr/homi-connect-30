@@ -55,11 +55,12 @@ const Hero = () => {
   const handleGoogleSignIn = async () => {
     setIsSigningWithGoogle(true);
     try {
-      console.log("Initiating Google sign in from Hero component");
+      console.log("Iniciando autenticación con Google desde Hero component");
+      // Redirección explícita a la página principal después de la autenticación
       await signInWithGoogle();
-      // We'll be redirected to Google login page
+      // No necesitamos hacer nada más aquí, la redirección se maneja en AuthContext
     } catch (error) {
-      console.error("Error during Google sign in:", error);
+      console.error("Error durante la autenticación con Google:", error);
       setIsSigningWithGoogle(false);
     }
   };

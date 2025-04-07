@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -89,9 +90,11 @@ const SignInPage = () => {
   const handleGoogleSignIn = async () => {
     setIsSigningWithGoogle(true);
     try {
+      console.log("Iniciando autenticación con Google desde SignInPage");
       await signInWithGoogle();
+      // La redirección ocurrirá automáticamente
     } catch (error) {
-      console.error("Error during Google sign in:", error);
+      console.error("Error durante la autenticación con Google:", error);
       setIsSigningWithGoogle(false);
     }
   };

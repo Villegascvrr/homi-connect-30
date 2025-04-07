@@ -310,28 +310,31 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const signInWithGoogle = async () => {
     setLoading(true);
     try {
-      console.log("Starting Google sign-in process");
+      console.log("Iniciando proceso de autenticación con Google");
+      
+      // Definimos la URL de redirección absoluta para asegurar consistencia
+      const redirectUrl = `${window.location.origin}/verified`;
+      console.log("URL de redirección configurada:", redirectUrl);
       
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/verified`,
+          redirectTo: redirectUrl,
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
           },
-          scopes: 'email profile' // Explicitly request these scopes
+          scopes: 'email profile'
         },
       });
 
       if (error) throw error;
       
-      console.log("Redirecting to Google OAuth", data);
+      console.log("Redirección a autenticación de Google iniciada:", data);
       
-      // No need to set anything manually as the user will be redirected to Google
-      // and then back to our app where onAuthStateChange will handle the session
+      // La redirección ocurrirá automáticamente
     } catch (error: any) {
-      console.error("Google sign-in error:", error);
+      console.error("Error en autenticación con Google:", error);
       toast({
         title: "Error al iniciar sesión con Google",
         description: error.message || "Ha ocurrido un error durante el inicio de sesión con Google.",
