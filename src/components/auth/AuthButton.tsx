@@ -14,32 +14,55 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useEffect, useState } from "react";
+import { hasStoredSession } from "@/integrations/supabase/client";
 
 const AuthButton = () => {
-  const { user, signOut, loading: authLoading } = useAuth();
+  const { user, signOut, loading: authLoading, refreshUser } = useAuth();
   const isMobile = useIsMobile();
   const [loading, setLoading] = useState(true);
   const [isSigningOut, setIsSigningOut] = useState(false);
+  const [sessionVerified, setSessionVerified] = useState(false);
 
   // Add a short timeout to ensure we don't get stuck in loading state
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 1500);
+    }, 2000);
     
     return () => clearTimeout(timer);
   }, []);
 
+  // Check if we have a session in localStorage but no user loaded
+  useEffect(() => {
+    const checkSession = async () => {
+      if (!user && hasStoredSession() && !sessionVerified) {
+        try {
+          console.log("Session found in localStorage but no user in context, attempting refresh");
+          await refreshUser();
+          setSessionVerified(true);
+        } catch (error) {
+          console.error("Failed to refresh user from localStorage session:", error);
+          setSessionVerified(true); // Mark as verified anyway to avoid repeated attempts
+        }
+      } else {
+        setSessionVerified(true);
+      }
+    };
+    
+    checkSession();
+  }, [user, refreshUser, sessionVerified]);
+
   // Use local loading state that times out, or auth loading state
-  const isLoading = loading && authLoading;
+  const isLoading = (loading && authLoading) || !sessionVerified;
 
   const handleSignOut = async () => {
     try {
       setIsSigningOut(true);
       await signOut();
+      // Force a page reload to clear any stale state
+      window.location.href = '/';
     } catch (error) {
       console.error("Error during sign out:", error);
-    } finally {
       setIsSigningOut(false);
     }
   };

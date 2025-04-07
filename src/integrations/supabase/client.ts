@@ -28,8 +28,12 @@ export const hasStoredSession = (): boolean => {
   
   try {
     const sessionData = JSON.parse(sessionStr);
-    const isExpired = sessionData.expires_at && new Date(sessionData.expires_at * 1000) < new Date();
-    return !isExpired;
+    // Check if session is expired
+    if (sessionData.expires_at) {
+      const expiresAt = new Date(sessionData.expires_at * 1000);
+      return expiresAt > new Date();
+    }
+    return !!sessionData.access_token;
   } catch (e) {
     console.error("Error parsing session from localStorage:", e);
     return false;

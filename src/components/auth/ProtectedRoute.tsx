@@ -3,7 +3,7 @@ import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import DemoBanner from "../layout/DemoBanner";
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, hasStoredSession } from "@/integrations/supabase/client";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -18,43 +18,49 @@ const ProtectedRoute = ({
   previewComponent,
   demoMessage
 }: ProtectedRouteProps) => {
-  const { user, session, loading } = useAuth();
+  const { user, session, loading, refreshUser } = useAuth();
   const location = useLocation();
   const [authCheckComplete, setAuthCheckComplete] = useState(false);
+  const [localCheckComplete, setLocalCheckComplete] = useState(false);
   const [hasLocalSession, setHasLocalSession] = useState(false);
   
   // Check for local session on mount
   useEffect(() => {
-    const checkLocalSession = () => {
-      const sessionStr = localStorage.getItem('homi-auth-session');
-      if (sessionStr) {
+    const localSessionExists = hasStoredSession();
+    setHasLocalSession(localSessionExists);
+    setLocalCheckComplete(true);
+    
+    console.log("Local session check:", localSessionExists ? "Valid session found" : "No valid session");
+  }, []);
+  
+  // Try to refresh session if we have a local session but no user in context
+  useEffect(() => {
+    const attemptSessionRefresh = async () => {
+      if (hasLocalSession && !user && !session && localCheckComplete && !loading) {
+        console.log("Has local session but no user in context, attempting to refresh session");
         try {
-          const sessionData = JSON.parse(sessionStr);
-          const isExpired = sessionData.expires_at && new Date(sessionData.expires_at * 1000) < new Date();
-          const hasValidSession = !isExpired;
-          
-          console.log("Local session check:", hasValidSession ? "Valid session found" : "Invalid or expired session");
-          setHasLocalSession(hasValidSession);
-          
-          // If we have a valid session in localStorage but no user/session in context
-          // trigger a session refresh
-          if (hasValidSession && !user && !session) {
-            console.log("Valid local session but no user in context, refreshing session");
-            supabase.auth.refreshSession();
+          const { data } = await supabase.auth.refreshSession();
+          if (data.session) {
+            console.log("Successfully refreshed session from localStorage");
+            await refreshUser();
+          } else {
+            console.log("Failed to refresh session from localStorage");
           }
-        } catch (e) {
-          console.error("Error parsing session from localStorage:", e);
-          setHasLocalSession(false);
+        } catch (error) {
+          console.error("Error refreshing session:", error);
+        } finally {
+          // Mark auth check as complete even if we failed
+          setAuthCheckComplete(true);
         }
-      } else {
-        console.log("No session found in localStorage");
-        setHasLocalSession(false);
+      } else if (!loading) {
+        // If not loading, mark auth check as complete
+        setAuthCheckComplete(true);
       }
     };
     
-    checkLocalSession();
-  }, [user, session]);
-  
+    attemptSessionRefresh();
+  }, [user, session, loading, hasLocalSession, localCheckComplete, refreshUser]);
+
   useEffect(() => {
     console.log("Protected route accessed:", {
       path: location.pathname,
@@ -62,46 +68,25 @@ const ProtectedRoute = ({
       hasSession: !!session,
       hasLocalSession: hasLocalSession,
       isLoading: loading,
+      authCheckComplete: authCheckComplete,
+      localCheckComplete: localCheckComplete,
       allowsPreview: allowPreview
     });
     
-    // Set a more reasonable timeout for auth check
+    // Set a timeout to prevent infinite loading state
     const timeoutId = setTimeout(() => {
-      if (loading) {
+      if (!authCheckComplete) {
         console.log("Auth check taking too long, forcing completion");
         setAuthCheckComplete(true);
       }
-    }, 2000); // Increased timeout to give more time for auth check
+    }, 3000);
     
     return () => clearTimeout(timeoutId);
-  }, [location.pathname, user, session, loading, allowPreview, hasLocalSession]);
-  
-  useEffect(() => {
-    const checkSession = async () => {
-      if (!user && !session && hasLocalSession) {
-        console.log("No user or session in context, but found in localStorage. Refreshing session...");
-        try {
-          const { data } = await supabase.auth.getSession();
-          if (data.session) {
-            console.log("Session refreshed from localStorage");
-          } else {
-            console.log("Failed to refresh session from localStorage");
-            setAuthCheckComplete(true);
-          }
-        } catch (error) {
-          console.error("Error refreshing session:", error);
-          setAuthCheckComplete(true);
-        }
-      } else if (!loading) {
-        console.log("Auth loading finished, status:", user ? "authenticated" : "not authenticated");
-        setAuthCheckComplete(true);
-      }
-    };
-    
-    checkSession();
-  }, [loading, user, session, hasLocalSession]);
+  }, [location.pathname, user, session, loading, allowPreview, hasLocalSession, 
+      authCheckComplete, localCheckComplete]);
 
-  if ((loading && !authCheckComplete) || (!user && hasLocalSession && !authCheckComplete)) {
+  // Show loading state only if we're still checking authentication
+  if ((loading || !authCheckComplete) && !localCheckComplete) {
     return (
       <div className="flex flex-col justify-center items-center h-[200px] bg-gray-50">
         <div className="h-6 w-6 animate-spin rounded-full border-2 border-homi-purple border-t-transparent"></div>
