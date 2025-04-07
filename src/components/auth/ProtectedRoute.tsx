@@ -3,7 +3,7 @@ import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import DemoBanner from "../layout/DemoBanner";
 import { useEffect, useState } from "react";
-import { supabase, hasStoredSession } from "@/integrations/supabase/client";
+import { hasStoredSession } from "@/integrations/supabase/client";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -40,29 +40,17 @@ const ProtectedRoute = ({
       if (hasLocalSession && !user && !session && localCheckComplete && !loading) {
         console.log("Has local session but no user in context, attempting to refresh session");
         try {
-          const { data } = await supabase.auth.refreshSession();
-          if (data.session) {
-            console.log("Successfully refreshed session from localStorage");
-            await refreshUser();
-          } else {
-            console.log("Failed to refresh session from localStorage");
-            // Increment retry count to limit retries
-            setRetryCount(prev => prev + 1);
-            
-            // Try one more approach - get session directly
-            if (retryCount < 2) {
-              const { data: sessionData } = await supabase.auth.getSession();
-              if (sessionData.session) {
-                console.log("Got session from getSession call");
-                await refreshUser();
-              }
-            }
-          }
+          await refreshUser();
+          setAuthCheckComplete(true);
         } catch (error) {
           console.error("Error refreshing session:", error);
-        } finally {
-          // Mark auth check as complete even if we failed
-          setAuthCheckComplete(true);
+          // Increment retry count to limit retries
+          setRetryCount(prev => prev + 1);
+          
+          if (retryCount >= 2) {
+            // Mark auth check as complete even if we failed after multiple retries
+            setAuthCheckComplete(true);
+          }
         }
       } else if (!loading) {
         // If not loading, mark auth check as complete

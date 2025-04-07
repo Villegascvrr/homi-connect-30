@@ -99,3 +99,29 @@ export const signInWithGoogleOAuth = async (): Promise<void> => {
     throw error;
   }
 }
+
+/**
+ * Checks if an email exists in the auth.users table
+ * Uses the database function check_email_exists for secure checking
+ * @param email The email to check
+ * @returns Promise resolving to boolean indicating if email exists
+ */
+export const checkEmailExists = async (email: string): Promise<boolean> => {
+  try {
+    // Use explicit typing for RPC call
+    const { data, error } = await supabase
+      .rpc<boolean, { email_to_check: string }>('check_email_exists', { 
+        email_to_check: email 
+      });
+      
+    if (error) {
+      console.error("Error checking email in auth:", error);
+      return false; // Safe fallback
+    }
+    
+    return !!data;
+  } catch (error) {
+    console.error("Exception checking if email exists:", error);
+    return false; // Safe fallback
+  }
+};
