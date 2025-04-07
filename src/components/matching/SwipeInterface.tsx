@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import SwipeCard from './SwipeCard';
 import { Button } from '@/components/ui/button';
@@ -72,13 +71,11 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
   const [nextCardReady, setNextCardReady] = useState(false);
   const [removedProfiles, setRemovedProfiles] = useState<Set<string>>(new Set());
   
-  // Fix: Move this outside so we can reference it for total count
   const availableProfiles = updatedProfiles.filter(profile => !removedProfiles.has(profile.id));
   const currentProfile = availableProfiles[currentIndex];
   const nextProfile = availableProfiles[currentIndex + 1]; // Pre-load next profile
   
-  // Fix: Changed this to check if we still have profiles in availableProfiles
-  const hasMoreProfiles = currentIndex < availableProfiles.length;
+  const hasMoreProfiles = availableProfiles.length > 0;
   
   useEffect(() => {
     if (nextProfile) {
@@ -120,7 +117,6 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
         onPass(id);
       }
       
-      // This stays at 0 now instead of incrementing
       setCurrentIndex(0);
       setDirection(null);
     }, 400);
@@ -150,9 +146,10 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
     setHistory([]);
     setDirection(null);
     setRemovedProfiles(new Set());
+    setNextCardReady(false);
   };
   
-  if (!hasMoreProfiles || !currentProfile) {
+  if (!hasMoreProfiles) {
     return (
       <div className="h-full flex flex-col items-center justify-center py-8 px-4">
         <div className="text-center">
@@ -166,7 +163,7 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
               className="rounded-full bg-homi-purple hover:bg-homi-purple/90 button-glow"
               onClick={handleReset}
             >
-              <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+              <RefreshCw className="mr-2 h-4 w-4" />
               Ver perfiles de nuevo
             </Button>
           )}
