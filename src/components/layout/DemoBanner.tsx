@@ -15,11 +15,19 @@ const DemoBanner = ({
 }: DemoBannerProps) => {
   const { user } = useAuth();
   const [justRegistered, setJustRegistered] = useState(false);
+  const [forceHide, setForceHide] = useState(false);
   const location = useLocation();
   
-  // Check if user just registered based on URL parameter
+  // Check URL parameters for controlling the banner display
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
+    
+    // Check if we need to force hide the banner
+    if (urlParams.get('forceHideBadge') === 'true') {
+      setForceHide(true);
+      return;
+    }
+    
     // Only set justRegistered if user is authenticated AND registered parameter is true
     if (urlParams.get('registered') === 'true' && user) {
       setJustRegistered(true);
@@ -30,6 +38,11 @@ const DemoBanner = ({
       setJustRegistered(false);
     }
   }, [user, location.search]);
+
+  // Don't show the banner if we need to force hide it
+  if (forceHide) {
+    return null;
+  }
 
   // Message for different user states and pages
   const getMessage = () => {

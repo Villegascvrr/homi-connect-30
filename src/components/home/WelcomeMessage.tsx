@@ -8,25 +8,25 @@ import { useAuth } from '@/context/AuthContext';
 
 interface WelcomeMessageProps {
   firstName?: string;
+  showWelcomeToast?: boolean;
 }
 
-const WelcomeMessage = ({ firstName }: WelcomeMessageProps) => {
+const WelcomeMessage = ({ firstName, showWelcomeToast = false }: WelcomeMessageProps) => {
   const [followed, setFollowed] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
   const { user } = useAuth();
   
-  // Mostramos el toast de bienvenida solo si el usuario está autenticado y solo una vez
+  // Only show welcome toast if explicitly requested via props
   useEffect(() => {
-    // Only show welcome toast if user is authenticated
-    if (user) {
+    if (user && showWelcomeToast) {
       toast({
         title: "¡Bienvenido a HomiMatch!",
         description: "Tu cuenta ha sido creada correctamente.",
         duration: 6000,
       });
     }
-  }, [user, toast]);
+  }, [user, toast, showWelcomeToast]);
   
   // Use firstName from props or from user if available
   const displayName = firstName || (user?.user_metadata?.firstName || user?.user_metadata?.first_name || '');
