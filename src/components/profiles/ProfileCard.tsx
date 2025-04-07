@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import CompatibilityBadge from '@/components/ui/CompatibilityBadge';
 import { Button } from '@/components/ui/button';
@@ -7,6 +8,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { Input } from '@/components/ui/input';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 interface Tag {
   id: number;
@@ -77,7 +79,7 @@ const ProfileCard = ({
   );
   
   return <>
-      <div className="glass-card overflow-hidden transition-all duration-300 hover:shadow-hover h-full">
+      <div className="glass-card overflow-hidden transition-all duration-300 hover:shadow-hover h-full rounded-xl">
         <div className="relative">
           <div className="absolute top-0 left-0 w-full h-8 flex justify-center items-center z-10 pt-2">
             <div className="bg-white/90 rounded-full px-4 py-1 shadow-sm">
@@ -85,7 +87,7 @@ const ProfileCard = ({
             </div>
           </div>
           
-          <div className="aspect-[4/5] overflow-hidden bg-gradient-to-br from-purple-100 to-pink-50 relative">
+          <div className="aspect-[4/5] overflow-hidden bg-gradient-to-br from-purple-100 to-pink-50 relative rounded-t-xl">
             <img 
               src={imgUrl} 
               alt={`${name}`} 
@@ -97,8 +99,17 @@ const ProfileCard = ({
           </div>
         </div>
         
-        <div className="p-3 md:p-5">
-          <div className="flex justify-between items-start mb-2">
+        <div className="p-3 md:p-5 relative">
+          {/* Adding circular avatar that overlaps image and card content */}
+          <div className="absolute -top-8 left-3">
+            <Avatar className="h-16 w-16 border-4 border-white">
+              <AvatarImage src={imgUrl} alt={name} />
+              <AvatarFallback>{name.charAt(0)}</AvatarFallback>
+            </Avatar>
+          </div>
+          
+          <div className="flex justify-end mb-2 mt-4"> 
+            {/* Added mt-4 to give space for the avatar */}
             <div>
               <h3 className="text-lg md:text-xl font-semibold">{name}, {age}</h3>
               {username && <p className="text-xs md:text-sm text-muted-foreground flex items-center gap-1 mb-1">

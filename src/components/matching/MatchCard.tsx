@@ -156,7 +156,7 @@ const MatchCard = ({
         swiping === 'left' ? 'animate-swipe-left' : ''
       }`}
     >
-      <div className="relative aspect-[3/2] overflow-hidden bg-gray-100">
+      <div className="relative aspect-[3/2] overflow-hidden bg-gray-100 rounded-t-xl">
         <img
           src={imgUrl}
           alt={name}

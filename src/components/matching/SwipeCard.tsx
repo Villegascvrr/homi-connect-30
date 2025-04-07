@@ -256,8 +256,8 @@ const SwipeCard = ({
           </div>
         )}
         
-        {/* Profile Image Section - updated aspect ratio */}
-        <div className="relative aspect-[3/2] overflow-hidden bg-gray-100">
+        {/* Profile Image Section - updated with rounded corners */}
+        <div className="relative aspect-[3/2] overflow-hidden bg-gray-100 rounded-t-xl">
           <img
             src={imgUrl}
             alt={name}

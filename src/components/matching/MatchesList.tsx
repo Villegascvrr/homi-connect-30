@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
@@ -5,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Heart, X, MessageSquare } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 interface Tag {
   id: number;
@@ -125,7 +127,7 @@ const MatchesList = ({ matches, onMessage, onUnmatch, onViewProfile }: MatchesLi
           onClick={() => onViewProfile(match.id)}
         >
           <div className="relative">
-            <div className="aspect-[4/3] overflow-hidden">
+            <div className="aspect-[4/3] overflow-hidden rounded-t-md">
               <img 
                 src={match.imgUrl} 
                 alt={match.name}
@@ -141,9 +143,17 @@ const MatchesList = ({ matches, onMessage, onUnmatch, onViewProfile }: MatchesLi
               <Heart size={12} className="fill-white" />
               Match
             </div>
+            
+            {/* Circle avatar overlapping the image bottom */}
+            <div className="absolute -bottom-5 left-4">
+              <Avatar className="h-10 w-10 border-2 border-white">
+                <AvatarImage src={match.imgUrl} alt={match.name} />
+                <AvatarFallback>{match.name.charAt(0)}</AvatarFallback>
+              </Avatar>
+            </div>
           </div>
           
-          <div className="p-4">
+          <div className="p-4 pt-6">
             <div className="flex justify-between items-start mb-2">
               <div>
                 <h3 className="font-semibold text-lg">{match.name}, {match.age}</h3>
