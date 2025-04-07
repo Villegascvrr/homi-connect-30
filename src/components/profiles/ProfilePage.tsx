@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from "@/context/AuthContext";
@@ -9,27 +10,45 @@ import { useToast } from "@/hooks/use-toast";
 import { Card } from "@/components/ui/card";
 import { AtSign, MapPin, GraduationCap, Briefcase, Edit, User, Heart, Tag, Clock, Trash2, Cigarette, PawPrint, Users } from 'lucide-react';
 import ProfileForm from "./ProfileForm";
+import ProfileAuthGate from '../auth/ProfileAuthGate';
 
 const ProfilePage = () => {
-  const { user, session } = useAuth();
+  const { user, session, loading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [loading, setLoading] = useState(true);
+  const [profileLoading, setProfileLoading] = useState(true);
   const [profile, setProfile] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+
+  // Early return if not authenticated and not loading
+  if (!loading && !user && !session) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <main className="flex-grow pt-20 pb-12 bg-gray-50">
+          <div className="container mx-auto px-4">
+            <div className="max-w-4xl mx-auto">
+              <ProfileAuthGate />
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   useEffect(() => {
     const fetchProfileData = async () => {
       if (!user?.id) {
         console.log("No user ID available for profile fetch");
-        setLoading(false);
+        setProfileLoading(false);
         return;
       }
 
       try {
         console.log("Fetching profile data for user ID:", user.id);
-        setLoading(true);
+        setProfileLoading(true);
         setError(null);
         
         const { data, error } = await supabase
@@ -56,22 +75,22 @@ const ProfilePage = () => {
       } catch (err) {
         console.error("Error in fetchProfileData:", err);
       } finally {
-        setLoading(false);
+        setProfileLoading(false);
       }
     };
 
     if (user) {
       fetchProfileData();
-    } else {
-      setLoading(false);
+    } else if (!loading) {
+      setProfileLoading(false);
     }
-  }, [user, navigate]);
+  }, [user, navigate, loading]);
 
   const handleEditClick = () => {
     navigate('/profile/edit');
   };
 
-  if (loading) {
+  if (loading || profileLoading) {
     return (
       <div className="min-h-screen flex flex-col">
         <Navbar />

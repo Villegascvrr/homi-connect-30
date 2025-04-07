@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -21,12 +20,12 @@ import PrivacyPage from "./pages/PrivacyPage";
 import TermsPage from "./pages/TermsPage";
 import CookiesPage from "./pages/CookiesPage";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import ProfileAuthGate from "./components/auth/ProfileAuthGate";
 import AdminPage from "./pages/AdminPage";
 import { useEffect, useState, Suspense } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
 
-// Create QueryClient with optimized settings
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -39,7 +38,6 @@ const queryClient = new QueryClient({
   },
 });
 
-// Loader component for route transitions
 const PageLoader = () => (
   <div className="flex flex-col justify-center items-center h-[60vh]">
     <Loader2 className="h-8 w-8 animate-spin text-homi-purple" />
@@ -48,15 +46,12 @@ const PageLoader = () => (
 );
 
 const App = () => {
-  // Use a key to force re-render of AuthProvider when auth state changes
   const [authProviderKey, setAuthProviderKey] = useState('initial');
   const [isAppReady, setIsAppReady] = useState(false);
   
-  // Initialize app and set up listeners
   useEffect(() => {
     console.log("App initializing...");
     
-    // Set up listener for auth state changes to force AuthProvider re-initialization
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_OUT') {
         console.log("Auth state change detected: SIGNED_OUT - Forcing AuthProvider reset");
@@ -67,7 +62,6 @@ const App = () => {
       }
     });
     
-    // Pre-fetch basic data for performance
     const prefetchBasicData = async () => {
       try {
         const { data: { session } } = await queryClient.fetchQuery({
@@ -99,24 +93,20 @@ const App = () => {
           });
         }
         
-        // Mark app as ready after initial data fetch
         setIsAppReady(true);
       } catch (error) {
         console.error("Error prefetching data:", error);
-        // Even on error, mark app as ready to prevent indefinite loading
         setIsAppReady(true);
       }
     };
     
     prefetchBasicData();
     
-    // Clean up subscription on unmount
     return () => {
       subscription.unsubscribe();
     };
   }, []);
   
-  // Show loading screen while app is initializing
   if (!isAppReady) {
     return (
       <div className="flex flex-col justify-center items-center h-screen bg-background">
@@ -144,7 +134,6 @@ const App = () => {
                 <Route path="/terms" element={<TermsPage />} />
                 <Route path="/cookies" element={<CookiesPage />} />
                 
-                {/* Auth callback routes - Ensure we catch all possible callback paths */}
                 <Route path="/auth/callback" element={<VerifiedPage />} />
                 <Route path="/callback" element={<VerifiedPage />} />
                 
@@ -153,26 +142,27 @@ const App = () => {
                     <MatchingPage isPreview={false} />
                   </ProtectedRoute>
                 } />
-                <Route path="/profile" element={
-                  <ProtectedRoute>
-                    <ProfilePage />
-                  </ProtectedRoute>
-                } />
+                
+                <Route path="/profile" element={<ProfilePage />} />
+                
                 <Route path="/profile/:id" element={
-                  <ProtectedRoute>
+                  <ProtectedRoute authComponent={<ProfileAuthGate />} redirectToSignIn={false}>
                     <ProfileViewPage />
                   </ProtectedRoute>
                 } />
+                
                 <Route path="/profile/create" element={
-                  <ProtectedRoute>
+                  <ProtectedRoute authComponent={<ProfileAuthGate />} redirectToSignIn={false}>
                     <ProfileForm />
                   </ProtectedRoute>
                 } />
+                
                 <Route path="/profile/edit" element={
-                  <ProtectedRoute>
+                  <ProtectedRoute authComponent={<ProfileAuthGate />} redirectToSignIn={false}>
                     <ProfileEditPage />
                   </ProtectedRoute>
                 } />
+                
                 <Route path="/chat" element={
                   <ProtectedRoute allowPreview={true}>
                     <ChatPage isPreview={false} />
@@ -185,10 +175,8 @@ const App = () => {
                   </ProtectedRoute>
                 } />
                 
-                {/* Handle empty routes */}
                 <Route path="" element={<Navigate to="/" replace />} />
                 
-                {/* Catch all other routes with NotFound page */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>

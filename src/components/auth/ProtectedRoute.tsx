@@ -11,6 +11,8 @@ interface ProtectedRouteProps {
   allowPreview?: boolean;
   previewComponent?: React.ReactNode;
   demoMessage?: string;
+  authComponent?: React.ReactNode; // New prop to allow custom auth component
+  redirectToSignIn?: boolean; // Control whether to redirect or show inline auth
 }
 
 /**
@@ -21,7 +23,9 @@ const ProtectedRoute = ({
   children, 
   allowPreview = false,
   previewComponent,
-  demoMessage
+  demoMessage,
+  authComponent,
+  redirectToSignIn = true, // Default to redirecting for backward compatibility
 }: ProtectedRouteProps) => {
   const { user, session, loading } = useAuth();
   const location = useLocation();
@@ -58,10 +62,12 @@ const ProtectedRoute = ({
       localCheckComplete: localCheckComplete,
       allowsPreview: allowPreview,
       isNavigating: isNavigating,
-      maxWaitTimeReached: maxWaitTimeReached
+      maxWaitTimeReached: maxWaitTimeReached,
+      withCustomAuthComponent: !!authComponent,
+      willRedirect: redirectToSignIn
     });
   }, [location.pathname, user, session, loading, allowPreview, hasLocalSession, 
-      localCheckComplete, isNavigating, maxWaitTimeReached]);
+      localCheckComplete, isNavigating, maxWaitTimeReached, authComponent, redirectToSignIn]);
 
   // Prevent re-renders during navigation
   useEffect(() => {
@@ -120,8 +126,21 @@ const ProtectedRoute = ({
     );
   }
 
+  // If we have a custom auth component and don't want to redirect, show it inline
+  if (authComponent && !redirectToSignIn) {
+    console.log("Showing inline auth component");
+    return (
+      <div className="pt-16">
+        <DemoBanner />
+        <div className="mt-4">
+          {authComponent}
+        </div>
+      </div>
+    );
+  }
+
   // If not authenticated and not navigating yet, redirect to login page
-  if (!isNavigating) {
+  if (!isNavigating && redirectToSignIn) {
     console.log("Redirecting to signin from:", location.pathname);
     setIsNavigating(true);
     // Use immediate return of Navigate instead of setTimeout to ensure faster redirection
