@@ -16,14 +16,17 @@ const ScrollToTop = () => {
     // Skip the effect on first render to avoid unnecessary scroll
     if (isFirstRender.current) {
       isFirstRender.current = false;
+      console.log("ScrollToTop: First render, skipping scroll");
       return;
     }
     
     // Skip the effect if the path hasn't actually changed
     if (prevPathRef.current === pathname) {
+      console.log("ScrollToTop: Path unchanged, skipping scroll");
       return;
     }
     
+    console.log("ScrollToTop: Path changed from", prevPathRef.current, "to", pathname);
     prevPathRef.current = pathname;
     
     // Clear any previous pending scroll operation
@@ -70,6 +73,7 @@ const ScrollToTop = () => {
       if (scrollTimeoutRef.current) {
         window.clearTimeout(scrollTimeoutRef.current);
       }
+      console.log("ScrollToTop: Component unmounted, skipping scroll");
     };
   }, [pathname, hash, key]); // Added key to dependencies to ensure scroll on same-path but different-key navigation
 

@@ -1,4 +1,3 @@
-
 import * as React from "react"
 
 // Definimos los breakpoints en un objeto para mayor flexibilidad
@@ -19,28 +18,29 @@ type BreakpointKey = keyof typeof BREAKPOINTS
  * @returns boolean que indica si la pantalla es menor que el breakpoint
  */
 export function useIsMobile(breakpoint: BreakpointKey = "md") {
-  const [isMobile, setIsMobile] = React.useState<boolean>(
-    typeof window !== 'undefined' ? window.innerWidth < BREAKPOINTS[breakpoint] : false
-  )
+  const [isMobile, setIsMobile] = React.useState<boolean>(false);
 
   React.useEffect(() => {
-    if (typeof window === 'undefined') return
+    if (typeof window === 'undefined') return;
     
     const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < BREAKPOINTS[breakpoint])
+      const currentWidth = window.innerWidth;
+      const breakpointWidth = BREAKPOINTS[breakpoint];
+      setIsMobile(currentWidth < breakpointWidth);
+      console.log(`Initial mobile detection: ${currentWidth < breakpointWidth} (width: ${currentWidth}, breakpoint: ${breakpointWidth})`);
     }
     
     // Check on initial render
-    checkIfMobile()
+    checkIfMobile();
     
     // Add event listener for window resize
-    window.addEventListener("resize", checkIfMobile)
+    window.addEventListener("resize", checkIfMobile);
     
     // Clean up
-    return () => window.removeEventListener("resize", checkIfMobile)
-  }, [breakpoint])
+    return () => window.removeEventListener("resize", checkIfMobile);
+  }, [breakpoint]);
 
-  return isMobile
+  return isMobile;
 }
 
 /**

@@ -23,14 +23,12 @@ const ProtectedRoute = ({
   previewComponent,
   demoMessage
 }: ProtectedRouteProps) => {
-  const { user, session, loading, refreshUser } = useAuth();
+  const { user, session, loading } = useAuth();
   const location = useLocation();
-  const [authCheckComplete, setAuthCheckComplete] = useState(false);
   const [localCheckComplete, setLocalCheckComplete] = useState(false);
   const [hasLocalSession, setHasLocalSession] = useState(false);
-  const [retryCount, setRetryCount] = useState(0);
   const [isNavigating, setIsNavigating] = useState(false);
-  const [renderKey] = useState(() => `protected-route-${Math.random().toString(36).substring(2, 9)}`);
+  const [maxWaitTimeReached, setMaxWaitTimeReached] = useState(false);
   
   // Check for local session on mount - this happens quickly to avoid flicker
   useEffect(() => {
@@ -39,46 +37,15 @@ const ProtectedRoute = ({
     setLocalCheckComplete(true);
     
     console.log("Local session check:", localSessionExists ? "Valid session found" : "No valid session");
+    
+    // Set a timeout to prevent infinite loading state
+    const timeoutId = setTimeout(() => {
+      setMaxWaitTimeReached(true);
+      console.log("Max wait time reached, forcing auth check completion");
+    }, 1500); // Shorter timeout for better UX
+    
+    return () => clearTimeout(timeoutId);
   }, []);
-  
-  // Try to refresh session if we have a local session but no user in context
-  useEffect(() => {
-    let isMounted = true;
-    
-    const attemptSessionRefresh = async () => {
-      if (hasLocalSession && !user && !session && localCheckComplete && !loading) {
-        console.log("Has local session but no user in context, attempting to refresh session");
-        try {
-          await refreshUser();
-          if (isMounted) {
-            setAuthCheckComplete(true);
-          }
-        } catch (error) {
-          console.error("Error refreshing session:", error);
-          // Increment retry count to limit retries
-          if (isMounted) {
-            setRetryCount(prev => prev + 1);
-          
-            if (retryCount >= 2) {
-              // Mark auth check as complete even if we failed after multiple retries
-              setAuthCheckComplete(true);
-            }
-          }
-        }
-      } else if (!loading) {
-        // If not loading, mark auth check as complete
-        if (isMounted) {
-          setAuthCheckComplete(true);
-        }
-      }
-    };
-    
-    attemptSessionRefresh();
-    
-    return () => {
-      isMounted = false;
-    };
-  }, [user, session, loading, hasLocalSession, localCheckComplete, refreshUser, retryCount]);
 
   // For debugging
   useEffect(() => {
@@ -88,24 +55,13 @@ const ProtectedRoute = ({
       hasSession: !!session,
       hasLocalSession: hasLocalSession,
       isLoading: loading,
-      authCheckComplete: authCheckComplete,
       localCheckComplete: localCheckComplete,
       allowsPreview: allowPreview,
-      retryCount: retryCount,
-      isNavigating: isNavigating
+      isNavigating: isNavigating,
+      maxWaitTimeReached: maxWaitTimeReached
     });
-    
-    // Set a timeout to prevent infinite loading state
-    const timeoutId = setTimeout(() => {
-      if (!authCheckComplete) {
-        console.log("Auth check taking too long, forcing completion");
-        setAuthCheckComplete(true);
-      }
-    }, 2000); // Reduced from 3000ms to 2000ms for better UX
-    
-    return () => clearTimeout(timeoutId);
   }, [location.pathname, user, session, loading, allowPreview, hasLocalSession, 
-      authCheckComplete, localCheckComplete, retryCount, isNavigating]);
+      localCheckComplete, isNavigating, maxWaitTimeReached]);
 
   // Prevent re-renders during navigation
   useEffect(() => {
@@ -114,9 +70,11 @@ const ProtectedRoute = ({
     }
   }, [isNavigating]);
 
-  // Show loading state only if we're still checking authentication
-  // Use a more controlled approach to avoid flickering
-  if ((loading || !authCheckComplete) && !localCheckComplete) {
+  // Check if we can make an auth determination
+  const canDetermineAuth = localCheckComplete || maxWaitTimeReached || !loading;
+  
+  // Show loading state only for a reasonable time
+  if (!canDetermineAuth) {
     return (
       <div className="flex flex-col justify-center items-center h-screen bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-homi-purple" />
@@ -131,7 +89,7 @@ const ProtectedRoute = ({
   if (isAuthenticated) {
     console.log("User authenticated, showing protected content");
     return (
-      <div key={renderKey} className="pt-16">
+      <div className="pt-16">
         <DemoBanner />
         <div className="mt-4">
           {children}
@@ -142,7 +100,7 @@ const ProtectedRoute = ({
 
   if (allowPreview && previewComponent) {
     return (
-      <div key={renderKey} className="pt-16">
+      <div className="pt-16">
         <DemoBanner />
         <div className="mt-4">
           {previewComponent}
@@ -153,7 +111,7 @@ const ProtectedRoute = ({
 
   if (allowPreview) {
     return (
-      <div key={renderKey} className="pt-16">
+      <div className="pt-16">
         <DemoBanner />
         <div className="mt-4">
           {children}
