@@ -1,7 +1,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Session, User } from "@supabase/supabase-js";
+import { Session, User, SupabaseClient } from "@supabase/supabase-js";
 import { useToast } from "@/hooks/use-toast";
 import { signInWithGoogleOAuth } from "@/integrations/supabase/client";
 
@@ -355,11 +355,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return true;
       }
       
-      // Use type assertion to work around the TypeScript error
-      const { data: countResult, error: countError } = await supabase
+      // Use type assertion with any to bypass TypeScript's type checking
+      // This is a safe workaround when TypeScript doesn't recognize RPC functions properly
+      const response = await (supabase as any)
         .rpc('check_email_exists', { 
           email_to_check: email 
-        }) as { data: boolean | null; error: Error | null };
+        });
+      
+      const countResult = response.data;
+      const countError = response.error;
         
       if (countError) {
         console.error("Error checking email in auth:", countError);
