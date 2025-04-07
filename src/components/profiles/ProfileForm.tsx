@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,7 +23,12 @@ const formSchema = z.object({
   username: z.string().min(2, "El nombre de usuario debe tener al menos 2 caracteres"),
   email: z.string().email("Por favor introduce un email válido"),
   bio: z.string().optional(),
-  age: z.string().optional(),
+  age: z.string()
+    .refine(val => {
+      const num = parseInt(val);
+      return !isNaN(num) && num >= 16;
+    }, { message: "Debes tener al menos 16 años" })
+    .optional(),
   occupation: z.string().optional(),
   occupationType: z.enum(['student', 'professional', 'entrepreneur', 'other']).optional(),
   university: z.string().optional(),
@@ -88,20 +92,17 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
     },
   });
 
-  // Watch occupation type to show/hide university field
   useEffect(() => {
     const occupationType = form.watch("occupationType");
     setShowUniversityField(occupationType === "student");
   }, [form.watch("occupationType")]);
 
-  // Fetch user profile data when component mounts
   useEffect(() => {
     const fetchUserProfile = async () => {
       if (user) {
         setIsLoading(true);
         
         try {
-          // Fetch user's profile from Supabase
           const { data: profileData, error } = await supabase
             .from('profiles')
             .select('*')
@@ -115,7 +116,6 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
           
           console.log("Raw profile data from Supabase:", profileData);
           
-          // Determine apartment status
           let currentApartmentStatus: 'looking' | 'have' = 'looking';
           if (profileData.sevilla_zona) {
             if (profileData.sevilla_zona === 'tengo_piso') {
@@ -126,12 +126,10 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
           }
           setApartmentStatus(currentApartmentStatus);
           
-          // Parse lifestyle data correctly - ensure it's an object
           const lifestyleData = typeof profileData.lifestyle === 'object' && profileData.lifestyle !== null
             ? profileData.lifestyle as Record<string, unknown>
             : {};
           
-          // Set occupation type based on existing data
           let occupationType = "other";
           if (profileData.ocupacion === "Estudiante") {
             occupationType = "student";
@@ -143,7 +141,6 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
           
           setShowUniversityField(occupationType === "student");
           
-          // Set form data with the fetched profile
           form.reset({
             firstName: profileData.first_name || '',
             lastName: profileData.last_name || '',
@@ -173,7 +170,6 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
           console.log("Profile data loaded into form:", form.getValues());
         } catch (err) {
           console.error("Error loading profile data:", err);
-          // Fallback to using just the auth user data
           form.reset({
             firstName: user.user_metadata?.firstName || "",
             lastName: user.user_metadata?.lastName || "",
@@ -215,17 +211,13 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
     console.log("Form submitted with values:", values);
     
     try {
-      // Store the actual sevilla_zona based on apartment status
       let sevilla_zona;
       if (values.apartmentStatus === 'have') {
-        // If user has an apartment, store 'tengo_piso' as the zone
         sevilla_zona = 'tengo_piso';
       } else {
-        // If user is looking for an apartment, store the selected zone
         sevilla_zona = values.sevilla_zona;
       }
       
-      // Map occupation type to actual occupation value
       let occupation = values.occupation;
       if (values.occupationType === "student") {
         occupation = "Estudiante";
@@ -237,13 +229,11 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
         occupation = "Otro";
       }
       
-      // Prepare lifestyle data
       const lifestyle = {
         ...(values.lifestyle || {}),
         budget: values.budget
       };
       
-      // Prepare data for update
       const updateData = {
         first_name: values.firstName,
         last_name: values.lastName,
@@ -263,7 +253,6 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
       
       console.log("Data being sent to Supabase:", updateData);
       
-      // Update the profile in Supabase
       const { data, error } = await supabase
         .from('profiles')
         .update(updateData)
@@ -277,13 +266,11 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
       
       console.log("Update successful, returned data:", data);
       
-      // Refresh the user data in the global context with better error handling
       try {
         await refreshUser();
         console.log("User refreshed successfully after profile update");
       } catch (refreshError) {
         console.error("Error refreshing user after profile update:", refreshError);
-        // We continue anyway since the data was saved successfully
       }
       
       toast({
@@ -291,7 +278,6 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
         description: "Tu información de perfil ha sido guardada.",
       });
       
-      // Force a session refresh to ensure latest data is available
       try {
         const { data: sessionData } = await supabase.auth.refreshSession();
         if (sessionData && sessionData.session) {
@@ -301,11 +287,8 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
         console.error("Error refreshing session after profile update:", sessionError);
       }
       
-      // Call the onSaved callback if provided
       if (onSaved) {
-        // To prevent navigation issues, use a small delay to ensure state is updated
         setTimeout(() => {
-          // Scroll to the top of the page before executing the callback
           window.scrollTo({
             top: 0,
             left: 0,
@@ -356,7 +339,6 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div className="space-y-4">
-          {/* Status toggle */}
           <div className="mb-4">
             <ProfileStatusToggle 
               isActive={form.watch('isProfileActive')} 
@@ -366,7 +348,6 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
           
           <Separator className="my-4" />
           
-          {/* Image upload section */}
           <div className="w-full mb-6">
             <FormImageUpload
               name="profileImage"
@@ -376,20 +357,16 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
             />
           </div>
           
-          {/* Basic info section */}
           <ProfileBasicInfo 
             form={form} 
             showUniversityField={showUniversityField}
             onOccupationTypeChange={handleOccupationTypeChange}
           />
           
-          {/* Interests section with predefined options */}
           <ProfileInterests form={form} />
           
-          {/* Lifestyle preferences section */}
           <ProfileLifestyle form={form} />
           
-          {/* Apartment preferences section */}
           <ProfileApartmentPreferences 
             form={form} 
             apartmentStatus={apartmentStatus}

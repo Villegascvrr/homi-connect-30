@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import { FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -97,6 +97,9 @@ const ProfileBasicInfo = ({ form, showUniversityField = false, onOccupationTypeC
               <FormControl>
                 <Input placeholder="Tu edad" {...field} />
               </FormControl>
+              <FormDescription>
+                Debes tener al menos 16 años para utilizar la plataforma
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
