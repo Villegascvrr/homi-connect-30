@@ -69,9 +69,14 @@ export const isUsernameAvailable = async (username: string): Promise<boolean> =>
 export const signInWithGoogleOAuth = async (): Promise<void> => {
   // Always use the window.location.origin to ensure the redirect is correct
   const origin = window.location.origin;
+  // Always append these paths to handle callbacks correctly
+  const redirectPaths = ['/verified', '/auth/callback', '/callback'];
+  
+  // Use primary redirect to /verified, but ensure all paths are configured in Supabase
   const redirectTo = `${origin}/verified`;
   
   console.log(`[Google Auth] Starting Google OAuth flow with redirect to: ${redirectTo}`);
+  console.log(`[Google Auth] Host origin: ${origin}`);
   
   try {
     // Use signInWithOAuth which will handle both new and existing users
@@ -83,8 +88,8 @@ export const signInWithGoogleOAuth = async (): Promise<void> => {
           access_type: 'offline',
           prompt: 'consent',
         },
-        // Fix: Pass an array of scopes instead of a string
-        scopes: ['email', 'profile'],
+        // Important: Use string type for scopes to match Supabase API
+        scopes: 'email profile',
         skipBrowserRedirect: false,
       },
     });

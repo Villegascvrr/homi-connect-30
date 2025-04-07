@@ -32,6 +32,8 @@ additional_redirect_urls = [
   "https://www.homimatch.com",
   "https://www.homimatch.com/auth/callback",
   "https://www.homimatch.com/callback",
+  "https://homimatch.com/*",
+  "https://www.homimatch.com/*",
   "*"
 ]
 jwt_expiry = 3600
@@ -57,6 +59,8 @@ additional_redirect_urls = [
   "https://www.homimatch.com",
   "https://www.homimatch.com/auth/callback",
   "https://www.homimatch.com/callback",
+  "https://homimatch.com/*",
+  "https://www.homimatch.com/*",
   "*"
 ]
 additional_scopes = ["email", "profile"]
@@ -97,4 +101,3 @@ verify_jwt = false
 
 [realtime]
 enabled = true
-
