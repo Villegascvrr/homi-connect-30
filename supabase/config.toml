@@ -22,7 +22,7 @@ default_sender = "onboarding@resend.dev"
 enabled = true
 # Updated site_url to match the new domain
 site_url = "https://homimatch.com"
-additional_redirect_urls = ["https://homimatch.com/verified", "https://homimatch.com"]
+additional_redirect_urls = ["https://homimatch.com/verified", "https://homimatch.com", "*"]
 jwt_expiry = 3600
 enable_refresh_token_rotation = true
 refresh_token_reuse_interval = 10
@@ -36,6 +36,8 @@ enable_confirmations = false
 enabled = true
 client_id = "TU_GOOGLE_CLIENT_ID_REAL"
 secret = "TU_GOOGLE_CLIENT_SECRET_REAL"
+additional_redirect_urls = ["https://homimatch.com/verified", "https://homimatch.com", "*"]
+additional_scopes = ["email", "profile"]
 
 [analytics]
 enabled = false

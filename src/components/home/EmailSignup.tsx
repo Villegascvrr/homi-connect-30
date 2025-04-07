@@ -74,6 +74,7 @@ const EmailSignup = () => {
   const handleGoogleSignIn = async () => {
     setIsSigningWithGoogle(true);
     try {
+      console.log("Initiating Google sign in from EmailSignup component");
       await signInWithGoogle();
       // No need to set states here as we'll be redirected to Google
     } catch (error: any) {

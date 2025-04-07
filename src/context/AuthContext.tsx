@@ -74,7 +74,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     
     // Set up the auth state change listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, currentSession) => {
+      async (event, currentSession) => {
         console.log("Auth state changed:", event, currentSession ? "With session" : "No session");
         
         if (currentSession) {
@@ -97,13 +97,47 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             // Use setTimeout to avoid lockup in auth state change callback
             setTimeout(async () => {
               try {
-                const { data: profileData, error } = await supabase
+                // Check if profile exists first
+                let { data: profileData, error } = await supabase
                   .from('profiles')
                   .select('profile_image, first_name, last_name')
                   .eq('id', authUser.id)
                   .maybeSingle();
                 
-                if (!error && profileData) {
+                if (error || !profileData) {
+                  console.log("Profile not found or error, checking if we should create one for Google user");
+                  
+                  // For Google login, we might need to create a profile if it doesn't exist
+                  if (event === 'SIGNED_IN' && authUser.app_metadata?.provider === 'google') {
+                    const name = authUser.user_metadata?.full_name || authUser.user_metadata?.name || '';
+                    const nameParts = name.split(' ');
+                    const firstName = nameParts[0] || '';
+                    const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
+                    
+                    const newProfile = {
+                      id: authUser.id,
+                      first_name: firstName,
+                      last_name: lastName,
+                      username: `google_${authUser.id.substring(0, 8)}`,
+                      email: authUser.email
+                    };
+                    
+                    console.log("Creating profile for Google user:", newProfile);
+                    
+                    const { error: insertError } = await supabase
+                      .from('profiles')
+                      .upsert(newProfile, { onConflict: 'id' });
+                    
+                    if (!insertError) {
+                      profileData = newProfile;
+                      console.log("Created new profile for Google user");
+                    } else {
+                      console.error("Error creating profile for Google user:", insertError);
+                    }
+                  }
+                }
+                
+                if (profileData) {
                   console.log("Profile data fetched successfully");
                   setUser({
                     ...authUser,
@@ -271,7 +305,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
-          }
+          },
+          scopes: 'email profile' // Explicitly request these scopes
         },
       });
 
