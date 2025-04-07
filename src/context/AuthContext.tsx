@@ -18,6 +18,7 @@ type AuthContextType = {
   loading: boolean;
   refreshUser: () => Promise<void>;
   isEmailVerified: boolean;
+  checkEmailExists: (email: string) => Promise<boolean>;
 };
 
 export interface UserSignUpData {
@@ -365,10 +366,61 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const checkEmailExists = async (email: string): Promise<boolean> => {
+    try {
+      console.log("Checking if email exists:", email);
+      
+      // First check in auth.users table via the signUp API with dummy credentials
+      const { error } = await supabase.auth.signUp({
+        email,
+        password: `temp-password-${Date.now()}`, // Temporary password that won't be used
+        options: { emailRedirectTo: window.location.origin }
+      });
+      
+      // If we get a "User already registered" error, the email exists
+      if (error && (error.message.includes('already registered') || error.message.includes('already exists'))) {
+        console.log("Email exists in auth system:", email);
+        return true;
+      }
+      
+      // Also check profiles table as a fallback
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('email', email)
+        .maybeSingle();
+      
+      if (profileData) {
+        console.log("Email exists in profiles table:", email);
+        return true;
+      }
+      
+      // Email doesn't exist
+      console.log("Email does not exist:", email);
+      return false;
+    } catch (error) {
+      console.error("Error checking if email exists:", error);
+      // Better to assume it exists in case of error (safer approach)
+      return true;
+    }
+  };
+
   const signUp = async (userData: UserSignUpData) => {
     setLoading(true);
     try {
       console.log("Starting signup process for:", userData.email);
+      
+      // First check if email already exists (both in auth and profiles)
+      const emailExists = await checkEmailExists(userData.email);
+      if (emailExists) {
+        console.log("Email already exists, cannot register:", userData.email);
+        toast({
+          title: "Correo ya registrado",
+          description: "Este correo electrónico ya está registrado. Por favor, inicia sesión o usa otro correo.",
+          variant: "destructive",
+        });
+        return { success: false, error: { message: "Email already registered" } };
+      }
       
       // Sign up the user with auto-confirm true
       const { data: authData, error: authError } = await supabase.auth.signUp({
@@ -456,14 +508,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         description: "Ya puedes comenzar a usar tu cuenta.",
       });
       
+      // Redirect to home page after successful registration, similar to Google login
+      window.location.href = '/?registered=true';
+      
       return { success: true };
     } catch (error: any) {
       console.error("SignUp error:", error);
-      toast({
-        title: "Error al crear la cuenta",
-        description: error.message || "Ha ocurrido un error durante el registro.",
-        variant: "destructive",
-      });
+      // Check if the error is due to email already in use
+      if (error.message?.includes('email') || error.message?.includes('already')) {
+        toast({
+          title: "Correo ya registrado",
+          description: "Este correo electrónico ya está registrado. Por favor, inicia sesión o usa otro correo.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error al crear la cuenta",
+          description: error.message || "Ha ocurrido un error durante el registro.",
+          variant: "destructive",
+        });
+      }
       return { success: false, error };
     } finally {
       setLoading(false);
@@ -577,7 +641,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     signOut,
     loading,
     refreshUser,
-    isEmailVerified
+    isEmailVerified,
+    checkEmailExists
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

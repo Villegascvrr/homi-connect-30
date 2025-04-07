@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -38,10 +39,11 @@ const EmailSignup = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isWelcomeShown, setIsWelcomeShown] = useState(false);
   const [isSigningWithGoogle, setIsSigningWithGoogle] = useState(false);
+  const [isCheckingEmail, setIsCheckingEmail] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
   const formContainerRef = useRef<HTMLDivElement>(null);
-  const { signUp, signInWithGoogle } = useAuth();
+  const { signUp, signInWithGoogle, checkEmailExists } = useAuth();
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -88,10 +90,56 @@ const EmailSignup = () => {
     }
   };
 
+  // Email validation on change to give early feedback
+  const validateEmailNotInUse = async (email: string) => {
+    if (!email || !email.includes('@')) return;
+    
+    setIsCheckingEmail(true);
+    try {
+      const exists = await checkEmailExists(email);
+      if (exists) {
+        form.setError("email", {
+          type: "manual",
+          message: "Este correo electrónico ya está registrado. Por favor, usa otro o inicia sesión."
+        });
+      } else {
+        // Clear the error if email is available
+        form.clearErrors("email");
+      }
+    } catch (error) {
+      console.error("Error checking email:", error);
+    } finally {
+      setIsCheckingEmail(false);
+    }
+  };
+
+  // Add debounce to avoid too many API calls
+  useEffect(() => {
+    const email = form.watch("email");
+    if (!email) return;
+    
+    const timer = setTimeout(() => {
+      validateEmailNotInUse(email);
+    }, 800);
+    
+    return () => clearTimeout(timer);
+  }, [form.watch("email")]);
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
     
     try {
+      // Check email existence again right before submission
+      const emailExists = await checkEmailExists(values.email);
+      if (emailExists) {
+        form.setError("email", {
+          type: "manual",
+          message: "Este correo electrónico ya está registrado. Por favor, usa otro o inicia sesión."
+        });
+        setIsLoading(false);
+        return;
+      }
+      
       const result = await signUp({
         email: values.email,
         password: values.password,
@@ -267,8 +315,19 @@ const EmailSignup = () => {
                   <FormLabel>Email *</FormLabel>
                   <FormControl>
                     <div className="relative">
-                      <Input id="email" type="email" placeholder="tu@email.com" className="pl-10 rounded-full" {...field} />
+                      <Input 
+                        id="email" 
+                        type="email" 
+                        placeholder="tu@email.com" 
+                        className={`pl-10 rounded-full ${isCheckingEmail ? 'pr-10' : ''}`}
+                        {...field}
+                      />
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                      {isCheckingEmail && (
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-homi-purple border-b-transparent"></div>
+                        </div>
+                      )}
                     </div>
                   </FormControl>
                   <FormMessage />
@@ -287,9 +346,22 @@ const EmailSignup = () => {
                   <FormMessage />
                 </FormItem>} />
             
-            <Button type="submit" disabled={isLoading} className="w-full mt-6 rounded-full">
-              {isLoading ? "Creando cuenta..." : "Crear cuenta"}
-              <ArrowRight className="ml-1 h-4 w-4" />
+            <Button 
+              type="submit" 
+              disabled={isLoading || isCheckingEmail} 
+              className="w-full mt-6 rounded-full"
+            >
+              {isLoading ? (
+                <>
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-b-transparent mr-2"></div>
+                  Creando cuenta...
+                </>
+              ) : (
+                <>
+                  Crear cuenta
+                  <ArrowRight className="ml-1 h-4 w-4" />
+                </>
+              )}
             </Button>
           </form>
         </Form>

@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -53,11 +54,12 @@ const RegisterPage = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSigningWithGoogle, setIsSigningWithGoogle] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCheckingEmail, setIsCheckingEmail] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const formContainerRef = useRef<HTMLDivElement>(null);
-  const { signUp, signInWithGoogle } = useAuth();
+  const { signUp, signInWithGoogle, checkEmailExists } = useAuth();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -76,6 +78,34 @@ const RegisterPage = () => {
     },
     mode: "onChange"
   });
+  
+  // Add debounce to avoid too many API calls
+  useEffect(() => {
+    const email = form.watch("email");
+    if (!email || !email.includes('@')) return;
+    
+    setIsCheckingEmail(true);
+    const timer = setTimeout(async () => {
+      try {
+        const exists = await checkEmailExists(email);
+        if (exists) {
+          form.setError("email", {
+            type: "manual",
+            message: "Este correo electrónico ya está registrado. Por favor, usa otro o inicia sesión."
+          });
+        } else {
+          // Clear the error if email is available
+          form.clearErrors("email");
+        }
+      } catch (error) {
+        console.error("Error checking email:", error);
+      } finally {
+        setIsCheckingEmail(false);
+      }
+    }, 800);
+    
+    return () => clearTimeout(timer);
+  }, [form.watch("email")]);
 
   const handleGoogleSignIn = async () => {
     setIsSigningWithGoogle(true);
@@ -93,21 +123,19 @@ const RegisterPage = () => {
     setIsSubmitting(true);
     
     try {
-      // Comprobar si el nombre de usuario ya existe
-      const { isUsernameAvailable } = await import('@/integrations/supabase/client');
-      const usernameAvailable = await isUsernameAvailable(values.username);
-      
-      if (!usernameAvailable) {
-        form.setError("username", { 
+      // Final check if email exists right before submission
+      const emailExists = await checkEmailExists(values.email);
+      if (emailExists) {
+        form.setError("email", {
           type: "manual", 
-          message: "Este nombre de usuario ya está en uso. Por favor, elige otro." 
+          message: "Este correo electrónico ya está registrado. Por favor, usa otro o inicia sesión." 
         });
         setIsSubmitting(false);
         return;
       }
       
-      // Si el nombre de usuario está disponible, proceder con el registro
-      await signUp({
+      // Si el correo no existe, procedemos con el registro
+      const result = await signUp({
         email: values.email,
         password: values.password,
         firstName: values.firstName,
@@ -115,16 +143,22 @@ const RegisterPage = () => {
         username: values.username
       });
       
-      toast({
-        title: "Registro exitoso",
-        description: "¡Tu perfil ha sido creado! Ahora puedes encontrar tu compañero de piso ideal.",
-        variant: "default",
-      });
-      
-      console.log("Registration successful, redirecting to home page with registered=true param");
-      
-      // Redirigir al usuario a la página principal directamente
-      navigate('/?registered=true');
+      if (result.success) {
+        toast({
+          title: "Registro exitoso",
+          description: "¡Tu perfil ha sido creado! Ahora puedes encontrar tu compañero de piso ideal.",
+          variant: "default",
+        });
+        
+        console.log("Registration successful, redirecting to home page with registered=true param");
+        
+        // La redirección ya la hace el método signUp
+      } else if (result.error?.message?.includes('email') || result.error?.message?.includes('already')) {
+        form.setError("email", {
+          type: "manual",
+          message: "Este correo electrónico ya está registrado. Por favor, usa otro o inicia sesión."
+        });
+      }
     } catch (error: any) {
       console.error("Error during registration:", error);
       
@@ -278,10 +312,15 @@ const RegisterPage = () => {
                               <Input 
                                 placeholder="tu@email.com" 
                                 type="email" 
-                                className="pl-10 rounded-full" 
+                                className={`pl-10 rounded-full ${isCheckingEmail ? 'pr-10' : ''}`} 
                                 {...field} 
                               />
                               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                              {isCheckingEmail && (
+                                <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-homi-purple border-b-transparent"></div>
+                                </div>
+                              )}
                             </div>
                           </FormControl>
                           <FormMessage />
@@ -379,7 +418,7 @@ const RegisterPage = () => {
                     <Button 
                       type="submit"
                       className="rounded-full bg-homi-purple hover:bg-homi-purple/90 w-full mt-4 flex items-center gap-1"
-                      disabled={isSubmitting}
+                      disabled={isSubmitting || isCheckingEmail}
                     >
                       {isSubmitting ? (
                         <>
