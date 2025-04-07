@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import CompatibilityBadge from '@/components/ui/CompatibilityBadge';
 import { Button } from '@/components/ui/button';
@@ -15,7 +16,7 @@ interface Tag {
 interface ProfileCardProps {
   id: string;
   name: string;
-  username?: string; // Added username as optional property
+  username?: string;
   age: number;
   location: string;
   bio: string;
@@ -87,7 +88,7 @@ const ProfileCard = ({
           
           <div className="aspect-[4/5] overflow-hidden bg-gradient-to-br from-purple-100 to-pink-50 relative">
             <img 
-              src="https://images.unsplash.com/photo-1649972904349-6e44c42644a7" 
+              src={imgUrl} 
               alt={name} 
               className="w-full h-full object-cover transition-transform duration-300 hover:scale-105" 
             />

@@ -40,13 +40,37 @@ interface SwipeInterfaceProps {
 
 const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProps) => {
   const updatedProfiles = profiles.map(profile => {
-    if (profile.name.endsWith('a') || profile.name === 'Elena' || profile.name === 'Isabel' || profile.name === 'Laura') {
+    if (profile.name === 'Elena') {
       return {
         ...profile,
         imgUrl: 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7'
       };
+    } else if (profile.name === 'Laura') {
+      return {
+        ...profile,
+        imgUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158'
+      };
+    } else if (profile.name.endsWith('a') || profile.name === 'Isabel') { 
+      return {
+        ...profile,
+        imgUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2'
+      };
+    } else if (profile.name === 'Carlos' || profile.name === 'David') {
+      return {
+        ...profile,
+        imgUrl: 'https://images.unsplash.com/photo-1581092795360-fd1ca04f0952'
+      };
+    } else if (profile.name === 'Miguel' || profile.name === 'Juan') {
+      return {
+        ...profile,
+        imgUrl: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5'
+      };
+    } else {
+      return {
+        ...profile,
+        imgUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e'
+      };
     }
-    return profile;
   });
 
   const [currentIndex, setCurrentIndex] = useState(0);
