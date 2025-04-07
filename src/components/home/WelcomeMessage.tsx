@@ -9,9 +9,10 @@ import { useAuth } from '@/context/AuthContext';
 interface WelcomeMessageProps {
   firstName?: string;
   showWelcomeToast?: boolean;
+  isNewUser?: boolean;
 }
 
-const WelcomeMessage = ({ firstName, showWelcomeToast = false }: WelcomeMessageProps) => {
+const WelcomeMessage = ({ firstName, showWelcomeToast = false, isNewUser = false }: WelcomeMessageProps) => {
   const [followed, setFollowed] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -24,14 +25,14 @@ const WelcomeMessage = ({ firstName, showWelcomeToast = false }: WelcomeMessageP
       const timer = setTimeout(() => {
         toast({
           title: "¡Bienvenido a HomiMatch!",
-          description: "Tu cuenta ha sido creada correctamente.",
+          description: isNewUser ? "Tu cuenta ha sido creada correctamente." : "Has iniciado sesión correctamente.",
           duration: 8000, // Aumentado para asegurar visibilidad
         });
       }, 800); // Tiempo aumentado para evitar problemas de timing
       
       return () => clearTimeout(timer);
     }
-  }, [user, toast, showWelcomeToast]);
+  }, [user, toast, showWelcomeToast, isNewUser]);
   
   // Usa el nombre de pila de props o del usuario si está disponible
   const displayName = firstName || (user?.user_metadata?.firstName || user?.user_metadata?.first_name || '');
@@ -84,7 +85,7 @@ const WelcomeMessage = ({ firstName, showWelcomeToast = false }: WelcomeMessageP
       
       <p className="text-center text-muted-foreground mb-6">
         Te avisaremos cuando la aplicación esté completamente disponible.
-        Mientras tanto, completa tu perfil para estar listo cuando lancemos.
+        Mientras tanto, {isNewUser ? "completa tu perfil" : "explora las características disponibles"} para estar listo cuando lancemos.
       </p>
       
       <div className="bg-homi-ultraLightPurple/50 p-4 rounded-xl mb-6 text-center border border-homi-purple/20">
@@ -99,7 +100,7 @@ const WelcomeMessage = ({ firstName, showWelcomeToast = false }: WelcomeMessageP
           className="w-full bg-gradient-to-r from-homi-purple to-homi-lightPurple hover:from-homi-lightPurple hover:to-homi-purple text-white font-bold shadow-lg shadow-purple-500/30 transform hover:scale-105 transition-all duration-300 rounded-full py-6"
         >
           <UserRound className="mr-2 h-5 w-5" />
-          Completar mi perfil ahora
+          {isNewUser ? "Completar mi perfil ahora" : "Editar mi perfil"}
         </Button>
         
         <div className="text-center mt-4">

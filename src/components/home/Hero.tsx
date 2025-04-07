@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Check, Instagram, MessageCircle } from 'lucide-react';
@@ -13,6 +12,7 @@ const Hero = () => {
   const [email, setEmail] = useState('');
   const [showSignupForm, setShowSignupForm] = useState(false);
   const [justRegistered, setJustRegistered] = useState(false);
+  const [justLoggedIn, setJustLoggedIn] = useState(false);
   const isMobile = useIsMobile();
   const {
     user,
@@ -28,18 +28,29 @@ const Hero = () => {
     if (user) {
       const urlParams = new URLSearchParams(window.location.search);
       const isRegistered = urlParams.get('registered') === 'true';
+      const isLoggedIn = urlParams.get('loggedIn') === 'true';
       
       if (isRegistered) {
         console.log("Usuario recién registrado, mostrando mensaje de bienvenida");
         setJustRegistered(true);
+        setJustLoggedIn(false);
+        
+        // Limpiar parámetros URL después de procesarlos
+        window.history.replaceState({}, document.title, window.location.pathname);
+      } else if (isLoggedIn) {
+        console.log("Usuario recién conectado, mostrando mensaje de bienvenida");
+        setJustLoggedIn(true);
+        setJustRegistered(false);
         
         // Limpiar parámetros URL después de procesarlos
         window.history.replaceState({}, document.title, window.location.pathname);
       } else {
         setJustRegistered(false);
+        setJustLoggedIn(false);
       }
     } else {
       setJustRegistered(false);
+      setJustLoggedIn(false);
     }
   }, [user, location.search]);
 
@@ -74,18 +85,19 @@ const Hero = () => {
   };
 
   const renderContent = () => {
-    if (user && justRegistered) {
+    if (user && (justRegistered || justLoggedIn)) {
       return <WelcomeMessage 
         firstName={user?.user_metadata?.firstName || user?.user_metadata?.first_name || user?.user_metadata?.name || user?.user_metadata?.full_name}
         showWelcomeToast={true}
+        isNewUser={justRegistered}
       />;
     }
     
-    if (user && !justRegistered) {
+    if (user && !justRegistered && !justLoggedIn) {
       return (
         <>
           <div className="inline-block px-4 py-1.5 mb-6 rounded-full bg-green-100 text-green-700 text-xs md:text-sm font-medium">
-            <Check className="inline-block mr-1 h-4 w-4" /> Usuario registrado
+            <Check className="inline-block mr-1 h-4 w-4" /> Usuario conectado
           </div>
           
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 animate-slide-up leading-tight px-2">
@@ -93,7 +105,7 @@ const Hero = () => {
           </h1>
           
           <p className="text-base md:text-lg text-muted-foreground mb-6 max-w-2xl mx-auto px-2">
-            Gracias por registrarte. Te notificaremos cuando la aplicación esté completamente funcional.
+            Gracias por iniciar sesión. Te notificaremos cuando la aplicación esté completamente funcional.
             Mientras tanto, puedes explorar algunas de las características disponibles o completar tu perfil.
           </p>
 

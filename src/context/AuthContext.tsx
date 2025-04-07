@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Session, User } from "@supabase/supabase-js";
@@ -477,9 +476,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         // Manually ensure session is stored in localStorage
         saveSessionToLocalStorage(data.session);
         
-        // Navigate to home after successful login
+        // Navigate to home after successful login with the loggedIn parameter
         setTimeout(() => {
-          window.location.href = '/';
+          window.location.href = '/?loggedIn=true';
         }, 500);
       } else {
         throw new Error("No session returned after login");
