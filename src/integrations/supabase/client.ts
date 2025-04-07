@@ -90,6 +90,6 @@ export const signInWithGoogleOAuth = async (): Promise<void> => {
   }
   
   console.log("[Google Auth] OAuth flow initiated successfully. User will be redirected to Google.");
-  return data;
-};
+  // Don't return the data, just let the function complete
+}
 
