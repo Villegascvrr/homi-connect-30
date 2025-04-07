@@ -42,7 +42,7 @@ const ScrollToTop = () => {
           window.scrollTo({
             top: 0,
             left: 0,
-            behavior: 'instant' // Most modern browsers support this now
+            behavior: 'instant' as ScrollBehavior // Explicitly cast to ScrollBehavior
           });
           
           console.log("Scrolled to top for path:", pathname);
@@ -53,7 +53,7 @@ const ScrollToTop = () => {
           
           if (element) {
             element.scrollIntoView({
-              behavior: 'instant' 
+              behavior: 'instant' as ScrollBehavior // Explicitly cast to ScrollBehavior
             });
             console.log(`Scrolled to element with id: ${elementId}`);
           } else {
@@ -73,7 +73,7 @@ const ScrollToTop = () => {
       if (scrollTimeoutRef.current) {
         window.clearTimeout(scrollTimeoutRef.current);
       }
-      console.log("ScrollToTop: Component unmounted, skipping scroll");
+      console.log("ScrollToTop: Component unmounted, cleaning up");
     };
   }, [pathname, hash, key]); // Added key to dependencies to ensure scroll on same-path but different-key navigation
 

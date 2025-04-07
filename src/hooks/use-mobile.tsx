@@ -1,3 +1,4 @@
+
 import * as React from "react"
 
 // Definimos los breakpoints en un objeto para mayor flexibilidad
@@ -26,8 +27,9 @@ export function useIsMobile(breakpoint: BreakpointKey = "md") {
     const checkIfMobile = () => {
       const currentWidth = window.innerWidth;
       const breakpointWidth = BREAKPOINTS[breakpoint];
-      setIsMobile(currentWidth < breakpointWidth);
-      console.log(`Initial mobile detection: ${currentWidth < breakpointWidth} (width: ${currentWidth}, breakpoint: ${breakpointWidth})`);
+      const result = currentWidth < breakpointWidth;
+      setIsMobile(result);
+      console.log(`Mobile detection: ${result} (width: ${currentWidth}, breakpoint: ${breakpointWidth})`);
     }
     
     // Check on initial render

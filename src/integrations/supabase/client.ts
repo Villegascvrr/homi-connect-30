@@ -83,7 +83,7 @@ export const signInWithGoogleOAuth = async (): Promise<void> => {
           access_type: 'offline',
           prompt: 'consent',
         },
-        // Fix: Change scopes from string to array of strings 
+        // Fix: Use array of strings for scopes instead of a single string
         scopes: ['email', 'profile'],
         skipBrowserRedirect: false,
       },
@@ -109,7 +109,7 @@ export const signInWithGoogleOAuth = async (): Promise<void> => {
  */
 export const checkEmailExists = async (email: string): Promise<boolean> => {
   try {
-    // Fix the TypeScript error by using proper type parameters for RPC call
+    // Fix: Specify correct type parameter for RPC call
     const { data, error } = await supabase
       .rpc<boolean>('check_email_exists', { 
         email_to_check: email 

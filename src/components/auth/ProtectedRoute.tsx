@@ -83,9 +83,9 @@ const ProtectedRoute = ({
     );
   }
 
-  // Check if we have a user or session from any source
+  // Immediately check if user is authenticated to avoid multiple renders
   const isAuthenticated = !!user || !!session || hasLocalSession;
-
+  
   if (isAuthenticated) {
     console.log("User authenticated, showing protected content");
     return (
@@ -120,10 +120,11 @@ const ProtectedRoute = ({
     );
   }
 
-  // Only navigate if not already navigating to prevent loops
+  // If not authenticated and not navigating yet, redirect to login page
   if (!isNavigating) {
     console.log("Redirecting to signin from:", location.pathname);
     setIsNavigating(true);
+    // Use immediate return of Navigate instead of setTimeout to ensure faster redirection
     return <Navigate to="/signin" state={{ from: location.pathname }} replace />;
   }
   
