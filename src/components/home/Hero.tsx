@@ -25,19 +25,21 @@ const Hero = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const isRegistered = urlParams.get('registered') === 'true';
+    // Clear any existing state first
+    setJustRegistered(false);
     
-    // Only set justRegistered if user is authenticated AND registered parameter is true
-    if (isRegistered && user) {
-      console.log("Usuario recién registrado con email verificado, mostrando mensaje de bienvenida");
-      setJustRegistered(true);
-      // Clean up URL parameters after processing
-      window.history.replaceState({}, document.title, window.location.pathname);
-    } else {
-      // Reset justRegistered if user is not authenticated
-      if (!user) {
-        setJustRegistered(false);
+    // Only proceed if there's a user
+    if (user) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const isRegistered = urlParams.get('registered') === 'true';
+      
+      // Only set justRegistered if registered parameter is true
+      if (isRegistered) {
+        console.log("Usuario recién registrado con email verificado, mostrando mensaje de bienvenida");
+        setJustRegistered(true);
+        
+        // Clean up URL parameters after processing
+        window.history.replaceState({}, document.title, window.location.pathname);
       }
     }
   }, [user, location.search]);
