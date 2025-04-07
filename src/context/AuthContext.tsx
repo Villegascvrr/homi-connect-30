@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Session, User } from "@supabase/supabase-js";
@@ -32,7 +31,6 @@ export interface UserSignUpData {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Function to manually save session to localStorage
 const saveSessionToLocalStorage = (session: Session | null): void => {
   if (session) {
     try {
@@ -40,7 +38,6 @@ const saveSessionToLocalStorage = (session: Session | null): void => {
       localStorage.setItem('homi-auth-session', sessionJson);
       console.log("Session saved to localStorage:", sessionJson.substring(0, 50) + "...");
       
-      // Verify storage was successful
       const stored = localStorage.getItem('homi-auth-session');
       if (!stored) {
         console.warn("Failed to verify session storage, retrying...");
@@ -57,25 +54,18 @@ const saveSessionToLocalStorage = (session: Session | null): void => {
   }
 };
 
-// Function to extract username from email
 const extractUsernameFromEmail = (email: string): string => {
   if (!email) return '';
   
-  // Get the part before @ symbol
   const username = email.split('@')[0];
-  
-  // Remove any special characters that might not be allowed in usernames
   return username.replace(/[^a-zA-Z0-9_]/g, '').toLowerCase();
 };
 
-// Function to clean up all auth-related storage
 const cleanupAuthStorage = (): void => {
-  // Clear all auth-related localStorage items
   localStorage.removeItem('homi-auth-session');
   localStorage.removeItem('supabase.auth.token');
   localStorage.removeItem('auth.token');
 
-  // Clear any additional auth data that might be stored
   try {
     const localStorageKeys = Object.keys(localStorage);
     localStorageKeys.forEach(key => {
@@ -93,10 +83,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [isEmailVerified, setIsEmailVerified] = useState(true);
-  const [authKey, setAuthKey] = useState<string>('initial'); // Key to force re-render
+  const [authKey, setAuthKey] = useState<string>('initial');
   const { toast } = useToast();
 
-  // Monitor and log session changes for debugging
   useEffect(() => {
     if (session) {
       console.log("Session updated in state:", session.access_token.substring(0, 10) + "...");
@@ -109,7 +98,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     console.log("AuthProvider initializing with key:", authKey);
     setLoading(true);
     
-    // Set up the auth state change listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, currentSession) => {
         console.log("Auth state changed:", event, currentSession ? "With session" : "No session");
@@ -118,23 +106,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           console.log("Session received in auth state change:", 
             currentSession.access_token ? currentSession.access_token.substring(0, 10) + "..." : "No access token");
           
-          // Set session immediately
           setSession(currentSession);
           
-          // Manually save session to localStorage with aggressive verification
           saveSessionToLocalStorage(currentSession);
           
           if (currentSession.user) {
             const authUser = currentSession.user;
             console.log("User ID from session:", authUser.id);
             
-            // Siempre consideramos el email como verificado
             setIsEmailVerified(true);
             
-            // Use setTimeout to avoid lockup in auth state change callback
             setTimeout(async () => {
               try {
-                // Check if profile exists first
                 let { data: profileData, error } = await supabase
                   .from('profiles')
                   .select('profile_image, first_name, last_name')
@@ -144,23 +127,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 if (error || !profileData) {
                   console.log("Profile not found or error, checking if we should create one for Google user");
                   
-                  // For Google login, we might need to create a profile if it doesn't exist
                   if (event === 'SIGNED_IN' && authUser.app_metadata?.provider === 'google') {
                     const name = authUser.user_metadata?.full_name || authUser.user_metadata?.name || '';
                     const nameParts = name.split(' ');
                     const firstName = nameParts[0] || '';
                     const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
                     
-                    // Create a username from the email
                     const usernameFromEmail = extractUsernameFromEmail(authUser.email || '');
                     
                     const newProfile = {
                       id: authUser.id,
                       first_name: firstName,
                       last_name: lastName,
-                      username: usernameFromEmail, // Use the username extracted from email
+                      username: usernameFromEmail,
                       email: authUser.email,
-                      profile_image: null // Add profile_image field with null value
+                      profile_image: null
                     };
                     
                     console.log("Creating profile for Google user:", newProfile);
@@ -199,7 +180,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         } else {
           console.log("No session in auth state change");
           if (event === 'SIGNED_OUT') {
-            // Clear all auth-related storage
             cleanupAuthStorage();
             setSession(null);
             setUser(null);
@@ -210,10 +190,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
     );
 
-    // Then check for an existing session
     const checkExistingSession = async () => {
       try {
-        // First try to get session from Supabase
         const { data: { session: currentSession } } = await supabase.auth.getSession();
         console.log("Initial session check:", currentSession ? "Found session" : "No session");
         
@@ -221,7 +199,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           console.log("Setting session from getSession call");
           setSession(currentSession);
           
-          // Ensure session is stored in localStorage with verification
           saveSessionToLocalStorage(currentSession);
           
           const authUser = currentSession.user;
@@ -249,7 +226,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             setUser(authUser);
           }
         } else {
-          // If no session from Supabase, check localStorage as fallback
           const sessionStr = localStorage.getItem('homi-auth-session');
           console.log("Checking localStorage for session:", sessionStr ? "Found" : "Not found");
           
@@ -260,14 +236,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               
               if (!isExpired) {
                 console.log("Using session from localStorage");
-                // Set the session from localStorage
                 setSession(sessionData);
                 
                 if (sessionData.user) {
-                  console.log("Setting user from localStorage session");
                   setUser(sessionData.user);
                   
-                  // Try to refresh the session with Supabase
                   supabase.auth.refreshSession().then(({ data }) => {
                     if (data.session) {
                       console.log("Session refreshed successfully");
@@ -302,13 +275,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => {
       subscription.unsubscribe();
     };
-  }, [authKey]); // Depend on authKey to force re-initialization
+  }, [authKey]);
 
   const refreshUser = async () => {
     try {
       console.log("Refreshing user data");
       
-      // First refresh the session to ensure we have the latest token
       const { data: sessionData, error: sessionError } = await supabase.auth.refreshSession();
       if (sessionError) {
         console.error("Error refreshing session:", sessionError);
@@ -318,7 +290,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         saveSessionToLocalStorage(sessionData.session);
       }
       
-      // Now get the latest user data
       const { data: { user: refreshedUser }, error } = await supabase.auth.getUser();
       if (error) throw error;
       
@@ -351,11 +322,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       console.log("Iniciando proceso unificado de autenticación con Google");
       
-      // Usar la función optimizada para el manejo unificado de inicio de sesión/registro con Google
       await signInWithGoogleOAuth();
       
-      // No necesitamos hacer nada más aquí, la redirección ocurrirá automáticamente
-      // y el listener de onAuthStateChange manejará la actualización del estado
     } catch (error: any) {
       console.error("Error en autenticación con Google:", error);
       toast({
@@ -371,8 +339,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       console.log("Checking if email exists:", email);
       
-      // FIXED: Use a dedicated API endpoint instead of the sign-up endpoint
-      // that was inadvertently creating accounts
       const { data, error } = await supabase
         .from('profiles')
         .select('email')
@@ -384,14 +350,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return true;
       }
       
-      // If not in profiles, check auth.users table without creating an account
-      // This uses the RPC function with proper type handling
       const { data: count, error: countError } = await supabase
-        .rpc('check_email_exists', { email_to_check: email });
+        .rpc('check_email_exists', { email_to_check: email }) as { data: number | null, error: any };
         
       if (countError) {
         console.error("Error checking email in auth:", countError);
-        // Better to assume it exists in case of error (safer approach)
         return true;
       }
       
@@ -400,7 +363,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       return exists;
     } catch (error) {
       console.error("Error checking if email exists:", error);
-      // Better to assume it exists in case of error (safer approach)
       return true;
     }
   };
@@ -410,7 +372,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       console.log("Starting signup process for:", userData.email);
       
-      // First check if email already exists (both in auth and profiles)
       const emailExists = await checkEmailExists(userData.email);
       if (emailExists) {
         console.log("Email already exists, cannot register:", userData.email);
@@ -422,7 +383,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return { success: false, error: { message: "Email already registered" } };
       }
       
-      // Sign up the user with auto-confirm true
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: userData.email,
         password: userData.password,
@@ -444,7 +404,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       console.log("Auth signup successful, user created:", authData.user?.id);
       
       if (authData.user) {
-        // Create the user profile
         const profileData = {
           id: authData.user.id,
           first_name: userData.firstName,
@@ -464,16 +423,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         
         console.log("Profile created successfully");
         
-        // Explicitly set session and user after signup with aggressive storage
         if (authData.session) {
           console.log("Setting session from signup response");
           setSession(authData.session);
           setUser(authData.user);
           
-          // Force session storage in localStorage with verification
           saveSessionToLocalStorage(authData.session);
           
-          // Double-check storage was successful
           const verifyStorage = localStorage.getItem('homi-auth-session');
           if (!verifyStorage) {
             console.warn("Session storage verification failed, retrying...");
@@ -483,8 +439,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           console.warn("No session in signup response!");
         }
         
-        // Multiple attempts to refresh the session
-        const refreshAttempts = [500, 1000, 2000]; // Increasing delays
+        const refreshAttempts = [500, 1000, 2000];
         
         for (const delay of refreshAttempts) {
           setTimeout(async () => {
@@ -494,7 +449,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 console.log(`Session refreshed after signup (delay: ${delay}ms)`);
                 setSession(data.session);
                 saveSessionToLocalStorage(data.session);
-                return; // Exit if successful
+                return;
               }
             } catch (e) {
               console.error(`Error refreshing session after signup (delay: ${delay}ms):`, e);
@@ -508,13 +463,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         description: "Ya puedes comenzar a usar tu cuenta.",
       });
       
-      // Redirect to home page after successful registration, similar to Google login
       window.location.href = '/?registered=true';
       
       return { success: true };
     } catch (error: any) {
       console.error("SignUp error:", error);
-      // Check if the error is due to email already in use
       if (error.message?.includes('email') || error.message?.includes('already')) {
         toast({
           title: "Correo ya registrado",
@@ -551,16 +504,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       
       console.log("Sign-in successful, session:", data.session ? "Exists" : "Missing");
       
-      // Explicitly set session and user after signin
       if (data.session) {
         console.log("Session set after signin:", data.session.access_token.substring(0, 10) + "...");
         setSession(data.session);
         setUser(data.user);
         
-        // Manually ensure session is stored in localStorage
         saveSessionToLocalStorage(data.session);
         
-        // Navigate to home after successful login with the loggedIn parameter
         setTimeout(() => {
           window.location.href = '/?loggedIn=true';
         }, 500);
@@ -588,17 +538,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       console.log("Starting sign out process...");
       
-      // First, clear local state. This ensures UI responds immediately.
       setLoading(true);
       
-      // Clear all auth-related storage before API call
       cleanupAuthStorage();
       
-      // Clear application state
       setUser(null);
       setSession(null);
       
-      // Tell Supabase to sign out
       const { error } = await supabase.auth.signOut();
       
       if (error) {
@@ -614,10 +560,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           description: "Has cerrado sesión correctamente.",
         });
         
-        // Force re-initialization of the AuthProvider by changing the authKey
         setAuthKey('signed-out-' + Date.now());
         
-        // Navigate to home page instead of reloading
         window.location.href = '/';
       }
     } catch (error: any) {
