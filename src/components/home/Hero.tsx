@@ -25,20 +25,23 @@ const Hero = () => {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const isRegistered = urlParams.get('registered') === 'true';
-    console.log("Checking registration status:", {
+    
+    console.log("Verificando estado de registro:", {
       isRegistered,
       userExists: !!user,
       isEmailVerified,
       currentJustRegistered: justRegistered,
-      searchParams: urlParams.toString()
+      searchParams: urlParams.toString(),
+      rawURL: window.location.href
     });
     
-    if (isRegistered) {
-      console.log("User just registered with verified email, showing welcome message");
+    if (isRegistered && user) {
+      console.log("Usuario recién registrado con email verificado, mostrando mensaje de bienvenida");
       setJustRegistered(true);
+      // Limpiamos la URL para que no se muestre el parámetro
       window.history.replaceState({}, document.title, window.location.pathname);
     } else {
-      console.log("User state:", user ? "logged in" : "not logged in", "Just registered:", justRegistered);
+      console.log("Estado del usuario:", user ? "conectado" : "no conectado", "Recién registrado:", justRegistered);
     }
   }, [user, location.search, isEmailVerified, justRegistered]);
 
