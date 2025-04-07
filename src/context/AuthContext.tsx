@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Session, User } from "@supabase/supabase-js";
@@ -328,27 +327,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       console.log("Iniciando proceso de autenticación con Google");
       
-      // Definimos la URL de redirección absoluta para asegurar consistencia
-      const redirectUrl = `${window.location.origin}/verified`;
-      console.log("URL de redirección configurada:", redirectUrl);
+      // Usamos la nueva función optimizada para el inicio de sesión con Google
+      await signInWithGoogleOAuth();
       
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: redirectUrl,
-          queryParams: {
-            access_type: 'offline',
-            prompt: 'consent',
-          },
-          scopes: 'email profile'
-        },
-      });
-
-      if (error) throw error;
-      
-      console.log("Redirección a autenticación de Google iniciada:", data);
-      
-      // La redirección ocurrirá automáticamente
+      // No necesitamos hacer nada más aquí, la redirección ocurrirá automáticamente
+      // y el listener de onAuthStateChange manejará la actualización del estado
     } catch (error: any) {
       console.error("Error en autenticación con Google:", error);
       toast({
@@ -358,6 +341,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
       setLoading(false);
     }
+  };
+
+  const signInWithGoogleOAuth = async () => {
+    const redirectUrl = `${window.location.origin}/verified`;
+    console.log("URL de redirección configurada:", redirectUrl);
+    
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: redirectUrl,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        },
+        scopes: 'email profile'
+      },
+    });
+
+    if (error) throw error;
+    
+    console.log("Redirección a autenticación de Google iniciada:", data);
   };
 
   const signUp = async (userData: UserSignUpData) => {

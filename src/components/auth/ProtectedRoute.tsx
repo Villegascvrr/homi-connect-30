@@ -23,6 +23,7 @@ const ProtectedRoute = ({
   const [authCheckComplete, setAuthCheckComplete] = useState(false);
   const [localCheckComplete, setLocalCheckComplete] = useState(false);
   const [hasLocalSession, setHasLocalSession] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
   
   // Check for local session on mount
   useEffect(() => {
@@ -45,6 +46,17 @@ const ProtectedRoute = ({
             await refreshUser();
           } else {
             console.log("Failed to refresh session from localStorage");
+            // Increment retry count to limit retries
+            setRetryCount(prev => prev + 1);
+            
+            // Try one more approach - get session directly
+            if (retryCount < 2) {
+              const { data: sessionData } = await supabase.auth.getSession();
+              if (sessionData.session) {
+                console.log("Got session from getSession call");
+                await refreshUser();
+              }
+            }
           }
         } catch (error) {
           console.error("Error refreshing session:", error);
@@ -59,7 +71,7 @@ const ProtectedRoute = ({
     };
     
     attemptSessionRefresh();
-  }, [user, session, loading, hasLocalSession, localCheckComplete, refreshUser]);
+  }, [user, session, loading, hasLocalSession, localCheckComplete, refreshUser, retryCount]);
 
   useEffect(() => {
     console.log("Protected route accessed:", {
@@ -70,7 +82,8 @@ const ProtectedRoute = ({
       isLoading: loading,
       authCheckComplete: authCheckComplete,
       localCheckComplete: localCheckComplete,
-      allowsPreview: allowPreview
+      allowsPreview: allowPreview,
+      retryCount: retryCount
     });
     
     // Set a timeout to prevent infinite loading state
@@ -83,7 +96,7 @@ const ProtectedRoute = ({
     
     return () => clearTimeout(timeoutId);
   }, [location.pathname, user, session, loading, allowPreview, hasLocalSession, 
-      authCheckComplete, localCheckComplete]);
+      authCheckComplete, localCheckComplete, retryCount]);
 
   // Show loading state only if we're still checking authentication
   if ((loading || !authCheckComplete) && !localCheckComplete) {
