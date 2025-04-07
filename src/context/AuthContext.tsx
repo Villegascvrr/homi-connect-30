@@ -350,8 +350,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return true;
       }
       
+      type CheckEmailResponse = {
+        data: number | null;
+        error: any;
+      };
+      
       const { data: countResult, error: countError } = await supabase
-        .rpc('check_email_exists', { email_to_check: email });
+        .rpc('check_email_exists', { email_to_check: email }) as CheckEmailResponse;
         
       if (countError) {
         console.error("Error checking email in auth:", countError);
