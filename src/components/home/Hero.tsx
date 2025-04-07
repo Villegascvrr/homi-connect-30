@@ -144,7 +144,7 @@ const Hero = () => {
         </div>
         
         <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6 animate-slide-up leading-tight px-2 my-0">
-          Encuentra tu <span className="homi-gradient-text">compañero ideal</span>
+          Conecta con <span className="homi-gradient-text">compañeros de piso</span> compatibles
         </h1>
         
         <p className="text-base md:text-xl text-muted-foreground mb-6 max-w-2xl mx-auto px-2">HomiMatch utiliza un sistema de matching inteligente para conectarte con compañeros de piso que comparten tus intereses y estilo de vida.</p>
