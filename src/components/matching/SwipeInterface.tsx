@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import SwipeCard from './SwipeCard';
 import { Button } from '@/components/ui/button';
@@ -40,6 +39,16 @@ interface SwipeInterfaceProps {
 }
 
 const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProps) => {
+  const updatedProfiles = profiles.map(profile => {
+    if (profile.name.endsWith('a') || profile.name === 'Elena' || profile.name === 'Isabel' || profile.name === 'Laura') {
+      return {
+        ...profile,
+        imgUrl: 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7'
+      };
+    }
+    return profile;
+  });
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [history, setHistory] = useState<string[]>([]);
   const [direction, setDirection] = useState<'left' | 'right' | null>(null);
@@ -48,12 +57,11 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
   const [nextCardReady, setNextCardReady] = useState(false);
   const [removedProfiles, setRemovedProfiles] = useState<Set<string>>(new Set());
   
-  const filteredProfiles = profiles.filter(profile => !removedProfiles.has(profile.id));
+  const filteredProfiles = updatedProfiles.filter(profile => !removedProfiles.has(profile.id));
   const currentProfile = filteredProfiles[currentIndex];
   const nextProfile = filteredProfiles[currentIndex + 1]; // Pre-load next profile
   const hasMoreProfiles = currentIndex < filteredProfiles.length;
   
-  // Pre-load next profile image
   useEffect(() => {
     if (nextProfile) {
       const img = new Image();
@@ -62,10 +70,8 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
     }
   }, [currentIndex, nextProfile]);
   
-  // Reset animation state when profile changes
   useEffect(() => {
     setDirection(null);
-    // Short delay before allowing next swipe action
     const timer = setTimeout(() => {
       setIsTransitioning(false);
     }, 300);
@@ -78,21 +84,14 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
     setIsTransitioning(true);
     setDirection(action === 'like' ? 'right' : 'left');
     
-    // Add to history
     setHistory(prev => [...prev, id]);
-    
-    // Add to removed profiles to prevent re-appearance
     setRemovedProfiles(prev => new Set([...prev, id]));
     
-    // Move to next profile with a slight delay for animation
     setTimeout(() => {
       if (action === 'like') {
-        // If it's a high compatibility match (over 85%), show match animation
-        const matchedProfile = profiles.find(p => p.id === id);
+        const matchedProfile = updatedProfiles.find(p => p.id === id);
         if (matchedProfile && matchedProfile.compatibility > 85) {
           setShowMatch(matchedProfile);
-          
-          // Hide match animation after 2.5 seconds
           setTimeout(() => {
             setShowMatch(null);
           }, 2500);
@@ -105,7 +104,7 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
       
       setCurrentIndex(prev => prev + 1);
       setDirection(null);
-    }, 400); // Match animation timing with SwipeCard
+    }, 400);
   };
   
   const handleUndo = () => {
@@ -113,11 +112,9 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
     
     setIsTransitioning(true);
     
-    // Get the last ID from history to remove from removedProfiles
     const lastId = history[history.length - 1];
     
     setTimeout(() => {
-      // Remove from removed profiles to make it visible again
       setRemovedProfiles(prev => {
         const newSet = new Set(prev);
         newSet.delete(lastId);
@@ -125,7 +122,6 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
       });
       
       setCurrentIndex(prev => prev - 1);
-      // Remove the last action from history
       setHistory(prev => prev.slice(0, -1));
       setIsTransitioning(false);
     }, 300);
@@ -135,7 +131,7 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
     setCurrentIndex(0);
     setHistory([]);
     setDirection(null);
-    setRemovedProfiles(new Set()); // Clear all removed profiles
+    setRemovedProfiles(new Set());
   };
   
   if (!hasMoreProfiles || !currentProfile) {
@@ -163,7 +159,6 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
   
   return (
     <div className="max-h-[85vh] relative mt-2">
-      {/* Match animation overlay with improved animation */}
       {showMatch && (
         <div className="fixed inset-0 bg-black/70 flex flex-col items-center justify-center z-50 animate-fade-in">
           <div className="text-center p-6 max-w-sm animate-scale-in">
@@ -190,7 +185,6 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
               <Button 
                 className="w-full bg-homi-purple hover:bg-homi-purple/90"
                 onClick={() => {
-                  // In a real app, this would navigate to chat
                   setShowMatch(null);
                 }}
               >
@@ -208,7 +202,6 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
         </div>
       )}
 
-      {/* Card stack effect - show next card behind current one */}
       <div className="relative">
         {nextProfile && nextCardReady && !isTransitioning && (
           <div className="absolute inset-0 transform scale-[0.92] -translate-y-6 opacity-40 blur-sm pointer-events-none">
@@ -235,7 +228,7 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
       
       <div className="text-center mt-4 animate-fade-in">
         <p className="text-sm text-muted-foreground">
-          Perfil {currentIndex + 1} de {profiles.length - removedProfiles.size + currentIndex}
+          Perfil {currentIndex + 1} de {updatedProfiles.length - removedProfiles.size + currentIndex}
         </p>
       </div>
     </div>

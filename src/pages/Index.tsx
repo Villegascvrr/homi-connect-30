@@ -1,4 +1,3 @@
-
 import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
@@ -56,7 +55,7 @@ const Index = () => {
       age: 22,
       location: 'Valencia',
       bio: 'Estudiante de Medicina. Me encanta cocinar y compartir momentos con amigos. Busco compañeros con intereses similares.',
-      imgUrl: 'https://images.unsplash.com/photo-1472396961693-142e6e269027',
+      imgUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158',
       tags: [{
         id: 6,
         name: 'Sociable'

@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import CompatibilityBadge from '@/components/ui/CompatibilityBadge';
 import { Button } from '@/components/ui/button';
@@ -80,7 +79,6 @@ const ProfileCard = ({
   return <>
       <div className="glass-card overflow-hidden transition-all duration-300 hover:shadow-hover h-full">
         <div className="relative">
-          {/* Logo en la parte superior */}
           <div className="absolute top-0 left-0 w-full h-8 flex justify-center items-center z-10 pt-2">
             <div className="bg-white/90 rounded-full px-4 py-1 shadow-sm">
               <span className="text-homi-purple font-bold text-sm">homi</span>
@@ -88,7 +86,11 @@ const ProfileCard = ({
           </div>
           
           <div className="aspect-[4/5] overflow-hidden bg-gradient-to-br from-purple-100 to-pink-50 relative">
-            <img src={imgUrl} alt={name} className="w-full h-full object-cover transition-transform duration-300 hover:scale-105" />
+            <img 
+              src="https://images.unsplash.com/photo-1649972904349-6e44c42644a7" 
+              alt={name} 
+              className="w-full h-full object-cover transition-transform duration-300 hover:scale-105" 
+            />
             <div className="absolute top-3 right-3">
               <CompatibilityBadge percentage={compatibility} />
             </div>
@@ -138,7 +140,6 @@ const ProfileCard = ({
         </div>
       </div>
 
-      {/* QR Code Dialog - Desktop */}
       {!isMobile && (
         <Dialog open={showQrDialog} onOpenChange={setShowQrDialog}>
           <DialogContent className="sm:max-w-md">
@@ -150,7 +151,6 @@ const ProfileCard = ({
         </Dialog>
       )}
       
-      {/* QR Code Drawer - Mobile */}
       {isMobile && (
         <Drawer open={showQrDialog} onOpenChange={setShowQrDialog}>
           <DrawerContent>
