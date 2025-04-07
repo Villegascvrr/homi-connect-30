@@ -224,7 +224,7 @@ const SwipeCard = ({
   };
   
   return (
-    <div className="h-full flex flex-col items-center justify-center py-4">
+    <div className="h-full flex flex-col items-center justify-center py-2">
       <div 
         ref={cardRef}
         className={cn(
@@ -256,8 +256,8 @@ const SwipeCard = ({
           </div>
         )}
         
-        {/* Profile Image Section */}
-        <div className="relative aspect-[3/4] overflow-hidden bg-gray-100">
+        {/* Profile Image Section - updated aspect ratio */}
+        <div className="relative aspect-[3/2] overflow-hidden bg-gray-100">
           <img
             src={imgUrl}
             alt={name}
@@ -267,7 +267,7 @@ const SwipeCard = ({
             )}
           />
           <div 
-            className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4 text-white"
+            className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3 text-white"
           >
             <h3 className="text-xl font-bold">{name}, {age}</h3>
             <p className="text-sm opacity-90 flex items-center gap-1">
@@ -275,12 +275,12 @@ const SwipeCard = ({
               {location}
             </p>
           </div>
-          <div className="absolute top-3 right-3">
+          <div className="absolute top-2 right-2">
             <CompatibilityBadge percentage={compatibility} />
           </div>
           
           {/* Verified badge */}
-          <div className="absolute top-3 left-3">
+          <div className="absolute top-2 left-2">
             <span className="flex items-center gap-1 bg-white/90 text-homi-purple text-xs px-2 py-1 rounded-full">
               <ShieldCheck size={12} />
               Verificado
@@ -288,9 +288,9 @@ const SwipeCard = ({
           </div>
         </div>
         
-        {/* Profile Details Section */}
-        <div className="p-4">
-          <div className="flex justify-between items-center mb-3">
+        {/* Profile Details Section - more compact */}
+        <div className="p-3">
+          <div className="flex justify-between items-center mb-2">
             <button 
               onClick={() => setShowDetails(!showDetails)}
               className="text-sm font-medium text-homi-purple flex items-center gap-1 hover:underline"
@@ -299,9 +299,9 @@ const SwipeCard = ({
               <span className="transition-transform duration-300" style={{ transform: showDetails ? 'rotate(180deg)' : 'rotate(0deg)' }}>▼</span>
             </button>
             
-            <div className="flex gap-2">
+            <div className="flex gap-1">
               {budget && (
-                <span className="flex items-center text-xs gap-1 bg-homi-ultraLightPurple text-homi-purple px-2 py-1 rounded-full">
+                <span className="flex items-center text-xs gap-1 bg-homi-ultraLightPurple text-homi-purple px-2 py-0.5 rounded-full">
                   <DollarSign size={12} />
                   {budget.min}€-{budget.max}€
                 </span>
@@ -309,9 +309,9 @@ const SwipeCard = ({
             </div>
           </div>
           
-          <p className={`${showDetails ? '' : 'line-clamp-2'} text-sm mb-3`}>{bio}</p>
+          <p className={`${showDetails ? '' : 'line-clamp-2'} text-sm mb-2`}>{bio}</p>
           
-          <div className="flex flex-wrap gap-1.5 mb-3">
+          <div className="flex flex-wrap gap-1 mb-2">
             {tags.slice(0, showDetails ? tags.length : 3).map((tag) => (
               <span 
                 key={tag.id} 
@@ -329,11 +329,11 @@ const SwipeCard = ({
           
           {/* Additional details */}
           {showDetails && lifestyle && (
-            <div className="mb-4 animate-fade-in">
-              <h4 className="font-medium mb-2 text-sm">Estilo de vida</h4>
+            <div className="mb-3 animate-fade-in">
+              <h4 className="font-medium mb-1 text-xs">Estilo de vida</h4>
               <div className="grid grid-cols-2 gap-2">
-                <div className="flex items-center gap-2 text-sm">
-                  <span className="w-7 h-7 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
+                <div className="flex items-center gap-1 text-xs">
+                  <span className="w-6 h-6 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
                     <Clock size={14} />
                   </span>
                   <div>
@@ -341,8 +341,8 @@ const SwipeCard = ({
                     <span className="text-xs">{lifestyle.schedule}</span>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <span className="w-7 h-7 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
+                <div className="flex items-center gap-1 text-xs">
+                  <span className="w-6 h-6 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
                     <User size={14} />
                   </span>
                   <div>
@@ -350,8 +350,8 @@ const SwipeCard = ({
                     <span className="text-xs">{lifestyle.cleanliness}</span>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <span className="w-7 h-7 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
+                <div className="flex items-center gap-1 text-xs">
+                  <span className="w-6 h-6 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
                     <MessageSquare size={14} />
                   </span>
                   <div>
@@ -359,8 +359,8 @@ const SwipeCard = ({
                     <span className="text-xs">{lifestyle.guests}</span>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <span className="w-7 h-7 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
+                <div className="flex items-center gap-1 text-xs">
+                  <span className="w-6 h-6 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
                     <span className="text-xs">🚬</span>
                   </span>
                   <div>
@@ -375,43 +375,43 @@ const SwipeCard = ({
       </div>
       
       {/* Control buttons below the card */}
-      <div className="flex justify-center items-center gap-3 mt-6">
+      <div className="flex justify-center items-center gap-3 mt-3">
         <Button 
           variant="outline"
           size="icon"
-          className="w-12 h-12 rounded-full border-2 border-red-500 text-red-500 flex items-center justify-center shadow-md transition-all hover:bg-red-500 hover:text-white transform hover:scale-110 active:scale-95"
+          className="w-10 h-10 rounded-full border-2 border-red-500 text-red-500 flex items-center justify-center shadow-md transition-all hover:bg-red-500 hover:text-white transform hover:scale-110 active:scale-95"
           onClick={() => handleSwipe('left')}
         >
-          <X size={24} />
+          <X size={20} />
         </Button>
         
         {onUndo && (
           <Button 
             variant="outline"
             size="icon"
-            className="w-10 h-10 rounded-full border-2 border-gray-400 text-gray-500 flex items-center justify-center shadow-md transition-all hover:bg-gray-100 active:scale-95"
+            className="w-8 h-8 rounded-full border-2 border-gray-400 text-gray-500 flex items-center justify-center shadow-md transition-all hover:bg-gray-100 active:scale-95"
             onClick={onUndo}
           >
-            <Undo2 size={20} />
+            <Undo2 size={16} />
           </Button>
         )}
         
         <Button 
           variant="outline"
           size="icon"
-          className="w-10 h-10 rounded-full border-2 border-gray-400 text-gray-500 flex items-center justify-center shadow-md transition-all hover:bg-gray-100 active:scale-95"
+          className="w-8 h-8 rounded-full border-2 border-gray-400 text-gray-500 flex items-center justify-center shadow-md transition-all hover:bg-gray-100 active:scale-95"
           onClick={() => onView(id)}
         >
-          <User size={20} />
+          <User size={16} />
         </Button>
         
         <Button 
           variant="outline"
           size="icon"
-          className="w-12 h-12 rounded-full border-2 border-homi-purple text-homi-purple flex items-center justify-center shadow-md transition-all hover:bg-homi-purple hover:text-white transform hover:scale-110 active:scale-95"
+          className="w-10 h-10 rounded-full border-2 border-homi-purple text-homi-purple flex items-center justify-center shadow-md transition-all hover:bg-homi-purple hover:text-white transform hover:scale-110 active:scale-95"
           onClick={() => handleSwipe('right')}
         >
-          <Heart size={24} />
+          <Heart size={20} />
         </Button>
       </div>
     </div>

@@ -140,7 +140,7 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
   
   if (!hasMoreProfiles || !currentProfile) {
     return (
-      <div className="h-full flex flex-col items-center justify-center py-12 px-4">
+      <div className="h-full flex flex-col items-center justify-center py-8 px-4">
         <div className="text-center">
           <h2 className="text-xl font-bold mb-3">No hay más perfiles</h2>
           <p className="text-muted-foreground mb-6">
@@ -162,7 +162,7 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
   }
   
   return (
-    <div className="h-full relative mt-2">
+    <div className="max-h-[85vh] relative mt-2">
       {/* Match animation overlay with improved animation */}
       {showMatch && (
         <div className="fixed inset-0 bg-black/70 flex flex-col items-center justify-center z-50 animate-fade-in">
@@ -213,7 +213,7 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
         {nextProfile && nextCardReady && !isTransitioning && (
           <div className="absolute inset-0 transform scale-[0.92] -translate-y-6 opacity-40 blur-sm pointer-events-none">
             <div className="w-full max-w-xs mx-auto glass-card rounded-xl overflow-hidden">
-              <div className="aspect-[3/4] bg-gray-100">
+              <div className="aspect-[3/2] bg-gray-100">
                 <img 
                   src={nextProfile.imgUrl} 
                   alt="Next profile" 

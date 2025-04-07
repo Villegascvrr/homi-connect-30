@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import CompatibilityBadge from '@/components/ui/CompatibilityBadge';
 import { Heart, X, MessageSquare, User, DollarSign, Calendar, Home, ShieldCheck, Clock } from 'lucide-react';
@@ -147,7 +148,7 @@ const MatchCard = ({
     );
   }
 
-  // Original full-size card design
+  // Original full-size card design - now with reduced height and more compact layout
   return (
     <div 
       className={`relative max-w-md w-full mx-auto glass-card overflow-hidden transition-all duration-300 shadow-lg ${
@@ -155,27 +156,27 @@ const MatchCard = ({
         swiping === 'left' ? 'animate-swipe-left' : ''
       }`}
     >
-      <div className="relative aspect-[4/5] overflow-hidden bg-gray-100">
+      <div className="relative aspect-[3/2] overflow-hidden bg-gray-100">
         <img
           src={imgUrl}
           alt={name}
           className="w-full h-full object-cover"
         />
         <div 
-          className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-6 text-white"
+          className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3 text-white"
         >
-          <h3 className="text-2xl font-bold">{name}, {age}</h3>
+          <h3 className="text-xl font-bold">{name}, {age}</h3>
           <p className="text-sm opacity-90 flex items-center gap-1">
             <Home size={14} />
             {location}
           </p>
         </div>
-        <div className="absolute top-4 right-4">
+        <div className="absolute top-2 right-2">
           <CompatibilityBadge percentage={compatibility} size="lg" />
         </div>
         
         {/* Verified badge */}
-        <div className="absolute top-4 left-4">
+        <div className="absolute top-2 left-2">
           <span className="flex items-center gap-1 bg-white/90 text-homi-purple text-xs px-2 py-1 rounded-full">
             <ShieldCheck size={12} />
             Verificado
@@ -183,8 +184,8 @@ const MatchCard = ({
         </div>
       </div>
       
-      <div className="p-6">
-        <div className="flex justify-between items-center mb-4">
+      <div className="p-3">
+        <div className="flex justify-between items-center mb-2">
           <button 
             onClick={() => setShowDetails(!showDetails)}
             className="text-sm font-medium text-homi-purple flex items-center gap-1 hover:underline"
@@ -209,13 +210,13 @@ const MatchCard = ({
           </div>
         </div>
         
-        <p className="mb-4">{bio}</p>
+        <p className={`${showDetails ? '' : 'line-clamp-2'} mb-3 text-sm`}>{bio}</p>
         
-        <div className="flex flex-wrap gap-2 mb-6">
+        <div className="flex flex-wrap gap-1 mb-3">
           {tags.map((tag) => (
             <span 
               key={tag.id} 
-              className="px-3 py-1 text-xs rounded-full bg-homi-ultraLightPurple text-homi-purple"
+              className="px-2 py-0.5 text-xs rounded-full bg-homi-ultraLightPurple text-homi-purple"
             >
               {tag.name}
             </span>
@@ -224,69 +225,69 @@ const MatchCard = ({
         
         {/* Additional details */}
         {showDetails && lifestyle && (
-          <div className="mb-6 animate-fade-in">
-            <h4 className="font-medium mb-2 text-sm">Estilo de vida</h4>
+          <div className="mb-3 animate-fade-in">
+            <h4 className="font-medium mb-1 text-xs">Estilo de vida</h4>
             <div className="grid grid-cols-2 gap-2">
-              <div className="flex items-center gap-2 text-sm">
-                <span className="w-8 h-8 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
-                  <Clock size={16} />
+              <div className="flex items-center gap-1 text-xs">
+                <span className="w-6 h-6 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
+                  <Clock size={14} />
                 </span>
                 <div>
-                  <span className="text-xs text-muted-foreground block">Horario</span>
-                  <span>{lifestyle.schedule}</span>
+                  <span className="text-xs text-muted-foreground">Horario</span>
+                  <span className="block">{lifestyle.schedule}</span>
                 </div>
               </div>
-              <div className="flex items-center gap-2 text-sm">
-                <span className="w-8 h-8 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
-                  <User size={16} />
+              <div className="flex items-center gap-1 text-xs">
+                <span className="w-6 h-6 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
+                  <User size={14} />
                 </span>
                 <div>
-                  <span className="text-xs text-muted-foreground block">Limpieza</span>
-                  <span>{lifestyle.cleanliness}</span>
+                  <span className="text-xs text-muted-foreground">Limpieza</span>
+                  <span className="block">{lifestyle.cleanliness}</span>
                 </div>
               </div>
-              <div className="flex items-center gap-2 text-sm">
-                <span className="w-8 h-8 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
-                  <MessageSquare size={16} />
+              <div className="flex items-center gap-1 text-xs">
+                <span className="w-6 h-6 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
+                  <MessageSquare size={14} />
                 </span>
                 <div>
-                  <span className="text-xs text-muted-foreground block">Invitados</span>
-                  <span>{lifestyle.guests}</span>
+                  <span className="text-xs text-muted-foreground">Invitados</span>
+                  <span className="block">{lifestyle.guests}</span>
                 </div>
               </div>
-              <div className="flex items-center gap-2 text-sm">
-                <span className="w-8 h-8 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
+              <div className="flex items-center gap-1 text-xs">
+                <span className="w-6 h-6 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
                   <span className="text-xs">🚬</span>
                 </span>
                 <div>
-                  <span className="text-xs text-muted-foreground block">Fumar</span>
-                  <span>{lifestyle.smoking}</span>
+                  <span className="text-xs text-muted-foreground">Fumar</span>
+                  <span className="block">{lifestyle.smoking}</span>
                 </div>
               </div>
             </div>
           </div>
         )}
         
-        <div className="flex justify-between gap-3 mt-4">
+        <div className="flex justify-between gap-2 mt-2">
           <button 
-            className="w-16 h-16 rounded-full bg-white border border-red-500 text-red-500 flex items-center justify-center shadow-md transition-all hover:bg-red-500 hover:text-white"
+            className="w-10 h-10 rounded-full bg-white border border-red-500 text-red-500 flex items-center justify-center shadow-md transition-all hover:bg-red-500 hover:text-white"
             onClick={() => handleSwipe('left')}
           >
-            <X size={28} />
+            <X size={20} />
           </button>
           
           <button 
-            className="w-12 h-12 rounded-full bg-white border border-gray-300 text-gray-500 flex items-center justify-center shadow-md transition-all hover:bg-gray-100"
+            className="w-8 h-8 rounded-full bg-white border border-gray-300 text-gray-500 flex items-center justify-center shadow-md transition-all hover:bg-gray-100"
             onClick={() => onView(id)}
           >
-            <User size={20} />
+            <User size={16} />
           </button>
           
           <button 
-            className="w-16 h-16 rounded-full bg-white border border-homi-purple text-homi-purple flex items-center justify-center shadow-md transition-all hover:bg-homi-purple hover:text-white"
+            className="w-10 h-10 rounded-full bg-white border border-homi-purple text-homi-purple flex items-center justify-center shadow-md transition-all hover:bg-homi-purple hover:text-white"
             onClick={() => handleSwipe('right')}
           >
-            <Heart size={28} />
+            <Heart size={20} />
           </button>
         </div>
       </div>
