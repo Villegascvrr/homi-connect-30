@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import SwipeCard from './SwipeCard';
 import { Button } from '@/components/ui/button';
@@ -206,7 +207,7 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
               </Button>
               <Button 
                 variant="outline" 
-                className="w-full text-white border-white hover:bg-white/20"
+                className="w-full text-white border-white hover:bg-white/20 hover:text-white focus:text-white"
                 onClick={() => setShowMatch(null)}
               >
                 Seguir buscando
