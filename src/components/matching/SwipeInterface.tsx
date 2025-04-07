@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import SwipeCard from './SwipeCard';
 import { Button } from '@/components/ui/button';
@@ -71,11 +72,12 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
   const [nextCardReady, setNextCardReady] = useState(false);
   const [removedProfiles, setRemovedProfiles] = useState<Set<string>>(new Set());
   
+  // Fix: Filter available profiles first, then check if we have any left
   const availableProfiles = updatedProfiles.filter(profile => !removedProfiles.has(profile.id));
-  const currentProfile = availableProfiles[currentIndex];
-  const nextProfile = availableProfiles[currentIndex + 1]; // Pre-load next profile
+  const currentProfile = availableProfiles.length > 0 ? availableProfiles[currentIndex] : null;
+  const nextProfile = availableProfiles.length > currentIndex + 1 ? availableProfiles[currentIndex + 1] : null;
   
-  const hasMoreProfiles = availableProfiles.length > 0;
+  const hasMoreProfiles = availableProfiles.length > 0 && currentProfile !== null;
   
   useEffect(() => {
     if (nextProfile) {
@@ -94,13 +96,19 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
   }, [currentIndex]);
   
   const handleSwipeAction = (action: 'like' | 'pass', id: string) => {
-    if (isTransitioning) return;
+    if (isTransitioning || !currentProfile) return;
     
     setIsTransitioning(true);
     setDirection(action === 'like' ? 'right' : 'left');
     
     setHistory(prev => [...prev, id]);
-    setRemovedProfiles(prev => new Set([...prev, id]));
+    
+    // Fix: Make sure we add the profile to removed profiles
+    setRemovedProfiles(prev => {
+      const newSet = new Set(prev);
+      newSet.add(id);
+      return newSet;
+    });
     
     setTimeout(() => {
       if (action === 'like') {
@@ -232,13 +240,15 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
           </div>
         )}
 
-        <SwipeCard
-          {...currentProfile}
-          onLike={(id) => handleSwipeAction('like', id)}
-          onPass={(id) => handleSwipeAction('pass', id)}
-          onView={onView}
-          onUndo={history.length > 0 ? handleUndo : undefined}
-        />
+        {currentProfile && (
+          <SwipeCard
+            {...currentProfile}
+            onLike={(id) => handleSwipeAction('like', id)}
+            onPass={(id) => handleSwipeAction('pass', id)}
+            onView={onView}
+            onUndo={history.length > 0 ? handleUndo : undefined}
+          />
+        )}
       </div>
       
       <div className="text-center mt-4 animate-fade-in">
