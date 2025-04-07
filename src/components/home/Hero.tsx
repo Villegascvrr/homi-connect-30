@@ -25,22 +25,24 @@ const Hero = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Clear any existing state first
-    setJustRegistered(false);
-    
-    // Only proceed if there's a user
+    // Solo procesar si hay un usuario autenticado
     if (user) {
       const urlParams = new URLSearchParams(window.location.search);
       const isRegistered = urlParams.get('registered') === 'true';
       
-      // Only set justRegistered if registered parameter is true
       if (isRegistered) {
-        console.log("Usuario recién registrado con email verificado, mostrando mensaje de bienvenida");
+        console.log("Usuario recién registrado, mostrando mensaje de bienvenida");
         setJustRegistered(true);
         
-        // Clean up URL parameters after processing
+        // Limpiar parámetros URL después de procesarlos
         window.history.replaceState({}, document.title, window.location.pathname);
+      } else {
+        // Si el usuario está autenticado pero no es recién registrado
+        setJustRegistered(false);
       }
+    } else {
+      // Si no hay usuario autenticado, no mostrar mensaje de bienvenida
+      setJustRegistered(false);
     }
   }, [user, location.search]);
 
@@ -76,7 +78,7 @@ const Hero = () => {
 
   // Determine what view to show based on user state
   const renderContent = () => {
-    // If user is logged in AND just registered, show welcome message with toast
+    // Si hay un usuario autenticado Y acaba de registrarse, mostrar mensaje de bienvenida
     if (user && justRegistered) {
       return <WelcomeMessage 
         firstName={user?.user_metadata?.firstName || user?.user_metadata?.first_name || user?.user_metadata?.name || user?.user_metadata?.full_name}
@@ -84,7 +86,7 @@ const Hero = () => {
       />;
     }
     
-    // If user is logged in but not just registered, show regular logged-in user view
+    // Si hay un usuario autenticado pero NO acaba de registrarse
     if (user && !justRegistered) {
       return (
         <>
@@ -134,7 +136,7 @@ const Hero = () => {
       );
     }
     
-    // Otherwise, show registration options for non-logged in users
+    // Para usuarios no autenticados, mostrar opciones de registro pero SIN mensaje de bienvenida personalizado
     return (
       <>
         <div className="inline-block px-4 py-1.5 mb-1 md:mb-2 rounded-full bg-homi-ultraLightPurple text-homi-purple text-xs md:text-sm font-medium animate-pulse-soft">
@@ -142,7 +144,7 @@ const Hero = () => {
         </div>
         
         <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6 animate-slide-up leading-tight px-2 my-0">
-          ¡Bienvenido a <span className="homi-gradient-text">HomiMatch</span>!
+          Encuentra tu <span className="homi-gradient-text">compañero ideal</span>
         </h1>
         
         <p className="text-base md:text-xl text-muted-foreground mb-6 max-w-2xl mx-auto px-2">HomiMatch utiliza un sistema de matching inteligente para conectarte con compañeros de piso que comparten tus intereses y estilo de vida.</p>

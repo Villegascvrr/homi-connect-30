@@ -17,18 +17,23 @@ const WelcomeMessage = ({ firstName, showWelcomeToast = false }: WelcomeMessageP
   const navigate = useNavigate();
   const { user } = useAuth();
   
-  // Only show welcome toast if explicitly requested via props AND user is authenticated
+  // Solo muestra el toast de bienvenida si se solicita explícitamente a través de props Y el usuario está autenticado
   useEffect(() => {
-    if (user && showWelcomeToast) {
-      toast({
-        title: "¡Bienvenido a HomiMatch!",
-        description: "Tu cuenta ha sido creada correctamente.",
-        duration: 6000,
-      });
+    if (showWelcomeToast && user) {
+      // Usar un pequeño timeout para asegurar que el componente esté completamente montado
+      const timer = setTimeout(() => {
+        toast({
+          title: "¡Bienvenido a HomiMatch!",
+          description: "Tu cuenta ha sido creada correctamente.",
+          duration: 6000,
+        });
+      }, 300);
+      
+      return () => clearTimeout(timer);
     }
   }, [user, toast, showWelcomeToast]);
   
-  // Use firstName from props or from user if available
+  // Usa el nombre de pila de props o del usuario si está disponible
   const displayName = firstName || (user?.user_metadata?.firstName || user?.user_metadata?.first_name || '');
 
   const handleInstagramClick = () => {
@@ -43,13 +48,13 @@ const WelcomeMessage = ({ firstName, showWelcomeToast = false }: WelcomeMessageP
   };
 
   const handleProfileClick = () => {
-    // Navigate to profile edit page with a flag in the URL to indicate it's a new user
+    // Navega a la página de edición de perfil con una bandera en la URL para indicar que es un nuevo usuario
     navigate('/profile/edit?new=true');
     
     toast({
       title: "Completa tu perfil",
       description: "Completa tu información para encontrar compañeros compatibles",
-      duration: 5000, // Longer duration for new users
+      duration: 5000, // Mayor duración para nuevos usuarios
     });
   }
 
