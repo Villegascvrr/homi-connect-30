@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
@@ -37,7 +36,6 @@ const MatchesList = ({ matches, onMessage, onUnmatch, onViewProfile }: MatchesLi
   const isMobile = useIsMobile();
   const [animatingCards, setAnimatingCards] = useState<Record<string, string>>({});
 
-  // Sort matches by most recent
   const sortedMatches = [...matches].sort((a, b) => 
     new Date(b.matchDate).getTime() - new Date(a.matchDate).getTime()
   );
@@ -45,10 +43,8 @@ const MatchesList = ({ matches, onMessage, onUnmatch, onViewProfile }: MatchesLi
   const handleUnmatch = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     
-    // Add animation before unmatch
     setAnimatingCards(prev => ({ ...prev, [id]: 'unmatch' }));
     
-    // Remove after animation completes
     setTimeout(() => {
       onUnmatch(id);
       toast({
@@ -62,10 +58,8 @@ const MatchesList = ({ matches, onMessage, onUnmatch, onViewProfile }: MatchesLi
   const handleMessage = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     
-    // Add animation before redirecting
     setAnimatingCards(prev => ({ ...prev, [id]: 'message' }));
     
-    // Navigate after animation completes
     setTimeout(() => {
       onMessage(id);
     }, 300);

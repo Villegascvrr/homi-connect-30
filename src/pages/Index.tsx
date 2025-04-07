@@ -1,3 +1,4 @@
+
 import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
@@ -19,7 +20,7 @@ const Index = () => {
       age: 23,
       location: 'Madrid',
       bio: 'Estudiante de Arquitectura. Me gusta leer, el arte y las noches tranquilas. Busco piso cerca de la universidad.',
-      imgUrl: 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7',
+      imgUrl: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1000',
       tags: [{
         id: 1,
         name: 'Ordenada'
@@ -37,7 +38,7 @@ const Index = () => {
       age: 25,
       location: 'Barcelona',
       bio: 'Desarrollador web, amante de la tecnología y los videojuegos. Busco un ambiente relajado donde pueda trabajar y descansar.',
-      imgUrl: 'https://images.unsplash.com/photo-1581092795360-fd1ca04f0952',
+      imgUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=1000',
       tags: [{
         id: 1,
         name: 'Tecnología'
@@ -55,7 +56,7 @@ const Index = () => {
       age: 22,
       location: 'Valencia',
       bio: 'Estudiante de Medicina. Me encanta cocinar y compartir momentos con amigos. Busco compañeros con intereses similares.',
-      imgUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158',
+      imgUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1000',
       tags: [{
         id: 6,
         name: 'Sociable'
