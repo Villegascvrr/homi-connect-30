@@ -22,7 +22,7 @@ import TermsPage from "./pages/TermsPage";
 import CookiesPage from "./pages/CookiesPage";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import AdminPage from "./pages/AdminPage";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 const queryClient = new QueryClient({
@@ -38,8 +38,22 @@ const queryClient = new QueryClient({
 });
 
 const App = () => {
+  // Use a key to force re-render of AuthProvider when auth state changes
+  const [authProviderKey, setAuthProviderKey] = useState('initial');
+  
   useEffect(() => {
     console.log("App fully initialized");
+    
+    // Set up listener for auth state changes to force AuthProvider re-initialization
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_OUT') {
+        console.log("Auth state change detected: SIGNED_OUT - Forcing AuthProvider reset");
+        setAuthProviderKey('signed-out-' + Date.now());
+      } else if (event === 'SIGNED_IN') {
+        console.log("Auth state change detected: SIGNED_IN - Forcing AuthProvider reset");
+        setAuthProviderKey('signed-in-' + Date.now());
+      }
+    });
     
     const prefetchBasicData = async () => {
       try {
@@ -77,11 +91,15 @@ const App = () => {
     };
     
     prefetchBasicData();
+    
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
   
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
+      <AuthProvider key={authProviderKey}>
         <TooltipProvider>
           <Toaster />
           <Sonner />

@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Session, User } from "@supabase/supabase-js";
@@ -67,11 +66,32 @@ const extractUsernameFromEmail = (email: string): string => {
   return username.replace(/[^a-zA-Z0-9_]/g, '').toLowerCase();
 };
 
+// Function to clean up all auth-related storage
+const cleanupAuthStorage = (): void => {
+  // Clear all auth-related localStorage items
+  localStorage.removeItem('homi-auth-session');
+  localStorage.removeItem('supabase.auth.token');
+  localStorage.removeItem('auth.token');
+
+  // Clear any additional auth data that might be stored
+  try {
+    const localStorageKeys = Object.keys(localStorage);
+    localStorageKeys.forEach(key => {
+      if (key.includes('supabase') || key.includes('auth') || key.includes('session')) {
+        localStorage.removeItem(key);
+      }
+    });
+  } catch (error) {
+    console.error("Error cleaning up localStorage:", error);
+  }
+};
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<ExtendedUser | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [isEmailVerified, setIsEmailVerified] = useState(true);
+  const [authKey, setAuthKey] = useState<string>('initial'); // Key to force re-render
   const { toast } = useToast();
 
   // Monitor and log session changes for debugging
@@ -84,7 +104,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [session]);
 
   useEffect(() => {
-    console.log("AuthProvider initializing");
+    console.log("AuthProvider initializing with key:", authKey);
     setLoading(true);
     
     // Set up the auth state change listener first
@@ -177,8 +197,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         } else {
           console.log("No session in auth state change");
           if (event === 'SIGNED_OUT') {
-            // Clear session from localStorage on sign out
-            localStorage.removeItem('homi-auth-session');
+            // Clear all auth-related storage
+            cleanupAuthStorage();
             setSession(null);
             setUser(null);
             setIsEmailVerified(false);
@@ -280,7 +300,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => {
       subscription.unsubscribe();
     };
-  }, []);
+  }, [authKey]); // Depend on authKey to force re-initialization
 
   const refreshUser = async () => {
     try {
@@ -507,6 +527,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       // First, clear local state. This ensures UI responds immediately.
       setLoading(true);
       
+      // Clear all auth-related storage before API call
+      cleanupAuthStorage();
+      
+      // Clear application state
+      setUser(null);
+      setSession(null);
+      
       // Tell Supabase to sign out
       const { error } = await supabase.auth.signOut();
       
@@ -518,23 +545,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           variant: "destructive",
         });
       } else {
-        // Clear application state
-        setUser(null);
-        setSession(null);
-        // Clear session from localStorage
-        localStorage.removeItem('homi-auth-session');
-        
         toast({
           title: "Sesión cerrada",
           description: "Has cerrado sesión correctamente.",
         });
         
-        // Force reload the page to ensure a clean state
-        // This helps reset any lingering state issues
-        console.log("Reloading page to ensure clean state");
-        setTimeout(() => {
-          window.location.href = '/';
-        }, 300);
+        // Force re-initialization of the AuthProvider by changing the authKey
+        setAuthKey('signed-out-' + Date.now());
+        
+        // Navigate to home page instead of reloading
+        window.location.href = '/';
       }
     } catch (error: any) {
       console.error("Exception during signout:", error);

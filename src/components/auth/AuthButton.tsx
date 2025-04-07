@@ -32,6 +32,7 @@ const AuthButton = () => {
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [sessionVerified, setSessionVerified] = useState(false);
   const [isGoogleSignIn, setIsGoogleSignIn] = useState(false);
+  const [renderKey, setRenderKey] = useState('initial'); // Key to force re-render
 
   // Add a short timeout to ensure we don't get stuck in loading state
   useEffect(() => {
@@ -41,6 +42,11 @@ const AuthButton = () => {
     
     return () => clearTimeout(timer);
   }, []);
+
+  // Force re-render on user change
+  useEffect(() => {
+    setRenderKey(`auth-button-${user ? 'logged-in' : 'logged-out'}-${Date.now()}`);
+  }, [user]);
 
   // Check if we have a session in localStorage but no user loaded
   useEffect(() => {
@@ -69,7 +75,7 @@ const AuthButton = () => {
     try {
       setIsSigningOut(true);
       await signOut();
-      // Page reload will be handled in the signOut function
+      // The page navigation will now be handled in the signOut function
     } catch (error) {
       console.error("Error during sign out:", error);
       setIsSigningOut(false);
@@ -94,11 +100,15 @@ const AuthButton = () => {
     );
   }
 
+  // Key for forcing re-render when auth state changes
+  const keyPrefix = user ? 'user-logged-in' : 'user-logged-out';
+  const componentKey = `${keyPrefix}-${renderKey}`;
+
   if (!user) {
     // For mobile view, show a stacked layout
     if (isMobile) {
       return (
-        <div className="flex flex-col space-y-2">
+        <div className="flex flex-col space-y-2" key={componentKey}>
           <Link
             to="/signin"
             className="block w-full text-center px-3 py-2 rounded-full text-base font-medium text-foreground hover:bg-muted"
@@ -135,7 +145,7 @@ const AuthButton = () => {
     
     // For desktop view, show buttons side by side
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2" key={componentKey}>
         <Button asChild variant="outline" size="sm" className="border-homi-purple text-homi-purple hover:bg-homi-purple/10 rounded-full">
           <Link to="/signin">Iniciar sesión</Link>
         </Button>
@@ -167,7 +177,7 @@ const AuthButton = () => {
 
   // User is logged in, show avatar dropdown
   return (
-    <DropdownMenu>
+    <DropdownMenu key={componentKey}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-9 w-9 rounded-full p-0">
           <Avatar className="h-9 w-9">

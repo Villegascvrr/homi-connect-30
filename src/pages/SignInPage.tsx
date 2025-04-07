@@ -49,9 +49,13 @@ const SignInPage = () => {
   const isMobile = useIsMobile();
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-  const { user, signIn } = useAuth();
   const [showEmailVerificationAlert, setShowEmailVerificationAlert] = useState(false);
   const [loginError, setLoginError] = useState('');
+  
+  // Add a key to force re-render of the component on route changes
+  const [pageKey] = useState(`signin-${Date.now()}`);
+  
+  const { user, signIn } = useAuth();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -83,8 +87,11 @@ const SignInPage = () => {
     setLoginError('');
   }, [location, navigate, toast]);
   
+  // Use multiple useEffects for different concerns
   useEffect(() => {
+    console.log("SignInPage: Checking user state:", user ? "User exists" : "No user");
     if (user) {
+      console.log("SignInPage: User is authenticated, redirecting to home");
       navigate('/');
     }
   }, [user, navigate]);
@@ -115,12 +122,14 @@ const SignInPage = () => {
     }
   };
 
+  // Early return if user is already authenticated
   if (user) {
+    console.log("SignInPage: Early return due to authenticated user");
     return null;
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col" key={pageKey}>
       <Navbar />
       
       <main className="flex-grow pt-20 pb-12">
