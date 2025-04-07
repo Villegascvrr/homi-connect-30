@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -11,7 +10,6 @@ import { CheckCircle2, ArrowRight, User, Mail, AtSign, Lock } from 'lucide-react
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 const formSchema = z.object({
   firstName: z.string().min(2, {
@@ -38,7 +36,6 @@ const formSchema = z.object({
 const EmailSignup = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [needsVerification, setNeedsVerification] = useState(false);
   const [isWelcomeShown, setIsWelcomeShown] = useState(false);
   const [isSigningWithGoogle, setIsSigningWithGoogle] = useState(false);
   const { toast } = useToast();
@@ -105,8 +102,8 @@ const EmailSignup = () => {
       if (result.success) {
         console.log("Registration successful");
         
-        // First show verification needed message
-        setNeedsVerification(true);
+        // Show welcome message and redirect
+        setIsWelcomeShown(true);
         setIsSubmitted(true);
         
         // Force manual session storage with redundancy
@@ -129,13 +126,17 @@ const EmailSignup = () => {
           console.error("Error storing session:", err);
         }
         
-        // Show verification message
+        // Show success message
         toast({
           title: "Cuenta creada con éxito",
-          description: "Por favor, revisa tu correo electrónico para verificar tu cuenta.",
+          description: "Ya puedes comenzar a usar tu cuenta.",
           variant: "default",
-          duration: 8000,
         });
+        
+        // Redirect to home page after short delay
+        setTimeout(() => {
+          navigate('/?registered=true');
+        }, 2000);
       } else {
         toast({
           title: "Error",
@@ -155,35 +156,6 @@ const EmailSignup = () => {
     }
   };
 
-  if (isSubmitted && needsVerification) {
-    return <div className="flex flex-col items-center justify-center p-8 bg-gradient-to-br from-homi-ultraLightPurple to-white dark:from-homi-purple/20 dark:to-background rounded-xl border border-homi-purple/20 shadow-md animate-fade-in">
-        <div className="h-16 w-16 bg-orange-100 rounded-full flex items-center justify-center text-orange-500 mb-4">
-          <Mail className="h-8 w-8" />
-        </div>
-        <h3 className="text-2xl font-bold mb-3">¡Verifica tu correo electrónico!</h3>
-        <p className="text-center text-lg mb-4">
-          Hemos enviado un enlace de verificación a tu correo electrónico.
-        </p>
-        <Alert className="mb-4 max-w-md">
-          <AlertTitle>Importante:</AlertTitle>
-          <AlertDescription>
-            Debes verificar tu correo electrónico antes de poder iniciar sesión en Homi. Por favor, revisa tu bandeja de entrada.
-          </AlertDescription>
-        </Alert>
-        <div className="text-sm text-muted-foreground text-center">
-          <p>Hemos enviado un correo de verificación a <span className="font-semibold">{form.getValues('email')}</span></p>
-          <p className="mt-2">Una vez verificado, podrás iniciar sesión con tus credenciales.</p>
-          <Button 
-            variant="link" 
-            onClick={() => navigate('/signin')} 
-            className="mt-4"
-          >
-            Ir a iniciar sesión
-          </Button>
-        </div>
-      </div>;
-  }
-
   if (isSubmitted && isWelcomeShown) {
     return <div className="flex flex-col items-center justify-center p-8 bg-gradient-to-br from-homi-ultraLightPurple to-white dark:from-homi-purple/20 dark:to-background rounded-xl border border-homi-purple/20 shadow-md animate-fade-in">
         <CheckCircle2 className="h-16 w-16 text-green-500 mb-4" />
@@ -193,6 +165,12 @@ const EmailSignup = () => {
         </p>
         <div className="text-sm text-muted-foreground">
           <p>Ya puedes comenzar a usar todas las funcionalidades de Homi.</p>
+          <Button 
+            onClick={() => navigate('/')} 
+            className="mt-4"
+          >
+            Ir al inicio
+          </Button>
         </div>
       </div>;
   }

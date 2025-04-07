@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -124,10 +123,8 @@ const RegisterPage = () => {
       
       console.log("Registration successful, redirecting to home page with registered=true param");
       
-      // Better approach: short timeout to ensure state updates before redirect
-      setTimeout(() => {
-        window.location.replace('/?registered=true');
-      }, 100);
+      // Redirigir al usuario a la página principal directamente
+      navigate('/?registered=true');
     } catch (error: any) {
       console.error("Error during registration:", error);
       
