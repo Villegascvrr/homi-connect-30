@@ -112,6 +112,7 @@ export const useFetchProfiles = () => {
             description: 'No se pudieron cargar los perfiles',
             variant: 'destructive'
           });
+          setLoading(false);
           return;
         }
         
@@ -171,7 +172,7 @@ export const useProfileMatches = () => {
 
   useEffect(() => {
     const generateMatches = async () => {
-      if (profilesLoading || !profiles.length) {
+      if (profilesLoading) {
         return;
       }
 
@@ -190,6 +191,7 @@ export const useProfileMatches = () => {
           description: 'No se pudieron generar matches',
           variant: 'destructive'
         });
+        setLoading(false);
       }
     };
 
