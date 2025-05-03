@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import MatchCard from '@/components/matching/MatchCard';
@@ -12,8 +12,10 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Filter, UserRound, LayoutGrid, SwatchBook, Heart, Users, Settings } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import DemoBanner from '@/components/layout/DemoBanner';
+import { useProfileMatches, mapProfileToMatchProfile, MatchProfile } from '@/hooks/use-profiles';
+import { useAuth } from '@/context/AuthContext';
 
 type MockProfile = {
   id: number;
@@ -207,71 +209,26 @@ interface MatchingPageProps {
 const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilters, setActiveFilters] = useState<FilterValues | null>(null);
-  const [filteredProfiles, setFilteredProfiles] = useState<MockProfile[]>(mockProfiles);
-  const [originalFilteredProfiles, setOriginalFilteredProfiles] = useState<MockProfile[]>([]);
+  const [filteredProfiles, setFilteredProfiles] = useState<MatchProfile[]>([]);
+  const [originalFilteredProfiles, setOriginalFilteredProfiles] = useState<MatchProfile[]>([]);
   const [viewMode, setViewMode] = useState<'grid' | 'swipe'>('grid');
   const [activeTab, setActiveTab] = useState<'discover' | 'matches'>('discover');
   const { toast } = useToast();
   const [openSearchFilters, setOpenSearchFilters] = useState(false);
   const [openPreferences, setOpenPreferences] = useState(false);
   const isMobile = useIsMobile();
-  const [matches, setMatches] = useState([{
-    id: "5",
-    name: "Elena Fernández",
-    age: 25,
-    location: "Madrid",
-    imgUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=1976&auto=format&fit=crop&ixlib=rb-4.0.3",
-    compatibility: 91,
-    matchDate: "2025-03-18T14:30:00Z",
-    messageCount: 5,
-    tags: [{
-      id: 1,
-      name: "música"
-    }, {
-      id: 2,
-      name: "yoga"
-    }, {
-      id: 3,
-      name: "cocina"
-    }]
-  }, {
-    id: "6",
-    name: "Diego Morales",
-    age: 27,
-    location: "Barcelona",
-    imgUrl: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3",
-    compatibility: 87,
-    matchDate: "2025-03-15T10:15:00Z",
-    tags: [{
-      id: 1,
-      name: "gaming"
-    }, {
-      id: 2,
-      name: "tecnología"
-    }, {
-      id: 3,
-      name: "cine"
-    }]
-  }, {
-    id: "7",
-    name: "Lucía Martínez",
-    age: 24,
-    location: "Valencia",
-    imgUrl: "https://images.unsplash.com/photo-1519699047748-de8e457a634e?q=80&w=1980&auto=format&fit=crop&ixlib=rb-4.0.3",
-    compatibility: 82,
-    matchDate: "2025-03-10T18:45:00Z",
-    messageCount: 2,
-    tags: [{
-      id: 1,
-      name: "deporte"
-    }, {
-      id: 2,
-      name: "viajes"
-    }, {
-      id: 3,
-      name: "fotografía"
-    }]
-  }]);
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { matches: profileMatches, loading: matchesLoading } = useProfileMatches();
+  const [matches, setMatches] = useState<any[]>([]);
+
+  // Respond to changes in real profile data
+  useEffect(() => {
+    if (!matchesLoading) {
+      setFilteredProfiles(profileMatches);
+      setOriginalFilteredProfiles(profileMatches);
+    }
+  }, [profileMatches, matchesLoading]);
 
   React.useEffect(() => {
     if (isMobile) {
@@ -332,7 +289,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
     );
   };
 
-  const calculateSimilarityScore = (profile: MockProfile, filters: FilterValues) => {
+  const calculateSimilarityScore = (profile: MatchProfile, filters: FilterValues) => {
     let score = 0;
     let possiblePoints = 0;
     if (filters.ubicacion) {
@@ -426,56 +383,57 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
   };
 
   const applyFiltersAndSearch = (query: string, filters: FilterValues | null) => {
-    let exactMatches: MockProfile[] = [];
-    let similarProfiles: {
-      profile: MockProfile;
-      score: number;
-    }[] = [];
-    let results = [...mockProfiles];
+    let results = [...profileMatches];
 
     if (query.trim()) {
       const lowerCaseQuery = query.toLowerCase();
-      results = results.filter(profile => profile.name.toLowerCase().includes(lowerCaseQuery) || profile.username.toLowerCase().includes(lowerCaseQuery) || profile.bio.toLowerCase().includes(lowerCaseQuery) || profile.location.toLowerCase().includes(lowerCaseQuery) || profile.occupation.toLowerCase().includes(lowerCaseQuery));
+      results = results.filter(profile => 
+        profile.name.toLowerCase().includes(lowerCaseQuery) || 
+        profile.username.toLowerCase().includes(lowerCaseQuery) || 
+        profile.bio.toLowerCase().includes(lowerCaseQuery) || 
+        profile.location.toLowerCase().includes(lowerCaseQuery) || 
+        profile.occupation.toLowerCase().includes(lowerCaseQuery)
+      );
     }
 
     if (filters) {
-      similarProfiles = results.map(profile => ({
-        profile,
-        score: calculateSimilarityScore(profile, filters)
-      }));
-
-      let filteredResults = [...results];
+      let exactMatches: MatchProfile[] = [];
+      let similarProfiles: {
+        profile: MatchProfile;
+        score: number;
+      }[] = [];
+      
       if (filters.ubicacion) {
-        filteredResults = filteredResults.filter(profile => profile.location === filters.ubicacion);
+        results = results.filter(profile => profile.location === filters.ubicacion);
       }
       if (filters.presupuesto) {
         const [min, max] = filters.presupuesto;
-        filteredResults = filteredResults.filter(profile => profile.budget && profile.budget.min <= max && profile.budget.max >= min);
+        results = results.filter(profile => profile.budget && profile.budget.min <= max && profile.budget.max >= min);
       }
       if (filters.rangoEdad) {
         if (filters.rangoEdad === '18-25') {
-          filteredResults = filteredResults.filter(profile => profile.age >= 18 && profile.age <= 25);
+          results = results.filter(profile => profile.age >= 18 && profile.age <= 25);
         } else if (filters.rangoEdad === '26-30') {
-          filteredResults = filteredResults.filter(profile => profile.age >= 26 && profile.age <= 30);
+          results = results.filter(profile => profile.age >= 26 && profile.age <= 30);
         } else if (filters.rangoEdad === '31-40') {
-          filteredResults = filteredResults.filter(profile => profile.age >= 31 && profile.age <= 40);
+          results = results.filter(profile => profile.age >= 31 && profile.age <= 40);
         } else if (filters.rangoEdad === '41+') {
-          filteredResults = filteredResults.filter(profile => profile.age >= 41);
+          results = results.filter(profile => profile.age >= 41);
         }
       }
       if (filters.estiloVida && filters.estiloVida.length > 0) {
         const estiloVidaTerms = filters.estiloVida.map(ev => ev.toLowerCase());
-        filteredResults = filteredResults.filter(profile => {
+        results = results.filter(profile => {
           const profileLifestyle = profile.lifestyle;
           const hasMatchingLifestyle = estiloVidaTerms.includes('ordenado') && profileLifestyle.cleanliness === "Muy ordenada" || estiloVidaTerms.includes('tranquilo') && profileLifestyle.noise === "Tranquila" || estiloVidaTerms.includes('nocturno') && profileLifestyle.schedule === "nocturno" || estiloVidaTerms.includes('madrugador') && profileLifestyle.schedule === "diurno" || estiloVidaTerms.includes('no-fumador') && profileLifestyle.smoking === "No";
           return hasMatchingLifestyle;
         });
       }
       if (filters.intereses && filters.intereses.length > 0) {
-        filteredResults = filteredResults.filter(profile => filters.intereses!.some(interest => profile.interests.includes(interest)));
+        results = results.filter(profile => filters.intereses!.some(interest => profile.interests.includes(interest)));
       }
       if (filters.nivelLimpieza) {
-        filteredResults = filteredResults.filter(profile => {
+        results = results.filter(profile => {
           const lifestyle = profile.lifestyle;
           if (filters.nivelLimpieza === 'alta') {
             return lifestyle.cleanliness === "Muy ordenada";
@@ -487,7 +445,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
         });
       }
       if (filters.nivelRuido) {
-        filteredResults = filteredResults.filter(profile => {
+        results = results.filter(profile => {
           const lifestyle = profile.lifestyle;
           if (filters.nivelRuido === 'bajo') {
             return lifestyle.noise === "Tranquila";
@@ -499,7 +457,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
         });
       }
       if (filters.horarioHabitual) {
-        filteredResults = filteredResults.filter(profile => {
+        results = results.filter(profile => {
           const lifestyle = profile.lifestyle;
           if (filters.horarioHabitual === 'madrugador') {
             return lifestyle.schedule === "diurno";
@@ -511,7 +469,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
         });
       }
       if (filters.invitados) {
-        filteredResults = filteredResults.filter(profile => {
+        results = results.filter(profile => {
           const lifestyle = profile.lifestyle;
           if (filters.invitados === 'frecuente') {
             return lifestyle.guests === "Frecuentemente";
@@ -523,7 +481,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
         });
       }
       if (filters.fumar) {
-        filteredResults = filteredResults.filter(profile => {
+        results = results.filter(profile => {
           const lifestyle = profile.lifestyle;
           if (filters.fumar === 'no') {
             return lifestyle.smoking === "No";
@@ -532,7 +490,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
           }
         });
       }
-      exactMatches = filteredResults;
+      exactMatches = results;
 
       if (exactMatches.length === 0 && similarProfiles.length > 0) {
         similarProfiles.sort((a, b) => b.score - a.score);
@@ -554,6 +512,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
 
     setOriginalFilteredProfiles(results);
     setFilteredProfiles(results);
+    
     if (activeFilters !== null || query.trim()) {
       toast({
         title: `${results.length} perfiles encontrados`,
@@ -567,7 +526,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
     handleAction(
       () => {
         if (!matches.some(match => match.id === id)) {
-          const profileToMatch = mockProfiles.find(p => p.id.toString() === id);
+          const profileToMatch = profileMatches.find(p => p.id.toString() === id);
           if (profileToMatch) {
             const newMatch = {
               id: profileToMatch.id.toString(),
@@ -623,11 +582,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
   const handleView = (id: string) => {
     handleAction(
       () => {
-        toast({
-          title: "Ver perfil",
-          description: "Viendo el perfil completo",
-          variant: "default"
-        });
+        navigate(`/profiles/${id}`);
       },
       "Función de ver perfil"
     );
@@ -645,11 +600,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
   const handleMessage = (id: string) => {
     handleAction(
       () => {
-        toast({
-          title: "Abrir chat",
-          description: "Redirigiendo al chat con este usuario",
-          variant: "default"
-        });
+        navigate('/chat');
       },
       "Función de mensaje"
     );
@@ -658,15 +609,26 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
   const handleViewProfile = (id: string) => {
     handleAction(
       () => {
-        toast({
-          title: "Ver perfil completo",
-          description: "Viendo el perfil completo del usuario",
-          variant: "default"
-        });
+        navigate(`/profiles/${id}`);
       },
       "Función de ver perfil completo"
     );
   };
+
+  if (matchesLoading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <main className="flex-grow pt-0 pb-12 bg-transparent flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin h-8 w-8 border-t-2 border-homi-purple rounded-full mx-auto mb-4"></div>
+            <p>Cargando perfiles...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -806,9 +768,9 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                           <MatchCard 
                             key={profile.id} 
                             {...cardProps} 
-                            onLike={handleLike} 
-                            onPass={handlePass} 
-                            onView={handleView} 
+                            onLike={() => handleLike(profile.id)} 
+                            onPass={() => handlePass(profile.id)} 
+                            onView={() => handleView(profile.id)} 
                             compact={isMobile} 
                           />
                         );

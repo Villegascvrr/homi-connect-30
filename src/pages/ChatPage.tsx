@@ -5,144 +5,52 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import ChatList from '@/components/chat/ChatList';
 import ChatWindow from '@/components/chat/ChatWindow';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/AuthContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import DemoBanner from '@/components/layout/DemoBanner';
 import { X } from 'lucide-react';
+import { useProfileMatches, MatchProfile } from '@/hooks/use-profiles';
 
-// Mock data for chat matches
-const mockMatches = [
-  {
-    id: "1",
-    name: "Laura García",
-    lastMessage: "¿Has visto el piso de Chamberí?",
-    timestamp: "2025-05-02T14:30:00Z",
-    unread: 2,
-    online: true,
-    typing: false,
-    imgUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3"
-  },
-  {
-    id: "2",
-    name: "Carlos Martínez",
-    lastMessage: "Perfecto, hablamos mañana entonces",
-    timestamp: "2025-05-02T10:15:00Z",
-    unread: 0,
-    online: true,
-    typing: true,
-    imgUrl: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3"
-  },
-  {
-    id: "3",
-    name: "Ana López",
-    lastMessage: "Me interesa compartir piso contigo",
-    timestamp: "2025-05-01T18:45:00Z",
-    unread: 1,
-    online: false,
-    typing: false,
-    imgUrl: "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1961&auto=format&fit=crop&ixlib=rb-4.0.3"
-  },
-  {
-    id: "4",
-    name: "Miguel Sánchez",
-    lastMessage: "¿Tienes mascotas?",
-    timestamp: "2025-04-30T09:20:00Z",
-    unread: 0,
-    online: false,
-    typing: false,
-    imgUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3"
+// Mapeamos perfiles reales a los chats
+const mapProfileToChat = (profile: MatchProfile) => {
+  return {
+    id: profile.id,
+    name: profile.name,
+    lastMessage: "Hola! ¿Cómo estás?",
+    timestamp: new Date().toISOString(),
+    unread: Math.round(Math.random()), // 0 o 1
+    online: Math.random() > 0.5, // 50% probabilidad
+    typing: Math.random() > 0.8, // 20% probabilidad
+    imgUrl: profile.profileImage
+  };
+};
+
+// Mock messages para cada chat (usamos IDs reales)
+const createMockMessagesForChat = (chatId: string) => {
+  const messageCount = Math.floor(Math.random() * 5) + 1; // 1-5 mensajes
+  const messages = [];
+  
+  let timestamp = new Date();
+  timestamp.setMinutes(timestamp.getMinutes() - messageCount * 5); // Espaciamos los mensajes
+  
+  for (let i = 0; i < messageCount; i++) {
+    const isUserMessage = i % 2 === 0;
+    
+    messages.push({
+      id: `${chatId}-${i}`,
+      senderId: isUserMessage ? "me" : "other",
+      text: isUserMessage ? 
+        "Hola! Me interesa tu perfil. ¿Podríamos hablar sobre compartir piso?" :
+        "¡Hola! Claro, me encantaría. Cuéntame más sobre ti y lo que buscas.",
+      timestamp: timestamp.toISOString(),
+      read: true
+    });
+    
+    timestamp.setMinutes(timestamp.getMinutes() + 5);
   }
-];
-
-// Mock messages for chats
-const mockMessages = {
-  "1": [
-    {
-      id: "1-1",
-      senderId: "other",
-      text: "Hola! Vi tu perfil y creo que seríamos buenos compañeros de piso. ¿Has visto el piso de Chamberí?",
-      timestamp: "2025-05-02T14:28:00Z",
-      read: true
-    },
-    {
-      id: "1-2",
-      senderId: "me",
-      text: "Hola Laura! Sí, me parece muy interesante. ¿Te gustaría quedar para verlo juntos?",
-      timestamp: "2025-05-02T14:30:00Z",
-      read: false
-    }
-  ],
-  "2": [
-    {
-      id: "2-1",
-      senderId: "me",
-      text: "Hola Carlos, me interesa tu anuncio. ¿El piso está disponible desde junio?",
-      timestamp: "2025-05-02T10:10:00Z",
-      read: true
-    },
-    {
-      id: "2-2",
-      senderId: "other",
-      text: "Hola! Sí, está disponible desde el 1 de junio. ¿Te gustaría verlo?",
-      timestamp: "2025-05-02T10:12:00Z",
-      read: true
-    },
-    {
-      id: "2-3",
-      senderId: "me",
-      text: "Genial, ¿podríamos quedar el miércoles?",
-      timestamp: "2025-05-02T10:13:00Z",
-      read: true
-    },
-    {
-      id: "2-4",
-      senderId: "other",
-      text: "Perfecto, hablamos mañana entonces",
-      timestamp: "2025-05-02T10:15:00Z",
-      read: true
-    }
-  ],
-  "3": [
-    {
-      id: "3-1",
-      senderId: "other",
-      text: "Hola! Me ha gustado mucho tu perfil",
-      timestamp: "2025-05-01T18:40:00Z",
-      read: true
-    },
-    {
-      id: "3-2",
-      senderId: "other",
-      text: "Me interesa compartir piso contigo",
-      timestamp: "2025-05-01T18:45:00Z",
-      read: false
-    }
-  ],
-  "4": [
-    {
-      id: "4-1",
-      senderId: "other",
-      text: "Hola! He visto que buscas compañero en Madrid centro",
-      timestamp: "2025-04-30T09:15:00Z",
-      read: true
-    },
-    {
-      id: "4-2",
-      senderId: "me",
-      text: "Hola Miguel, sí, estoy buscando. ¿Tienes alguna preferencia de zona?",
-      timestamp: "2025-04-30T09:18:00Z",
-      read: true
-    },
-    {
-      id: "4-3",
-      senderId: "other",
-      text: "¿Tienes mascotas?",
-      timestamp: "2025-04-30T09:20:00Z",
-      read: true
-    }
-  ]
+  
+  return messages;
 };
 
 interface ChatPageProps {
@@ -154,10 +62,28 @@ const ChatPage = ({ isPreview = false }: ChatPageProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
   const isMobile = useIsMobile();
+  const { matches: profileMatches, loading: matchesLoading } = useProfileMatches();
   
+  const [matches, setMatches] = useState<any[]>([]);
+  const [mockMessages, setMockMessages] = useState<{[key: string]: any[]}>({});
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
-  const [matches, setMatches] = useState(mockMatches);
   const [showMobileChat, setShowMobileChat] = useState(false);
+  
+  // Convertimos perfiles reales a formato de chat
+  useEffect(() => {
+    if (!matchesLoading && profileMatches.length > 0) {
+      // Tomamos los primeros 4 perfiles para simular chats activos
+      const chatMatches = profileMatches.slice(0, 4).map(mapProfileToChat);
+      setMatches(chatMatches);
+      
+      // Generamos mensajes mock para cada chat
+      const messagesMap: {[key: string]: any[]} = {};
+      chatMatches.forEach(chat => {
+        messagesMap[chat.id] = createMockMessagesForChat(chat.id);
+      });
+      setMockMessages(messagesMap);
+    }
+  }, [profileMatches, matchesLoading]);
   
   // Select first chat by default on desktop
   useEffect(() => {
@@ -188,7 +114,22 @@ const ChatPage = ({ isPreview = false }: ChatPageProps) => {
   
   // Get selected chat data
   const selectedChat = matches.find(match => match.id === selectedChatId);
-  const selectedChatMessages = selectedChatId ? mockMessages[selectedChatId as keyof typeof mockMessages] : [];
+  const selectedChatMessages = selectedChatId ? mockMessages[selectedChatId] || [] : [];
+
+  if (matchesLoading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <main className="flex-grow bg-background flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin h-8 w-8 border-t-2 border-homi-purple rounded-full mx-auto mb-4"></div>
+            <p>Cargando conversaciones...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">

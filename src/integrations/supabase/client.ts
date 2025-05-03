@@ -88,7 +88,7 @@ export const signInWithGoogleOAuth = async (): Promise<void> => {
           access_type: 'offline',
           prompt: 'consent',
         },
-        // Important: Fix the type for scopes to match Supabase API
+        // Fix: Remove string type which was causing the TypeScript error
         scopes: 'email profile',
         skipBrowserRedirect: false,
       },
