@@ -1,19 +1,24 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import ChatList from '@/components/chat/ChatList';
 import ChatWindow from '@/components/chat/ChatWindow';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/AuthContext';
+import { useIsMobile } from '@/hooks/use-mobile';
+import DemoBanner from '@/components/layout/DemoBanner';
+import { X } from 'lucide-react';
 
-// Define a mock chat match for demo purposes
-const mockChatMatches = [
+// Mock data for chat matches
+const mockMatches = [
   {
     id: "1",
     name: "Laura García",
-    lastMessage: "¡Hola! Vi tu perfil y creo que podríamos ser buenos compañeros de piso.",
-    timestamp: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
+    lastMessage: "¿Has visto el piso de Chamberí?",
+    timestamp: "2025-05-02T14:30:00Z",
     unread: 2,
     online: true,
     typing: false,
@@ -22,8 +27,8 @@ const mockChatMatches = [
   {
     id: "2",
     name: "Carlos Martínez",
-    lastMessage: "Me interesa el piso que comentaste cerca de la universidad.",
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 3).toISOString(),
+    lastMessage: "Perfecto, hablamos mañana entonces",
+    timestamp: "2025-05-02T10:15:00Z",
     unread: 0,
     online: true,
     typing: true,
@@ -32,9 +37,9 @@ const mockChatMatches = [
   {
     id: "3",
     name: "Ana López",
-    lastMessage: "¿Cuándo podríamos quedar para ver el piso?",
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 12).toISOString(),
-    unread: 0,
+    lastMessage: "Me interesa compartir piso contigo",
+    timestamp: "2025-05-01T18:45:00Z",
+    unread: 1,
     online: false,
     typing: false,
     imgUrl: "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1961&auto=format&fit=crop&ixlib=rb-4.0.3"
@@ -42,93 +47,100 @@ const mockChatMatches = [
   {
     id: "4",
     name: "Miguel Sánchez",
-    lastMessage: "Perfecto, entonces nos vemos mañana a las 6.",
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
-    unread: 1,
+    lastMessage: "¿Tienes mascotas?",
+    timestamp: "2025-04-30T09:20:00Z",
+    unread: 0,
     online: false,
     typing: false,
     imgUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3"
   }
 ];
 
-// Define sample messages for each chat
+// Mock messages for chats
 const mockMessages = {
   "1": [
     {
-      id: '1-1',
-      senderId: 'other',
-      text: '¡Hola! Vi tu perfil y creo que podríamos ser buenos compañeros de piso. ¿Buscas algo cerca de la universidad?',
-      timestamp: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
-      read: true
-    }, 
-    {
-      id: '1-2',
-      senderId: 'me',
-      text: 'Hola Laura, sí estoy buscando cerca del campus. Me encantaría hablar más sobre ello.',
-      timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
+      id: "1-1",
+      senderId: "other",
+      text: "Hola! Vi tu perfil y creo que seríamos buenos compañeros de piso. ¿Has visto el piso de Chamberí?",
+      timestamp: "2025-05-02T14:28:00Z",
       read: true
     },
     {
-      id: '1-3',
-      senderId: 'other',
-      text: '¡Genial! Tengo un piso compartido a 10 minutos de la facultad. Es amplio y luminoso.',
-      timestamp: new Date(Date.now() - 1000 * 60 * 20).toISOString(),
+      id: "1-2",
+      senderId: "me",
+      text: "Hola Laura! Sí, me parece muy interesante. ¿Te gustaría quedar para verlo juntos?",
+      timestamp: "2025-05-02T14:30:00Z",
       read: false
     }
   ],
   "2": [
     {
-      id: '2-1',
-      senderId: 'other',
-      text: 'Me interesa el piso que comentaste cerca de la universidad. ¿Sigue disponible?',
-      timestamp: new Date(Date.now() - 1000 * 60 * 180).toISOString(),
+      id: "2-1",
+      senderId: "me",
+      text: "Hola Carlos, me interesa tu anuncio. ¿El piso está disponible desde junio?",
+      timestamp: "2025-05-02T10:10:00Z",
       read: true
     },
     {
-      id: '2-2',
-      senderId: 'me',
-      text: 'Sí, aún está disponible. ¿Te gustaría verlo esta semana?',
-      timestamp: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
+      id: "2-2",
+      senderId: "other",
+      text: "Hola! Sí, está disponible desde el 1 de junio. ¿Te gustaría verlo?",
+      timestamp: "2025-05-02T10:12:00Z",
+      read: true
+    },
+    {
+      id: "2-3",
+      senderId: "me",
+      text: "Genial, ¿podríamos quedar el miércoles?",
+      timestamp: "2025-05-02T10:13:00Z",
+      read: true
+    },
+    {
+      id: "2-4",
+      senderId: "other",
+      text: "Perfecto, hablamos mañana entonces",
+      timestamp: "2025-05-02T10:15:00Z",
       read: true
     }
   ],
   "3": [
     {
-      id: '3-1',
-      senderId: 'me',
-      text: 'Hola Ana, vi que estás buscando compañeros de piso en la zona centro.',
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 13).toISOString(),
+      id: "3-1",
+      senderId: "other",
+      text: "Hola! Me ha gustado mucho tu perfil",
+      timestamp: "2025-05-01T18:40:00Z",
       read: true
     },
     {
-      id: '3-2',
-      senderId: 'other',
-      text: 'Sí, estoy buscando en esa zona. ¿Cuándo podríamos quedar para ver el piso?',
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 12).toISOString(),
-      read: true
+      id: "3-2",
+      senderId: "other",
+      text: "Me interesa compartir piso contigo",
+      timestamp: "2025-05-01T18:45:00Z",
+      read: false
     }
   ],
   "4": [
     {
-      id: '4-1',
-      senderId: 'other',
-      text: '¿Te parece bien quedar mañana para ver el piso?',
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 25).toISOString(),
+      id: "4-1",
+      senderId: "other",
+      text: "Hola! He visto que buscas compañero en Madrid centro",
+      timestamp: "2025-04-30T09:15:00Z",
       read: true
     },
     {
-      id: '4-2',
-      senderId: 'me',
-      text: 'Sí, perfecto. ¿A las 6 de la tarde?',
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24.5).toISOString(),
+      id: "4-2",
+      senderId: "me",
+      text: "Hola Miguel, sí, estoy buscando. ¿Tienes alguna preferencia de zona?",
+      timestamp: "2025-04-30T09:18:00Z",
       read: true
     },
     {
-      id: '4-3',
-      senderId: 'other',
-      text: 'Perfecto, entonces nos vemos mañana a las 6.',
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
-      read: false
+      id: "4-3",
+      senderId: "other",
+      text: "¿Tienes mascotas?",
+      timestamp: "2025-04-30T09:20:00Z",
+      read: true
     }
   ]
 };
@@ -138,78 +150,135 @@ interface ChatPageProps {
 }
 
 const ChatPage = ({ isPreview = false }: ChatPageProps) => {
-  const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
+  const navigate = useNavigate();
   const { user } = useAuth();
-  const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
+  const isMobile = useIsMobile();
   
+  const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
+  const [matches, setMatches] = useState(mockMatches);
+  const [showMobileChat, setShowMobileChat] = useState(false);
+  
+  // Select first chat by default on desktop
   useEffect(() => {
-    // Set initial selected chat
-    if (mockChatMatches.length > 0 && !selectedChatId) {
-      setSelectedChatId(mockChatMatches[0].id);
+    if (!isMobile && matches.length > 0 && !selectedChatId) {
+      setSelectedChatId(matches[0].id);
     }
-    
-    // Force loading to complete after a short delay
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-      console.log("Chat page loaded successfully");
-    }, 300);
-    
-    return () => clearTimeout(timer);
-  }, [selectedChatId]);
+  }, [isMobile, matches, selectedChatId]);
   
   const handleSelectChat = (id: string) => {
-    if (id === selectedChatId) return; // Skip if already selected
     setSelectedChatId(id);
-    console.log("Selected chat changed to:", id);
+    
+    // Mark messages as read
+    setMatches(prevMatches => 
+      prevMatches.map(match => 
+        match.id === id ? { ...match, unread: 0 } : match
+      )
+    );
+    
+    // Show chat window on mobile
+    if (isMobile) {
+      setShowMobileChat(true);
+    }
   };
   
-  // Find the currently selected chat
-  const selectedChat = mockChatMatches.find(match => match.id === selectedChatId) || mockChatMatches[0];
-
-  // Show a more visible loading indicator
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex flex-col bg-background">
-        <Navbar />
-        <div className="flex-grow flex items-center justify-center">
-          <div className="flex flex-col items-center gap-2">
-            <div className="h-10 w-10 animate-spin rounded-full border-4 border-homi-purple border-t-transparent"></div>
-            <p className="text-muted-foreground">Cargando chat...</p>
-          </div>
-        </div>
-        <Footer />
-      </div>
-    );
-  }
+  const handleBackToList = () => {
+    setShowMobileChat(false);
+  };
+  
+  // Get selected chat data
+  const selectedChat = matches.find(match => match.id === selectedChatId);
+  const selectedChatMessages = selectedChatId ? mockMessages[selectedChatId as keyof typeof mockMessages] : [];
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col">
       <Navbar />
       
-      {/* Content container with proper spacing */}
-      <main className="flex-grow flex flex-col">
-        <div className="h-full flex flex-col">
-          <div className="flex h-[calc(100vh-8rem)]">
-            <div className="w-full sm:w-1/3 md:w-1/4 border-r overflow-y-auto">
-              <ChatList 
-                matches={mockChatMatches} 
-                selectedChatId={selectedChatId} 
-                onSelectChat={handleSelectChat}
-              />
-            </div>
-            <div className="hidden sm:block sm:w-2/3 md:w-3/4">
-              {selectedChat && (
-                <ChatWindow 
-                  chat={{
-                    id: selectedChat.id,
-                    name: selectedChat.name,
-                    imgUrl: selectedChat.imgUrl,
-                    online: selectedChat.online,
-                    typing: selectedChat.typing
-                  }} 
-                  initialMessages={mockMessages[selectedChat.id as keyof typeof mockMessages] || []}
-                />
-              )}
+      {isPreview && <DemoBanner />}
+      
+      <main className="flex-grow bg-background">
+        <div className="container mx-auto px-0 md:px-4 h-[calc(100vh-10rem)] max-h-[calc(100vh-10rem)]">
+          <div className="mb-6 px-4">
+            <h1 className="text-2xl md:text-3xl font-bold mb-2">
+              <span className="homi-gradient-text">Mensajes</span>
+            </h1>
+            <p className="text-muted-foreground max-w-2xl">
+              Conecta con tus matches y organiza tu búsqueda de piso compartido.
+            </p>
+          </div>
+          
+          <div className="bg-card border rounded-lg overflow-hidden h-[calc(100vh-15rem)]">
+            {/* For desktop: two-column layout */}
+            <div className="flex h-full">
+              {/* Chat list - hidden on mobile when a chat is selected */}
+              <div 
+                className={`border-r ${
+                  isMobile && showMobileChat ? 'hidden' : 'flex'
+                } flex-col w-full md:w-1/3 h-full`}
+              >
+                {matches.length > 0 ? (
+                  <ChatList 
+                    matches={matches} 
+                    selectedChatId={selectedChatId} 
+                    onSelectChat={handleSelectChat}
+                  />
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-full p-4 text-center">
+                    <div className="mb-4 p-3 rounded-full bg-muted">
+                      {/* Icon for empty state */}
+                    </div>
+                    <h3 className="text-lg font-medium mb-2">No tienes mensajes</h3>
+                    <p className="text-muted-foreground mb-4">
+                      Da like a perfiles para hacer match y comenzar a chatear
+                    </p>
+                    <button
+                      onClick={() => navigate('/matching')}
+                      className="text-homi-purple hover:text-homi-purple/80"
+                    >
+                      Ir a explorar perfiles
+                    </button>
+                  </div>
+                )}
+              </div>
+              
+              {/* Chat window - shown on desktop or on mobile when chat is selected */}
+              <div 
+                className={`${
+                  isMobile && !showMobileChat ? 'hidden' : 'flex'
+                } flex-col w-full md:w-2/3 h-full`}
+              >
+                {selectedChat ? (
+                  <>
+                    {/* Mobile back button */}
+                    {isMobile && (
+                      <button 
+                        onClick={handleBackToList}
+                        className="flex items-center p-2 bg-background/80 backdrop-blur sticky top-0 z-10 md:hidden"
+                      >
+                        <X size={18} className="mr-2" />
+                        <span>Volver</span>
+                      </button>
+                    )}
+                    
+                    <ChatWindow 
+                      chat={{
+                        id: selectedChat.id,
+                        name: selectedChat.name,
+                        imgUrl: selectedChat.imgUrl,
+                        online: selectedChat.online,
+                        typing: selectedChat.typing
+                      }} 
+                      initialMessages={selectedChatMessages}
+                    />
+                  </>
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-full p-4 text-center">
+                    <p className="text-muted-foreground">
+                      Selecciona una conversación para comenzar a chatear
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
