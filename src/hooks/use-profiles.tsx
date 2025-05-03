@@ -54,6 +54,79 @@ export type MatchProfile = {
   username: string;
 };
 
+// Datos de ejemplo para uso en desarrollo
+const mockProfiles: MatchProfile[] = [
+  {
+    id: "demo-1",
+    name: "Laura García",
+    age: 24,
+    location: "Madrid",
+    occupation: "Estudiante de Medicina",
+    bio: "Buscando piso compartido cerca del hospital. Soy tranquila y ordenada.",
+    compatibility: 95,
+    profileImage: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3",
+    interests: ["lectura", "viajes", "música"],
+    lifestyle: {
+      cleanliness: "Muy ordenada",
+      noise: "Tranquila",
+      schedule: "diurno",
+      guests: "Ocasionalmente",
+      smoking: "No"
+    },
+    budget: {
+      min: 400,
+      max: 600
+    },
+    username: "lauragarcia"
+  },
+  {
+    id: "demo-2",
+    name: "Carlos Martínez",
+    age: 28,
+    location: "Barcelona",
+    occupation: "Desarrollador Web",
+    bio: "Busco compañero/a de piso en Barcelona. Trabajo desde casa la mayoría de días.",
+    compatibility: 82,
+    profileImage: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3",
+    interests: ["tecnología", "gaming", "deportes"],
+    lifestyle: {
+      cleanliness: "Normal",
+      noise: "Normal",
+      schedule: "flexible",
+      guests: "Frecuentemente",
+      smoking: "No"
+    },
+    budget: {
+      min: 500,
+      max: 800
+    },
+    username: "carlosm"
+  },
+  {
+    id: "demo-3",
+    name: "Ana López",
+    age: 26,
+    location: "Valencia",
+    occupation: "Diseñadora Gráfica",
+    bio: "Creativa, ordenada y sociable. Busco piso cerca del centro con buen ambiente.",
+    compatibility: 78,
+    profileImage: "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1961&auto=format&fit=crop&ixlib=rb-4.0.3",
+    interests: ["arte", "fotografía", "viajes"],
+    lifestyle: {
+      cleanliness: "Muy ordenada",
+      noise: "Sociable",
+      schedule: "diurno",
+      guests: "Ocasionalmente",
+      smoking: "Sí"
+    },
+    budget: {
+      min: 350,
+      max: 550
+    },
+    username: "analopez"
+  }
+];
+
 // Map from database profile to the format expected by the matching system
 export const mapProfileToMatchProfile = (profile: Profile): MatchProfile => {
   return {
@@ -88,15 +161,60 @@ export const useFetchProfiles = () => {
   const { user } = useAuth();
   const { toast } = useToast();
 
+  // Determinar si estamos en modo desarrollo mediante un parámetro o una condición específica
+  // Esto permite que el desarrollador vea los perfiles sin afectar a los usuarios reales
+  const isDeveloperMode = () => {
+    // Comprueba si hay un parámetro específico en la URL (útil para testing)
+    const urlParams = new URLSearchParams(window.location.search);
+    const devMode = urlParams.get('devMode') === 'true';
+    
+    // También podemos comprobar si estamos en una URL local o de desarrollo
+    const isLocalhost = window.location.hostname === 'localhost' || 
+                        window.location.hostname === '127.0.0.1' ||
+                        window.location.hostname.includes('gitpod.io') ||
+                        window.location.hostname.includes('lovable');
+    
+    return devMode || isLocalhost;
+  };
+
   useEffect(() => {
     const fetchProfiles = async () => {
-      if (!user) {
-        setLoading(false);
-        return;
-      }
-
       try {
         setLoading(true);
+        
+        // Si estamos en modo desarrollador, mostrar perfiles de prueba después de un breve retraso
+        // para simular la carga desde la base de datos
+        if (isDeveloperMode()) {
+          console.log("[DEV MODE] Showing mock profiles for development testing");
+          setTimeout(() => {
+            const mockProfilesRaw: Profile[] = mockProfiles.map(mock => ({
+              id: mock.id,
+              first_name: mock.name.split(' ')[0],
+              last_name: mock.name.includes(' ') ? mock.name.split(' ').slice(1).join(' ') : '',
+              username: mock.username,
+              email: `${mock.username}@example.com`,
+              bio: mock.bio,
+              ocupacion: mock.occupation,
+              edad: mock.age.toString(),
+              profile_image: mock.profileImage,
+              interests: mock.interests,
+              lifestyle: mock.lifestyle,
+              sevilla_zona: mock.location,
+              companeros_count: '1',
+              universidad: null,
+              is_profile_active: true
+            }));
+            
+            setProfiles(mockProfilesRaw);
+            setLoading(false);
+          }, 800);
+          return;
+        }
+
+        if (!user) {
+          setLoading(false);
+          return;
+        }
         
         const { data, error } = await supabase
           .from('profiles')
@@ -177,13 +295,15 @@ export const useProfileMatches = () => {
       }
 
       try {
-        // Convert all profiles to the format expected by the matching system
+        // Convertir todos los perfiles al formato esperado por el sistema de matching
         const matchProfiles = profiles.map(mapProfileToMatchProfile);
         
-        // In the future, we can implement a real matching algorithm here
-        // For now, we'll just use all profiles as matches with random compatibility scores
+        // En el futuro, podemos implementar un algoritmo real de matching aquí
+        // Por ahora, simplemente usaremos todos los perfiles como matches con puntuaciones de compatibilidad aleatorias
         setMatches(matchProfiles);
         setLoading(false);
+        
+        console.log(`[Matches] Generated ${matchProfiles.length} potential matches`);
       } catch (err) {
         console.error('Error generating matches:', err);
         toast({
