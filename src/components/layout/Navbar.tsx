@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { Moon, Sun, Menu, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import AuthButton from '@/components/auth/AuthButton';
@@ -14,9 +14,6 @@ const Navbar = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [theme, setTheme] = useState<'light' | 'dark'>(
-    document.documentElement.classList.contains('dark') ? 'dark' : 'light'
-  );
   
   // Handle scroll effect for navbar
   useEffect(() => {
@@ -27,20 +24,6 @@ const Navbar = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-  
-  // Handle theme toggle
-  const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light';
-    setTheme(newTheme);
-    
-    if (newTheme === 'dark') {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
-  };
   
   // Safe navigation guard - close menu when changing pages
   useEffect(() => {
@@ -103,16 +86,11 @@ const Navbar = () => {
             
             {/* Actions section */}
             <div className="flex items-center gap-4">
-              {/* Theme toggle button */}
-              <Button variant="ghost" size="icon" onClick={toggleTheme}>
-                {theme === 'light' ? <Moon className="h-[1.2rem] w-[1.2rem]" /> : <Sun className="h-[1.2rem] w-[1.2rem]" />}
-              </Button>
-              
               {/* NavbarActions component for authenticated user */}
-              <NavbarActions className="hidden md:flex" />
+              <NavbarActions />
               
               {/* Authentication button */}
-              <AuthButton className="hidden md:block" />
+              <AuthButton />
               
               {/* Mobile menu button */}
               <Button
@@ -181,7 +159,7 @@ const Navbar = () => {
               )}
 
               <div className="mt-2 pt-2 border-t">
-                <AuthButton className="w-full" />
+                <AuthButton />
               </div>
             </div>
           </div>

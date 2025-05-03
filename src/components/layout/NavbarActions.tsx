@@ -51,7 +51,7 @@ const NavbarActions = ({ className = '' }: NavbarActionsProps) => {
         size="icon"
         className="relative"
         aria-label="Developer Mode"
-        onClick={() => toggleDeveloperMode()}
+        onClick={toggleDeveloperMode}
       >
         <Code className={`h-[1.2rem] w-[1.2rem] ${isDeveloperMode ? 'text-amber-500' : ''}`} />
         {isDeveloperMode && (

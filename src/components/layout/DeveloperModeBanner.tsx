@@ -29,17 +29,8 @@ const DeveloperModeBanner = () => {
             className="text-xs rounded-full gap-1 bg-white/20 backdrop-blur-sm hover:bg-white/30 border-white/20"
             onClick={toggleDeveloperMode}
           >
-            {isDeveloperMode ? (
-              <>
-                <EyeOff size={14} />
-                Switch to User Mode
-              </>
-            ) : (
-              <>
-                <Eye size={14} />
-                Switch to Developer Mode
-              </>
-            )}
+            <EyeOff size={14} />
+            Switch to User Mode
           </Button>
         </div>
       </div>
