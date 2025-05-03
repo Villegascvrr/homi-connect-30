@@ -1,8 +1,10 @@
+
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useDeveloperMode } from '@/context/DeveloperModeContext';
+import { Json } from '@/integrations/supabase/types';
 
 export interface ProfileLifestyle {
   cleanliness: string;
@@ -10,6 +12,7 @@ export interface ProfileLifestyle {
   schedule: string;
   guests: string;
   smoking: string;
+  pets?: string; // Make this optional for compatibility
 }
 
 export interface Profile {
@@ -28,6 +31,9 @@ export interface Profile {
   companeros_count: string | null;
   universidad: string | null;
   is_profile_active: boolean | null;
+  created_at?: string;
+  updated_at?: string;
+  gallery_images?: string[] | null;
 }
 
 export type MatchProfile = {
@@ -46,6 +52,7 @@ export type MatchProfile = {
     schedule: string;
     guests: string;
     smoking: string;
+    pets?: string;
   };
   budget: {
     min: number;
@@ -255,12 +262,26 @@ export const useFetchProfiles = () => {
             
             if (dbProfile.lifestyle) {
               try {
-                // If it's already an object, use it directly
+                // Handle different potential formats of lifestyle data
                 if (typeof dbProfile.lifestyle === 'object') {
-                  lifestyle = dbProfile.lifestyle as unknown as ProfileLifestyle;
+                  // If it's already an object, create a properly typed version
+                  lifestyle = {
+                    cleanliness: String(dbProfile.lifestyle?.cleanliness || ''),
+                    noise: String(dbProfile.lifestyle?.noise || ''),
+                    schedule: String(dbProfile.lifestyle?.schedule || ''),
+                    guests: String(dbProfile.lifestyle?.guests || ''),
+                    smoking: String(dbProfile.lifestyle?.smoking || '')
+                  };
                 } else if (typeof dbProfile.lifestyle === 'string') {
                   // If it's a string, parse it
-                  lifestyle = JSON.parse(dbProfile.lifestyle);
+                  const parsedLifestyle = JSON.parse(dbProfile.lifestyle);
+                  lifestyle = {
+                    cleanliness: String(parsedLifestyle?.cleanliness || ''),
+                    noise: String(parsedLifestyle?.noise || ''),
+                    schedule: String(parsedLifestyle?.schedule || ''),
+                    guests: String(parsedLifestyle?.guests || ''),
+                    smoking: String(parsedLifestyle?.smoking || '')
+                  };
                 }
               } catch (e) {
                 console.error('Error parsing lifestyle:', e);

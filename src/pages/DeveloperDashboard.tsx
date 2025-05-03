@@ -31,8 +31,9 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { Profile } from "@/hooks/use-profiles";
+import { Profile, ProfileLifestyle } from "@/hooks/use-profiles";
 import { Badge } from "@/components/ui/badge";
+import { Json } from "@/integrations/supabase/types";
 
 const DeveloperDashboard = () => {
   const { user } = useAuth();
@@ -70,10 +71,38 @@ const DeveloperDashboard = () => {
           throw profilesError;
         }
 
-        setProfiles(profilesData || []);
-        setActiveProfiles(
-          profilesData?.filter((p) => p.is_profile_active).length || 0
-        );
+        if (profilesData) {
+          // Convert the profiles data to match our Profile interface
+          const typedProfiles: Profile[] = profilesData.map(profile => {
+            // Convert lifestyle from Json to ProfileLifestyle or null
+            let lifestyle: ProfileLifestyle | null = null;
+            
+            if (profile.lifestyle) {
+              try {
+                // Handle lifestyle data conversion safely
+                if (typeof profile.lifestyle === 'object') {
+                  lifestyle = {
+                    cleanliness: String(profile.lifestyle?.cleanliness || ''),
+                    noise: String(profile.lifestyle?.noise || ''),
+                    schedule: String(profile.lifestyle?.schedule || ''),
+                    guests: String(profile.lifestyle?.guests || ''),
+                    smoking: String(profile.lifestyle?.smoking || '')
+                  };
+                }
+              } catch (e) {
+                console.error('Error parsing lifestyle data:', e);
+              }
+            }
+
+            return {
+              ...profile,
+              lifestyle,
+            } as unknown as Profile;
+          });
+
+          setProfiles(typedProfiles);
+          setActiveProfiles(typedProfiles?.filter((p) => p.is_profile_active).length || 0);
+        }
 
         // For now, let's use placeholder values for matches and chats
         // In a real implementation, you would fetch these from their respective tables
@@ -112,10 +141,38 @@ const DeveloperDashboard = () => {
 
         if (profilesError) throw profilesError;
 
-        setProfiles(profilesData || []);
-        setActiveProfiles(
-          profilesData?.filter((p) => p.is_profile_active).length || 0
-        );
+        if (profilesData) {
+          // Convert the profiles data to match our Profile interface
+          const typedProfiles: Profile[] = profilesData.map(profile => {
+            // Convert lifestyle from Json to ProfileLifestyle or null
+            let lifestyle: ProfileLifestyle | null = null;
+            
+            if (profile.lifestyle) {
+              try {
+                // Handle lifestyle data conversion safely
+                if (typeof profile.lifestyle === 'object') {
+                  lifestyle = {
+                    cleanliness: String(profile.lifestyle?.cleanliness || ''),
+                    noise: String(profile.lifestyle?.noise || ''),
+                    schedule: String(profile.lifestyle?.schedule || ''),
+                    guests: String(profile.lifestyle?.guests || ''),
+                    smoking: String(profile.lifestyle?.smoking || '')
+                  };
+                }
+              } catch (e) {
+                console.error('Error parsing lifestyle data:', e);
+              }
+            }
+
+            return {
+              ...profile,
+              lifestyle,
+            } as unknown as Profile;
+          });
+
+          setProfiles(typedProfiles);
+          setActiveProfiles(typedProfiles?.filter((p) => p.is_profile_active).length || 0);
+        }
 
         toast({
           title: "Data Refreshed",

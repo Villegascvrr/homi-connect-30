@@ -88,8 +88,8 @@ export const signInWithGoogleOAuth = async (): Promise<void> => {
           access_type: 'offline',
           prompt: 'consent',
         },
-        // Fix: Use string array for scopes parameter
-        scopes: ['email', 'profile'],
+        // Fix: Use scopes array here with single strings, not a string array
+        scopes: 'email profile',
       },
     });
     
@@ -113,6 +113,7 @@ export const signInWithGoogleOAuth = async (): Promise<void> => {
  */
 export const checkEmailExists = async (email: string): Promise<boolean> => {
   try {
+    // Fix: Ensure we're passing the correct parameter name and value
     const { data, error } = await supabase
       .rpc('check_email_exists', { 
         email_to_check: email 

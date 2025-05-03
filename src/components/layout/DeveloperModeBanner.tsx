@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useDeveloperMode } from '@/context/DeveloperModeContext';
-import { AlertTriangle, Eye, EyeOff } from 'lucide-react';
+import { AlertTriangle, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const DeveloperModeBanner = () => {
