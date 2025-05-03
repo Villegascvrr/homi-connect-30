@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -265,12 +264,13 @@ export const useFetchProfiles = () => {
                 // Handle different potential formats of lifestyle data
                 if (typeof dbProfile.lifestyle === 'object') {
                   // If it's already an object, create a properly typed version
+                  const lifestyleObj = dbProfile.lifestyle as Record<string, any>;
                   lifestyle = {
-                    cleanliness: String(dbProfile.lifestyle?.cleanliness || ''),
-                    noise: String(dbProfile.lifestyle?.noise || ''),
-                    schedule: String(dbProfile.lifestyle?.schedule || ''),
-                    guests: String(dbProfile.lifestyle?.guests || ''),
-                    smoking: String(dbProfile.lifestyle?.smoking || '')
+                    cleanliness: String(lifestyleObj?.cleanliness || ''),
+                    noise: String(lifestyleObj?.noise || ''),
+                    schedule: String(lifestyleObj?.schedule || ''),
+                    guests: String(lifestyleObj?.guests || ''),
+                    smoking: String(lifestyleObj?.smoking || '')
                   };
                 } else if (typeof dbProfile.lifestyle === 'string') {
                   // If it's a string, parse it

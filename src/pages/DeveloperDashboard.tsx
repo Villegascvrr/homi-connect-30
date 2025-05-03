@@ -33,7 +33,6 @@ import {
 import { useNavigate } from "react-router-dom";
 import { Profile, ProfileLifestyle } from "@/hooks/use-profiles";
 import { Badge } from "@/components/ui/badge";
-import { Json } from "@/integrations/supabase/types";
 
 const DeveloperDashboard = () => {
   const { user } = useAuth();
@@ -81,13 +80,27 @@ const DeveloperDashboard = () => {
               try {
                 // Handle lifestyle data conversion safely
                 if (typeof profile.lifestyle === 'object') {
+                  const lifestyleObj = profile.lifestyle as Record<string, any>;
                   lifestyle = {
-                    cleanliness: String(profile.lifestyle?.cleanliness || ''),
-                    noise: String(profile.lifestyle?.noise || ''),
-                    schedule: String(profile.lifestyle?.schedule || ''),
-                    guests: String(profile.lifestyle?.guests || ''),
-                    smoking: String(profile.lifestyle?.smoking || '')
+                    cleanliness: String(lifestyleObj?.cleanliness || ''),
+                    noise: String(lifestyleObj?.noise || ''),
+                    schedule: String(lifestyleObj?.schedule || ''),
+                    guests: String(lifestyleObj?.guests || ''),
+                    smoking: String(lifestyleObj?.smoking || '')
                   };
+                } else if (typeof profile.lifestyle === 'string') {
+                  try {
+                    const parsedLifestyle = JSON.parse(profile.lifestyle as string);
+                    lifestyle = {
+                      cleanliness: String(parsedLifestyle?.cleanliness || ''),
+                      noise: String(parsedLifestyle?.noise || ''),
+                      schedule: String(parsedLifestyle?.schedule || ''),
+                      guests: String(parsedLifestyle?.guests || ''),
+                      smoking: String(parsedLifestyle?.smoking || '')
+                    };
+                  } catch (e) {
+                    console.error('Error parsing lifestyle string:', e);
+                  }
                 }
               } catch (e) {
                 console.error('Error parsing lifestyle data:', e);
@@ -97,7 +110,7 @@ const DeveloperDashboard = () => {
             return {
               ...profile,
               lifestyle,
-            } as unknown as Profile;
+            } as Profile;
           });
 
           setProfiles(typedProfiles);
@@ -151,13 +164,27 @@ const DeveloperDashboard = () => {
               try {
                 // Handle lifestyle data conversion safely
                 if (typeof profile.lifestyle === 'object') {
+                  const lifestyleObj = profile.lifestyle as Record<string, any>;
                   lifestyle = {
-                    cleanliness: String(profile.lifestyle?.cleanliness || ''),
-                    noise: String(profile.lifestyle?.noise || ''),
-                    schedule: String(profile.lifestyle?.schedule || ''),
-                    guests: String(profile.lifestyle?.guests || ''),
-                    smoking: String(profile.lifestyle?.smoking || '')
+                    cleanliness: String(lifestyleObj?.cleanliness || ''),
+                    noise: String(lifestyleObj?.noise || ''),
+                    schedule: String(lifestyleObj?.schedule || ''),
+                    guests: String(lifestyleObj?.guests || ''),
+                    smoking: String(lifestyleObj?.smoking || '')
                   };
+                } else if (typeof profile.lifestyle === 'string') {
+                  try {
+                    const parsedLifestyle = JSON.parse(profile.lifestyle as string);
+                    lifestyle = {
+                      cleanliness: String(parsedLifestyle?.cleanliness || ''),
+                      noise: String(parsedLifestyle?.noise || ''),
+                      schedule: String(parsedLifestyle?.schedule || ''),
+                      guests: String(parsedLifestyle?.guests || ''),
+                      smoking: String(parsedLifestyle?.smoking || '')
+                    };
+                  } catch (e) {
+                    console.error('Error parsing lifestyle string:', e);
+                  }
                 }
               } catch (e) {
                 console.error('Error parsing lifestyle data:', e);
@@ -167,7 +194,7 @@ const DeveloperDashboard = () => {
             return {
               ...profile,
               lifestyle,
-            } as unknown as Profile;
+            } as Profile;
           });
 
           setProfiles(typedProfiles);
