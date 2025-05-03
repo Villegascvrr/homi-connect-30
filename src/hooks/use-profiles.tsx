@@ -115,10 +115,18 @@ export const useFetchProfiles = () => {
           return;
         }
         
+        if (!data || data.length === 0) {
+          console.log('No profiles found or empty data array');
+          setProfiles([]);
+          setLoading(false);
+          return;
+        }
+        
         // Map database profiles to our Profile interface, ensuring lifestyle is properly typed
         const typedProfiles = data.map(dbProfile => {
           // Convert lifestyle from JSON to ProfileLifestyle or null
           let lifestyle: ProfileLifestyle | null = null;
+          
           if (dbProfile.lifestyle) {
             try {
               // If it's already an object, use it directly
