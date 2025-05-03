@@ -115,7 +115,31 @@ export const useFetchProfiles = () => {
           return;
         }
         
-        setProfiles(data || []);
+        // Map database profiles to our Profile interface, ensuring lifestyle is properly typed
+        const typedProfiles = data.map(dbProfile => {
+          // Convert lifestyle from JSON to ProfileLifestyle or null
+          let lifestyle: ProfileLifestyle | null = null;
+          if (dbProfile.lifestyle) {
+            try {
+              // If it's already an object, use it directly
+              if (typeof dbProfile.lifestyle === 'object') {
+                lifestyle = dbProfile.lifestyle as unknown as ProfileLifestyle;
+              } else if (typeof dbProfile.lifestyle === 'string') {
+                // If it's a string, parse it
+                lifestyle = JSON.parse(dbProfile.lifestyle);
+              }
+            } catch (e) {
+              console.error('Error parsing lifestyle:', e);
+            }
+          }
+
+          return {
+            ...dbProfile,
+            lifestyle
+          } as Profile;
+        });
+        
+        setProfiles(typedProfiles);
       } catch (err) {
         console.error('Exception fetching profiles:', err);
         setError('Error desconocido al cargar perfiles');

@@ -88,9 +88,8 @@ export const signInWithGoogleOAuth = async (): Promise<void> => {
           access_type: 'offline',
           prompt: 'consent',
         },
-        // Fix: Remove string type which was causing the TypeScript error
+        // Fix: Using proper format for scopes
         scopes: 'email profile',
-        skipBrowserRedirect: false,
       },
     });
     
@@ -114,7 +113,6 @@ export const signInWithGoogleOAuth = async (): Promise<void> => {
  */
 export const checkEmailExists = async (email: string): Promise<boolean> => {
   try {
-    // Fix: Remove the generic type parameter
     const { data, error } = await supabase
       .rpc('check_email_exists', { 
         email_to_check: email 
