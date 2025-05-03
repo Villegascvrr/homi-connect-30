@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -6,7 +5,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import ScrollToTop from "./components/layout/ScrollToTop";
 import { AuthProvider } from "./context/AuthContext";
-import { DeveloperModeProvider } from "./context/DeveloperModeContext";
 import Index from "./pages/Index";
 import MatchingPage from "./pages/MatchingPage";
 import ProfilePage from "./components/profiles/ProfilePage";
@@ -27,7 +25,6 @@ import AdminPage from "./pages/AdminPage";
 import { useEffect, useState, Suspense } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
-import DeveloperDashboard from "./pages/DeveloperDashboard";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -121,79 +118,71 @@ const App = () => {
   
   return (
     <QueryClientProvider client={queryClient}>
-      <DeveloperModeProvider>
-        <AuthProvider key={authProviderKey}>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <ScrollToTop />
-              <Suspense fallback={<PageLoader />}>
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/signin" element={<SignInPage />} />
-                  <Route path="/register" element={<RegisterPage />} />
-                  <Route path="/verified" element={<VerifiedPage />} />
-                  <Route path="/privacy" element={<PrivacyPage />} />
-                  <Route path="/terms" element={<TermsPage />} />
-                  <Route path="/cookies" element={<CookiesPage />} />
-                  
-                  <Route path="/auth/callback" element={<VerifiedPage />} />
-                  <Route path="/callback" element={<VerifiedPage />} />
-                  
-                  <Route path="/matching" element={
-                    <ProtectedRoute allowPreview={true}>
-                      <MatchingPage isPreview={false} />
-                    </ProtectedRoute>
-                  } />
-                  
-                  <Route path="/profile" element={<ProfilePage />} />
-                  
-                  <Route path="/profile/:id" element={
-                    <ProtectedRoute authComponent={<ProfileAuthGate />} redirectToSignIn={false}>
-                      <ProfileViewPage />
-                    </ProtectedRoute>
-                  } />
-                  
-                  <Route path="/profile/create" element={
-                    <ProtectedRoute authComponent={<ProfileAuthGate />} redirectToSignIn={false}>
-                      <ProfileForm />
-                    </ProtectedRoute>
-                  } />
-                  
-                  <Route path="/profile/edit" element={
-                    <ProtectedRoute authComponent={<ProfileAuthGate />} redirectToSignIn={false}>
-                      <ProfileEditPage />
-                    </ProtectedRoute>
-                  } />
-                  
-                  <Route path="/chat" element={
-                    <ProtectedRoute allowPreview={true}>
-                      <ChatPage isPreview={false} />
-                    </ProtectedRoute>
-                  } />
-                  
-                  <Route path="/admin/profiles" element={
-                    <ProtectedRoute>
-                      <AdminPage />
-                    </ProtectedRoute>
-                  } />
-                  
-                  <Route path="/developer" element={
-                    <ProtectedRoute>
-                      <DeveloperDashboard />
-                    </ProtectedRoute>
-                  } />
-                  
-                  <Route path="" element={<Navigate to="/" replace />} />
-                  
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </Suspense>
-            </BrowserRouter>
-          </TooltipProvider>
-        </AuthProvider>
-      </DeveloperModeProvider>
+      <AuthProvider key={authProviderKey}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <ScrollToTop />
+            <Suspense fallback={<PageLoader />}>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/signin" element={<SignInPage />} />
+                <Route path="/register" element={<RegisterPage />} />
+                <Route path="/verified" element={<VerifiedPage />} />
+                <Route path="/privacy" element={<PrivacyPage />} />
+                <Route path="/terms" element={<TermsPage />} />
+                <Route path="/cookies" element={<CookiesPage />} />
+                
+                <Route path="/auth/callback" element={<VerifiedPage />} />
+                <Route path="/callback" element={<VerifiedPage />} />
+                
+                <Route path="/matching" element={
+                  <ProtectedRoute allowPreview={true}>
+                    <MatchingPage isPreview={false} />
+                  </ProtectedRoute>
+                } />
+                
+                <Route path="/profile" element={<ProfilePage />} />
+                
+                <Route path="/profile/:id" element={
+                  <ProtectedRoute authComponent={<ProfileAuthGate />} redirectToSignIn={false}>
+                    <ProfileViewPage />
+                  </ProtectedRoute>
+                } />
+                
+                <Route path="/profile/create" element={
+                  <ProtectedRoute authComponent={<ProfileAuthGate />} redirectToSignIn={false}>
+                    <ProfileForm />
+                  </ProtectedRoute>
+                } />
+                
+                <Route path="/profile/edit" element={
+                  <ProtectedRoute authComponent={<ProfileAuthGate />} redirectToSignIn={false}>
+                    <ProfileEditPage />
+                  </ProtectedRoute>
+                } />
+                
+                <Route path="/chat" element={
+                  <ProtectedRoute allowPreview={true}>
+                    <ChatPage isPreview={false} />
+                  </ProtectedRoute>
+                } />
+                
+                <Route path="/admin/profiles" element={
+                  <ProtectedRoute>
+                    <AdminPage />
+                  </ProtectedRoute>
+                } />
+                
+                <Route path="" element={<Navigate to="/" replace />} />
+                
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 };

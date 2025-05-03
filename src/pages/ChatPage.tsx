@@ -1,56 +1,136 @@
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import ChatList from '@/components/chat/ChatList';
 import ChatWindow from '@/components/chat/ChatWindow';
-import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/AuthContext';
-import { useIsMobile } from '@/hooks/use-mobile';
-import DemoBanner from '@/components/layout/DemoBanner';
-import { X } from 'lucide-react';
-import { useProfileMatches, MatchProfile } from '@/hooks/use-profiles';
 
-// Mapeamos perfiles reales a los chats
-const mapProfileToChat = (profile: MatchProfile) => {
-  return {
-    id: profile.id,
-    name: profile.name,
-    lastMessage: "Hola! ¿Cómo estás?",
-    timestamp: new Date().toISOString(),
-    unread: Math.round(Math.random()), // 0 o 1
-    online: Math.random() > 0.5, // 50% probabilidad
-    typing: Math.random() > 0.8, // 20% probabilidad
-    imgUrl: profile.profileImage
-  };
-};
-
-// Mock messages para cada chat (usamos IDs reales)
-const createMockMessagesForChat = (chatId: string) => {
-  const messageCount = Math.floor(Math.random() * 5) + 1; // 1-5 mensajes
-  const messages = [];
-  
-  let timestamp = new Date();
-  timestamp.setMinutes(timestamp.getMinutes() - messageCount * 5); // Espaciamos los mensajes
-  
-  for (let i = 0; i < messageCount; i++) {
-    const isUserMessage = i % 2 === 0;
-    
-    messages.push({
-      id: `${chatId}-${i}`,
-      senderId: isUserMessage ? "me" : "other",
-      text: isUserMessage ? 
-        "Hola! Me interesa tu perfil. ¿Podríamos hablar sobre compartir piso?" :
-        "¡Hola! Claro, me encantaría. Cuéntame más sobre ti y lo que buscas.",
-      timestamp: timestamp.toISOString(),
-      read: true
-    });
-    
-    timestamp.setMinutes(timestamp.getMinutes() + 5);
+// Define a mock chat match for demo purposes
+const mockChatMatches = [
+  {
+    id: "1",
+    name: "Laura García",
+    lastMessage: "¡Hola! Vi tu perfil y creo que podríamos ser buenos compañeros de piso.",
+    timestamp: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
+    unread: 2,
+    online: true,
+    typing: false,
+    imgUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3"
+  },
+  {
+    id: "2",
+    name: "Carlos Martínez",
+    lastMessage: "Me interesa el piso que comentaste cerca de la universidad.",
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 3).toISOString(),
+    unread: 0,
+    online: true,
+    typing: true,
+    imgUrl: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3"
+  },
+  {
+    id: "3",
+    name: "Ana López",
+    lastMessage: "¿Cuándo podríamos quedar para ver el piso?",
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 12).toISOString(),
+    unread: 0,
+    online: false,
+    typing: false,
+    imgUrl: "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1961&auto=format&fit=crop&ixlib=rb-4.0.3"
+  },
+  {
+    id: "4",
+    name: "Miguel Sánchez",
+    lastMessage: "Perfecto, entonces nos vemos mañana a las 6.",
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
+    unread: 1,
+    online: false,
+    typing: false,
+    imgUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3"
   }
-  
-  return messages;
+];
+
+// Define sample messages for each chat
+const mockMessages = {
+  "1": [
+    {
+      id: '1-1',
+      senderId: 'other',
+      text: '¡Hola! Vi tu perfil y creo que podríamos ser buenos compañeros de piso. ¿Buscas algo cerca de la universidad?',
+      timestamp: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
+      read: true
+    }, 
+    {
+      id: '1-2',
+      senderId: 'me',
+      text: 'Hola Laura, sí estoy buscando cerca del campus. Me encantaría hablar más sobre ello.',
+      timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
+      read: true
+    },
+    {
+      id: '1-3',
+      senderId: 'other',
+      text: '¡Genial! Tengo un piso compartido a 10 minutos de la facultad. Es amplio y luminoso.',
+      timestamp: new Date(Date.now() - 1000 * 60 * 20).toISOString(),
+      read: false
+    }
+  ],
+  "2": [
+    {
+      id: '2-1',
+      senderId: 'other',
+      text: 'Me interesa el piso que comentaste cerca de la universidad. ¿Sigue disponible?',
+      timestamp: new Date(Date.now() - 1000 * 60 * 180).toISOString(),
+      read: true
+    },
+    {
+      id: '2-2',
+      senderId: 'me',
+      text: 'Sí, aún está disponible. ¿Te gustaría verlo esta semana?',
+      timestamp: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
+      read: true
+    }
+  ],
+  "3": [
+    {
+      id: '3-1',
+      senderId: 'me',
+      text: 'Hola Ana, vi que estás buscando compañeros de piso en la zona centro.',
+      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 13).toISOString(),
+      read: true
+    },
+    {
+      id: '3-2',
+      senderId: 'other',
+      text: 'Sí, estoy buscando en esa zona. ¿Cuándo podríamos quedar para ver el piso?',
+      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 12).toISOString(),
+      read: true
+    }
+  ],
+  "4": [
+    {
+      id: '4-1',
+      senderId: 'other',
+      text: '¿Te parece bien quedar mañana para ver el piso?',
+      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 25).toISOString(),
+      read: true
+    },
+    {
+      id: '4-2',
+      senderId: 'me',
+      text: 'Sí, perfecto. ¿A las 6 de la tarde?',
+      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24.5).toISOString(),
+      read: true
+    },
+    {
+      id: '4-3',
+      senderId: 'other',
+      text: 'Perfecto, entonces nos vemos mañana a las 6.',
+      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
+      read: false
+    }
+  ]
 };
 
 interface ChatPageProps {
@@ -58,168 +138,78 @@ interface ChatPageProps {
 }
 
 const ChatPage = ({ isPreview = false }: ChatPageProps) => {
-  const navigate = useNavigate();
-  const { user } = useAuth();
-  const { toast } = useToast();
-  const isMobile = useIsMobile();
-  const { matches: profileMatches, loading: matchesLoading } = useProfileMatches();
-  
-  const [matches, setMatches] = useState<any[]>([]);
-  const [mockMessages, setMockMessages] = useState<{[key: string]: any[]}>({});
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
-  const [showMobileChat, setShowMobileChat] = useState(false);
+  const { user } = useAuth();
+  const [isLoading, setIsLoading] = useState(true);
   
-  // Convertimos perfiles reales a formato de chat
   useEffect(() => {
-    if (!matchesLoading && profileMatches.length > 0) {
-      // Tomamos los primeros 4 perfiles para simular chats activos
-      const chatMatches = profileMatches.slice(0, 4).map(mapProfileToChat);
-      setMatches(chatMatches);
-      
-      // Generamos mensajes mock para cada chat
-      const messagesMap: {[key: string]: any[]} = {};
-      chatMatches.forEach(chat => {
-        messagesMap[chat.id] = createMockMessagesForChat(chat.id);
-      });
-      setMockMessages(messagesMap);
+    // Set initial selected chat
+    if (mockChatMatches.length > 0 && !selectedChatId) {
+      setSelectedChatId(mockChatMatches[0].id);
     }
-  }, [profileMatches, matchesLoading]);
-  
-  // Select first chat by default on desktop
-  useEffect(() => {
-    if (!isMobile && matches.length > 0 && !selectedChatId) {
-      setSelectedChatId(matches[0].id);
-    }
-  }, [isMobile, matches, selectedChatId]);
+    
+    // Force loading to complete after a short delay
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+      console.log("Chat page loaded successfully");
+    }, 300);
+    
+    return () => clearTimeout(timer);
+  }, [selectedChatId]);
   
   const handleSelectChat = (id: string) => {
+    if (id === selectedChatId) return; // Skip if already selected
     setSelectedChatId(id);
-    
-    // Mark messages as read
-    setMatches(prevMatches => 
-      prevMatches.map(match => 
-        match.id === id ? { ...match, unread: 0 } : match
-      )
-    );
-    
-    // Show chat window on mobile
-    if (isMobile) {
-      setShowMobileChat(true);
-    }
+    console.log("Selected chat changed to:", id);
   };
   
-  const handleBackToList = () => {
-    setShowMobileChat(false);
-  };
-  
-  // Get selected chat data
-  const selectedChat = matches.find(match => match.id === selectedChatId);
-  const selectedChatMessages = selectedChatId ? mockMessages[selectedChatId] || [] : [];
+  // Find the currently selected chat
+  const selectedChat = mockChatMatches.find(match => match.id === selectedChatId) || mockChatMatches[0];
 
-  if (matchesLoading) {
+  // Show a more visible loading indicator
+  if (isLoading) {
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col bg-background">
         <Navbar />
-        <main className="flex-grow bg-background flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin h-8 w-8 border-t-2 border-homi-purple rounded-full mx-auto mb-4"></div>
-            <p>Cargando conversaciones...</p>
+        <div className="flex-grow flex items-center justify-center">
+          <div className="flex flex-col items-center gap-2">
+            <div className="h-10 w-10 animate-spin rounded-full border-4 border-homi-purple border-t-transparent"></div>
+            <p className="text-muted-foreground">Cargando chat...</p>
           </div>
-        </main>
+        </div>
         <Footer />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
       
-      {isPreview && <DemoBanner />}
-      
-      <main className="flex-grow bg-background">
-        <div className="container mx-auto px-0 md:px-4 h-[calc(100vh-10rem)] max-h-[calc(100vh-10rem)]">
-          <div className="mb-6 px-4">
-            <h1 className="text-2xl md:text-3xl font-bold mb-2">
-              <span className="homi-gradient-text">Mensajes</span>
-            </h1>
-            <p className="text-muted-foreground max-w-2xl">
-              Conecta con tus matches y organiza tu búsqueda de piso compartido.
-            </p>
-          </div>
-          
-          <div className="bg-card border rounded-lg overflow-hidden h-[calc(100vh-15rem)]">
-            {/* For desktop: two-column layout */}
-            <div className="flex h-full">
-              {/* Chat list - hidden on mobile when a chat is selected */}
-              <div 
-                className={`border-r ${
-                  isMobile && showMobileChat ? 'hidden' : 'flex'
-                } flex-col w-full md:w-1/3 h-full`}
-              >
-                {matches.length > 0 ? (
-                  <ChatList 
-                    matches={matches} 
-                    selectedChatId={selectedChatId} 
-                    onSelectChat={handleSelectChat}
-                  />
-                ) : (
-                  <div className="flex flex-col items-center justify-center h-full p-4 text-center">
-                    <div className="mb-4 p-3 rounded-full bg-muted">
-                      {/* Icon for empty state */}
-                    </div>
-                    <h3 className="text-lg font-medium mb-2">No tienes mensajes</h3>
-                    <p className="text-muted-foreground mb-4">
-                      Da like a perfiles para hacer match y comenzar a chatear
-                    </p>
-                    <button
-                      onClick={() => navigate('/matching')}
-                      className="text-homi-purple hover:text-homi-purple/80"
-                    >
-                      Ir a explorar perfiles
-                    </button>
-                  </div>
-                )}
-              </div>
-              
-              {/* Chat window - shown on desktop or on mobile when chat is selected */}
-              <div 
-                className={`${
-                  isMobile && !showMobileChat ? 'hidden' : 'flex'
-                } flex-col w-full md:w-2/3 h-full`}
-              >
-                {selectedChat ? (
-                  <>
-                    {/* Mobile back button */}
-                    {isMobile && (
-                      <button 
-                        onClick={handleBackToList}
-                        className="flex items-center p-2 bg-background/80 backdrop-blur sticky top-0 z-10 md:hidden"
-                      >
-                        <X size={18} className="mr-2" />
-                        <span>Volver</span>
-                      </button>
-                    )}
-                    
-                    <ChatWindow 
-                      chat={{
-                        id: selectedChat.id,
-                        name: selectedChat.name,
-                        imgUrl: selectedChat.imgUrl,
-                        online: selectedChat.online,
-                        typing: selectedChat.typing
-                      }} 
-                      initialMessages={selectedChatMessages}
-                    />
-                  </>
-                ) : (
-                  <div className="flex flex-col items-center justify-center h-full p-4 text-center">
-                    <p className="text-muted-foreground">
-                      Selecciona una conversación para comenzar a chatear
-                    </p>
-                  </div>
-                )}
-              </div>
+      {/* Content container with proper spacing */}
+      <main className="flex-grow flex flex-col">
+        <div className="h-full flex flex-col">
+          <div className="flex h-[calc(100vh-8rem)]">
+            <div className="w-full sm:w-1/3 md:w-1/4 border-r overflow-y-auto">
+              <ChatList 
+                matches={mockChatMatches} 
+                selectedChatId={selectedChatId} 
+                onSelectChat={handleSelectChat}
+              />
+            </div>
+            <div className="hidden sm:block sm:w-2/3 md:w-3/4">
+              {selectedChat && (
+                <ChatWindow 
+                  chat={{
+                    id: selectedChat.id,
+                    name: selectedChat.name,
+                    imgUrl: selectedChat.imgUrl,
+                    online: selectedChat.online,
+                    typing: selectedChat.typing
+                  }} 
+                  initialMessages={mockMessages[selectedChat.id as keyof typeof mockMessages] || []}
+                />
+              )}
             </div>
           </div>
         </div>

@@ -1,174 +1,143 @@
 
 import { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import AuthButton from '@/components/auth/AuthButton';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { cn } from '@/lib/utils';
 import { useAuth } from '@/context/AuthContext';
-import DeveloperModeBanner from '@/components/layout/DeveloperModeBanner';
-import NavbarActions from '@/components/layout/NavbarActions';
+import AuthButton from '@/components/auth/AuthButton';
+
+import {
+  NavigationMenu,
+  NavigationMenuList,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuContent,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu"
 
 const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-  const [scrolled, setScrolled] = useState<boolean>(false);
-  const { user } = useAuth();
-  const navigate = useNavigate();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const location = useLocation();
-  
-  // Handle scroll effect for navbar
+  const isMobile = useIsMobile();
+  const { user } = useAuth();
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const toggleDropdown = (dropdown: string) => {
+    if (activeDropdown === dropdown) {
+      setActiveDropdown(null);
+    } else {
+      setActiveDropdown(dropdown);
+    }
+  };
+
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 10);
+      if (window.scrollY > 10) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
     };
-    
+
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
-  
-  // Safe navigation guard - close menu when changing pages
+
   useEffect(() => {
     setIsMenuOpen(false);
   }, [location.pathname]);
-  
-  // Handle closing mobile menu when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
-      if (isMenuOpen && !target.closest('#navbar-mobile-menu') && !target.closest('#navbar-menu-button')) {
-        setIsMenuOpen(false);
-      }
-    };
-    
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isMenuOpen]);
-  
+
+  const navLinks = [
+    { name: 'Inicio', path: '/' },
+    { name: 'Encuentra compañeros', path: '/matching' },
+    { name: 'Chat', path: '/chat' },
+    { name: 'Perfil', path: '/profile' },
+  ];
+
   return (
-    <>
-      <DeveloperModeBanner />
-    
-      <header className={`fixed top-0 w-full z-40 transition-all duration-200 ${scrolled ? 'bg-background/80 backdrop-blur-md shadow-sm' : 'bg-transparent'}`}>
-        <div className="container mx-auto px-4">
-          <div className="flex h-16 items-center justify-between">
-            {/* Logo */}
-            <div className="flex items-center">
-              <Link to="/" className="flex items-center gap-2">
-                <img 
-                  src="/lovable-uploads/2d51c735-5f08-4390-8bb3-9f96a25db216.png" 
-                  alt="HomiMatch" 
-                  className="h-8 w-auto"
-                />
-                <span className="font-bold text-lg tracking-tight">HomiMatch</span>
-              </Link>
-            </div>
-            
-            {/* Desktop navigation */}
-            <nav className="hidden md:flex items-center gap-1">
-              <Button variant="ghost" asChild>
-                <Link to="/">Inicio</Link>
-              </Button>
-              
-              {user && (
-                <>
-                  <Button variant="ghost" asChild>
-                    <Link to="/matching">Buscar Match</Link>
-                  </Button>
-                  <Button variant="ghost" asChild>
-                    <Link to="/chat">Chat</Link>
-                  </Button>
-                </>
-              )}
-              
-              <Button variant="ghost" asChild>
-                <Link to="/cookies">Recursos</Link>
-              </Button>
-            </nav>
-            
-            {/* Actions section */}
-            <div className="flex items-center gap-4">
-              {/* NavbarActions component for authenticated user */}
-              <NavbarActions />
-              
-              {/* Authentication button */}
-              <AuthButton />
-              
-              {/* Mobile menu button */}
-              <Button
-                id="navbar-menu-button"
-                variant="ghost" 
-                size="icon"
-                className="md:hidden"
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
+    <header className={cn(
+      "fixed top-0 left-0 right-0 z-50 transition-all duration-300 w-full",
+      isScrolled ? "bg-white/80 dark:bg-background/80 backdrop-blur-md shadow-sm" : "bg-transparent"
+    )}>
+      <div className="container mx-auto px-4 w-full">
+        <div className="flex items-center justify-between h-16 md:h-20">
+          <Link to="/" className="flex items-center">
+            <span className="text-xl md:text-2xl font-bold homi-gradient-text">HomiMatch</span>
+          </Link>
+
+          <nav className="hidden md:flex items-center space-x-1">
+            {navLinks.map((link) => (
+              <Link
+                key={link.name}
+                to={link.path}
+                className={cn(
+                  "px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                  location.pathname === link.path
+                    ? "text-homi-purple"
+                    : "text-foreground hover:text-homi-purple"
+                )}
               >
-                {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-              </Button>
+                {link.name}
+              </Link>
+            ))}
+          </nav>
+
+          <div className="hidden md:flex items-center">
+            <AuthButton />
+          </div>
+
+          <div className="flex md:hidden">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleMenu}
+              aria-label="Toggle menu"
+            >
+              {isMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {isMenuOpen && (
+        <div className="md:hidden bg-white dark:bg-card shadow-lg w-full">
+          <div className="px-2 pt-2 pb-3 space-y-1">
+            {navLinks.map((link) => (
+              <Link
+                key={link.name}
+                to={link.path}
+                className={cn(
+                  "block px-3 py-2 rounded-md text-base font-medium",
+                  location.pathname === link.path
+                    ? "bg-homi-ultraLightPurple text-homi-purple"
+                    : "text-foreground hover:bg-muted"
+                )}
+              >
+                {link.name}
+              </Link>
+            ))}
+            
+            <div className="pt-2 pb-1">
+              <AuthButton />
             </div>
           </div>
         </div>
-        
-        {/* Mobile menu */}
-        {isMenuOpen && (
-          <div 
-            id="navbar-mobile-menu"
-            className="md:hidden fixed inset-x-0 top-16 bg-background/95 backdrop-blur-md shadow-md overflow-hidden transition-all z-50"
-          >
-            <div className="container mx-auto px-4 py-4 flex flex-col gap-2">
-              <Link 
-                to="/" 
-                className="flex items-center px-4 py-2 text-sm font-medium rounded-md hover:bg-accent"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Inicio
-              </Link>
-              
-              {user && (
-                <>
-                  <Link 
-                    to="/matching" 
-                    className="flex items-center px-4 py-2 text-sm font-medium rounded-md hover:bg-accent"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Buscar Match
-                  </Link>
-                  <Link 
-                    to="/chat" 
-                    className="flex items-center px-4 py-2 text-sm font-medium rounded-md hover:bg-accent"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Chat
-                  </Link>
-                </>
-              )}
-              
-              <Link 
-                to="/cookies" 
-                className="flex items-center px-4 py-2 text-sm font-medium rounded-md hover:bg-accent"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Recursos
-              </Link>
-              
-              {user && (
-                <Link 
-                  to="/profile" 
-                  className="flex items-center px-4 py-2 text-sm font-medium rounded-md hover:bg-accent"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Mi Perfil
-                </Link>
-              )}
-
-              <div className="mt-2 pt-2 border-t">
-                <AuthButton />
-              </div>
-            </div>
-          </div>
-        )}
-      </header>
-      
-      {/* Empty div to push content below fixed navbar */}
-      <div className="h-16"></div>
-    </>
+      )}
+    </header>
   );
 };
 

@@ -43,15 +43,7 @@ interface SwipeInterfaceProps {
 const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProps) => {
   const { toast } = useToast();
   const updatedProfiles = profiles.map(profile => {
-    // Si el perfil ya tiene una imagen URL válida, úsala
-    if (profile.imgUrl && (profile.imgUrl.startsWith('http') || profile.imgUrl.startsWith('/'))) {
-      return profile;
-    }
-    
-    // De lo contrario, genera una imagen basada en el ID del perfil
-    const profileId = profile.id ? (isNaN(parseInt(profile.id)) ? 
-      profile.id.charCodeAt(0) % 10 : parseInt(profile.id) % 10) : 
-      Math.floor(Math.random() * 10);
+    const profileId = parseInt(profile.id) || Math.floor(Math.random() * 10);
     
     const imageIndex = profileId % 10;
     
@@ -192,29 +184,6 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
       description: "Puedes ver todos los perfiles de nuevo."
     });
   };
-  
-  // Si no hay perfiles inicialmente, pero están disponibles updatedProfiles,
-  // muestra un mensaje indicando que son perfiles de desarrollo/demo
-  if (updatedProfiles.length > 0 && availableProfiles.length === 0) {
-    return (
-      <div className="h-full flex flex-col items-center justify-center py-8 px-4">
-        <div className="text-center">
-          <h2 className="text-xl font-bold mb-3">Has visto todos los perfiles</h2>
-          <p className="text-muted-foreground mb-6">
-            ¿Quieres ver los perfiles de nuevo?
-          </p>
-          
-          <Button 
-            className="rounded-full bg-homi-purple hover:bg-homi-purple/90 button-glow"
-            onClick={handleReset}
-          >
-            <RefreshCw className="mr-2 h-4 w-4" />
-            Ver perfiles de nuevo
-          </Button>
-        </div>
-      </div>
-    );
-  }
   
   if (!hasMoreProfiles) {
     return (
