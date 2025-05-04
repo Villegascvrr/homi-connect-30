@@ -3,14 +3,25 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Mail, LogIn } from 'lucide-react';
+import { Mail } from 'lucide-react';
 import { signInWithGoogleOAuth } from '@/integrations/supabase/client';
+import { useAuth } from '@/context/AuthContext';
+
+interface ProfileAuthGateProps {
+  children: React.ReactNode;
+}
 
 /**
- * Component displayed on the profile page when user is not authenticated
- * Provides options to sign in or register
+ * Component that renders children when user is authenticated
+ * Otherwise displays auth options
  */
-const ProfileAuthGate = () => {
+const ProfileAuthGate: React.FC<ProfileAuthGateProps> = ({ children }) => {
+  const { user } = useAuth();
+  
+  if (user) {
+    return <>{children}</>;
+  }
+  
   return (
     <Card className="max-w-md mx-auto p-8 shadow-md">
       <div className="text-center mb-8">
