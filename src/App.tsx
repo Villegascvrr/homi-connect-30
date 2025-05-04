@@ -64,9 +64,7 @@ function App() {
             path="/profile"
             element={
               <ProtectedRoute>
-                <ProfileAuthGate>
-                  <ProfilePage />
-                </ProfileAuthGate>
+                <ProfileAuthGate children={<ProfilePage />} />
               </ProtectedRoute>
             }
           />
