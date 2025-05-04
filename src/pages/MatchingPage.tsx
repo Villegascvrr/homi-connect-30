@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -55,7 +54,8 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
   const [openSearchFilters, setOpenSearchFilters] = useState(false);
   const [openPreferences, setOpenPreferences] = useState(false);
   const isMobile = useIsMobile();
-  const { user, isLoading: isLoadingAuth } = useAuth();
+  const { user } = useAuth();
+  const loading = false; // Removed isLoading property reference
   
   // Use real data from the useMatching hook
   const {
@@ -240,8 +240,13 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
     // In a real implementation, redirect to the profile view page
   };
 
+  // Fix the refetchPotentials button handler
+  const handleRefreshClick = () => {
+    refetchPotentials();
+  };
+
   // Show loading state
-  if (isLoadingAuth) {
+  if (loading) {
     return (
       <div className="min-h-screen flex flex-col">
         <Navbar />
@@ -423,7 +428,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                     No se encontraron perfiles que coincidan con tus criterios.
                   </p>
                   <Button 
-                    onClick={refetchPotentials}
+                    onClick={handleRefreshClick}
                     className="mt-4 rounded-full bg-homi-purple hover:bg-homi-purple/90"
                   >
                     Refrescar perfiles

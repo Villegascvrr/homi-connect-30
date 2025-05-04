@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import RegisterPage from "./pages/RegisterPage";
 import SignInPage from "./pages/SignInPage";
-import ProfilePage from "./pages/ProfilePage";
+import ProfilePage from "./components/profiles/ProfilePage";
 import MatchingPage from "./pages/MatchingPage";
 import ChatPage from "./pages/ChatPage";
 import NotFound from "./pages/NotFound";
@@ -47,7 +47,7 @@ function App() {
           <Route
             path="/register"
             element={
-              <ProtectedRoute allowsPublicAccess redirectPath="/profile">
+              <ProtectedRoute redirectPath="/profile">
                 <RegisterPage />
               </ProtectedRoute>
             }
@@ -55,7 +55,7 @@ function App() {
           <Route
             path="/signin"
             element={
-              <ProtectedRoute allowsPublicAccess redirectPath="/profile">
+              <ProtectedRoute redirectPath="/profile">
                 <SignInPage />
               </ProtectedRoute>
             }
@@ -73,7 +73,7 @@ function App() {
           <Route 
             path="/matching" 
             element={
-              <ProtectedRoute allowsPreview>
+              <ProtectedRoute allowPreview>
                 <MatchingPage />
               </ProtectedRoute>
             } 

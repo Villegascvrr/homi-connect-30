@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link, NavLink as RouterNavLink } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -65,7 +66,11 @@ const NavLink: React.FC<NavLinkProps> = ({ to, children }) => (
   </RouterNavLink>
 );
 
-const MobileNavLink: React.FC<NavLinkProps> = ({ to, children, onClick }) => (
+interface MobileNavLinkProps extends NavLinkProps {
+  onClick: () => void;
+}
+
+const MobileNavLink: React.FC<MobileNavLinkProps> = ({ to, children, onClick }) => (
   <RouterNavLink
     to={to}
     onClick={onClick}
@@ -176,9 +181,5 @@ const Navbar: React.FC = () => {
     </header>
   );
 };
-
-interface MobileNavLinkProps extends NavLinkProps {
-  onClick: () => void;
-}
 
 export default Navbar;
