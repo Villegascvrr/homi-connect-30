@@ -1,11 +1,19 @@
 
-import React, { useRef, useEffect } from 'react';
-import { cn } from '@/lib/utils';
-import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
-import { Skeleton } from '@/components/ui/skeleton';
+import { useState, useRef, useEffect } from 'react';
+import { Send, Image, Mic, Paperclip, Smile } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { supabase } from '@/integrations/supabase/client';
 
-interface ChatMessage {
+interface ChatMatch {
+  id: string;
+  name: string;
+  imgUrl: string;
+  online: boolean;
+  typing: boolean;
+}
+
+interface Message {
   id: string;
   senderId: string;
   text: string;
@@ -14,147 +22,194 @@ interface ChatMessage {
 }
 
 interface ChatWindowProps {
-  messages: ChatMessage[];
-  currentUserId: string;
-  isLoading?: boolean;
+  chat: ChatMatch;
+  initialMessages?: Message[];
 }
 
-const ChatWindow: React.FC<ChatWindowProps> = ({ 
-  messages, 
-  currentUserId,
-  isLoading = false
-}) => {
+const ChatWindow = ({
+  chat,
+  initialMessages = []
+}: ChatWindowProps) => {
+  const [messages, setMessages] = useState<Message[]>(initialMessages);
+  const [newMessage, setNewMessage] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  
-  // Scroll to bottom on new messages
+  const [shouldAutoScroll, setShouldAutoScroll] = useState(false);
+
+  // Reset messages when chat changes
   useEffect(() => {
-    if (messagesEndRef.current && messages.length > 0) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [messages]);
-  
-  // Format message timestamp
-  const formatMessageTime = (timestamp: string) => {
-    try {
-      const date = new Date(timestamp);
-      return format(date, 'HH:mm', { locale: es });
-    } catch (error) {
-      return '';
-    }
-  };
-  
-  if (isLoading) {
-    return (
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {Array(5).fill(0).map((_, i) => (
-          <div key={i} className={`flex ${i % 2 === 0 ? 'justify-end' : 'justify-start'}`}>
-            <Skeleton className={`h-10 max-w-[80%] ${i % 2 === 0 ? 'rounded-l-lg rounded-tr-lg' : 'rounded-r-lg rounded-tl-lg'}`} style={{ width: `${100 + Math.random() * 200}px` }} />
-          </div>
-        ))}
-      </div>
-    );
-  }
-  
-  // Group messages by date
-  const groupedMessages: { [date: string]: ChatMessage[] } = {};
-  
-  messages.forEach(message => {
-    try {
-      const date = new Date(message.timestamp);
-      const dateKey = format(date, 'yyyy-MM-dd');
-      
-      if (!groupedMessages[dateKey]) {
-        groupedMessages[dateKey] = [];
+    setMessages(initialMessages);
+    console.log(`Loading messages for chat ${chat.id}:`, initialMessages);
+  }, [chat.id, initialMessages]);
+
+  // Complete disable of initial autoscroll but enable for new messages
+  useEffect(() => {
+    // Disable initial auto scroll on component mount
+    const timer = setTimeout(() => {
+      setShouldAutoScroll(true);
+    }, 1000); // Longer delay to ensure page is fully rendered
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Only scroll on new messages, not on initial load
+  useEffect(() => {
+    if (shouldAutoScroll && messagesEndRef.current) {
+      // Don't scroll on initial render of messages
+      if (messages.length > initialMessages.length) {
+        messagesEndRef.current.scrollIntoView({
+          behavior: 'smooth'
+        });
       }
-      
-      groupedMessages[dateKey].push(message);
-    } catch (error) {
-      // Handle invalid dates
-      const fallbackKey = 'unknown-date';
-      if (!groupedMessages[fallbackKey]) {
-        groupedMessages[fallbackKey] = [];
-      }
-      
-      groupedMessages[fallbackKey].push(message);
     }
-  });
+  }, [messages, shouldAutoScroll, initialMessages.length]);
   
-  // Format date for display
-  const formatDateHeader = (dateKey: string) => {
-    if (dateKey === 'unknown-date') return 'Fecha desconocida';
+  const handleSendMessage = () => {
+    if (newMessage.trim() === '') return;
     
-    try {
-      const date = new Date(dateKey);
-      const today = new Date();
-      const yesterday = new Date(today);
-      yesterday.setDate(yesterday.getDate() - 1);
+    const message = {
+      id: Date.now().toString(),
+      senderId: 'me',
+      text: newMessage,
+      timestamp: new Date().toISOString(),
+      read: false
+    };
+    
+    setMessages([...messages, message]);
+    setNewMessage('');
+
+    // Simulate reply based on the current chat partner
+    setTimeout(() => {
+      let replyText = '';
       
-      if (date.toDateString() === today.toDateString()) {
-        return 'Hoy';
-      } else if (date.toDateString() === yesterday.toDateString()) {
-        return 'Ayer';
-      } else {
-        return format(date, 'd MMMM, yyyy', { locale: es });
+      // Generate appropriate responses based on chat contact
+      switch(chat.id) {
+        case "1":
+          replyText = "¡Genial! ¿Te gustaría ver el piso esta semana?";
+          break;
+        case "2":
+          replyText = "Sí, tengo disponibilidad para vernos. ¿Qué día te viene mejor?";
+          break;
+        case "3":
+          replyText = "Estoy buscando en esa zona. ¿Cuándo podríamos quedar para ver el piso?";
+          break;
+        case "4":
+          replyText = "Perfecto, entonces nos vemos mañana a las 6.";
+          break;
+        default:
+          replyText = "Gracias por tu mensaje. Te responderé lo antes posible.";
       }
-    } catch (error) {
-      return dateKey;
-    }
+      
+      const replyMessage = {
+        id: (Date.now() + 1).toString(),
+        senderId: 'other',
+        text: replyText,
+        timestamp: new Date().toISOString(),
+        read: false
+      };
+      setMessages(prevMessages => [...prevMessages, replyMessage]);
+    }, 3000);
+  };
+
+  // Format timestamp to human-readable time
+  const formatMessageTime = (timestamp: string) => {
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   };
   
   return (
-    <div className="flex-1 overflow-y-auto p-4">
-      {messages.length === 0 ? (
-        <div className="h-full flex flex-col items-center justify-center text-center p-4">
-          <p className="text-muted-foreground mb-2">No hay mensajes aún</p>
-          <p className="text-xs text-muted-foreground">¡Envía el primer mensaje para comenzar la conversación!</p>
+    <div className="flex flex-col h-full">
+      {/* Chat header - reduced padding */}
+      <div className="py-2 px-3 border-b border-border flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="relative">
+            <div className="w-8 h-8 rounded-full overflow-hidden">
+              <img src={chat.imgUrl} alt={chat.name} className="w-full h-full object-cover" />
+            </div>
+            {chat.online && <span className="absolute bottom-0 right-0 w-2 h-2 bg-green-500 rounded-full border-2 border-white"></span>}
+          </div>
+          <div>
+            <h3 className="font-semibold text-sm">{chat.name}</h3>
+            <p className="text-xs text-muted-foreground">
+              {chat.online ? chat.typing ? 'Escribiendo...' : 'En línea' : 'Desconectado'}
+            </p>
+          </div>
         </div>
-      ) : (
-        <>
-          {Object.keys(groupedMessages).map(dateKey => (
-            <div key={dateKey} className="mb-6">
-              <div className="flex justify-center mb-4">
-                <span className="text-xs px-3 py-1 bg-muted rounded-full">
-                  {formatDateHeader(dateKey)}
-                </span>
-              </div>
-              
-              <div className="space-y-3">
-                {groupedMessages[dateKey].map(message => {
-                  const isSentByMe = message.senderId === currentUserId;
-                  
-                  return (
-                    <div key={message.id} className={cn(
-                      "flex",
-                      isSentByMe ? "justify-end" : "justify-start"
-                    )}>
-                      <div className={cn(
-                        "max-w-[80%] px-4 py-2 rounded-lg",
-                        isSentByMe 
-                          ? "bg-homi-purple text-white rounded-bl-lg rounded-br-sm rounded-tr-lg" 
-                          : "bg-muted rounded-bl-sm rounded-br-lg rounded-tl-lg"
-                      )}>
-                        <p className="text-sm break-words">{message.text}</p>
-                        <div className={cn(
-                          "flex justify-end items-center gap-1 mt-1",
-                          isSentByMe ? "text-white/70" : "text-muted-foreground"
-                        )}>
-                          <span className="text-[10px]">{formatMessageTime(message.timestamp)}</span>
-                          {isSentByMe && (
-                            <span className="text-[10px]">
-                              {message.read ? '• Leído' : ''}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
+        
+        <div className="flex gap-1">
+          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+            <Paperclip size={16} />
+          </Button>
+          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+            <Image size={16} />
+          </Button>
+        </div>
+      </div>
+      
+      {/* Messages area with improved ScrollArea container */}
+      <ScrollArea className="flex-1 py-2 px-3 max-h-[calc(100vh-16rem)] my-[30px]">
+        <div className="space-y-2">
+          {messages.map(message => (
+            <div key={message.id} className={`flex ${message.senderId === 'me' ? 'justify-end' : 'justify-start'}`}>
+              <div className={`max-w-[80%] rounded-xl p-2 ${message.senderId === 'me' ? 'bg-homi-purple text-white rounded-tr-none' : 'bg-gray-100 dark:bg-gray-800 rounded-tl-none'}`}>
+                <p className="text-sm">{message.text}</p>
+                <div className={`text-xs mt-1 flex items-center ${message.senderId === 'me' ? 'justify-end text-white/70' : 'text-muted-foreground'}`}>
+                  {formatMessageTime(message.timestamp)}
+                  {message.senderId === 'me' && (
+                    <span className="ml-1">
+                      {message.read ? '✓✓' : '✓'}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           ))}
           <div ref={messagesEndRef} />
-        </>
-      )}
+        </div>
+      </ScrollArea>
+      
+      {/* Message input - improved button distribution */}
+      <div className="py-4 px-3 border-t border-border mt-auto">
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
+            <Smile size={18} />
+          </Button>
+          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
+            <Paperclip size={18} />
+          </Button>
+          
+          <div className="flex-1 relative">
+            <input 
+              type="text" 
+              placeholder="Escribe un mensaje..." 
+              className="w-full p-2.5 pr-10 rounded-full border border-border bg-background focus:outline-none focus:ring-2 focus:ring-homi-purple text-sm" 
+              value={newMessage} 
+              onChange={e => setNewMessage(e.target.value)} 
+              onKeyDown={e => {
+                if (e.key === 'Enter') handleSendMessage();
+              }} 
+            />
+            <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
+              {newMessage.trim() === '' ? (
+                <Button variant="ghost" size="icon" className="rounded-full h-8 w-8">
+                  <Mic size={18} className="text-muted-foreground" />
+                </Button>
+              ) : (
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="rounded-full text-homi-purple hover:text-homi-purple hover:bg-homi-ultraLightPurple h-8 w-8" 
+                  onClick={handleSendMessage}
+                >
+                  <Send size={18} />
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

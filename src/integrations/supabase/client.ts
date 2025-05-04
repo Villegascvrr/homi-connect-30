@@ -114,8 +114,8 @@ export const signInWithGoogleOAuth = async (): Promise<void> => {
  */
 export const checkEmailExists = async (email: string): Promise<boolean> => {
   try {
-    // Cast supabase to any to bypass TypeScript issues with the custom function
-    const { data, error } = await (supabase as any)
+    // Use the correct type for the function parameters
+    const { data, error } = await supabase
       .rpc('check_email_exists', { 
         email_to_check: email 
       });

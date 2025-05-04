@@ -9,7 +9,6 @@ import { Loader2 } from "lucide-react";
 interface ProtectedRouteProps {
   children: React.ReactNode;
   allowPreview?: boolean;
-  redirectPath?: string;
   previewComponent?: React.ReactNode;
   demoMessage?: string;
   authComponent?: React.ReactNode; // New prop to allow custom auth component
@@ -23,7 +22,6 @@ interface ProtectedRouteProps {
 const ProtectedRoute = ({ 
   children, 
   allowPreview = false,
-  redirectPath = "/signin",
   previewComponent,
   demoMessage,
   authComponent,
@@ -146,7 +144,7 @@ const ProtectedRoute = ({
     console.log("Redirecting to signin from:", location.pathname);
     setIsNavigating(true);
     // Use immediate return of Navigate instead of setTimeout to ensure faster redirection
-    return <Navigate to={redirectPath} state={{ from: location.pathname }} replace />;
+    return <Navigate to="/signin" state={{ from: location.pathname }} replace />;
   }
   
   // Fallback while navigating to prevent flickering
