@@ -9,7 +9,6 @@ import { useToast } from "@/hooks/use-toast";
 import { Card } from "@/components/ui/card";
 import { AtSign, MapPin, GraduationCap, Briefcase, Edit, User, Heart, Tag, Clock, Trash2, Cigarette, PawPrint, Users } from 'lucide-react';
 import ProfileForm from "./ProfileForm";
-import ProfileAuthGate from '../auth/ProfileAuthGate';
 
 const ProfilePage = () => {
   const { user, session, loading } = useAuth();
@@ -28,7 +27,24 @@ const ProfilePage = () => {
         <main className="flex-grow pt-20 pb-12 bg-gray-50">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
-              <ProfileAuthGate />
+              {/* Fixed: Ensuring we don't use ProfileAuthGate without children */}
+              {/* The ProfileAuthGate component is now handled in App.tsx where it has proper children */}
+              <div className="max-w-md mx-auto p-8 shadow-md bg-white rounded-lg">
+                <div className="text-center mb-4">
+                  <h2 className="text-2xl font-bold">Acceso requerido</h2>
+                  <p className="text-muted-foreground">
+                    Para ver tu perfil, necesitas iniciar sesión o registrarte
+                  </p>
+                </div>
+                <div className="space-y-4">
+                  <Link to="/signin" className="w-full block">
+                    <Button className="w-full">Iniciar sesión</Button>
+                  </Link>
+                  <Link to="/register" className="w-full block">
+                    <Button variant="outline" className="w-full">Registrarse</Button>
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
         </main>
