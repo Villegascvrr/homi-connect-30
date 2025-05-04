@@ -29,8 +29,11 @@ export const recordMatchPreference = async (
   status: 'like' | 'pass'
 ): Promise<{ data: ProfileMatch | null; isMatch: boolean; error: Error | null }> => {
   try {
+    // Temporarily cast to any to bypass TypeScript issues with new tables
+    const supabaseAny = supabase as any;
+    
     // Check if this preference already exists
-    const { data: existingPreference } = await supabase
+    const { data: existingPreference } = await supabaseAny
       .from('profile_matches')
       .select('*')
       .eq('profile_id', profileId)
@@ -44,7 +47,7 @@ export const recordMatchPreference = async (
       }
       
       // Otherwise update it
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAny
         .from('profile_matches')
         .update({ status, updated_at: new Date().toISOString() })
         .eq('id', existingPreference.id)
@@ -65,11 +68,11 @@ export const recordMatchPreference = async (
     }
 
     // Create a new preference record
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAny
       .from('profile_matches')
       .insert({
         profile_id: profileId,
-        target_profileId: targetProfileId,
+        target_profile_id: targetProfileId,
         status,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
@@ -103,7 +106,10 @@ export const recordMatchPreference = async (
  * Checks if there is a mutual like between two profiles
  */
 const checkForMutualMatch = async (profileId: string, targetProfileId: string): Promise<boolean> => {
-  const { data, error } = await supabase
+  // Temporarily cast to any to bypass TypeScript issues with new tables
+  const supabaseAny = supabase as any;
+  
+  const { data, error } = await supabaseAny
     .from('profile_matches')
     .select('*')
     .eq('profile_id', targetProfileId)
@@ -127,8 +133,11 @@ const checkForMutualMatch = async (profileId: string, targetProfileId: string): 
  */
 const createMatchRecord = async (profileOneId: string, profileTwoId: string): Promise<void> => {
   try {
+    // Temporarily cast to any to bypass TypeScript issues with new tables
+    const supabaseAny = supabase as any;
+    
     // Check if match already exists
-    const { data: existingMatch } = await supabase
+    const { data: existingMatch } = await supabaseAny
       .from('matches')
       .select('*')
       .or(`profile_one_id.eq.${profileOneId},profile_one_id.eq.${profileTwoId}`)
@@ -141,7 +150,7 @@ const createMatchRecord = async (profileOneId: string, profileTwoId: string): Pr
     }
 
     // Create new match record
-    const { error } = await supabase
+    const { error } = await supabaseAny
       .from('matches')
       .insert({
         profile_one_id: profileOneId,
@@ -166,7 +175,10 @@ const createMatchRecord = async (profileOneId: string, profileTwoId: string): Pr
  */
 export const getUserMatches = async (userId: string): Promise<MatchingResult[]> => {
   try {
-    const { data, error } = await supabase
+    // Temporarily cast to any to bypass TypeScript issues with new tables
+    const supabaseAny = supabase as any;
+    
+    const { data, error } = await supabaseAny
       .from('matches')
       .select(`
         *,
@@ -180,8 +192,8 @@ export const getUserMatches = async (userId: string): Promise<MatchingResult[]> 
 
     // Get last message for each match
     const matchesWithMessages = await Promise.all(
-      (data || []).map(async (match) => {
-        const { data: messages } = await supabase
+      (data || []).map(async (match: any) => {
+        const { data: messages } = await supabaseAny
           .from('messages')
           .select('*')
           .eq('match_id', match.id)
@@ -220,14 +232,17 @@ export const getUserMatches = async (userId: string): Promise<MatchingResult[]> 
  */
 export const getSeenProfiles = async (userId: string): Promise<string[]> => {
   try {
-    const { data, error } = await supabase
+    // Temporarily cast to any to bypass TypeScript issues with new tables
+    const supabaseAny = supabase as any;
+    
+    const { data, error } = await supabaseAny
       .from('profile_matches')
       .select('target_profile_id')
       .eq('profile_id', userId);
 
     if (error) throw error;
 
-    return data.map(item => item.target_profile_id);
+    return data.map((item: any) => item.target_profile_id);
   } catch (error) {
     console.error('Error getting seen profiles:', error);
     return [];

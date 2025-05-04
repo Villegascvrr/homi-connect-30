@@ -20,7 +20,10 @@ export const sendMessage = async (
   content: string
 ): Promise<Message | null> => {
   try {
-    const { data, error } = await supabase
+    // Temporarily cast to any to bypass TypeScript issues with new tables
+    const supabaseAny = supabase as any;
+    
+    const { data, error } = await supabaseAny
       .from('messages')
       .insert({
         match_id: matchId,
@@ -35,7 +38,7 @@ export const sendMessage = async (
     if (error) throw error;
 
     // Also update the match's updated_at timestamp
-    await supabase
+    await supabaseAny
       .from('matches')
       .update({ updated_at: new Date().toISOString() })
       .eq('id', matchId);
@@ -57,7 +60,10 @@ export const sendMessage = async (
  */
 export const getMessages = async (matchId: string): Promise<Message[]> => {
   try {
-    const { data, error } = await supabase
+    // Temporarily cast to any to bypass TypeScript issues with new tables
+    const supabaseAny = supabase as any;
+    
+    const { data, error } = await supabaseAny
       .from('messages')
       .select('*')
       .eq('match_id', matchId)
@@ -77,7 +83,10 @@ export const getMessages = async (matchId: string): Promise<Message[]> => {
  */
 export const markMessagesAsRead = async (matchId: string, userId: string): Promise<void> => {
   try {
-    const { error } = await supabase
+    // Temporarily cast to any to bypass TypeScript issues with new tables
+    const supabaseAny = supabase as any;
+    
+    const { error } = await supabaseAny
       .from('messages')
       .update({ read: true })
       .eq('match_id', matchId)
@@ -123,7 +132,10 @@ export const subscribeToMessages = (
  */
 export const getUnreadMessageCounts = async (userId: string): Promise<Record<string, number>> => {
   try {
-    const { data: matches } = await supabase
+    // Temporarily cast to any to bypass TypeScript issues with new tables
+    const supabaseAny = supabase as any;
+    
+    const { data: matches } = await supabaseAny
       .from('matches')
       .select('id')
       .or(`profile_one_id.eq.${userId},profile_two_id.eq.${userId}`);
@@ -133,8 +145,8 @@ export const getUnreadMessageCounts = async (userId: string): Promise<Record<str
     const counts: Record<string, number> = {};
     
     await Promise.all(
-      matches.map(async (match) => {
-        const { data, error } = await supabase
+      matches.map(async (match: any) => {
+        const { data, error } = await supabaseAny
           .from('messages')
           .select('id', { count: 'exact' })
           .eq('match_id', match.id)
