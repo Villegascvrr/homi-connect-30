@@ -1,214 +1,168 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useParams, Link, useLocation } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
+import { useChat } from '@/hooks/use-chat';
+import { useMatching } from '@/hooks/use-matching';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { ChevronLeft, Send } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import ChatList from '@/components/chat/ChatList';
 import ChatWindow from '@/components/chat/ChatWindow';
-import { useAuth } from '@/context/AuthContext';
 
-// Define a mock chat match for demo purposes
-const mockChatMatches = [
-  {
-    id: "1",
-    name: "Laura García",
-    lastMessage: "¡Hola! Vi tu perfil y creo que podríamos ser buenos compañeros de piso.",
-    timestamp: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
-    unread: 2,
-    online: true,
-    typing: false,
-    imgUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3"
-  },
-  {
-    id: "2",
-    name: "Carlos Martínez",
-    lastMessage: "Me interesa el piso que comentaste cerca de la universidad.",
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 3).toISOString(),
-    unread: 0,
-    online: true,
-    typing: true,
-    imgUrl: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3"
-  },
-  {
-    id: "3",
-    name: "Ana López",
-    lastMessage: "¿Cuándo podríamos quedar para ver el piso?",
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 12).toISOString(),
-    unread: 0,
-    online: false,
-    typing: false,
-    imgUrl: "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1961&auto=format&fit=crop&ixlib=rb-4.0.3"
-  },
-  {
-    id: "4",
-    name: "Miguel Sánchez",
-    lastMessage: "Perfecto, entonces nos vemos mañana a las 6.",
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
-    unread: 1,
-    online: false,
-    typing: false,
-    imgUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3"
-  }
-];
-
-// Define sample messages for each chat
-const mockMessages = {
-  "1": [
-    {
-      id: '1-1',
-      senderId: 'other',
-      text: '¡Hola! Vi tu perfil y creo que podríamos ser buenos compañeros de piso. ¿Buscas algo cerca de la universidad?',
-      timestamp: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
-      read: true
-    }, 
-    {
-      id: '1-2',
-      senderId: 'me',
-      text: 'Hola Laura, sí estoy buscando cerca del campus. Me encantaría hablar más sobre ello.',
-      timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
-      read: true
-    },
-    {
-      id: '1-3',
-      senderId: 'other',
-      text: '¡Genial! Tengo un piso compartido a 10 minutos de la facultad. Es amplio y luminoso.',
-      timestamp: new Date(Date.now() - 1000 * 60 * 20).toISOString(),
-      read: false
-    }
-  ],
-  "2": [
-    {
-      id: '2-1',
-      senderId: 'other',
-      text: 'Me interesa el piso que comentaste cerca de la universidad. ¿Sigue disponible?',
-      timestamp: new Date(Date.now() - 1000 * 60 * 180).toISOString(),
-      read: true
-    },
-    {
-      id: '2-2',
-      senderId: 'me',
-      text: 'Sí, aún está disponible. ¿Te gustaría verlo esta semana?',
-      timestamp: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
-      read: true
-    }
-  ],
-  "3": [
-    {
-      id: '3-1',
-      senderId: 'me',
-      text: 'Hola Ana, vi que estás buscando compañeros de piso en la zona centro.',
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 13).toISOString(),
-      read: true
-    },
-    {
-      id: '3-2',
-      senderId: 'other',
-      text: 'Sí, estoy buscando en esa zona. ¿Cuándo podríamos quedar para ver el piso?',
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 12).toISOString(),
-      read: true
-    }
-  ],
-  "4": [
-    {
-      id: '4-1',
-      senderId: 'other',
-      text: '¿Te parece bien quedar mañana para ver el piso?',
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 25).toISOString(),
-      read: true
-    },
-    {
-      id: '4-2',
-      senderId: 'me',
-      text: 'Sí, perfecto. ¿A las 6 de la tarde?',
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24.5).toISOString(),
-      read: true
-    },
-    {
-      id: '4-3',
-      senderId: 'other',
-      text: 'Perfecto, entonces nos vemos mañana a las 6.',
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
-      read: false
-    }
-  ]
-};
-
-interface ChatPageProps {
-  isPreview?: boolean;
-}
-
-const ChatPage = ({ isPreview = false }: ChatPageProps) => {
-  const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
+const ChatPage: React.FC = () => {
+  const { matchId } = useParams<{ matchId: string }>();
+  const location = useLocation();
   const { user } = useAuth();
-  const [isLoading, setIsLoading] = useState(true);
+  const { matches, isLoadingMatches } = useMatching();
+  const { messages, sendMessage, isSending, unreadCounts } = useChat(matchId);
+  const [newMessage, setNewMessage] = useState('');
+  const [selectedMatchId, setSelectedMatchId] = useState<string | undefined>(matchId);
+  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 768);
   
+  // Handle window resize
   useEffect(() => {
-    // Set initial selected chat
-    if (mockChatMatches.length > 0 && !selectedChatId) {
-      setSelectedChatId(mockChatMatches[0].id);
-    }
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth < 768);
+    };
     
-    // Force loading to complete after a short delay
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-      console.log("Chat page loaded successfully");
-    }, 300);
-    
-    return () => clearTimeout(timer);
-  }, [selectedChatId]);
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
   
-  const handleSelectChat = (id: string) => {
-    if (id === selectedChatId) return; // Skip if already selected
-    setSelectedChatId(id);
-    console.log("Selected chat changed to:", id);
+  // Set selected match based on URL parameter
+  useEffect(() => {
+    if (matchId) {
+      setSelectedMatchId(matchId);
+    }
+  }, [matchId]);
+  
+  // Get current match details
+  const currentMatch = matches.find(match => match.id === selectedMatchId);
+  
+  // Handle sending a message
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newMessage.trim() || !selectedMatchId) return;
+    
+    sendMessage(newMessage);
+    setNewMessage('');
   };
   
-  // Find the currently selected chat
-  const selectedChat = mockChatMatches.find(match => match.id === selectedChatId) || mockChatMatches[0];
-
-  // Show a more visible loading indicator
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex flex-col bg-background">
-        <Navbar />
-        <div className="flex-grow flex items-center justify-center">
-          <div className="flex flex-col items-center gap-2">
-            <div className="h-10 w-10 animate-spin rounded-full border-4 border-homi-purple border-t-transparent"></div>
-            <p className="text-muted-foreground">Cargando chat...</p>
-          </div>
-        </div>
-        <Footer />
-      </div>
-    );
-  }
-
+  // Handle selecting a match from the sidebar
+  const handleSelectMatch = (id: string) => {
+    setSelectedMatchId(id);
+  };
+  
+  // Determine if we should show the chat list or the chat window
+  const showChatList = !isSmallScreen || !selectedMatchId;
+  const showChatWindow = !isSmallScreen || (isSmallScreen && selectedMatchId);
+  
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col">
       <Navbar />
       
-      {/* Content container with proper spacing */}
-      <main className="flex-grow flex flex-col">
-        <div className="h-full flex flex-col">
-          <div className="flex h-[calc(100vh-8rem)]">
-            <div className="w-full sm:w-1/3 md:w-1/4 border-r overflow-y-auto">
-              <ChatList 
-                matches={mockChatMatches} 
-                selectedChatId={selectedChatId} 
-                onSelectChat={handleSelectChat}
-              />
+      <main className="flex-grow pt-4 pb-12 bg-transparent">
+        <div className="container mx-auto px-4 h-full">
+          <div className="flex flex-col h-full">
+            <div className="mb-6">
+              <h1 className="text-2xl md:text-3xl font-bold mb-2">
+                <span className="homi-gradient-text">Mensajes</span>
+              </h1>
+              <p className="text-muted-foreground max-w-2xl font-normal text-left">
+                Chatea con tus matches y conoce mejor a tus futuros compañeros de piso.
+              </p>
             </div>
-            <div className="hidden sm:block sm:w-2/3 md:w-3/4">
-              {selectedChat && (
-                <ChatWindow 
-                  chat={{
-                    id: selectedChat.id,
-                    name: selectedChat.name,
-                    imgUrl: selectedChat.imgUrl,
-                    online: selectedChat.online,
-                    typing: selectedChat.typing
-                  }} 
-                  initialMessages={mockMessages[selectedChat.id as keyof typeof mockMessages] || []}
-                />
+            
+            <div className="flex flex-1 gap-4 h-[70vh] min-h-[500px] lg:min-h-[600px]">
+              {/* Chat list / sidebar */}
+              {showChatList && (
+                <div className={`${isSmallScreen ? 'w-full' : 'w-1/3'} border rounded-lg overflow-hidden`}>
+                  <ChatList 
+                    matches={matches}
+                    selectedMatchId={selectedMatchId}
+                    onSelectMatch={handleSelectMatch}
+                    isLoading={isLoadingMatches}
+                    unreadCounts={unreadCounts}
+                  />
+                </div>
+              )}
+              
+              {/* Chat window */}
+              {showChatWindow && (
+                <div className={`${isSmallScreen ? 'w-full' : 'w-2/3'} border rounded-lg overflow-hidden flex flex-col`}>
+                  {selectedMatchId ? (
+                    <>
+                      {/* Chat header */}
+                      <div className="border-b p-3 flex items-center gap-3 bg-muted/30">
+                        {isSmallScreen && (
+                          <Link to="/chat">
+                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                              <ChevronLeft className="h-4 w-4" />
+                            </Button>
+                          </Link>
+                        )}
+                        
+                        {currentMatch ? (
+                          <>
+                            <Avatar className="h-10 w-10">
+                              <AvatarImage src={currentMatch.imgUrl} alt={currentMatch.name} />
+                              <AvatarFallback>{currentMatch.name.charAt(0)}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <h3 className="font-medium text-sm">{currentMatch.name}</h3>
+                              <p className="text-xs text-muted-foreground">{currentMatch.location}</p>
+                            </div>
+                          </>
+                        ) : (
+                          <div className="flex items-center gap-3">
+                            <Skeleton className="h-10 w-10 rounded-full" />
+                            <div>
+                              <Skeleton className="h-4 w-24 mb-1" />
+                              <Skeleton className="h-3 w-16" />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                      
+                      {/* Messages */}
+                      <ChatWindow 
+                        messages={messages} 
+                        currentUserId={user?.id || ''}
+                      />
+                      
+                      {/* Message input */}
+                      <form onSubmit={handleSendMessage} className="border-t p-3 flex gap-2">
+                        <Input
+                          value={newMessage}
+                          onChange={(e) => setNewMessage(e.target.value)}
+                          placeholder="Escribir mensaje..."
+                          className="flex-1"
+                          disabled={isSending}
+                        />
+                        <Button type="submit" disabled={isSending || !newMessage.trim()}>
+                          <Send className="h-4 w-4" />
+                        </Button>
+                      </form>
+                    </>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center h-full p-4 text-center">
+                      <div className="rounded-full bg-muted p-6 mb-4">
+                        <Send className="h-8 w-8 text-muted-foreground" />
+                      </div>
+                      <h3 className="text-xl font-semibold mb-2">Selecciona un chat</h3>
+                      <p className="text-muted-foreground max-w-xs">
+                        Elige una conversación de la lista o encuentra nuevos matches para comenzar a chatear.
+                      </p>
+                    </div>
+                  )}
+                </div>
               )}
             </div>
           </div>
