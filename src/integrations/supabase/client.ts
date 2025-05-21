@@ -88,8 +88,8 @@ export const signInWithGoogleOAuth = async (): Promise<void> => {
           access_type: 'offline',
           prompt: 'consent',
         },
-        // Important: Use string type for scopes to match Supabase API
-        scopes: 'email profile',
+        // Fix: Changed from string to string[] to match expected type
+        scopes: ['email', 'profile'],
         skipBrowserRedirect: false,
       },
     });
