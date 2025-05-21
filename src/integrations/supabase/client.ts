@@ -88,8 +88,8 @@ export const signInWithGoogleOAuth = async (): Promise<void> => {
           access_type: 'offline',
           prompt: 'consent',
         },
-        // Fix: Remove the scopes parameter completely and let Supabase use the defaults
-        // This resolves the type mismatch issue
+        // Important: Use string type for scopes to match Supabase API
+        scopes: 'email profile',
         skipBrowserRedirect: false,
       },
     });
