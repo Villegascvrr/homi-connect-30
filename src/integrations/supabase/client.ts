@@ -88,8 +88,6 @@ export const signInWithGoogleOAuth = async (): Promise<void> => {
           access_type: 'offline',
           prompt: 'consent',
         },
-        // Remove the scopes parameter completely to use default Supabase scopes
-        skipBrowserRedirect: false,
       },
     });
     
