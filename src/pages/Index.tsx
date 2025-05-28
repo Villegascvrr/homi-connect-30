@@ -17,7 +17,7 @@ const Index = () => {
   const featuredProfiles = [
     {
       id: '1',
-      name: 'Elena',
+      name: 'Elenita',
       age: 23,
       location: 'Madrid',
       bio: 'Estudiante de Arquitectura. Me gusta leer, el arte y las noches tranquilas. Busco piso cerca de la universidad.',
