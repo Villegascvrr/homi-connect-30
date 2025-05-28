@@ -84,10 +84,6 @@ export const signInWithGoogleOAuth = async (): Promise<void> => {
       provider: 'google',
       options: {
         redirectTo: redirectTo,
-        queryParams: {
-          access_type: 'offline',
-          prompt: 'consent',
-        },
       },
     });
     
