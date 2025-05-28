@@ -53,7 +53,7 @@ const Index = () => {
       compatibility: 75
     }, {
       id: '3',
-      name: 'Laura',
+      name: 'Laurita',
       age: 22,
       location: 'Valencia',
       bio: 'Estudiante de Medicina. Me encanta cocinar y compartir momentos con amigos. Busco compañeros con intereses similares.',
