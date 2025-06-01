@@ -125,7 +125,7 @@ const RegisterPage = () => {
   };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log('Form submitted:', values);
+    
     setIsSubmitting(true);
     
     try {
@@ -156,7 +156,7 @@ const RegisterPage = () => {
           variant: "default",
         });
         
-        console.log("Registration successful, redirecting to home page with registered=true param");
+        
         
         // La redirección ya la hace el método signUp
       } else if (result.error?.message?.includes('email') || result.error?.message?.includes('already')) {

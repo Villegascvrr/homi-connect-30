@@ -31,14 +31,12 @@ const Hero = () => {
       const isLoggedIn = urlParams.get('loggedIn') === 'true';
       
       if (isRegistered) {
-        console.log("Usuario recién registrado, mostrando mensaje de bienvenida");
         setJustRegistered(true);
         setJustLoggedIn(false);
         
         // Limpiar parámetros URL después de procesarlos
         window.history.replaceState({}, document.title, window.location.pathname);
       } else if (isLoggedIn) {
-        console.log("Usuario recién conectado, mostrando mensaje de bienvenida");
         setJustLoggedIn(true);
         setJustRegistered(false);
         

@@ -64,9 +64,7 @@ const ProfileViewPage = () => {
           setLoading(false);
           return;
         }
-        
-        // Log the raw data from the database
-        console.log("Raw profile data from Supabase:", data);
+  
         
         // Transform the data to match the expected structure
         if (data) {
@@ -87,8 +85,6 @@ const ProfileViewPage = () => {
                 lifestyleObj = data.lifestyle as ProfileLifestyle;
               }
             }
-            
-            console.log("Parsed lifestyle object:", lifestyleObj);
             
             const formattedProfile = {
               id: data.id,

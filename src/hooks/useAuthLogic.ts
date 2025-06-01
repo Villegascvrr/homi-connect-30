@@ -24,21 +24,18 @@ const saveSessionToLocalStorage = (session: Session | null): void => {
     try {
       const sessionJson = JSON.stringify(session);
       localStorage.setItem('homi-auth-session', sessionJson);
-      console.log("Session saved to localStorage");
       
       const stored = localStorage.getItem('homi-auth-session');
       if (!stored) {
         console.warn("Failed to verify session storage, retrying...");
         localStorage.setItem('homi-auth-session', sessionJson);
       } else {
-        console.log("Session stored successfully");
       }
     } catch (error) {
       console.error("Error saving session to localStorage:", error);
     }
   } else {
     localStorage.removeItem('homi-auth-session');
-    console.log("Session removed from localStorage");
   }
 };
 
@@ -96,14 +93,12 @@ export const useAuthLogic = () => {
    */
   const refreshUser = useCallback(async () => {
     try {
-      console.log("Refreshing user data");
       setIsInternalAction(true);
       
       const { data: sessionData, error: sessionError } = await supabase.auth.refreshSession();
       if (sessionError) {
         console.error("Error refreshing session:", sessionError);
       } else if (sessionData.session) {
-        console.log("Session refreshed during user refresh");
         setSession(sessionData.session);
         saveSessionToLocalStorage(sessionData.session);
       }
@@ -119,13 +114,13 @@ export const useAuthLogic = () => {
           .maybeSingle();
         
         if (!profileError && profileData) {
-          console.log("User refreshed with profile data");
+          
           setUser({
             ...refreshedUser,
             profile_image: profileData.profile_image
           });
         } else {
-          console.log("User refreshed without profile data");
+          
           setUser(refreshedUser);
         }
       }
@@ -144,7 +139,6 @@ export const useAuthLogic = () => {
     setLoading(true);
     setIsInternalAction(true);
     try {
-      console.log("Iniciando proceso unificado de autenticación con Google");
       
       // Using the exported function from supabase client
       await supabase.auth.signInWithOAuth({
@@ -176,7 +170,7 @@ export const useAuthLogic = () => {
    */
   const validateEmailNotInUse = useCallback(async (email: string): Promise<boolean> => {
     try {
-      console.log("Checking if email exists:", email);
+      
       setIsInternalAction(true);
       
       // First check in profiles table
@@ -187,14 +181,14 @@ export const useAuthLogic = () => {
         .maybeSingle();
       
       if (data) {
-        console.log("Email exists in profiles table:", email);
+        
         setIsInternalAction(false);
         return false;
       }
       
       // Then check in auth.users using our secure method
       const emailExists = await checkEmailExists(email);
-      console.log(`Email exists in auth system: ${emailExists ? "yes" : "no"}`);
+      
       setIsInternalAction(false);
       return !emailExists;
       
@@ -212,7 +206,7 @@ export const useAuthLogic = () => {
     setLoading(true);
     setIsInternalAction(true);
     try {
-      console.log("Starting signup process for:", userData.email);
+      
       
       // Validate required fields
       if (!userData.email || !userData.password || !userData.firstName || 
@@ -230,7 +224,7 @@ export const useAuthLogic = () => {
       // Check if email already exists
       const isEmailAvailable = await validateEmailNotInUse(userData.email);
       if (!isEmailAvailable) {
-        console.log("Email already exists, cannot register:", userData.email);
+        
         toast({
           title: "Correo ya registrado",
           description: "Este correo electrónico ya está registrado. Por favor, inicia sesión o usa otro correo.",
@@ -260,7 +254,7 @@ export const useAuthLogic = () => {
         throw authError;
       }
       
-      console.log("Auth signup successful, user created:", authData.user?.id);
+      
       
       if (authData.user) {
         const profileData = {
@@ -283,7 +277,7 @@ export const useAuthLogic = () => {
         console.log("Profile created successfully");
         
         if (authData.session) {
-          console.log("Setting session from signup response");
+          
           setSession(authData.session);
           setUser(authData.user);
           
@@ -334,7 +328,7 @@ export const useAuthLogic = () => {
     setLoading(true);
     setIsInternalAction(true);
     try {
-      console.log("Attempting to sign in user:", email);
+      
       
       if (!email || !password) {
         toast({
@@ -358,10 +352,8 @@ export const useAuthLogic = () => {
         throw error;
       }
       
-      console.log("Sign-in successful, session:", data.session ? "Exists" : "Missing");
-      
       if (data.session) {
-        console.log("Session set after signin");
+        
         setSession(data.session);
         setUser(data.user);
         
@@ -401,7 +393,6 @@ export const useAuthLogic = () => {
    */
   const signOut = useCallback(async () => {
     try {
-      console.log("Starting sign out process...");
       
       setLoading(true);
       setIsInternalAction(true);
@@ -456,7 +447,7 @@ export const useAuthLogic = () => {
 
   // Set up auth state listener and check for existing session
   useEffect(() => {
-    console.log("AuthLogic initializing with key:", authKey);
+    
     let isMounted = true;
     setLoading(true);
     
@@ -465,19 +456,19 @@ export const useAuthLogic = () => {
       async (event, currentSession) => {
         // Skip internal auth actions to prevent re-rendering loops
         if (isInternalAction) {
-          console.log("Skipping auth event due to internal action:", event);
+          
           return;
         }
         
-        console.log("Auth state changed:", event, currentSession ? "With session" : "No session");
+        
         
         if (!isMounted) {
-          console.log("Component unmounted, skipping auth state update");
+          
           return;
         }
         
         if (currentSession) {
-          console.log("Session received in auth state change");
+          
           
           if (isMounted) {
             setSession(currentSession);
@@ -486,7 +477,7 @@ export const useAuthLogic = () => {
           
           if (currentSession.user && isMounted) {
             const authUser = currentSession.user;
-            console.log("User ID from session:", authUser.id);
+            
             
             setIsEmailVerified(true);
             
@@ -504,7 +495,7 @@ export const useAuthLogic = () => {
                 if (!isMounted) return;
                 
                 if (error || !profileData) {
-                  console.log("Profile not found or error, checking if we should create one for Google user");
+                  
                   
                   // Create profile for Google users if needed
                   if (event === 'SIGNED_IN' && authUser.app_metadata?.provider === 'google') {
@@ -534,7 +525,7 @@ export const useAuthLogic = () => {
                     
                     if (!insertError) {
                       profileData = newProfile;
-                      console.log("Created new profile for Google user");
+                      
                     } else {
                       console.error("Error creating profile for Google user:", insertError);
                     }
@@ -542,13 +533,13 @@ export const useAuthLogic = () => {
                 }
                 
                 if (profileData && isMounted) {
-                  console.log("Profile data fetched successfully");
+                  
                   setUser({
                     ...authUser,
                     profile_image: profileData.profile_image
                   });
                 } else if (isMounted) {
-                  console.log("No profile data found or error:", error);
+                  
                   setUser(authUser);
                 }
               } catch (error) {
@@ -564,7 +555,7 @@ export const useAuthLogic = () => {
             }, 0);
           }
         } else {
-          console.log("No session in auth state change");
+          
           if (event === 'SIGNED_OUT' && isMounted) {
             cleanupAuthStorage();
             setSession(null);
@@ -582,12 +573,12 @@ export const useAuthLogic = () => {
     const checkExistingSession = async () => {
       try {
         const { data: { session: currentSession } } = await supabase.auth.getSession();
-        console.log("Initial session check:", currentSession ? "Found session" : "No session");
+        
         
         if (!isMounted) return;
         
         if (currentSession?.user) {
-          console.log("Setting session from getSession call");
+          
           setSession(currentSession);
           
           saveSessionToLocalStorage(currentSession);
@@ -605,24 +596,24 @@ export const useAuthLogic = () => {
             if (!isMounted) return;
             
             if (!error && profileData) {
-              console.log("Profile data fetched from existing session");
+              
               setUser({
                 ...authUser,
                 profile_image: profileData.profile_image
               });
             } else {
-              console.log("Setting user from session without profile data");
+              
               setUser(authUser);
             }
           } catch (error) {
-            console.error("Error fetching profile data:", error);
+            
             if (isMounted) {
               setUser(authUser);
             }
           }
         } else {
           const sessionStr = localStorage.getItem('homi-auth-session');
-          console.log("Checking localStorage for session:", sessionStr ? "Found" : "Not found");
+          
           
           if (sessionStr && isMounted) {
             try {
@@ -630,7 +621,7 @@ export const useAuthLogic = () => {
               const isExpired = sessionData.expires_at && new Date(sessionData.expires_at * 1000) < new Date();
               
               if (!isExpired) {
-                console.log("Using session from localStorage");
+                
                 setSession(sessionData);
                 
                 if (sessionData.user) {
@@ -640,7 +631,7 @@ export const useAuthLogic = () => {
                   supabase.auth.refreshSession().then(({ data }) => {
                     if (!isMounted) return;
                     if (data.session) {
-                      console.log("Session refreshed successfully");
+                      
                       setSession(data.session);
                       saveSessionToLocalStorage(data.session);
                     }
@@ -649,14 +640,14 @@ export const useAuthLogic = () => {
                   });
                 }
               } else {
-                console.log("Session in localStorage is expired");
+                
                 localStorage.removeItem('homi-auth-session');
               }
             } catch (error) {
               console.error("Error parsing session from localStorage:", error);
             }
           } else {
-            console.log("No existing session found in localStorage");
+            
           }
         }
         
@@ -676,7 +667,7 @@ export const useAuthLogic = () => {
     // Set timeout to prevent infinite loading state
     const loadingTimeout = setTimeout(() => {
       if (isMounted && loading) {
-        console.log("Auth loading timeout reached, forcing completion");
+        
         setLoading(false);
       }
     }, 3000);

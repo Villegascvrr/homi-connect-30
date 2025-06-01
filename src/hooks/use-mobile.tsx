@@ -29,7 +29,6 @@ export function useIsMobile(breakpoint: BreakpointKey = "md") {
       const breakpointWidth = BREAKPOINTS[breakpoint];
       const result = currentWidth < breakpointWidth;
       setIsMobile(result);
-      console.log(`Mobile detection: ${result} (width: ${currentWidth}, breakpoint: ${breakpointWidth})`);
     }
     
     // Check on initial render

@@ -12,7 +12,7 @@ interface Tag {
 
 interface SwipeCardProps {
   id: string;
-  name: string;
+  first_name: string;
   age: number;
   location: string;
   bio: string;
@@ -39,7 +39,7 @@ interface SwipeCardProps {
 
 const SwipeCard = ({
   id,
-  name,
+  first_name: name,
   age,
   location,
   bio,
@@ -62,7 +62,6 @@ const SwipeCard = ({
   const [showLike, setShowLike] = useState(false);
   const [showDislike, setShowDislike] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  
   // Reset indicators when swiping stops
   useEffect(() => {
     if (offsetX === 0) {
@@ -269,15 +268,13 @@ const SwipeCard = ({
           <div 
             className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3 text-white"
           >
-            <h3 className="text-xl font-bold">{name}, {age}</h3>
+            <h3 className="text-xl font-bold">{age && age !== 0 ? name+", "+age : name}</h3>
             <p className="text-sm opacity-90 flex items-center gap-1">
               <Home size={14} className="shrink-0" />
               {location}
             </p>
           </div>
-          <div className="absolute top-2 right-2">
-            <CompatibilityBadge percentage={compatibility} />
-          </div>
+          
           
           {/* Verified badge */}
           <div className="absolute top-2 left-2">

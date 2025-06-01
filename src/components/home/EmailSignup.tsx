@@ -80,7 +80,6 @@ const EmailSignup = () => {
     
     setIsSigningWithGoogle(true);
     try {
-      console.log("Iniciando Google sign in desde EmailSignup component");
       await signInWithGoogle();
       // La redirección la maneja el flujo OAuth
     } catch (error: any) {
@@ -153,16 +152,13 @@ const EmailSignup = () => {
         username: values.username
       });
       
-      if (result.success) {
-        console.log("Registration successful");
-        
+      if (result.success) {        
         setIsWelcomeShown(true);
         setIsSubmitted(true);
         
         try {
           const { data: sessionData } = await supabase.auth.getSession();
           if (sessionData?.session) {
-            console.log("Storing session manually");
             localStorage.setItem('homi-auth-session', JSON.stringify(sessionData.session));
           }
         } catch (err) {

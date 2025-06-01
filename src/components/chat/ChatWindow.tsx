@@ -38,7 +38,6 @@ const ChatWindow = ({
   // Reset messages when chat changes
   useEffect(() => {
     setMessages(initialMessages);
-    console.log(`Loading messages for chat ${chat.id}:`, initialMessages);
   }, [chat.id, initialMessages]);
 
   // Complete disable of initial autoscroll but enable for new messages

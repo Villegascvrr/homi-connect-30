@@ -84,7 +84,7 @@ const MatchCard = ({
           <div 
             className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2 text-white"
           >
-            <h3 className="text-base font-bold">{name}, {age}</h3>
+            <h3 className="text-base font-bold">{age && age !== 0 ? name+", "+age : name}</h3>
             <p className="text-xs opacity-90 flex items-center gap-1">
               <Home size={10} />
               {location}
@@ -165,15 +165,13 @@ const MatchCard = ({
         <div 
           className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3 text-white"
         >
-          <h3 className="text-xl font-bold">{name}, {age}</h3>
+          <h3 className="text-xl font-bold">{age && age !== 0 ? name+", "+age : name}</h3>
           <p className="text-sm opacity-90 flex items-center gap-1">
             <Home size={14} />
             {location}
           </p>
         </div>
-        <div className="absolute top-2 right-2">
-          <CompatibilityBadge percentage={compatibility} size="lg" />
-        </div>
+        
         
         {/* Verified badge */}
         <div className="absolute top-2 left-2">

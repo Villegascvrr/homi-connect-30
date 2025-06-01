@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import SwipeCard from './SwipeCard';
 import { Button } from '@/components/ui/button';
@@ -13,6 +12,8 @@ interface Tag {
 interface SwipeProfile {
   id: string;
   name: string;
+  first_name: string;
+  last_name: string;
   age: number;
   location: string;
   bio: string;
@@ -43,26 +44,11 @@ interface SwipeInterfaceProps {
 const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProps) => {
   const { toast } = useToast();
   const updatedProfiles = profiles.map(profile => {
-    const profileId = parseInt(profile.id) || Math.floor(Math.random() * 10);
-    
-    const imageIndex = profileId % 10;
-    
-    const imageUrls = [
-      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1000',
-      'https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1000',
-      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1000',
-      'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1000',
-      'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=1000',
-      'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=1000',
-      'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?q=80&w=1000',
-      'https://images.unsplash.com/photo-1542327897-d73f4005b533?q=80&w=1000',
-      'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1000',
-      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000'
-    ];
-    
+    const profileId = parseInt(profile.id) || Math.floor(Math.random() * 1000);
+    //console.log(profile)
     return {
+      profileId,
       ...profile,
-      imgUrl: imageUrls[imageIndex]
     };
   });
 
@@ -75,7 +61,7 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
   const [removedProfiles, setRemovedProfiles] = useState<Set<string>>(new Set());
   
   // Filter available profiles using removedProfiles set
-  const availableProfiles = updatedProfiles.filter(profile => !removedProfiles.has(profile.id));
+  const availableProfiles = profiles.filter(profile => !removedProfiles.has(profile.id));
   const currentProfile = availableProfiles.length > currentIndex ? availableProfiles[currentIndex] : null;
   const nextProfile = availableProfiles.length > currentIndex + 1 ? availableProfiles[currentIndex + 1] : null;
   
@@ -83,10 +69,7 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
   
   // Debug log the current state
   useEffect(() => {
-    console.log("Available profiles:", availableProfiles.length);
-    console.log("Current index:", currentIndex);
-    console.log("Current profile:", currentProfile?.name);
-    console.log("Removed profiles:", Array.from(removedProfiles));
+    
   }, [availableProfiles, currentIndex, currentProfile, removedProfiles]);
   
   useEffect(() => {

@@ -23,7 +23,6 @@ const ProfileEditPage = () => {
   
   useEffect(() => {
     if (!loading && !user && authCheckComplete) {
-      console.log("User not authenticated, redirecting to signin");
       navigate("/signin", { state: { from: "/profile/edit" } });
     }
   }, [user, loading, navigate, authCheckComplete]);

@@ -50,14 +50,12 @@ const App = () => {
   const [isAppReady, setIsAppReady] = useState(false);
   
   useEffect(() => {
-    console.log("App initializing...");
+
     
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_OUT') {
-        console.log("Auth state change detected: SIGNED_OUT - Forcing AuthProvider reset");
         setAuthProviderKey('signed-out-' + Date.now());
       } else if (event === 'SIGNED_IN') {
-        console.log("Auth state change detected: SIGNED_IN - Forcing AuthProvider reset");
         setAuthProviderKey('signed-in-' + Date.now());
       }
     });
@@ -73,7 +71,6 @@ const App = () => {
         });
         
         if (session?.user?.id) {
-          console.log("User is authenticated, prefetching profile data");
           queryClient.prefetchQuery({
             queryKey: ['profile', session.user.id],
             queryFn: async () => {
@@ -85,7 +82,6 @@ const App = () => {
                   .maybeSingle();
                 return data;
               } catch (error) {
-                console.error("Error prefetching profile:", error);
                 return null;
               }
             },

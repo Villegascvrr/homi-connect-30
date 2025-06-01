@@ -40,8 +40,6 @@ const ProtectedRoute = ({
     setHasLocalSession(localSessionExists);
     setLocalCheckComplete(true);
     
-    console.log("Local session check:", localSessionExists ? "Valid session found" : "No valid session");
-    
     // Set a timeout to prevent infinite loading state
     const timeoutId = setTimeout(() => {
       setMaxWaitTimeReached(true);
@@ -50,24 +48,6 @@ const ProtectedRoute = ({
     
     return () => clearTimeout(timeoutId);
   }, []);
-
-  // For debugging
-  useEffect(() => {
-    console.log("Protected route accessed:", {
-      path: location.pathname,
-      isAuthenticated: !!user,
-      hasSession: !!session,
-      hasLocalSession: hasLocalSession,
-      isLoading: loading,
-      localCheckComplete: localCheckComplete,
-      allowsPreview: allowPreview,
-      isNavigating: isNavigating,
-      maxWaitTimeReached: maxWaitTimeReached,
-      withCustomAuthComponent: !!authComponent,
-      willRedirect: redirectToSignIn
-    });
-  }, [location.pathname, user, session, loading, allowPreview, hasLocalSession, 
-      localCheckComplete, isNavigating, maxWaitTimeReached, authComponent, redirectToSignIn]);
 
   // Prevent re-renders during navigation
   useEffect(() => {
@@ -93,7 +73,6 @@ const ProtectedRoute = ({
   const isAuthenticated = !!user || !!session || hasLocalSession;
   
   if (isAuthenticated) {
-    console.log("User authenticated, showing protected content");
     return (
       <div className="pt-16">
         <DemoBanner />
@@ -128,7 +107,6 @@ const ProtectedRoute = ({
 
   // If we have a custom auth component and don't want to redirect, show it inline
   if (authComponent && !redirectToSignIn) {
-    console.log("Showing inline auth component");
     return (
       <div className="pt-16">
         <DemoBanner />
@@ -141,7 +119,6 @@ const ProtectedRoute = ({
 
   // If not authenticated and not navigating yet, redirect to login page
   if (!isNavigating && redirectToSignIn) {
-    console.log("Redirecting to signin from:", location.pathname);
     setIsNavigating(true);
     // Use immediate return of Navigate instead of setTimeout to ensure faster redirection
     return <Navigate to="/signin" state={{ from: location.pathname }} replace />;

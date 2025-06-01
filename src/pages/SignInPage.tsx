@@ -88,7 +88,7 @@ const SignInPage = () => {
   
   useEffect(() => {
     if (user && !isNavigatingAway) {
-      console.log("SignInPage: User is authenticated, redirecting to home");
+      
       setIsNavigatingAway(true);
       setTimeout(() => {
         navigate('/', { replace: true });

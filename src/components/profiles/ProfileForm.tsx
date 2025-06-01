@@ -114,7 +114,6 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
             throw error;
           }
           
-          console.log("Raw profile data from Supabase:", profileData);
           
           let currentApartmentStatus: 'looking' | 'have' = 'looking';
           if (profileData.sevilla_zona) {
@@ -167,7 +166,6 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
             },
           });
           
-          console.log("Profile data loaded into form:", form.getValues());
         } catch (err) {
           console.error("Error loading profile data:", err);
           form.reset({
@@ -251,8 +249,6 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
         updated_at: new Date().toISOString()
       };
       
-      console.log("Data being sent to Supabase:", updateData);
-      
       const { data, error } = await supabase
         .from('profiles')
         .update(updateData)
@@ -264,11 +260,8 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
         throw error;
       }
       
-      console.log("Update successful, returned data:", data);
-      
       try {
         await refreshUser();
-        console.log("User refreshed successfully after profile update");
       } catch (refreshError) {
         console.error("Error refreshing user after profile update:", refreshError);
       }
@@ -281,7 +274,6 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
       try {
         const { data: sessionData } = await supabase.auth.refreshSession();
         if (sessionData && sessionData.session) {
-          console.log("Session refreshed after profile update");
         }
       } catch (sessionError) {
         console.error("Error refreshing session after profile update:", sessionError);

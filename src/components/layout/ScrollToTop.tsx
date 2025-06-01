@@ -16,17 +16,14 @@ const ScrollToTop = () => {
     // Skip the effect on first render to avoid unnecessary scroll
     if (isFirstRender.current) {
       isFirstRender.current = false;
-      console.log("ScrollToTop: First render, skipping scroll");
       return;
     }
     
     // Skip the effect if the path hasn't actually changed
     if (prevPathRef.current === pathname) {
-      console.log("ScrollToTop: Path unchanged, skipping scroll");
       return;
     }
     
-    console.log("ScrollToTop: Path changed from", prevPathRef.current, "to", pathname);
     prevPathRef.current = pathname;
     
     // Clear any previous pending scroll operation
@@ -45,7 +42,7 @@ const ScrollToTop = () => {
             behavior: 'instant' as ScrollBehavior // Explicitly cast to ScrollBehavior
           });
           
-          console.log("Scrolled to top for path:", pathname);
+          
         } else {
           // For hash links, find and scroll to the element
           const elementId = hash.replace('#', '');
@@ -55,11 +52,11 @@ const ScrollToTop = () => {
             element.scrollIntoView({
               behavior: 'instant' as ScrollBehavior // Explicitly cast to ScrollBehavior
             });
-            console.log(`Scrolled to element with id: ${elementId}`);
+            
           } else {
             // If element not found, scroll to top
             window.scrollTo(0, 0);
-            console.log(`Element with id ${elementId} not found, scrolled to top`);
+            
           }
         }
       } catch (e) {
@@ -73,7 +70,6 @@ const ScrollToTop = () => {
       if (scrollTimeoutRef.current) {
         window.clearTimeout(scrollTimeoutRef.current);
       }
-      console.log("ScrollToTop: Component unmounted, cleaning up");
     };
   }, [pathname, hash, key]); // Added key to dependencies to ensure scroll on same-path but different-key navigation
 
