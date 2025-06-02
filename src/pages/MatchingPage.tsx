@@ -16,7 +16,8 @@ import { Filter, UserRound, LayoutGrid, SwatchBook, Heart, Users, Settings } fro
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Link } from 'react-router-dom';
 import DemoBanner from '@/components/layout/DemoBanner';
-
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/context/AuthContext';
 const formatProfileForMatchCard = (profile: Profile) => {
   const tags = profile?.interests?.map((interest: string, index: number) => ({
     id: index + 1,
@@ -78,6 +79,7 @@ interface MatchingPageProps {
 }
 
 const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
+  const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilters, setActiveFilters] = useState<FilterValues | null>(null);
   const [filteredProfiles, setFilteredProfiles] = useState<any[]>([]);
@@ -88,7 +90,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
   const [openSearchFilters, setOpenSearchFilters] = useState(false);
   const [openPreferences, setOpenPreferences] = useState(false);
   const isMobile = useIsMobile();
-  const { data: profiles, isLoading, error } = useProfiles();
+  const { data: profiles, isLoading, error } = useProfiles(user?.id);
   const [matches, setMatches] = useState([{
     id: "5",
     name: "Elena Fernández",
@@ -156,9 +158,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
     if (profiles) {
       setFilteredProfiles(profiles);
       setOriginalFilteredProfiles(profiles);
-      setAvailableProfiles(filteredProfiles.filter(profile => !removedProfiles.has(profile.id)))
     }
-    console.log("availables 2", filteredProfiles);
   }, [profiles]);
   React.useEffect(() => {
     if (isMobile) {
@@ -382,8 +382,21 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
 
   const handlePass = (id: string) => {
     handleAction(
-      () => {
+      async () => {
+        const newFilteredProfiles = filteredProfiles.filter(profile => profile.id !== id);
         setRemovedProfiles(removedProfiles.add(filteredProfiles.find(profile => profile.id === id)))
+        setFilteredProfiles(newFilteredProfiles);
+        // Insertar en la tabla profile_discards
+        try {
+          const { data: insertData, error: insertError } = await supabase
+            .from('profile_discards')
+            .insert({
+              profile_id: user?.id,
+              target_profile_id: id
+            })
+        } catch (error) {
+          console.error('Error inserting in profile_discards:', error);
+        }
         toast({
           title: "Pasas",
           description: "Has pasado de este perfil",
@@ -587,7 +600,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                   
                   {viewMode === 'grid' && (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {availableProfiles.map(profile => {
+                      {filteredProfiles.map(profile => {
                         const cardProps = formatProfileForMatchCard(profile);
                         return (
                           <MatchCard 

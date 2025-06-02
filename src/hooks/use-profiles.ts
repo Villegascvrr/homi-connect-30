@@ -29,7 +29,7 @@ export interface Profile {
   };
 }
 
-export const useProfiles = () => {
+export const useProfiles = (profileId: string) => {
   return useQuery({
     queryKey: ['profiles'],
     queryFn: async () => {
@@ -37,9 +37,28 @@ export const useProfiles = () => {
         const { data, error } = await Promise.race([
           supabase
             .from('profiles')
-            .select('*')
-            .eq('first_name', "Manuel")
-            .limit(50), // Limitamos a 10 perfiles inicialmente
+            .select(`
+              id,
+              first_name,
+              last_name,
+              username,
+              email,
+              edad,
+              ocupacion,
+              universidad,
+              bio,
+              profile_image,
+              gallery_images,
+              interests,
+              lifestyle,
+              is_profile_active,
+              sevilla_zona,
+              companeros_count,
+              discards:profile_discards!profile_discards_profile_id_fkey (id, profile_id, target_profile_id)
+            `)  
+            .eq('discards.profile_id', profileId)
+            .eq("first_name", "Manuel")
+            .limit(50),
           new Promise((_, reject) => 
             setTimeout(() => reject(new Error('Timeout')), 10000)
           ),

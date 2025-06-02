@@ -90,6 +90,42 @@ export type Database = {
           },
         ]
       }
+      profile_discards: {
+        Row: {
+          id: string
+          created_at: string
+          profile_id: string
+          target_profile_id: string
+        }
+        Insert: {
+          id?: string
+          created_at?: string
+          profile_id: string
+          target_profile_id: string
+        }
+        Update: {
+          id?: string
+          created_at?: string
+          profile_id?: string
+          target_profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_discards_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profile_discards_target_profile_id_fkey"
+            columns: ["target_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       profile_matches: {
         Row: {
           created_at: string
