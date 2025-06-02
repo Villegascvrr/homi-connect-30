@@ -131,7 +131,6 @@ export type Database = {
           created_at: string
           id: string
           profile_id: string
-          status: string
           target_profile_id: string
           updated_at: string
         }
@@ -139,7 +138,6 @@ export type Database = {
           created_at?: string
           id?: string
           profile_id: string
-          status: string
           target_profile_id: string
           updated_at?: string
         }
@@ -147,7 +145,6 @@ export type Database = {
           created_at?: string
           id?: string
           profile_id?: string
-          status?: string
           target_profile_id?: string
           updated_at?: string
         }
@@ -188,6 +185,7 @@ export type Database = {
           universidad: string | null
           updated_at: string
           username: string
+          skips: number
         }
         Insert: {
           bio?: string | null
@@ -208,6 +206,7 @@ export type Database = {
           universidad?: string | null
           updated_at?: string
           username: string
+          skips?: number | 0
         }
         Update: {
           bio?: string | null
@@ -228,6 +227,7 @@ export type Database = {
           universidad?: string | null
           updated_at?: string
           username?: string
+          skips?: number
         }
         Relationships: []
       }

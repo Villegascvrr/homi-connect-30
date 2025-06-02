@@ -29,10 +29,27 @@ export interface Profile {
   };
 }
 
-export const useProfiles = (profileId: string) => {
+export const useProfiles = (profileId?: string) => {
   return useQuery({
-    queryKey: ['profiles'],
+    queryKey: ['profiles', profileId],
     queryFn: async () => {
+      if (!profileId) {
+        throw new Error('ProfileId is required');
+      }
+
+      let skips = 0;
+      try {
+        const { data } = await supabase
+          .from('profiles')
+          .select('skips')
+          .eq('id', profileId)
+          .single();
+        skips = data?.skips || 0;
+      } catch (error) {
+        console.error('Error fetching profiles:', error);
+        throw error;
+      }
+
       try {
         const { data, error } = await Promise.race([
           supabase
@@ -54,17 +71,15 @@ export const useProfiles = (profileId: string) => {
               is_profile_active,
               sevilla_zona,
               companeros_count,
-              discards:profile_discards!profile_discards_profile_id_fkey (id, profile_id, target_profile_id)
-            `)  
-            .eq('discards.profile_id', profileId)
-            .eq("first_name", "Manuel")
-            .limit(50),
+              discards:profile_discards!profile_discards_target_profile_id_fkey (id, profile_id, target_profile_id),
+              matches:profile_matches!profile_matches_target_profile_id_fkey (id, profile_id, target_profile_id)
+            `)
+            .range(skips, skips + 9),
           new Promise((_, reject) => 
             setTimeout(() => reject(new Error('Timeout')), 10000)
           ),
         ]) as { data: any; error: any };
-
-        console.log("data", data)
+        
         if (error) {
           console.error('Error fetching profiles:', error);
           throw error;
@@ -74,14 +89,39 @@ export const useProfiles = (profileId: string) => {
           throw new Error('No data received');
         }
 
-        return data;
+        const profiles = data.reduce((acc: Profile[], profile) => {
+          if (profile.discards.length === 0 && profile.matches.length === 0) {
+            acc.push(profile);
+            return acc;
+          }
+
+          if (profile.matches.length > 0) {
+            for (const match of profile.matches) {
+              if (match.profile_id === profileId) {
+                return acc;
+              }
+            }
+          }
+
+          if (profile.discards.length > 0) {
+            for (const discard of profile.discards) {
+              if (discard.profile_id === profileId) {
+                return acc;
+              }
+            }
+          }
+          acc.push(profile)
+          return acc;
+        }, []);
+        return profiles;
       } catch (error) {
         console.error('Query error:', error);
         throw error;
       }
     },
+    enabled: !!profileId,
     retry: 1,
-    gcTime: 1000 * 60 * 30, // Mantener en cache por 30 minutos
-    staleTime: 1000 * 60 * 5, // Cache por 5 minutos
+    gcTime: 1000 * 60 * 30,
+    staleTime: 1000 * 60 * 5,
   });
 }; 

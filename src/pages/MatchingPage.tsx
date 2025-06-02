@@ -15,9 +15,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Filter, UserRound, LayoutGrid, SwatchBook, Heart, Users, Settings } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Link } from 'react-router-dom';
+import { useMatches } from '@/hooks/use-matches';
 import DemoBanner from '@/components/layout/DemoBanner';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
+
 const formatProfileForMatchCard = (profile: Profile) => {
   const tags = profile?.interests?.map((interest: string, index: number) => ({
     id: index + 1,
@@ -90,64 +92,8 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
   const [openSearchFilters, setOpenSearchFilters] = useState(false);
   const [openPreferences, setOpenPreferences] = useState(false);
   const isMobile = useIsMobile();
-  const { data: profiles, isLoading, error } = useProfiles(user?.id);
-  const [matches, setMatches] = useState([{
-    id: "5",
-    name: "Elena Fernández",
-    age: 25,
-    location: "Madrid",
-    imgUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=1976&auto=format&fit=crop&ixlib=rb-4.0.3",
-    compatibility: 91,
-    matchDate: "2025-03-18T14:30:00Z",
-    messageCount: 5,
-    tags: [{
-      id: 1,
-      name: "música"
-    }, {
-      id: 2,
-      name: "yoga"
-    }, {
-      id: 3,
-      name: "cocina"
-    }]
-  }, {
-    id: "6",
-    name: "Diego Morales",
-    age: 27,
-    location: "Barcelona",
-    imgUrl: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3",
-    compatibility: 87,
-    matchDate: "2025-03-15T10:15:00Z",
-    tags: [{
-      id: 1,
-      name: "gaming"
-    }, {
-      id: 2,
-      name: "tecnología"
-    }, {
-      id: 3,
-      name: "cine"
-    }]
-  }, {
-    id: "7",
-    name: "Lucía Martínez",
-    age: 24,
-    location: "Valencia",
-    imgUrl: "https://images.unsplash.com/photo-1519699047748-de8e457a634e?q=80&w=1980&auto=format&fit=crop&ixlib=rb-4.0.3",
-    compatibility: 82,
-    matchDate: "2025-03-10T18:45:00Z",
-    messageCount: 2,
-    tags: [{
-      id: 1,
-      name: "deporte"
-    }, {
-      id: 2,
-      name: "viajes"
-    }, {
-      id: 3,
-      name: "fotografía"
-    }]
-  }]);
+  const { data: profiles, isLoading, error, refetch } = useProfiles(user?.id);
+  const { data: matches, isLoading: matchesLoading, error: matchesError } = useMatches(user?.id);
 
   
   const [removedProfiles, setRemovedProfiles] = useState<Set<string>>(new Set());
@@ -160,6 +106,13 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
       setOriginalFilteredProfiles(profiles);
     }
   }, [profiles]);
+
+  React.useEffect(() => {
+    if (filteredProfiles.length === 0) {
+      refetch();
+    }
+  }, [filteredProfiles, refetch]);
+
   React.useEffect(() => {
     if (isMobile) {
       setViewMode('swipe');
@@ -354,26 +307,68 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
 
   const handleLike = (id: string) => {
     handleAction(
-      () => {
-        if (!matches.some(match => match.id === id)) {
-          const profileToMatch = profiles?.find(p => p.id.toString() === id);
-          if (profileToMatch) {
-            const newMatch = {
-              id: profileToMatch.id.toString(),
-              name: profileToMatch.name,
-              age: profileToMatch.age,
-              location: profileToMatch.location,
-              imgUrl: profileToMatch.profile_image,
-              compatibility: profileToMatch.compatibility,
-              matchDate: new Date().toISOString(),
-              messageCount: 0,
-              tags: profileToMatch.interests.map((interest, idx) => ({
-                id: idx + 1,
-                name: interest
-              }))
-            };
-            setMatches(prev => [newMatch, ...prev]);
+      async () => {
+        try{
+          // Primero obtenemos el valor actual
+          const { data: currentData } = await supabase
+            .from('profiles')
+            .select('skips')
+            .eq('id', user?.id)
+            .single();
+          
+          const currentSkips = currentData?.skips || 0;
+          
+          // Luego actualizamos con el nuevo valor
+          const { data: updateData, error: updateError } = await supabase
+            .from('profiles')
+            .update({ skips: currentSkips + 1 })
+            .eq('id', user?.id)
+        } catch (error) {
+          console.error('Error updating skips:', error);
+        }
+
+        //insertar en la tabla profile_matches
+        try {
+          const { data: insertData, error: insertError } = await supabase
+            .from('profile_matches')
+            .insert({
+              profile_id: user?.id,
+              target_profile_id: id
+            })
+        } catch (error) {
+          console.error('Error inserting in profile_matches:', error);
+        }
+        
+        //buscar en la tabla profile_matches si existe un match con el perfil target_profile_id
+        const { data: matchData, error: matchError } = await supabase
+          .from('profile_matches')
+          .select('*')
+          .eq('target_profile_id', user?.id)
+          .eq('profile_id', id)
+          .single()
+
+        //quitar el perfil de la lista de perfiles disponibles
+        const newFilteredProfiles = filteredProfiles.filter(profile => profile.id !== id);
+        setFilteredProfiles(newFilteredProfiles);
+
+        if (matchData) {
+          //insertar en la tabla matches
+          try {
+            const { data: insertData, error: insertError } = await supabase
+              .from('matches')
+              .insert({
+                profile_one_id: user?.id,
+                profile_two_id: id
+              })
+          } catch (error) {
+            console.error('Error inserting in matches:', error);
           }
+
+          toast({
+            title: "¡Nuevo match!",
+            description: "Has coincidido con este perfil",
+            variant: "default"
+          });
         }
       },
       "¡Nuevo match!"
@@ -397,6 +392,25 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
         } catch (error) {
           console.error('Error inserting in profile_discards:', error);
         }
+        try{
+          // Primero obtenemos el valor actual
+          const { data: currentData } = await supabase
+            .from('profiles')
+            .select('skips')
+            .eq('id', user?.id)
+            .single();
+          
+          const currentSkips = currentData?.skips || 0;
+          
+          // Luego actualizamos con el nuevo valor
+          const { data: updateData, error: updateError } = await supabase
+            .from('profiles')
+            .update({ skips: currentSkips + 1 })
+            .eq('id', user?.id)
+        } catch (error) {
+          console.error('Error updating skips:', error);
+        }
+
         toast({
           title: "Pasas",
           description: "Has pasado de este perfil",
@@ -423,7 +437,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
   const handleUnmatch = (id: string) => {
     handleAction(
       () => {
-        setMatches(prev => prev.filter(match => match.id !== id));
+        console.log("deshacer match", id);
       },
       "Función de deshacer match"
     );
@@ -488,7 +502,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                 <TabsTrigger value="matches" className="flex items-center gap-2">
                   <Heart size={16} />
                   <span className="hidden sm:inline">Mis Matches</span>
-                  {matches.length > 0 && (
+                  {matches && matches?.length > 0 && (
                     <span className="ml-1 px-1.5 py-0.5 text-xs rounded-full bg-homi-purple/20">
                       {matches.length}
                     </span>
@@ -626,7 +640,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
             </TabsContent>
             
             <TabsContent value="matches" className="mt-0">
-              {matches.length > 0 ? (
+              {matches && matches?.length > 0 ? (
                 <MatchesList 
                   matches={matches} 
                   onMessage={handleMessage}
