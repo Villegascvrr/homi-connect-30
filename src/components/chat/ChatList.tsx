@@ -21,12 +21,13 @@ interface ChatListProps {
 
 const ChatList = ({ matches, selectedChatId, onSelectChat }: ChatListProps) => {
   // Sort chats with unread messages first, then by timestamp
+  if (!matches) return <div>CARGANDO...</div>;
   const sortedMatches = [...matches].sort((a, b) => {
     if (a.unread > 0 && b.unread === 0) return -1;
     if (a.unread === 0 && b.unread > 0) return 1;
     return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
   });
-
+  
   return (
     <div className="max-h-[calc(100vh-7rem)] overflow-y-auto">
       {sortedMatches.map((match) => (

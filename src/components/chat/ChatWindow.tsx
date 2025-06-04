@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { Send, Image, Mic, Paperclip, Smile } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -15,28 +14,33 @@ interface ChatMatch {
 
 interface Message {
   id: string;
-  senderId: string;
-  text: string;
-  timestamp: string;
+  sender_id: string;
+  content: string;
+  created_at: string;
   read: boolean;
 }
 
 interface ChatWindowProps {
   chat: ChatMatch;
   initialMessages?: Message[];
+  user_id: string;
 }
 
 const ChatWindow = ({
   chat,
-  initialMessages = []
+  initialMessages = [],
+  user_id
 }: ChatWindowProps) => {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [newMessage, setNewMessage] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [shouldAutoScroll, setShouldAutoScroll] = useState(false);
-
+  
   // Reset messages when chat changes
   useEffect(() => {
+    const sortedMessages = [...initialMessages].sort((a, b) => {
+      return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+    });
     setMessages(initialMessages);
   }, [chat.id, initialMessages]);
 
@@ -56,57 +60,34 @@ const ChatWindow = ({
       // Don't scroll on initial render of messages
       if (messages.length > initialMessages.length) {
         messagesEndRef.current.scrollIntoView({
-          behavior: 'smooth'
+          behavior: 'smooth',
+          block: 'end'
         });
       }
     }
   }, [messages, shouldAutoScroll, initialMessages.length]);
   
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (newMessage.trim() === '') return;
     
-    const message = {
+    const message: Message = {
       id: Date.now().toString(),
-      senderId: 'me',
-      text: newMessage,
-      timestamp: new Date().toISOString(),
+      sender_id: user_id,
+      content: newMessage,
+      created_at: new Date().toISOString(),
       read: false
     };
+
+    // Send message to supabase
+    const { data, error } = await supabase.from('messages').insert({
+      match_id: chat.id,
+      sender_id: user_id,
+      content: newMessage,
+    });
     
     setMessages([...messages, message]);
     setNewMessage('');
 
-    // Simulate reply based on the current chat partner
-    setTimeout(() => {
-      let replyText = '';
-      
-      // Generate appropriate responses based on chat contact
-      switch(chat.id) {
-        case "1":
-          replyText = "¡Genial! ¿Te gustaría ver el piso esta semana?";
-          break;
-        case "2":
-          replyText = "Sí, tengo disponibilidad para vernos. ¿Qué día te viene mejor?";
-          break;
-        case "3":
-          replyText = "Estoy buscando en esa zona. ¿Cuándo podríamos quedar para ver el piso?";
-          break;
-        case "4":
-          replyText = "Perfecto, entonces nos vemos mañana a las 6.";
-          break;
-        default:
-          replyText = "Gracias por tu mensaje. Te responderé lo antes posible.";
-      }
-      
-      const replyMessage = {
-        id: (Date.now() + 1).toString(),
-        senderId: 'other',
-        text: replyText,
-        timestamp: new Date().toISOString(),
-        read: false
-      };
-      setMessages(prevMessages => [...prevMessages, replyMessage]);
-    }, 3000);
   };
 
   // Format timestamp to human-readable time
@@ -151,12 +132,12 @@ const ChatWindow = ({
       <ScrollArea className="flex-1 py-2 px-3 max-h-[calc(100vh-16rem)] my-[30px]">
         <div className="space-y-2">
           {messages.map(message => (
-            <div key={message.id} className={`flex ${message.senderId === 'me' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[80%] rounded-xl p-2 ${message.senderId === 'me' ? 'bg-homi-purple text-white rounded-tr-none' : 'bg-gray-100 dark:bg-gray-800 rounded-tl-none'}`}>
-                <p className="text-sm">{message.text}</p>
-                <div className={`text-xs mt-1 flex items-center ${message.senderId === 'me' ? 'justify-end text-white/70' : 'text-muted-foreground'}`}>
-                  {formatMessageTime(message.timestamp)}
-                  {message.senderId === 'me' && (
+            <div key={message.id} className={`flex ${message.sender_id === user_id ? 'justify-end' : 'justify-start'}`}>
+              <div className={`max-w-[80%] rounded-xl p-2 ${message.sender_id === user_id ? 'bg-homi-purple text-white rounded-tr-none' : 'bg-gray-100 dark:bg-gray-800 rounded-tl-none'}`}>
+                <p className="text-sm">{message.content}</p>
+                <div className={`text-xs mt-1 flex items-center ${message.sender_id === user_id ? 'justify-end text-white/70' : 'text-muted-foreground'}`}>
+                  {formatMessageTime(message.created_at)}
+                  {message.sender_id === user_id && (
                     <span className="ml-1">
                       {message.read ? '✓✓' : '✓'}
                     </span>
