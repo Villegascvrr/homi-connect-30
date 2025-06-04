@@ -38,9 +38,6 @@ const ChatWindow = ({
   
   // Reset messages when chat changes
   useEffect(() => {
-    const sortedMessages = [...initialMessages].sort((a, b) => {
-      return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
-    });
     setMessages(initialMessages);
   }, [chat.id, initialMessages]);
 
@@ -58,7 +55,7 @@ const ChatWindow = ({
   useEffect(() => {
     if (shouldAutoScroll && messagesEndRef.current) {
       // Don't scroll on initial render of messages
-      if (messages.length > initialMessages.length) {
+      if (messages.length >= initialMessages.length) {
         messagesEndRef.current.scrollIntoView({
           behavior: 'smooth',
           block: 'end'
