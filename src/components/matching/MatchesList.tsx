@@ -90,12 +90,6 @@ const MatchesList = ({ matches, onMessage, onUnmatch, onViewProfile }: MatchesLi
             ¡Sigue explorando perfiles y encontrarás compañeros de piso compatibles!
           </p>
         </div>
-        
-        <div className="bg-homi-ultraLightPurple/50 p-3 rounded-lg mb-6 max-w-md mx-auto">
-          <p className="text-sm font-medium text-homi-purple">
-            Estás viendo una demostración de la función de matching. Pronto podrás conectar con compañeros reales.
-          </p>
-        </div>
 
         <Button 
           onClick={() => navigate('/matching')}
@@ -109,13 +103,6 @@ const MatchesList = ({ matches, onMessage, onUnmatch, onViewProfile }: MatchesLi
 
   return (
     <div className={`grid ${isMobile ? 'grid-cols-1' : 'grid-cols-2 lg:grid-cols-3'} gap-4`}>
-      <div className="col-span-full mb-4">
-        <div className="bg-homi-ultraLightPurple/50 p-3 rounded-lg">
-          <p className="text-sm font-medium text-homi-purple text-center">
-            Estás viendo una demostración de la función de matching. Pronto podrás conectar con compañeros reales.
-          </p>
-        </div>
-      </div>
       
       {sortedMatches.map(match => (
         <Card 
@@ -190,7 +177,10 @@ const MatchesList = ({ matches, onMessage, onUnmatch, onViewProfile }: MatchesLi
                 variant="default" 
                 size="sm" 
                 className="flex-1 bg-homi-purple hover:bg-homi-purple/90"
-                onClick={(e) => handleMessage(match.id, e)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/chat`);
+                }}
               >
                 <MessageSquare size={16} className="mr-1" />
                 {match.messageCount && match.messageCount > 0 ? (

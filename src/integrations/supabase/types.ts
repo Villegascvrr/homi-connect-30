@@ -186,6 +186,7 @@ export type Database = {
           updated_at: string
           username: string
           skips: number
+          completed: boolean
         }
         Insert: {
           bio?: string | null
@@ -207,6 +208,7 @@ export type Database = {
           updated_at?: string
           username: string
           skips?: number | 0
+          completed?: boolean
         }
         Update: {
           bio?: string | null
@@ -228,6 +230,7 @@ export type Database = {
           updated_at?: string
           username?: string
           skips?: number
+          completed?: boolean
         }
         Relationships: []
       }

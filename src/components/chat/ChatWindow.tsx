@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Send, Image, Mic, Paperclip, Smile } from 'lucide-react';
+import { Send, Image, Mic, Paperclip, Smile, ChevronLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { supabase } from '@/integrations/supabase/client';
@@ -24,12 +24,16 @@ interface ChatWindowProps {
   chat: ChatMatch;
   initialMessages?: Message[];
   user_id: string;
+  isMobile: boolean;
+  onSelectChat: (chat: ChatMatch | null) => void;
 }
 
 const ChatWindow = ({
   chat,
   initialMessages = [],
-  user_id
+  user_id,
+  isMobile,
+  onSelectChat
 }: ChatWindowProps) => {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [newMessage, setNewMessage] = useState('');
@@ -101,6 +105,16 @@ const ChatWindow = ({
       {/* Chat header - reduced padding */}
       <div className="py-2 px-3 border-b border-border flex items-center justify-between">
         <div className="flex items-center gap-2">
+          {isMobile && (
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-8 w-8 rounded-full mr-1"
+              onClick={() => onSelectChat && onSelectChat(null)}
+            >
+              <ChevronLeft size={16} />
+            </Button>
+          )}
           <div className="relative">
             <div className="w-8 h-8 rounded-full overflow-hidden">
               <img src={chat.imgUrl} alt={chat.name} className="w-full h-full object-cover" />

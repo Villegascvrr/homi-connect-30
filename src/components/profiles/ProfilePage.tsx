@@ -173,7 +173,7 @@ const ProfilePage = () => {
     );
   }
 
-  const requiredFields = ['first_name', 'last_name', 'username', 'bio', 'edad', 'universidad', 'ocupacion', 'profile_image', 'interests'];
+  const requiredFields = ['first_name', 'last_name', 'username', 'bio', 'edad', 'profile_image', 'interests'];
   const completedFields = requiredFields.filter(field => {
     if (field === 'interests') {
       return profile.interests && Array.isArray(profile.interests) && profile.interests.length > 0;

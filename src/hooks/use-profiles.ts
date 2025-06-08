@@ -74,6 +74,7 @@ export const useProfiles = (profileId?: string) => {
               discards:profile_discards!profile_discards_target_profile_id_fkey (id, profile_id, target_profile_id),
               matches:profile_matches!profile_matches_target_profile_id_fkey (id, profile_id, target_profile_id)
             `)
+            .not('id', 'eq', profileId)
             .range(skips, skips + 9),
           new Promise((_, reject) => 
             setTimeout(() => reject(new Error('Timeout')), 10000)

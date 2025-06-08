@@ -75,7 +75,6 @@ const ProtectedRoute = ({
   if (isAuthenticated) {
     return (
       <div className="pt-16">
-        <DemoBanner />
         <div className="mt-4">
           {children}
         </div>
@@ -86,7 +85,6 @@ const ProtectedRoute = ({
   if (allowPreview && previewComponent) {
     return (
       <div className="pt-16">
-        <DemoBanner />
         <div className="mt-4">
           {previewComponent}
         </div>
@@ -97,7 +95,6 @@ const ProtectedRoute = ({
   if (allowPreview) {
     return (
       <div className="pt-16">
-        <DemoBanner />
         <div className="mt-4">
           {children}
         </div>
@@ -109,7 +106,6 @@ const ProtectedRoute = ({
   if (authComponent && !redirectToSignIn) {
     return (
       <div className="pt-16">
-        <DemoBanner />
         <div className="mt-4">
           {authComponent}
         </div>

@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 import CompatibilityBadge from '@/components/ui/CompatibilityBadge';
 import { Heart, X, MessageSquare, User, DollarSign, Calendar, Home, ShieldCheck, Clock, Undo2 } from 'lucide-react';
@@ -221,6 +220,8 @@ const SwipeCard = ({
     }
     return `translateX(${offsetX}px) rotate(${rotation}deg)`;
   };
+
+  const lifestyleData = getLifestyle(lifestyle);
   
   return (
     <div className="h-full flex flex-col items-center justify-center py-2">
@@ -270,7 +271,7 @@ const SwipeCard = ({
           >
             <h3 className="text-xl font-bold">{age && age !== 0 ? name+", "+age : name}</h3>
             <p className="text-sm opacity-90 flex items-center gap-1">
-              <Home size={14} className="shrink-0" />
+              {location && <Home size={14} className="shrink-0" />}
               {location}
             </p>
           </div>
@@ -325,7 +326,7 @@ const SwipeCard = ({
           </div>
           
           {/* Additional details */}
-          {showDetails && lifestyle && (
+          {showDetails && lifestyleData && (
             <div className="mb-3 animate-fade-in">
               <h4 className="font-medium mb-1 text-xs">Estilo de vida</h4>
               <div className="grid grid-cols-2 gap-2">
@@ -335,7 +336,7 @@ const SwipeCard = ({
                   </span>
                   <div>
                     <span className="text-xs text-muted-foreground block">Horario</span>
-                    <span className="text-xs">{lifestyle.schedule}</span>
+                    <span className="text-xs">{lifestyleData.schedule}</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-1 text-xs">
@@ -344,7 +345,7 @@ const SwipeCard = ({
                   </span>
                   <div>
                     <span className="text-xs text-muted-foreground block">Limpieza</span>
-                    <span className="text-xs">{lifestyle.cleanliness}</span>
+                    <span className="text-xs">{lifestyleData.cleanliness}</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-1 text-xs">
@@ -353,7 +354,7 @@ const SwipeCard = ({
                   </span>
                   <div>
                     <span className="text-xs text-muted-foreground block">Invitados</span>
-                    <span className="text-xs">{lifestyle.guests}</span>
+                    <span className="text-xs">{lifestyleData.guests}</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-1 text-xs">
@@ -362,7 +363,7 @@ const SwipeCard = ({
                   </span>
                   <div>
                     <span className="text-xs text-muted-foreground block">Fumar</span>
-                    <span className="text-xs">{lifestyle.smoking}</span>
+                    <span className="text-xs">{lifestyleData.smoking}</span>
                   </div>
                 </div>
               </div>
@@ -393,14 +394,6 @@ const SwipeCard = ({
           </Button>
         )}
         
-        <Button 
-          variant="outline"
-          size="icon"
-          className="w-8 h-8 rounded-full border-2 border-gray-400 text-gray-500 flex items-center justify-center shadow-md transition-all hover:bg-gray-100 active:scale-95"
-          onClick={() => onView(id)}
-        >
-          <User size={16} />
-        </Button>
         
         <Button 
           variant="outline"
@@ -416,3 +409,31 @@ const SwipeCard = ({
 };
 
 export default SwipeCard;
+
+const getLifestyle = (lifestyle: any) => {
+  if (!lifestyle) return null;
+
+  return {
+    cleanliness: lifestyle.cleanliness === "very_clean" ? "Muy ordenado/a" 
+      : lifestyle.cleanliness === "clean" ? "Ordenado/a" 
+      : lifestyle.cleanliness === "moderate" ? "Moderado/a" 
+      : lifestyle.cleanliness === "relaxed" ? "Relajado/a" 
+      : lifestyle.cleanliness,
+    
+    schedule: lifestyle.schedule === "morning_person" ? "Madrugador/a"
+      : lifestyle.schedule === "night_owl" ? "Nocturno/a"
+      : lifestyle.schedule === "flexible" ? "Flexible"
+      : lifestyle.schedule,
+    
+    guests: lifestyle.guests === "rarely" ? "Casi nunca"
+      : lifestyle.guests === "occasionally" ? "Ocasionalmente"
+      : lifestyle.guests === "frequently" ? "Frecuentemente"
+      : lifestyle.guests === "no_problem" ? "No me importa"
+      : lifestyle.guests,
+    
+    smoking: lifestyle.smoking === "non_smoker" ? "No fumo"
+      : lifestyle.smoking === "outdoor_only" ? "Fuma en exteriores"
+      : lifestyle.smoking === "smoker" ? "Fumo"
+      : lifestyle.smoking
+  };
+}

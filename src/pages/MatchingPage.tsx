@@ -326,7 +326,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
         } catch (error) {
           console.error('Error updating skips:', error);
         }
-
+        console.log("user?.id", user?.id, "id", id);
         //insertar en la tabla profile_matches
         try {
           const { data: insertData, error: insertError } = await supabase
@@ -345,13 +345,13 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
           .select('*')
           .eq('target_profile_id', user?.id)
           .eq('profile_id', id)
-          .single()
+          
 
         //quitar el perfil de la lista de perfiles disponibles
         const newFilteredProfiles = filteredProfiles.filter(profile => profile.id !== id);
         setFilteredProfiles(newFilteredProfiles);
 
-        if (matchData) {
+        if (matchData.length > 0) {
           //insertar en la tabla matches
           try {
             const { data: insertData, error: insertError } = await supabase
@@ -481,8 +481,6 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       
-      {isPreview && <DemoBanner />}
-      
       <main className="flex-grow pt-0 pb-12 bg-transparent">
         <div className="container mx-auto px-4">
           <div className="mb-6">
@@ -510,7 +508,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                 </TabsTrigger>
               </TabsList>
               
-              {activeTab === 'discover' && (
+              {activeTab === 'discover' && false && (
                 <div className="flex gap-2">
                   {isMobile && (
                     <div className="flex items-center mr-auto">
@@ -572,9 +570,9 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
             
             <TabsContent value="discover" className="mt-0">
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
-                <div className="lg:col-span-2">
+                {/*<div className="lg:col-span-2">
                   <ProfileSearchBar onSearch={handleSearch} className="w-full" />
-                </div>
+                </div>*/}
                 <div className="lg:col-span-1">
                   {/* Empty space for filters alignment */}
                 </div>
