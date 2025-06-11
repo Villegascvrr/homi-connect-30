@@ -151,16 +151,20 @@ const ChatPage = ({ isPreview = false }: ChatPageProps) => {
   const { data: messages, isLoading: messagesLoading, error: messagesError } = useMessages(matches);
   //console.log("messages", messages);
   
-  const parsedMatches = matches?.map((match) => ({
-    id: match.id,
-    name: match.name,
-    imgUrl: match.imgUrl,
-    online: false,
-    typing: false,
-    lastMessage: "No hay mensajes aún",
-    timestamp: match.matchDate,
-    unread: 0
-  }));
+  const parsedMatches = matches?.map((match) => {
+    const matchMessages = messages?.filter((message) => message.match_id === match.id)
+    const lastMessage = matchMessages[matchMessages.length - 1]
+    return {
+      id: match.id,
+      name: match.name,
+      imgUrl: match.imgUrl,
+      online: false,
+      typing: false,
+      lastMessage: lastMessage?.content || "No hay mensajes aún",
+      timestamp: match.matchDate,
+      unread: 0
+    }
+  });
   useEffect(() => {
     // Set initial selected chat
     if (parsedMatches && parsedMatches.length > 0 && !selectedChatId) {

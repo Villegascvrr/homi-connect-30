@@ -14,6 +14,7 @@ export interface UserSignUpData {
 
 export interface ExtendedUser extends User {
   profile_image?: string | null;
+  completed?: boolean;
 }
 
 /**
@@ -109,7 +110,7 @@ export const useAuthLogic = () => {
       if (refreshedUser) {
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
-          .select('profile_image')
+          .select('profile_image, completed')
           .eq('id', refreshedUser.id)
           .maybeSingle();
         
@@ -117,7 +118,8 @@ export const useAuthLogic = () => {
           
           setUser({
             ...refreshedUser,
-            profile_image: profileData.profile_image
+            profile_image: profileData.profile_image,
+            completed: profileData.completed
           });
         } else {
           

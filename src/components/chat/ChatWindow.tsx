@@ -123,9 +123,9 @@ const ChatWindow = ({
           </div>
           <div>
             <h3 className="font-semibold text-sm">{chat.name}</h3>
-            <p className="text-xs text-muted-foreground">
+            {/*<p className="text-xs text-muted-foreground">
               {chat.online ? chat.typing ? 'Escribiendo...' : 'En línea' : 'Desconectado'}
-            </p>
+            </p>*/}
           </div>
         </div>
         

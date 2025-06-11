@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Filter, UserRound, LayoutGrid, SwatchBook, Heart, Users, Settings } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useMatches } from '@/hooks/use-matches';
 import DemoBanner from '@/components/layout/DemoBanner';
 import { supabase } from '@/integrations/supabase/client';
@@ -82,6 +82,7 @@ interface MatchingPageProps {
 
 const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilters, setActiveFilters] = useState<FilterValues | null>(null);
   const [filteredProfiles, setFilteredProfiles] = useState<any[]>([]);
@@ -94,6 +95,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
   const isMobile = useIsMobile();
   const { data: profiles, isLoading, error, refetch } = useProfiles(user?.id);
   const { data: matches, isLoading: matchesLoading, error: matchesError } = useMatches(user?.id);
+  const hasProfileCompleted = user?.completed;
 
   
   const [removedProfiles, setRemovedProfiles] = useState<Set<string>>(new Set());
@@ -131,6 +133,10 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
     } else {
       action();
     }
+  };  
+
+  const handleGoToProfile = () => {
+    navigate('/profile/edit');
   };
 
   const handleSearch = (query: string) => {
@@ -568,7 +574,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
               )}
             </div>
             
-            <TabsContent value="discover" className="mt-0">
+            {hasProfileCompleted && (<TabsContent value="discover" className="mt-0">
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
                 {/*<div className="lg:col-span-2">
                   <ProfileSearchBar onSearch={handleSearch} className="w-full" />
@@ -635,7 +641,20 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                   </p>
                 </div>
               )}
-            </TabsContent>
+            </TabsContent>)}
+
+            {!hasProfileCompleted && (
+              <TabsContent value="discover" className="mt-0">
+                <div className="text-center py-16">
+                  <p className="text-xl text-muted-foreground">
+                    Por favor, completa tu perfil para poder explorar perfiles.
+                  </p>
+                  <Button size={isMobile ? "default" : "lg"} className="mt-4 rounded-full bg-gradient-to-r from-homi-purple to-homi-lightPurple hover:from-homi-lightPurple hover:to-homi-purple text-white font-bold shadow-lg shadow-purple-500/30 transform hover:scale-105 transition-all duration-300 w-full sm:w-auto" asChild>
+                    <Link to="/profile/edit">Completar mi perfil</Link>
+                  </Button>
+                </div>
+              </TabsContent>
+            )}
             
             <TabsContent value="matches" className="mt-0">
               {matches && matches?.length > 0 ? (
