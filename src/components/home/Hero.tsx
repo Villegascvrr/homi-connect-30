@@ -31,14 +31,12 @@ const Hero = () => {
       const isLoggedIn = urlParams.get('loggedIn') === 'true';
       
       if (isRegistered) {
-        console.log("Usuario recién registrado, mostrando mensaje de bienvenida");
         setJustRegistered(true);
         setJustLoggedIn(false);
         
         // Limpiar parámetros URL después de procesarlos
         window.history.replaceState({}, document.title, window.location.pathname);
       } else if (isLoggedIn) {
-        console.log("Usuario recién conectado, mostrando mensaje de bienvenida");
         setJustLoggedIn(true);
         setJustRegistered(false);
         
@@ -101,8 +99,7 @@ const Hero = () => {
           </h1>
           
           <p className="text-base md:text-lg text-muted-foreground mb-6 max-w-2xl mx-auto px-2">
-            Gracias por iniciar sesión. Te notificaremos cuando la aplicación esté completamente funcional.
-            Mientras tanto, puedes explorar algunas de las características disponibles o completar tu perfil.
+            Gracias por iniciar sesión. Deberás completar tu perfil para poder empezar a encontrar compañeros.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 mb-8">

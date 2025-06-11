@@ -19,7 +19,7 @@ const ProfilePage = () => {
   const [profile, setProfile] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-
+  
   // Early return if not authenticated and not loading
   if (!loading && !user && !session) {
     return (
@@ -61,11 +61,7 @@ const ProfilePage = () => {
           setError("No se pudo cargar el perfil. Por favor, inténtalo de nuevo.");
           throw error;
         }
-
-        console.log("Profile data fetched:", data);
-        
         if (!data) {
-          console.log("No profile data found, redirecting to profile creation");
           navigate('/profile/create');
           return;
         }
@@ -177,7 +173,7 @@ const ProfilePage = () => {
     );
   }
 
-  const requiredFields = ['first_name', 'last_name', 'username', 'bio', 'edad', 'universidad', 'ocupacion', 'profile_image', 'interests'];
+  const requiredFields = ['first_name', 'last_name', 'username', 'bio', 'edad', 'profile_image', 'interests'];
   const completedFields = requiredFields.filter(field => {
     if (field === 'interests') {
       return profile.interests && Array.isArray(profile.interests) && profile.interests.length > 0;

@@ -39,6 +39,7 @@ const formSchema = z.object({
   sevilla_zona: z.string().optional(),
   companeros_count: z.string().optional(),
   budget: z.string().optional(),
+  completed: z.boolean().default(false),
   lifestyle: z.object({
     schedule: z.enum(['morning_person', 'night_owl', 'flexible']).optional(),
     cleanliness: z.enum(['very_clean', 'clean', 'moderate', 'relaxed']).optional(),
@@ -82,6 +83,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
       sevilla_zona: "",
       companeros_count: "",
       budget: "",
+      completed: false,
       lifestyle: {
         schedule: undefined,
         cleanliness: undefined,
@@ -114,7 +116,6 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
             throw error;
           }
           
-          console.log("Raw profile data from Supabase:", profileData);
           
           let currentApartmentStatus: 'looking' | 'have' = 'looking';
           if (profileData.sevilla_zona) {
@@ -167,7 +168,6 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
             },
           });
           
-          console.log("Profile data loaded into form:", form.getValues());
         } catch (err) {
           console.error("Error loading profile data:", err);
           form.reset({
@@ -208,7 +208,6 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
     if (!user) return;
     
     setIsSubmitting(true);
-    console.log("Form submitted with values:", values);
     
     try {
       let sevilla_zona;
@@ -234,6 +233,8 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
         budget: values.budget
       };
       
+      const completed = (values.profileImage && values.firstName && values.age && values.occupation && values.lifestyle) ? true : false;
+
       const updateData = {
         first_name: values.firstName,
         last_name: values.lastName,
@@ -246,12 +247,11 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
         interests: values.interests,
         is_profile_active: values.isProfileActive,
         sevilla_zona: sevilla_zona,
+        completed: completed,
         companeros_count: values.companeros_count || '',
         lifestyle: lifestyle,
         updated_at: new Date().toISOString()
       };
-      
-      console.log("Data being sent to Supabase:", updateData);
       
       const { data, error } = await supabase
         .from('profiles')
@@ -264,11 +264,8 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
         throw error;
       }
       
-      console.log("Update successful, returned data:", data);
-      
       try {
         await refreshUser();
-        console.log("User refreshed successfully after profile update");
       } catch (refreshError) {
         console.error("Error refreshing user after profile update:", refreshError);
       }
@@ -281,7 +278,6 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
       try {
         const { data: sessionData } = await supabase.auth.refreshSession();
         if (sessionData && sessionData.session) {
-          console.log("Session refreshed after profile update");
         }
       } catch (sessionError) {
         console.error("Error refreshing session after profile update:", sessionError);

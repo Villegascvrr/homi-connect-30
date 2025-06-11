@@ -55,7 +55,7 @@ const MatchCard = ({
 }: MatchCardProps) => {
   const [swiping, setSwiping] = useState<'left' | 'right' | null>(null);
   const [showDetails, setShowDetails] = useState(false);
-
+  const lifestyleData = getLifestyle(lifestyle);
   const handleSwipe = (direction: 'left' | 'right') => {
     setSwiping(direction);
     setTimeout(() => {
@@ -84,7 +84,7 @@ const MatchCard = ({
           <div 
             className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2 text-white"
           >
-            <h3 className="text-base font-bold">{name}, {age}</h3>
+            <h3 className="text-base font-bold">{age && age !== 0 ? name+", "+age : name}</h3>
             <p className="text-xs opacity-90 flex items-center gap-1">
               <Home size={10} />
               {location}
@@ -165,15 +165,13 @@ const MatchCard = ({
         <div 
           className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3 text-white"
         >
-          <h3 className="text-xl font-bold">{name}, {age}</h3>
+          <h3 className="text-xl font-bold">{age && age !== 0 ? name+", "+age : name}</h3>
           <p className="text-sm opacity-90 flex items-center gap-1">
-            <Home size={14} />
+            {location && <Home size={14} />}
             {location}
           </p>
         </div>
-        <div className="absolute top-2 right-2">
-          <CompatibilityBadge percentage={compatibility} size="lg" />
-        </div>
+        
         
         {/* Verified badge */}
         <div className="absolute top-2 left-2">
@@ -224,7 +222,7 @@ const MatchCard = ({
         </div>
         
         {/* Additional details */}
-        {showDetails && lifestyle && (
+        {showDetails && lifestyleData && (
           <div className="mb-3 animate-fade-in">
             <h4 className="font-medium mb-1 text-xs">Estilo de vida</h4>
             <div className="grid grid-cols-2 gap-2">
@@ -234,7 +232,7 @@ const MatchCard = ({
                 </span>
                 <div>
                   <span className="text-xs text-muted-foreground">Horario</span>
-                  <span className="block">{lifestyle.schedule}</span>
+                  <span className="block">{lifestyleData.schedule}</span>
                 </div>
               </div>
               <div className="flex items-center gap-1 text-xs">
@@ -243,7 +241,7 @@ const MatchCard = ({
                 </span>
                 <div>
                   <span className="text-xs text-muted-foreground">Limpieza</span>
-                  <span className="block">{lifestyle.cleanliness}</span>
+                  <span className="block">{lifestyleData.cleanliness}</span>
                 </div>
               </div>
               <div className="flex items-center gap-1 text-xs">
@@ -252,7 +250,7 @@ const MatchCard = ({
                 </span>
                 <div>
                   <span className="text-xs text-muted-foreground">Invitados</span>
-                  <span className="block">{lifestyle.guests}</span>
+                  <span className="block">{lifestyleData.guests}</span>
                 </div>
               </div>
               <div className="flex items-center gap-1 text-xs">
@@ -261,7 +259,7 @@ const MatchCard = ({
                 </span>
                 <div>
                   <span className="text-xs text-muted-foreground">Fumar</span>
-                  <span className="block">{lifestyle.smoking}</span>
+                  <span className="block">{lifestyleData.smoking}</span>
                 </div>
               </div>
             </div>
@@ -276,12 +274,7 @@ const MatchCard = ({
             <X size={20} />
           </button>
           
-          <button 
-            className="w-8 h-8 rounded-full bg-white border border-gray-300 text-gray-500 flex items-center justify-center shadow-md transition-all hover:bg-gray-100"
-            onClick={() => onView(id)}
-          >
-            <User size={16} />
-          </button>
+          
           
           <button 
             className="w-10 h-10 rounded-full bg-white border border-homi-purple text-homi-purple flex items-center justify-center shadow-md transition-all hover:bg-homi-purple hover:text-white"
@@ -296,3 +289,31 @@ const MatchCard = ({
 };
 
 export default MatchCard;
+
+const getLifestyle = (lifestyle: any) => {
+  if (!lifestyle) return null;
+
+  return {
+    cleanliness: lifestyle.cleanliness === "very_clean" ? "Muy ordenado/a" 
+      : lifestyle.cleanliness === "clean" ? "Ordenado/a" 
+      : lifestyle.cleanliness === "moderate" ? "Moderado/a" 
+      : lifestyle.cleanliness === "relaxed" ? "Relajado/a" 
+      : lifestyle.cleanliness,
+    
+    schedule: lifestyle.schedule === "morning_person" ? "Madrugador/a"
+      : lifestyle.schedule === "night_owl" ? "Nocturno/a"
+      : lifestyle.schedule === "flexible" ? "Flexible"
+      : lifestyle.schedule,
+    
+    guests: lifestyle.guests === "rarely" ? "Casi nunca"
+      : lifestyle.guests === "occasionally" ? "Ocasionalmente"
+      : lifestyle.guests === "frequently" ? "Frecuentemente"
+      : lifestyle.guests === "no_problem" ? "No me importa"
+      : lifestyle.guests,
+    
+    smoking: lifestyle.smoking === "non_smoker" ? "No fumo"
+      : lifestyle.smoking === "outdoor_only" ? "Fuma en exteriores"
+      : lifestyle.smoking === "smoker" ? "Fumo"
+      : lifestyle.smoking
+  };
+}

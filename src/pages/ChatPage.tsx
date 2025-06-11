@@ -1,11 +1,13 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import ChatList from '@/components/chat/ChatList';
 import ChatWindow from '@/components/chat/ChatWindow';
 import { useAuth } from '@/context/AuthContext';
+import { useMessages } from '@/hooks/use-messages';
+import { useMatches } from '@/hooks/use-matches';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 // Define a mock chat match for demo purposes
 const mockChatMatches = [
@@ -141,18 +143,39 @@ const ChatPage = ({ isPreview = false }: ChatPageProps) => {
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
+  const isMobile = useIsMobile();
   
+  const { data: matches, isLoading: matchesLoading, error: matchesError } = useMatches(user?.id);
+  //console.log("matches", matches);
+ 
+  const { data: messages, isLoading: messagesLoading, error: messagesError } = useMessages(matches);
+  //console.log("messages", messages);
+  
+  const parsedMatches = matches?.map((match) => {
+    const matchMessages = messages?.filter((message) => message.match_id === match.id)
+    const lastMessage = matchMessages[matchMessages.length - 1]
+    return {
+      id: match.id,
+      name: match.name,
+      imgUrl: match.imgUrl,
+      online: false,
+      typing: false,
+      lastMessage: lastMessage?.content || "No hay mensajes aún",
+      timestamp: match.matchDate,
+      unread: 0
+    }
+  });
   useEffect(() => {
     // Set initial selected chat
-    if (mockChatMatches.length > 0 && !selectedChatId) {
-      setSelectedChatId(mockChatMatches[0].id);
+    if (parsedMatches && parsedMatches.length > 0 && !selectedChatId) {
+      //setSelectedChatId(parsedMatches[0].id);
     }
     
     // Force loading to complete after a short delay
     const timer = setTimeout(() => {
       setIsLoading(false);
       console.log("Chat page loaded successfully");
-    }, 300);
+    }, 1000);
     
     return () => clearTimeout(timer);
   }, [selectedChatId]);
@@ -164,8 +187,8 @@ const ChatPage = ({ isPreview = false }: ChatPageProps) => {
   };
   
   // Find the currently selected chat
-  const selectedChat = mockChatMatches.find(match => match.id === selectedChatId) || mockChatMatches[0];
-
+  const selectedChat = useMemo(() => parsedMatches ? parsedMatches?.find(match => match.id === selectedChatId) || parsedMatches[0] : null, [parsedMatches, selectedChatId]);
+  //console.log("selectedChat", selectedChat);
   // Show a more visible loading indicator
   if (isLoading) {
     return (
@@ -190,15 +213,17 @@ const ChatPage = ({ isPreview = false }: ChatPageProps) => {
       <main className="flex-grow flex flex-col">
         <div className="h-full flex flex-col">
           <div className="flex h-[calc(100vh-8rem)]">
-            <div className="w-full sm:w-1/3 md:w-1/4 border-r overflow-y-auto">
+            {/* Lista de chats - visible en móvil */}
+            <div className={`${selectedChatId && isMobile ? 'hidden' : 'block'} w-full sm:w-1/3 md:w-1/4 border-r overflow-y-auto`}>
               <ChatList 
-                matches={mockChatMatches} 
+                matches={parsedMatches} 
                 selectedChatId={selectedChatId} 
                 onSelectChat={handleSelectChat}
               />
             </div>
-            <div className="hidden sm:block sm:w-2/3 md:w-3/4">
-              {selectedChat && (
+            {/* Ventana de chat - visible en móvil cuando hay un chat seleccionado */}
+            <div className={`${!selectedChatId && isMobile ? 'hidden' : 'block'} w-full sm:w-2/3 md:w-3/4`}>
+              {selectedChat ? (
                 <ChatWindow 
                   chat={{
                     id: selectedChat.id,
@@ -207,8 +232,15 @@ const ChatPage = ({ isPreview = false }: ChatPageProps) => {
                     online: selectedChat.online,
                     typing: selectedChat.typing
                   }} 
-                  initialMessages={mockMessages[selectedChat.id as keyof typeof mockMessages] || []}
+                  initialMessages={messages?.filter((message) => message.match_id === selectedChat.id).sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()) || []}
+                  user_id={user?.id}
+                  isMobile={isMobile}
+                  onSelectChat={(chat) => setSelectedChatId(chat?.id || null)}
                 />
+              ) : (
+                <div className="flex items-center justify-center h-full">
+                  <p className="text-muted-foreground">Selecciona un chat para comenzar</p>
+                </div>
               )}
             </div>
           </div>

@@ -45,7 +45,6 @@ const ProfilesTable = () => {
         }
         
         if (data) {
-          console.log("Profiles fetched from Supabase:", data);
           
           // Clean and sanitize profile data - ensure all text fields are strings, not null
           const cleanedData = data.map(profile => {
@@ -67,7 +66,6 @@ const ProfilesTable = () => {
             };
           });
           
-          console.log("Cleaned profile data for display:", cleanedData);
           setProfiles(cleanedData);
           
           // Calculate stats

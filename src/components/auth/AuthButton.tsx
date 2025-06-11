@@ -53,7 +53,6 @@ const AuthButton = () => {
     const checkSession = async () => {
       if (!user && hasStoredSession() && !sessionVerified) {
         try {
-          console.log("Session found in localStorage but no user in context, attempting refresh");
           await refreshUser();
           setSessionVerified(true);
         } catch (error) {

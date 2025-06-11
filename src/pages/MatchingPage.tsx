@@ -8,140 +8,34 @@ import MatchingFilters from '@/components/matching/MatchingFilters';
 import SwipeInterface from '@/components/matching/SwipeInterface';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useProfiles } from '@/hooks/use-profiles';
+import type { Profile } from '@/hooks/use-profiles';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Filter, UserRound, LayoutGrid, SwatchBook, Heart, Users, Settings } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useMatches } from '@/hooks/use-matches';
 import DemoBanner from '@/components/layout/DemoBanner';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/context/AuthContext';
 
-type MockProfile = {
-  id: number;
-  name: string;
-  username: string;
-  age: number;
-  location: string;
-  occupation: string;
-  bio: string;
-  compatibility: number;
-  profileImage: string;
-  interests: string[];
-  lifestyle: {
-    cleanliness: string;
-    noise: string;
-    schedule: string;
-    guests: string;
-    smoking: string;
-  };
-  budget: {
-    min: number;
-    max: number;
-  };
-};
-
-const mockProfiles: MockProfile[] = [{
-  id: 1,
-  name: "Laura García",
-  username: "lauragarcia",
-  age: 24,
-  location: "Madrid",
-  occupation: "Estudiante de Medicina",
-  bio: "Buscando piso compartido cerca del hospital. Soy tranquila y ordenada.",
-  compatibility: 95,
-  profileImage: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3",
-  interests: ["lectura", "viajes", "música"],
-  lifestyle: {
-    cleanliness: "Muy ordenada",
-    noise: "Tranquila",
-    schedule: "diurno",
-    guests: "Ocasionalmente",
-    smoking: "No"
-  },
-  budget: {
-    min: 400,
-    max: 600
-  }
-}, {
-  id: 2,
-  name: "Carlos Martínez",
-  username: "carlosm",
-  age: 28,
-  location: "Barcelona",
-  occupation: "Desarrollador Web",
-  bio: "Busco compañero/a de piso en Barcelona. Trabajo desde casa la mayoría de días.",
-  compatibility: 82,
-  profileImage: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3",
-  interests: ["tecnología", "gaming", "deportes"],
-  lifestyle: {
-    cleanliness: "Normal",
-    noise: "Normal",
-    schedule: "flexible",
-    guests: "Frecuentemente",
-    smoking: "No"
-  },
-  budget: {
-    min: 500,
-    max: 800
-  }
-}, {
-  id: 3,
-  name: "Ana López",
-  username: "analopez",
-  age: 26,
-  location: "Valencia",
-  occupation: "Diseñadora Gráfica",
-  bio: "Creativa, ordenada y sociable. Busco piso cerca del centro con buen ambiente.",
-  compatibility: 78,
-  profileImage: "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1961&auto=format&fit=crop&ixlib=rb-4.0.3",
-  interests: ["arte", "fotografía", "viajes"],
-  lifestyle: {
-    cleanliness: "Muy ordenada",
-    noise: "Sociable",
-    schedule: "diurno",
-    guests: "Ocasionalmente",
-    smoking: "Sí"
-  },
-  budget: {
-    min: 350,
-    max: 550
-  }
-}, {
-  id: 4,
-  name: "Miguel Sánchez",
-  username: "miguels",
-  age: 30,
-  location: "Sevilla",
-  occupation: "Arquitecto",
-  bio: "Busco piso compartido con personas tranquilas y respetuosas.",
-  compatibility: 65,
-  profileImage: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3",
-  interests: ["deporte", "lectura", "música"],
-  lifestyle: {
-    cleanliness: "Normal",
-    noise: "Tranquilo",
-    schedule: "nocturno",
-    guests: "Rara vez",
-    smoking: "No"
-  },
-  budget: {
-    min: 400,
-    max: 700
-  }
-}];
-
-const formatProfileForMatchCard = (profile: any) => {
-  const tags = profile.interests.map((interest: string, index: number) => ({
+const formatProfileForMatchCard = (profile: Profile) => {
+  const tags = profile?.interests?.map((interest: string, index: number) => ({
     id: index + 1,
     name: interest
   }));
   return {
     id: profile.id.toString(),
-    name: profile.name,
-    age: profile.age,
+    name: profile.first_name + " "+ profile.last_name,
+    age: Number(profile.edad),
     location: profile.location,
     bio: profile.bio,
-    imgUrl: profile.profileImage,
-    tags: tags,
+    imgUrl: profile.profile_image,
+    tags: tags && tags.length > 0 ? tags : [{
+      id: 1,
+      name: "No se encontraron intereses"
+    }],
     compatibility: profile.compatibility,
     lifestyle: profile.lifestyle,
     budget: profile.budget,
@@ -182,96 +76,44 @@ const emptyLifestyle: Lifestyle = {
   smoking: ""
 };
 
-interface Profile {
-  id: number;
-  name: string;
-  username: string;
-  age: number;
-  location: string;
-  occupation: string;
-  bio: string;
-  compatibility: number;
-  profileImage: string;
-  interests: string[];
-  lifestyle: Lifestyle;
-  budget: {
-    min: number;
-    max: number;
-  };
-}
-
 interface MatchingPageProps {
   isPreview?: boolean;
 }
 
 const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilters, setActiveFilters] = useState<FilterValues | null>(null);
-  const [filteredProfiles, setFilteredProfiles] = useState<MockProfile[]>(mockProfiles);
-  const [originalFilteredProfiles, setOriginalFilteredProfiles] = useState<MockProfile[]>([]);
+  const [filteredProfiles, setFilteredProfiles] = useState<any[]>([]);
+  const [originalFilteredProfiles, setOriginalFilteredProfiles] = useState<Profile[]>([]);
   const [viewMode, setViewMode] = useState<'grid' | 'swipe'>('grid');
   const [activeTab, setActiveTab] = useState<'discover' | 'matches'>('discover');
   const { toast } = useToast();
   const [openSearchFilters, setOpenSearchFilters] = useState(false);
   const [openPreferences, setOpenPreferences] = useState(false);
   const isMobile = useIsMobile();
-  const [matches, setMatches] = useState([{
-    id: "5",
-    name: "Elena Fernández",
-    age: 25,
-    location: "Madrid",
-    imgUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=1976&auto=format&fit=crop&ixlib=rb-4.0.3",
-    compatibility: 91,
-    matchDate: "2025-03-18T14:30:00Z",
-    messageCount: 5,
-    tags: [{
-      id: 1,
-      name: "música"
-    }, {
-      id: 2,
-      name: "yoga"
-    }, {
-      id: 3,
-      name: "cocina"
-    }]
-  }, {
-    id: "6",
-    name: "Diego Morales",
-    age: 27,
-    location: "Barcelona",
-    imgUrl: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3",
-    compatibility: 87,
-    matchDate: "2025-03-15T10:15:00Z",
-    tags: [{
-      id: 1,
-      name: "gaming"
-    }, {
-      id: 2,
-      name: "tecnología"
-    }, {
-      id: 3,
-      name: "cine"
-    }]
-  }, {
-    id: "7",
-    name: "Lucía Martínez",
-    age: 24,
-    location: "Valencia",
-    imgUrl: "https://images.unsplash.com/photo-1519699047748-de8e457a634e?q=80&w=1980&auto=format&fit=crop&ixlib=rb-4.0.3",
-    compatibility: 82,
-    matchDate: "2025-03-10T18:45:00Z",
-    messageCount: 2,
-    tags: [{
-      id: 1,
-      name: "deporte"
-    }, {
-      id: 2,
-      name: "viajes"
-    }, {
-      id: 3,
-      name: "fotografía"
-    }]
-  }]);
+  const { data: profiles, isLoading, error, refetch } = useProfiles(user?.id);
+  const { data: matches, isLoading: matchesLoading, error: matchesError } = useMatches(user?.id);
+  const hasProfileCompleted = user?.completed;
+
+  
+  const [removedProfiles, setRemovedProfiles] = useState<Set<string>>(new Set());
+  const [ availableProfiles, setAvailableProfiles ]= useState<any[]>([]);
+
+
+  React.useEffect(() => {
+    if (profiles) {
+      setFilteredProfiles(profiles);
+      setOriginalFilteredProfiles(profiles);
+    }
+  }, [profiles]);
+
+  React.useEffect(() => {
+    if (filteredProfiles.length === 0) {
+      refetch();
+    }
+  }, [filteredProfiles, refetch]);
 
   React.useEffect(() => {
     if (isMobile) {
@@ -291,6 +133,10 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
     } else {
       action();
     }
+  };  
+
+  const handleGoToProfile = () => {
+    navigate('/profile/edit');
   };
 
   const handleSearch = (query: string) => {
@@ -332,7 +178,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
     );
   };
 
-  const calculateSimilarityScore = (profile: MockProfile, filters: FilterValues) => {
+  const calculateSimilarityScore = (profile: any, filters: FilterValues) => {
     let score = 0;
     let possiblePoints = 0;
     if (filters.ubicacion) {
@@ -426,190 +272,151 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
   };
 
   const applyFiltersAndSearch = (query: string, filters: FilterValues | null) => {
-    let exactMatches: MockProfile[] = [];
-    let similarProfiles: {
-      profile: MockProfile;
-      score: number;
-    }[] = [];
-    let results = [...mockProfiles];
+    if (!profiles) return;
 
-    if (query.trim()) {
-      const lowerCaseQuery = query.toLowerCase();
-      results = results.filter(profile => profile.name.toLowerCase().includes(lowerCaseQuery) || profile.username.toLowerCase().includes(lowerCaseQuery) || profile.bio.toLowerCase().includes(lowerCaseQuery) || profile.location.toLowerCase().includes(lowerCaseQuery) || profile.occupation.toLowerCase().includes(lowerCaseQuery));
+    let results = [...profiles];
+
+    // Aplicar búsqueda por texto
+    if (query) {
+      const searchLower = query.toLowerCase();
+      results = results.filter(profile =>
+        profile.name.toLowerCase().includes(searchLower) ||
+        profile.location.toLowerCase().includes(searchLower) ||
+        profile.bio.toLowerCase().includes(searchLower)
+      );
     }
 
+    // Aplicar filtros
     if (filters) {
-      similarProfiles = results.map(profile => ({
-        profile,
-        score: calculateSimilarityScore(profile, filters)
-      }));
+      results = results.filter(profile => {
+        let match = true;
 
-      let filteredResults = [...results];
-      if (filters.ubicacion) {
-        filteredResults = filteredResults.filter(profile => profile.location === filters.ubicacion);
-      }
-      if (filters.presupuesto) {
-        const [min, max] = filters.presupuesto;
-        filteredResults = filteredResults.filter(profile => profile.budget && profile.budget.min <= max && profile.budget.max >= min);
-      }
-      if (filters.rangoEdad) {
-        if (filters.rangoEdad === '18-25') {
-          filteredResults = filteredResults.filter(profile => profile.age >= 18 && profile.age <= 25);
-        } else if (filters.rangoEdad === '26-30') {
-          filteredResults = filteredResults.filter(profile => profile.age >= 26 && profile.age <= 30);
-        } else if (filters.rangoEdad === '31-40') {
-          filteredResults = filteredResults.filter(profile => profile.age >= 31 && profile.age <= 40);
-        } else if (filters.rangoEdad === '41+') {
-          filteredResults = filteredResults.filter(profile => profile.age >= 41);
+        // Filtrar por presupuesto
+        if (filters.presupuesto) {
+          const [min, max] = filters.presupuesto;
+          match = match && profile.budget.min >= min && profile.budget.max <= max;
         }
-      }
-      if (filters.estiloVida && filters.estiloVida.length > 0) {
-        const estiloVidaTerms = filters.estiloVida.map(ev => ev.toLowerCase());
-        filteredResults = filteredResults.filter(profile => {
-          const profileLifestyle = profile.lifestyle;
-          const hasMatchingLifestyle = estiloVidaTerms.includes('ordenado') && profileLifestyle.cleanliness === "Muy ordenada" || estiloVidaTerms.includes('tranquilo') && profileLifestyle.noise === "Tranquila" || estiloVidaTerms.includes('nocturno') && profileLifestyle.schedule === "nocturno" || estiloVidaTerms.includes('madrugador') && profileLifestyle.schedule === "diurno" || estiloVidaTerms.includes('no-fumador') && profileLifestyle.smoking === "No";
-          return hasMatchingLifestyle;
-        });
-      }
-      if (filters.intereses && filters.intereses.length > 0) {
-        filteredResults = filteredResults.filter(profile => filters.intereses!.some(interest => profile.interests.includes(interest)));
-      }
-      if (filters.nivelLimpieza) {
-        filteredResults = filteredResults.filter(profile => {
-          const lifestyle = profile.lifestyle;
-          if (filters.nivelLimpieza === 'alta') {
-            return lifestyle.cleanliness === "Muy ordenada";
-          } else if (filters.nivelLimpieza === 'media') {
-            return lifestyle.cleanliness === "Normal";
-          } else {
-            return true;
-          }
-        });
-      }
-      if (filters.nivelRuido) {
-        filteredResults = filteredResults.filter(profile => {
-          const lifestyle = profile.lifestyle;
-          if (filters.nivelRuido === 'bajo') {
-            return lifestyle.noise === "Tranquila";
-          } else if (filters.nivelRuido === 'moderado') {
-            return lifestyle.noise === "Normal";
-          } else {
-            return lifestyle.noise === "Sociable";
-          }
-        });
-      }
-      if (filters.horarioHabitual) {
-        filteredResults = filteredResults.filter(profile => {
-          const lifestyle = profile.lifestyle;
-          if (filters.horarioHabitual === 'madrugador') {
-            return lifestyle.schedule === "diurno";
-          } else if (filters.horarioHabitual === 'nocturno') {
-            return lifestyle.schedule === "nocturno";
-          } else {
-            return lifestyle.schedule === "flexible";
-          }
-        });
-      }
-      if (filters.invitados) {
-        filteredResults = filteredResults.filter(profile => {
-          const lifestyle = profile.lifestyle;
-          if (filters.invitados === 'frecuente') {
-            return lifestyle.guests === "Frecuentemente";
-          } else if (filters.invitados === 'ocasional') {
-            return lifestyle.guests === "Ocasionalmente";
-          } else {
-            return lifestyle.guests === "Rara vez";
-          }
-        });
-      }
-      if (filters.fumar) {
-        filteredResults = filteredResults.filter(profile => {
-          const lifestyle = profile.lifestyle;
-          if (filters.fumar === 'no') {
-            return lifestyle.smoking === "No";
-          } else {
-            return lifestyle.smoking === "Sí";
-          }
-        });
-      }
-      exactMatches = filteredResults;
 
-      if (exactMatches.length === 0 && similarProfiles.length > 0) {
-        similarProfiles.sort((a, b) => b.score - a.score);
-        const similarEnough = similarProfiles.filter(item => item.score >= 30);
-        if (similarEnough.length > 0) {
-          results = similarEnough.map(item => item.profile);
-          toast({
-            title: "No hay coincidencias exactas",
-            description: `Mostrando ${results.length} perfiles similares a tus criterios`,
-            variant: "default"
-          });
-        } else {
-          results = [];
+        // Filtrar por ubicación
+        if (filters.ubicacion) {
+          match = match && profile.location.toLowerCase() === filters.ubicacion.toLowerCase();
         }
-      } else {
-        results = exactMatches;
-      }
-    }
 
-    setOriginalFilteredProfiles(results);
-    setFilteredProfiles(results);
-    if (activeFilters !== null || query.trim()) {
-      toast({
-        title: `${results.length} perfiles encontrados`,
-        description: results.length > 0 ? "Se han encontrado perfiles que coinciden con tus criterios" : "No se encontraron perfiles que coincidan con tus criterios",
-        variant: results.length > 0 ? "default" : "destructive"
+        // ... resto de la lógica de filtros ...
+
+        return match;
       });
     }
+
+    setFilteredProfiles(results);
   };
 
   const handleLike = (id: string) => {
     handleAction(
-      () => {
-        if (!matches.some(match => match.id === id)) {
-          const profileToMatch = mockProfiles.find(p => p.id.toString() === id);
-          if (profileToMatch) {
-            const newMatch = {
-              id: profileToMatch.id.toString(),
-              name: profileToMatch.name,
-              age: profileToMatch.age,
-              location: profileToMatch.location,
-              imgUrl: profileToMatch.profileImage,
-              compatibility: profileToMatch.compatibility,
-              matchDate: new Date().toISOString(),
-              tags: profileToMatch.interests.map((interest, idx) => ({
-                id: idx + 1,
-                name: interest
-              }))
-            };
-            setMatches(prev => [newMatch, ...prev]);
-            toast({
-              title: "¡Nuevo match!",
-              description: `Has hecho match con ${profileToMatch.name}`,
-              variant: "default"
-            });
-          } else {
-            toast({
-              title: "¡Te interesa!",
-              description: "Has mostrado interés en este perfil",
-              variant: "default"
-            });
+      async () => {
+        try{
+          // Primero obtenemos el valor actual
+          const { data: currentData } = await supabase
+            .from('profiles')
+            .select('skips')
+            .eq('id', user?.id)
+            .single();
+          
+          const currentSkips = currentData?.skips || 0;
+          
+          // Luego actualizamos con el nuevo valor
+          const { data: updateData, error: updateError } = await supabase
+            .from('profiles')
+            .update({ skips: currentSkips + 1 })
+            .eq('id', user?.id)
+        } catch (error) {
+          console.error('Error updating skips:', error);
+        }
+        console.log("user?.id", user?.id, "id", id);
+        //insertar en la tabla profile_matches
+        try {
+          const { data: insertData, error: insertError } = await supabase
+            .from('profile_matches')
+            .insert({
+              profile_id: user?.id,
+              target_profile_id: id
+            })
+        } catch (error) {
+          console.error('Error inserting in profile_matches:', error);
+        }
+        
+        //buscar en la tabla profile_matches si existe un match con el perfil target_profile_id
+        const { data: matchData, error: matchError } = await supabase
+          .from('profile_matches')
+          .select('*')
+          .eq('target_profile_id', user?.id)
+          .eq('profile_id', id)
+          
+
+        //quitar el perfil de la lista de perfiles disponibles
+        const newFilteredProfiles = filteredProfiles.filter(profile => profile.id !== id);
+        setFilteredProfiles(newFilteredProfiles);
+
+        if (matchData.length > 0) {
+          //insertar en la tabla matches
+          try {
+            const { data: insertData, error: insertError } = await supabase
+              .from('matches')
+              .insert({
+                profile_one_id: user?.id,
+                profile_two_id: id
+              })
+          } catch (error) {
+            console.error('Error inserting in matches:', error);
           }
-        } else {
+
           toast({
-            title: "Ya hiciste match",
-            description: "Ya has hecho match con este perfil anteriormente",
+            title: "¡Nuevo match!",
+            description: "Has coincidido con este perfil",
             variant: "default"
           });
         }
       },
-      "Función de like"
+      "¡Nuevo match!"
     );
   };
 
   const handlePass = (id: string) => {
     handleAction(
-      () => {
+      async () => {
+        const newFilteredProfiles = filteredProfiles.filter(profile => profile.id !== id);
+        setRemovedProfiles(removedProfiles.add(filteredProfiles.find(profile => profile.id === id)))
+        setFilteredProfiles(newFilteredProfiles);
+        // Insertar en la tabla profile_discards
+        try {
+          const { data: insertData, error: insertError } = await supabase
+            .from('profile_discards')
+            .insert({
+              profile_id: user?.id,
+              target_profile_id: id
+            })
+        } catch (error) {
+          console.error('Error inserting in profile_discards:', error);
+        }
+        try{
+          // Primero obtenemos el valor actual
+          const { data: currentData } = await supabase
+            .from('profiles')
+            .select('skips')
+            .eq('id', user?.id)
+            .single();
+          
+          const currentSkips = currentData?.skips || 0;
+          
+          // Luego actualizamos con el nuevo valor
+          const { data: updateData, error: updateError } = await supabase
+            .from('profiles')
+            .update({ skips: currentSkips + 1 })
+            .eq('id', user?.id)
+        } catch (error) {
+          console.error('Error updating skips:', error);
+        }
+
         toast({
           title: "Pasas",
           description: "Has pasado de este perfil",
@@ -636,7 +443,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
   const handleUnmatch = (id: string) => {
     handleAction(
       () => {
-        setMatches(prev => prev.filter(match => match.id !== id));
+        console.log("deshacer match", id);
       },
       "Función de deshacer match"
     );
@@ -668,11 +475,17 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
     );
   };
 
+  if (isLoading) {
+    return <div className="flex items-center justify-center min-h-screen">Cargando perfiles...</div>;
+  }
+
+  if (error) {
+    return <div className="flex items-center justify-center min-h-screen">Error al cargar los perfiles</div>;
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      
-      {isPreview && <DemoBanner />}
       
       <main className="flex-grow pt-0 pb-12 bg-transparent">
         <div className="container mx-auto px-4">
@@ -693,7 +506,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                 <TabsTrigger value="matches" className="flex items-center gap-2">
                   <Heart size={16} />
                   <span className="hidden sm:inline">Mis Matches</span>
-                  {matches.length > 0 && (
+                  {matches && matches?.length > 0 && (
                     <span className="ml-1 px-1.5 py-0.5 text-xs rounded-full bg-homi-purple/20">
                       {matches.length}
                     </span>
@@ -701,7 +514,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                 </TabsTrigger>
               </TabsList>
               
-              {activeTab === 'discover' && (
+              {activeTab === 'discover' && false && (
                 <div className="flex gap-2">
                   {isMobile && (
                     <div className="flex items-center mr-auto">
@@ -761,11 +574,11 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
               )}
             </div>
             
-            <TabsContent value="discover" className="mt-0">
+            {hasProfileCompleted && (<TabsContent value="discover" className="mt-0">
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
-                <div className="lg:col-span-2">
+                {/*<div className="lg:col-span-2">
                   <ProfileSearchBar onSearch={handleSearch} className="w-full" />
-                </div>
+                </div>*/}
                 <div className="lg:col-span-1">
                   {/* Empty space for filters alignment */}
                 </div>
@@ -779,14 +592,19 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                         profiles={filteredProfiles.map(profile => ({
                           id: profile.id.toString(),
                           name: profile.name,
-                          age: profile.age,
+                          first_name: profile.first_name,
+                          last_name: profile.last_name,
+                          age: Number(profile.edad),
                           location: profile.location,
                           bio: profile.bio,
-                          imgUrl: profile.profileImage,
-                          tags: profile.interests.map((interest, idx) => ({
+                          imgUrl: profile.profile_image,
+                          tags: profile.interests ? profile.interests.map((interest, idx) => ({
                             id: idx + 1,
                             name: interest
-                          })),
+                          })) : [{
+                            id: 1,
+                            name: "No se encontraron intereses"
+                          }],
                           compatibility: profile.compatibility,
                           lifestyle: profile.lifestyle,
                           budget: profile.budget
@@ -823,10 +641,23 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                   </p>
                 </div>
               )}
-            </TabsContent>
+            </TabsContent>)}
+
+            {!hasProfileCompleted && (
+              <TabsContent value="discover" className="mt-0">
+                <div className="text-center py-16">
+                  <p className="text-xl text-muted-foreground">
+                    Por favor, completa tu perfil para poder explorar perfiles.
+                  </p>
+                  <Button size={isMobile ? "default" : "lg"} className="mt-4 rounded-full bg-gradient-to-r from-homi-purple to-homi-lightPurple hover:from-homi-lightPurple hover:to-homi-purple text-white font-bold shadow-lg shadow-purple-500/30 transform hover:scale-105 transition-all duration-300 w-full sm:w-auto" asChild>
+                    <Link to="/profile/edit">Completar mi perfil</Link>
+                  </Button>
+                </div>
+              </TabsContent>
+            )}
             
             <TabsContent value="matches" className="mt-0">
-              {matches.length > 0 ? (
+              {matches && matches?.length > 0 ? (
                 <MatchesList 
                   matches={matches} 
                   onMessage={handleMessage}

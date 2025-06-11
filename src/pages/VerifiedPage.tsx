@@ -32,7 +32,7 @@ const VerifiedPage = () => {
           });
           
           // Añadimos un console log para depurar
-          console.log("Verificación exitosa, redirigiendo a inicio con parámetro registered=true");
+          
           
           setTimeout(() => {
             // Aseguramos que se incluya el parámetro registered=true

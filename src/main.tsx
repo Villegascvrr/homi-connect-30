@@ -7,7 +7,6 @@ import './index.css'
 // Function to initialize the app with error handling
 const initializeApp = () => {
   try {
-    console.log('Initializing application...');
     const rootElement = document.getElementById('root');
     
     if (!rootElement) {
@@ -23,7 +22,6 @@ const initializeApp = () => {
       </StrictMode>
     );
     
-    console.log('Application rendered successfully');
   } catch (error) {
     console.error('Fatal error during application initialization:', error);
   }

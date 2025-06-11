@@ -30,10 +30,12 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
-      refetchOnMount: true, 
-      staleTime: 1000 * 10, // 10 seconds for faster response
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      staleTime: Infinity,
       retry: 1,
-      retryDelay: 500, // Faster retry to improve UX
+      retryDelay: 500,
+      gcTime: Infinity,
     },
   },
 });
@@ -50,46 +52,42 @@ const App = () => {
   const [isAppReady, setIsAppReady] = useState(false);
   
   useEffect(() => {
-    console.log("App initializing...");
-    
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_OUT') {
-        console.log("Auth state change detected: SIGNED_OUT - Forcing AuthProvider reset");
+        queryClient.clear();
         setAuthProviderKey('signed-out-' + Date.now());
-      } else if (event === 'SIGNED_IN') {
-        console.log("Auth state change detected: SIGNED_IN - Forcing AuthProvider reset");
-        setAuthProviderKey('signed-in-' + Date.now());
+      } else if (event === 'SIGNED_IN' && session) {
+        queryClient.prefetchQuery({
+          queryKey: ['profile', session.user.id],
+          queryFn: async () => {
+            const { data } = await supabase
+              .from('profiles')
+              .select('*')
+              .eq('id', session.user.id)
+              .maybeSingle();
+            return data;
+          },
+          staleTime: Infinity,
+        });
       }
     });
     
     const prefetchBasicData = async () => {
       try {
-        const { data: { session } } = await queryClient.fetchQuery({
-          queryKey: ['session'],
-          queryFn: async () => {
-            return await supabase.auth.getSession();
-          },
-          staleTime: 1000 * 60 * 5, // 5 minutes
-        });
+        const { data: { session } } = await supabase.auth.getSession();
         
         if (session?.user?.id) {
-          console.log("User is authenticated, prefetching profile data");
-          queryClient.prefetchQuery({
+          await queryClient.prefetchQuery({
             queryKey: ['profile', session.user.id],
             queryFn: async () => {
-              try {
-                const { data } = await supabase
-                  .from('profiles')
-                  .select('*')
-                  .eq('id', session.user.id)
-                  .maybeSingle();
-                return data;
-              } catch (error) {
-                console.error("Error prefetching profile:", error);
-                return null;
-              }
+              const { data } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', session.user.id)
+                .maybeSingle();
+              return data;
             },
-            staleTime: 1000 * 30, // 30 seconds
+            staleTime: Infinity,
           });
         }
         
