@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { useIsMobile } from '../../hooks/use-mobile'
 
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
@@ -63,6 +64,10 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
   const { user, refreshUser } = useAuth();
   const [apartmentStatus, setApartmentStatus] = useState<'looking' | 'have'>('looking');
   const [showUniversityField, setShowUniversityField] = useState(false);
+  const isMobile = useIsMobile()
+  const [isFloating, setIsFloating] = useState(false)
+  const formRef = useRef<HTMLFormElement>(null)
+  const buttonsRef = useRef<HTMLDivElement>(null)
   
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -204,6 +209,27 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
     fetchUserProfile();
   }, [user, form]);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!formRef.current || !buttonsRef.current) return
+      
+      const formBottom = formRef.current.offsetTop + formRef.current.offsetHeight
+      const currentScrollY = window.scrollY + window.innerHeight
+      const buttonsHeight = buttonsRef.current.offsetHeight
+      const originalButtonsPosition = formBottom - buttonsHeight - 20
+      
+      // Si el scroll está por encima de donde deberían estar los botones
+      if (currentScrollY < originalButtonsPosition) {
+        setIsFloating(true)
+      } else {
+        setIsFloating(false)
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
   async function onSubmit(values: FormValues) {
     if (!user) return;
     
@@ -333,7 +359,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div className="space-y-4">
           <div className="mb-4">
             <ProfileStatusToggle 
@@ -370,20 +396,32 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
           />
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-end mt-6">
+        {/* Botones que cambian entre normal y flotante */}
+        <div 
+          ref={buttonsRef}
+          className={`${
+            isFloating 
+              ? 'fixed bottom-4 left-0 right-0 z-50' 
+              : 'relative'
+          } flex flex-col sm:flex-row gap-4 justify-end max-w-4xl mx-auto px-4 sm:px-6 mt-6`}
+        >
           {cancelEdit && (
             <Button 
               type="button" 
               variant="outline" 
               onClick={cancelEdit}
-              className="w-full sm:w-auto"
+              className={`w-full sm:w-auto transition-all duration-200 ${
+                isFloating ? 'shadow-lg hover:shadow-xl' : ''
+              }`}
             >
               Cancelar
             </Button>
           )}
           <Button 
             type="submit" 
-            className="w-full sm:w-auto bg-homi-purple hover:bg-homi-purple/90" 
+            className={`w-full sm:w-auto bg-homi-purple hover:bg-homi-purple/90 transition-all duration-200 ${
+              isFloating ? 'shadow-lg hover:shadow-xl' : ''
+            }`}
             size="auto" 
             wrap="normal" 
             disabled={isSubmitting}

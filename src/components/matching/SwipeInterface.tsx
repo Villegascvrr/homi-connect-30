@@ -258,7 +258,7 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
             onLike={(id) => handleSwipeAction('like', id)}
             onPass={(id) => handleSwipeAction('pass', id)}
             onView={onView}
-            onUndo={history.length > 0 ? handleUndo : undefined}
+            //onUndo={history.length > 0 ? handleUndo : undefined}
           />
         )}
       </div>
