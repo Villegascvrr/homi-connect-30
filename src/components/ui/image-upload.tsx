@@ -2,7 +2,7 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Camera, Upload, X, RefreshCw } from 'lucide-react';
+import { Camera, Upload, X, RefreshCw, Crop, Move } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
@@ -29,11 +29,15 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isCropperOpen, setIsCropperOpen] = useState(false);
   const [rotation, setRotation] = useState(0);
+  const [scale, setScale] = useState(1);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
 
   const resetCropper = useCallback(() => {
     setSelectedImage(null);
     setIsCropperOpen(false);
     setRotation(0);
+    setScale(1);
+    setPosition({ x: 0, y: 0 });
   }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -101,6 +105,13 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
     }
   };
 
+  const handleEditImage = () => {
+    if (value) {
+      setSelectedImage(value);
+      setIsCropperOpen(true);
+    }
+  };
+
   const applyImageCrop = () => {
     // In a real implementation, we would apply the crop transformation
     // For now, we'll just use the selected image as-is
@@ -108,7 +119,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
       onChange(selectedImage);
       toast({
         title: "Imagen actualizada",
-        description: "La imagen de perfil se ha actualizado correctamente"
+        description: "Los ajustes de la imagen se han aplicado correctamente"
       });
     }
     resetCropper();
@@ -116,6 +127,20 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
 
   const rotateImage = () => {
     setRotation(prev => (prev + 90) % 360);
+  };
+
+  const zoomIn = () => {
+    setScale(prev => Math.min(prev + 0.1, 2));
+  };
+
+  const zoomOut = () => {
+    setScale(prev => Math.max(prev - 0.1, 0.5));
+  };
+
+  const resetAdjustments = () => {
+    setRotation(0);
+    setScale(1);
+    setPosition({ x: 0, y: 0 });
   };
 
   return (
@@ -138,12 +163,17 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
                 <Camera size={32} />
               </AvatarFallback>
             </Avatar>
-            <div className="absolute bottom-0 right-0 flex gap-2">
-              <Button type="button" size="icon" className="h-8 w-8 rounded-full" onClick={handleClickUpload}>
-                <Upload size={14} />
+            <div className="absolute bottom-0 right-0 flex gap-1">
+              {enableCropping && (
+                <Button type="button" size="icon" variant="secondary" className="h-7 w-7 rounded-full" onClick={handleEditImage} title="Ajustar imagen">
+                  <Crop size={12} />
+                </Button>
+              )}
+              <Button type="button" size="icon" className="h-7 w-7 rounded-full" onClick={handleClickUpload} title="Cambiar imagen">
+                <Upload size={12} />
               </Button>
-              <Button type="button" size="icon" variant="destructive" className="h-8 w-8 rounded-full" onClick={handleRemoveImage}>
-                <X size={14} />
+              <Button type="button" size="icon" variant="destructive" className="h-7 w-7 rounded-full" onClick={handleRemoveImage} title="Eliminar imagen">
+                <X size={12} />
               </Button>
             </div>
           </div>
@@ -170,36 +200,60 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
             </Button>
           </div>
         )}
-        <p className="text-xs text-muted-foreground">
+        <p className="text-xs text-muted-foreground text-center">
           Sube una foto clara de tu rostro para que otros usuarios puedan identificarte.
+          {enableCropping && " Podrás ajustarla después de subirla."}
         </p>
       </div>
 
-      {/* Image cropping dialog */}
+      {/* Image cropping and adjustment dialog */}
       <Dialog open={isCropperOpen} onOpenChange={setIsCropperOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>Ajustar foto de perfil</DialogTitle>
+            <DialogTitle className="flex items-center gap-2">
+              <Crop className="h-5 w-5" />
+              Ajustar foto de perfil
+            </DialogTitle>
           </DialogHeader>
           <div className="flex flex-col items-center space-y-4">
             {selectedImage && (
-              <div className="relative w-64 h-64 mx-auto overflow-hidden border rounded-md">
+              <div className="relative w-80 h-80 mx-auto overflow-hidden border rounded-lg bg-gray-100">
                 <img 
                   src={selectedImage} 
-                  alt="Imagen a recortar" 
-                  className="w-full h-full object-contain"
-                  style={{ transform: `rotate(${rotation}deg)` }}
+                  alt="Imagen a ajustar" 
+                  className="w-full h-full object-contain transition-transform duration-200"
+                  style={{ 
+                    transform: `rotate(${rotation}deg) scale(${scale}) translate(${position.x}px, ${position.y}px)` 
+                  }}
                 />
               </div>
             )}
-            <Button onClick={rotateImage} variant="outline" type="button">
-              <RefreshCw className="mr-2 h-4 w-4" />
-              Rotar
-            </Button>
+            
+            {/* Adjustment controls */}
+            <div className="flex flex-wrap gap-2 justify-center">
+              <Button onClick={rotateImage} variant="outline" size="sm" type="button">
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Rotar
+              </Button>
+              <Button onClick={zoomIn} variant="outline" size="sm" type="button">
+                +
+              </Button>
+              <Button onClick={zoomOut} variant="outline" size="sm" type="button">
+                -
+              </Button>
+              <Button onClick={resetAdjustments} variant="outline" size="sm" type="button">
+                <Move className="mr-2 h-4 w-4" />
+                Restablecer
+              </Button>
+            </div>
+            
+            <p className="text-sm text-muted-foreground text-center">
+              Usa los controles para rotar, hacer zoom y posicionar tu imagen como prefieras
+            </p>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={resetCropper} type="button">Cancelar</Button>
-            <Button onClick={applyImageCrop} type="button">Guardar</Button>
+            <Button onClick={applyImageCrop} type="button">Guardar cambios</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
