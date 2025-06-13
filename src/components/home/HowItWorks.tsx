@@ -1,4 +1,3 @@
-
 import { User, Users, MessageSquare, Home } from 'lucide-react';
 
 const HowItWorks = () => {
@@ -21,12 +20,12 @@ const HowItWorks = () => {
   }];
   
   return (
-    <section className="py-20 bg-gradient-to-br from-slate-50 via-white to-homi-ultraLightPurple/30 relative overflow-hidden">
+    <section className="py-20 bg-gradient-to-br from-homi-purple/5 via-homi-lightPurple/5 to-homi-ultraLightPurple/10 relative overflow-hidden">
       {/* Subtle geometric background elements */}
       <div className="absolute inset-0">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-homi-purple/5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-homi-lightPurple/8 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/3 w-40 h-40 bg-purple-200/10 rounded-full blur-2xl"></div>
+        <div className="absolute top-20 left-10 w-72 h-72 bg-homi-purple/3 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-homi-lightPurple/4 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/3 w-40 h-40 bg-homi-ultraLightPurple/5 rounded-full blur-2xl"></div>
       </div>
       
       <div className="container mx-auto px-4 relative z-10">
