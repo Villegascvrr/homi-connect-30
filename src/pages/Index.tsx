@@ -102,7 +102,7 @@ const Index = () => {
         navigate('/register');
       }
     } else {
-      // For premium plans, create checkout session directly
+      // For premium plans, create checkout session directly if logged in, otherwise go to register
       if (user) {
         await createCheckout(planId);
       } else {
