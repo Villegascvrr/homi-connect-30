@@ -89,10 +89,8 @@ const ProfilePage = () => {
 
   const handleSubscriptionClick = async () => {
     if (subscriptionInfo.subscribed) {
-      // If user has a subscription, open customer portal
       await openCustomerPortal();
     } else {
-      // If user is on free plan, redirect to pricing or create checkout for pro plan
       navigate('/precios');
     }
   };
@@ -184,6 +182,46 @@ const ProfilePage = () => {
       </div>
     );
   }
+
+  // Helper function to get city and zone display
+  const getLocationDisplay = () => {
+    const lifestyleData = typeof profile.lifestyle === 'object' && profile.lifestyle !== null
+      ? profile.lifestyle
+      : {};
+    
+    // Check if we have new format data
+    if (lifestyleData.ciudad) {
+      let cityText = lifestyleData.ciudad;
+      if (lifestyleData.ciudad === 'Sevilla' && lifestyleData.sevilla_zona) {
+        cityText += ` - ${lifestyleData.sevilla_zona}`;
+      }
+      return cityText;
+    }
+    
+    // Backwards compatibility: check sevilla_zona field
+    if (profile.sevilla_zona) {
+      if (profile.sevilla_zona === 'tengo_piso') {
+        return 'Ya tiene piso';
+      }
+      
+      // Check if it's a Sevilla zone
+      const sevillaZones = [
+        "Casco Antiguo", "Triana", "Los Remedios", "Nervión", 
+        "San Pablo - Santa Justa", "Este - Alcosa - Torreblanca", 
+        "Cerro - Amate", "Sur", "Bellavista - La Palmera", 
+        "Macarena", "Norte", "Otro/Alrededores"
+      ];
+      
+      if (sevillaZones.includes(profile.sevilla_zona)) {
+        return `Sevilla - ${profile.sevilla_zona}`;
+      }
+      
+      // It's probably a city name
+      return profile.sevilla_zona;
+    }
+    
+    return 'No especificado';
+  };
 
   const requiredFields = ['first_name', 'last_name', 'username', 'bio', 'edad', 'profile_image', 'interests'];
   const completedFields = requiredFields.filter(field => {
@@ -352,16 +390,12 @@ const ProfilePage = () => {
                   <h3 className="font-medium text-sm mb-2 flex items-center gap-1">
                     <Heart size={16} className="text-homi-purple" /> Estado de búsqueda
                   </h3>
-                  {profile.sevilla_zona === 'tengo_piso' ? (
-                    <p className="text-sm">Ya tienes piso y buscas compañeros</p>
-                  ) : (
-                    <div className="text-sm">
-                      <p className="mb-1">Buscando en: <span className="font-medium">{profile.sevilla_zona}</span></p>
-                      {profile.companeros_count && (
-                        <p>Compañeros: <span className="font-medium">{profile.companeros_count}</span></p>
-                      )}
-                    </div>
-                  )}
+                  <div className="text-sm">
+                    <p className="mb-1">Ubicación: <span className="font-medium">{getLocationDisplay()}</span></p>
+                    {profile.companeros_count && (
+                      <p>Compañeros: <span className="font-medium">{profile.companeros_count}</span></p>
+                    )}
+                  </div>
                 </Card>
               </div>
               
@@ -439,12 +473,10 @@ const ProfilePage = () => {
                       <MapPin size={16} className="text-homi-purple" /> Vivienda
                     </h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {profile.sevilla_zona && profile.sevilla_zona !== 'tengo_piso' && (
-                        <div>
-                          <p className="text-sm text-muted-foreground">Zona preferida</p>
-                          <p className="font-medium">{profile.sevilla_zona || 'No especificado'}</p>
-                        </div>
-                      )}
+                      <div>
+                        <p className="text-sm text-muted-foreground">Ubicación</p>
+                        <p className="font-medium">{getLocationDisplay()}</p>
+                      </div>
                       <div>
                         <p className="text-sm text-muted-foreground">Compañeros</p>
                         <p className="font-medium">{profile.companeros_count || 'No especificado'}</p>

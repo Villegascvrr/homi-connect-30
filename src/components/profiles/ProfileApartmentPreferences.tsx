@@ -2,11 +2,59 @@
 import React from 'react';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { MapPin, Users, Euro } from "lucide-react";
 
-// Zonas de Sevilla
+// Ciudades principales de España
+const spanishCities = [
+  "Madrid",
+  "Barcelona", 
+  "Valencia",
+  "Sevilla",
+  "Zaragoza",
+  "Málaga",
+  "Murcia",
+  "Palma",
+  "Las Palmas de Gran Canaria",
+  "Bilbao",
+  "Alicante",
+  "Córdoba",
+  "Valladolid",
+  "Vigo",
+  "Gijón",
+  "Granada",
+  "Vitoria-Gasteiz",
+  "Santander",
+  "Salamanca",
+  "Burgos",
+  "Albacete",
+  "Getafe",
+  "Alcalá de Henares",
+  "Pamplona",
+  "Cádiz",
+  "Jerez de la Frontera",
+  "Fuenlabrada",
+  "Almería",
+  "Leganés",
+  "Donostia-San Sebastián",
+  "Castellón de la Plana",
+  "Badajoz",
+  "Huelva",
+  "Tarragona",
+  "León",
+  "Cáceres",
+  "Dos Hermanas",
+  "Marbella",
+  "Barakaldo",
+  "Cartagena",
+  "Jaén",
+  "Orense",
+  "Otro"
+];
+
+// Zonas de Sevilla (solo se muestran si la ciudad es Sevilla)
 const sevillaZones = [
   "Casco Antiguo",
   "Triana",
@@ -47,12 +95,15 @@ const ProfileApartmentPreferences = ({
   apartmentStatus,
   onApartmentStatusChange
 }: ProfileApartmentPreferencesProps) => {
+  const selectedCity = form.watch('ciudad');
+  const isSevilla = selectedCity === 'Sevilla';
+
   return (
     <Card className="border-homi-purple/30">
       <CardHeader className="pb-3">
         <CardTitle className="text-xl font-semibold flex items-center gap-2">
           <MapPin className="text-homi-purple" size={20} />
-          Situación en Sevilla
+          Situación de vivienda
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -68,56 +119,85 @@ const ProfileApartmentPreferences = ({
               <FormControl>
                 <RadioGroupItem value="looking" />
               </FormControl>
-              <FormLabel className="font-normal">Estoy buscando piso en Sevilla</FormLabel>
+              <FormLabel className="font-normal">Estoy buscando piso</FormLabel>
             </FormItem>
             <FormItem className="flex items-center space-x-3 space-y-0">
               <FormControl>
                 <RadioGroupItem value="have" />
               </FormControl>
-              <FormLabel className="font-normal">Ya tengo piso en Sevilla y busco compañeros</FormLabel>
+              <FormLabel className="font-normal">Ya tengo piso y busco compañeros</FormLabel>
             </FormItem>
           </RadioGroup>
         </FormItem>
         
         {/* Show different fields based on apartment status */}
         <div className="space-y-4">
-          {/* Zone selection for those looking for apartment */}
-          {apartmentStatus === 'looking' && (
+          {/* City selection */}
+          <FormField
+            control={form.control}
+            name="ciudad"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  {apartmentStatus === 'looking' 
+                    ? '¿En qué ciudad estás buscando piso?' 
+                    : '¿En qué ciudad está tu piso?'
+                  }
+                </FormLabel>
+                <Select 
+                  onValueChange={(value) => {
+                    field.onChange(value);
+                    // Reset zona when city changes
+                    if (value !== 'Sevilla') {
+                      form.setValue('sevilla_zona', '');
+                    }
+                  }}
+                  value={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecciona una ciudad" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent className="max-h-60">
+                    {spanishCities.map((city) => (
+                      <SelectItem key={city} value={city}>{city}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Custom city input if "Otro" is selected */}
+          {selectedCity === 'Otro' && (
             <FormField
               control={form.control}
-              name="sevilla_zona"
+              name="ciudad_otra"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>¿En qué zona de Sevilla estás buscando piso?</FormLabel>
-                  <Select 
-                    onValueChange={field.onChange}
-                    value={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecciona una zona" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {sevillaZones.map((zone) => (
-                        <SelectItem key={zone} value={zone}>{zone}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormLabel>Especifica tu ciudad</FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="Escribe el nombre de tu ciudad"
+                      {...field}
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
           )}
           
-          {/* Zone for those with apartment looking for roommates */}
-          {apartmentStatus === 'have' && (
+          {/* Zone selection for Sevilla only */}
+          {isSevilla && (
             <FormField
               control={form.control}
               name="sevilla_zona"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>¿En qué zona de Sevilla está tu piso?</FormLabel>
+                  <FormLabel>¿En qué zona de Sevilla?</FormLabel>
                   <Select 
                     onValueChange={field.onChange}
                     value={field.value}
@@ -133,6 +213,9 @@ const ProfileApartmentPreferences = ({
                       ))}
                     </SelectContent>
                   </Select>
+                  <FormDescription>
+                    Especifica la zona de Sevilla para mejorar las coincidencias
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -169,7 +252,7 @@ const ProfileApartmentPreferences = ({
             )}
           />
           
-          {/* Budget field - now a select with ranges */}
+          {/* Budget field - only for those looking for apartment */}
           {apartmentStatus === 'looking' && (
             <FormField
               control={form.control}
