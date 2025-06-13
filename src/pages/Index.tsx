@@ -1,3 +1,4 @@
+
 import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
@@ -98,6 +99,7 @@ const Index = () => {
         navigate('/register');
       }
     } else {
+      // For premium plans, redirect to pricing page with plan preselected
       navigate(`/precios?plan=${planId}`);
     }
   };
@@ -134,7 +136,7 @@ const Index = () => {
         'Filtros personalizados',
         'Visibilidad prioritaria'
       ],
-      buttonText: 'Hazte PRO',
+      buttonText: 'Ver más información',
       buttonVariant: 'default' as const,
       popular: true,
       urgent: false,
@@ -155,7 +157,7 @@ const Index = () => {
         'Acceso anticipado',
         'Soporte prioritario'
       ],
-      buttonText: 'Quiero ser Fundador',
+      buttonText: 'Ver más información',
       buttonVariant: 'default' as const,
       popular: false,
       urgent: true,
