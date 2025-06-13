@@ -2,7 +2,7 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Camera, Upload, X, RefreshCw, Crop, Move } from 'lucide-react';
+import { Camera, Upload, X, Move, ZoomIn, ZoomOut } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
@@ -28,16 +28,17 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
   const [isUploading, setIsUploading] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isCropperOpen, setIsCropperOpen] = useState(false);
-  const [rotation, setRotation] = useState(0);
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
   const resetCropper = useCallback(() => {
     setSelectedImage(null);
     setIsCropperOpen(false);
-    setRotation(0);
     setScale(1);
     setPosition({ x: 0, y: 0 });
+    setIsDragging(false);
   }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -125,12 +126,8 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
     resetCropper();
   };
 
-  const rotateImage = () => {
-    setRotation(prev => (prev + 90) % 360);
-  };
-
   const zoomIn = () => {
-    setScale(prev => Math.min(prev + 0.1, 2));
+    setScale(prev => Math.min(prev + 0.1, 3));
   };
 
   const zoomOut = () => {
@@ -138,9 +135,29 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
   };
 
   const resetAdjustments = () => {
-    setRotation(0);
     setScale(1);
     setPosition({ x: 0, y: 0 });
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    setDragStart({
+      x: e.clientX - position.x,
+      y: e.clientY - position.y
+    });
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+    
+    setPosition({
+      x: e.clientX - dragStart.x,
+      y: e.clientY - dragStart.y
+    });
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
   };
 
   return (
@@ -166,7 +183,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
             <div className="absolute bottom-0 right-0 flex gap-1">
               {enableCropping && (
                 <Button type="button" size="icon" variant="secondary" className="h-7 w-7 rounded-full" onClick={handleEditImage} title="Ajustar imagen">
-                  <Crop size={12} />
+                  <Move size={12} />
                 </Button>
               )}
               <Button type="button" size="icon" className="h-7 w-7 rounded-full" onClick={handleClickUpload} title="Cambiar imagen">
@@ -211,35 +228,42 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Crop className="h-5 w-5" />
+              <Move className="h-5 w-5" />
               Ajustar foto de perfil
             </DialogTitle>
           </DialogHeader>
           <div className="flex flex-col items-center space-y-4">
             {selectedImage && (
-              <div className="relative w-80 h-80 mx-auto overflow-hidden border rounded-lg bg-gray-100">
+              <div className="relative w-80 h-80 mx-auto overflow-hidden border rounded-lg bg-gray-100 cursor-move">
                 <img 
                   src={selectedImage} 
                   alt="Imagen a ajustar" 
-                  className="w-full h-full object-contain transition-transform duration-200"
+                  className="w-full h-full object-contain transition-transform duration-200 select-none"
                   style={{ 
-                    transform: `rotate(${rotation}deg) scale(${scale}) translate(${position.x}px, ${position.y}px)` 
+                    transform: `scale(${scale}) translate(${position.x}px, ${position.y}px)` 
                   }}
+                  onMouseDown={handleMouseDown}
+                  onMouseMove={handleMouseMove}
+                  onMouseUp={handleMouseUp}
+                  onMouseLeave={handleMouseUp}
+                  draggable={false}
                 />
+                {/* Crop preview overlay - circular */}
+                <div className="absolute inset-0 pointer-events-none">
+                  <div className="w-full h-full relative">
+                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 h-48 rounded-full border-2 border-white shadow-lg"></div>
+                  </div>
+                </div>
               </div>
             )}
             
             {/* Adjustment controls */}
             <div className="flex flex-wrap gap-2 justify-center">
-              <Button onClick={rotateImage} variant="outline" size="sm" type="button">
-                <RefreshCw className="mr-2 h-4 w-4" />
-                Rotar
+              <Button onClick={zoomIn} variant="outline" size="sm" type="button" title="Acercar">
+                <ZoomIn className="h-4 w-4" />
               </Button>
-              <Button onClick={zoomIn} variant="outline" size="sm" type="button">
-                +
-              </Button>
-              <Button onClick={zoomOut} variant="outline" size="sm" type="button">
-                -
+              <Button onClick={zoomOut} variant="outline" size="sm" type="button" title="Alejar">
+                <ZoomOut className="h-4 w-4" />
               </Button>
               <Button onClick={resetAdjustments} variant="outline" size="sm" type="button">
                 <Move className="mr-2 h-4 w-4" />
@@ -248,7 +272,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
             </div>
             
             <p className="text-sm text-muted-foreground text-center">
-              Usa los controles para rotar, hacer zoom y posicionar tu imagen como prefieras
+              Arrastra para posicionar y usa los botones para hacer zoom. El círculo muestra el área que se verá en tu perfil.
             </p>
           </div>
           <DialogFooter>
