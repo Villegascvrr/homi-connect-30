@@ -1,4 +1,3 @@
-
 import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
@@ -212,8 +211,8 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Sección de precios mejorada visualmente */}
-        <section className="py-20 md:py-28 bg-gradient-to-br from-slate-50 via-white to-purple-50 overflow-x-hidden w-full relative">
+        {/* Sección de precios optimizada y más compacta */}
+        <section className="py-12 md:py-16 bg-gradient-to-br from-slate-50 via-white to-purple-50 overflow-x-hidden w-full relative">
           {/* Decorative elements */}
           <div className="absolute inset-0 overflow-hidden">
             <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-100 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-float"></div>
@@ -221,21 +220,21 @@ const Index = () => {
           </div>
           
           <div className="container mx-auto px-4 md:px-6 relative z-10">
-            <div className="text-center max-w-4xl mx-auto mb-16 md:mb-20 animate-on-scroll">
-              <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full border border-purple-200 mb-6">
+            <div className="text-center max-w-4xl mx-auto mb-10 md:mb-12 animate-on-scroll">
+              <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full border border-purple-200 mb-4">
                 <Sparkles className="w-4 h-4 text-homi-purple" />
                 <span className="text-sm font-medium text-homi-purple">Planes diseñados para ti</span>
               </div>
-              <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
                 Elige tu plan perfecto
               </h2>
-              <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto">
+              <p className="text-muted-foreground text-base md:text-lg max-w-2xl mx-auto">
                 Desde gratuito hasta funcionalidades premium. Encuentra compañeros compatibles con el plan que mejor se adapte a ti.
               </p>
             </div>
             
-            {/* Grid de planes mejorado */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6 max-w-6xl mx-auto mb-12">
+            {/* Grid de planes más compacto */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-8">
               {plans.map((plan, index) => (
                 <Card 
                   key={plan.id} 
@@ -246,9 +245,9 @@ const Index = () => {
                     animationDelay: `${index * 100}ms`
                   }}
                 >
-                  {/* Popular badge mejorado */}
+                  {/* Popular badge */}
                   {plan.popular && (
-                    <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-homi-purple to-purple-600 text-white text-center py-3 text-sm font-semibold shadow-lg">
+                    <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-homi-purple to-purple-600 text-white text-center py-2 text-sm font-semibold shadow-lg">
                       <div className="flex items-center justify-center gap-2">
                         <Star className="w-4 h-4 fill-current" />
                         Más Popular
@@ -257,67 +256,67 @@ const Index = () => {
                     </div>
                   )}
                   
-                  {/* Urgent badge mejorado */}
+                  {/* Urgent badge */}
                   {plan.urgent && (
-                    <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 text-black text-center py-3 text-sm font-bold shadow-lg animate-pulse">
+                    <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 text-black text-center py-2 text-sm font-bold shadow-lg animate-pulse">
                       <div className="flex items-center justify-center gap-1">
                         ⚡ {plan.urgentText} ⚡
                       </div>
                     </div>
                   )}
 
-                  <CardHeader className={`text-center relative ${plan.popular || plan.urgent ? 'pt-16' : 'pt-8'} pb-6`}>
+                  <CardHeader className={`text-center relative ${plan.popular || plan.urgent ? 'pt-12' : 'pt-6'} pb-4`}>
                     {/* Icon con efecto de glow */}
-                    <div className="flex justify-center mb-4">
-                      <div className="p-3 rounded-full bg-white/80 backdrop-blur-sm shadow-lg group-hover:shadow-xl transition-all duration-300">
+                    <div className="flex justify-center mb-3">
+                      <div className="p-2.5 rounded-full bg-white/80 backdrop-blur-sm shadow-lg group-hover:shadow-xl transition-all duration-300">
                         {plan.icon}
                       </div>
                     </div>
                     
-                    <CardTitle className="text-2xl font-bold mb-2 group-hover:text-homi-purple transition-colors duration-300">
+                    <CardTitle className="text-xl font-bold mb-2 group-hover:text-homi-purple transition-colors duration-300">
                       {plan.name}
                     </CardTitle>
-                    <CardDescription className="text-muted-foreground mb-4">
+                    <CardDescription className="text-muted-foreground mb-3 text-sm">
                       {plan.description}
                     </CardDescription>
                     
                     {/* Precio con mejor styling */}
-                    <div className="mb-6">
+                    <div className="mb-4">
                       {plan.originalPrice ? (
                         <div className="flex flex-col items-center gap-1">
                           <div className="flex items-baseline justify-center gap-1 text-muted-foreground">
-                            <span className="text-lg line-through">
+                            <span className="text-base line-through">
                               {plan.originalPrice}
                             </span>
                             <span className="text-sm">{plan.period}</span>
                           </div>
                           <div className="flex items-baseline justify-center gap-1">
-                            <span className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
+                            <span className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
                               {plan.price}
                             </span>
-                            <span className="text-muted-foreground text-lg">{plan.period}</span>
+                            <span className="text-muted-foreground text-base">{plan.period}</span>
                           </div>
                         </div>
                       ) : (
                         <div className="flex items-baseline justify-center gap-1">
-                          <span className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
+                          <span className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
                             {plan.price}
                           </span>
                           {plan.period && (
-                            <span className="text-muted-foreground text-lg">{plan.period}</span>
+                            <span className="text-muted-foreground text-base">{plan.period}</span>
                           )}
                         </div>
                       )}
                     </div>
                   </CardHeader>
 
-                  <CardContent className="px-6 pb-8">
-                    {/* Lista de características mejorada */}
-                    <ul className="space-y-4 mb-8">
+                  <CardContent className="px-5 pb-6">
+                    {/* Lista de características más compacta */}
+                    <ul className="space-y-2.5 mb-6">
                       {plan.features.map((feature, index) => (
-                        <li key={index} className="flex items-start gap-3 group/item">
-                          <div className="flex-shrink-0 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mt-0.5 group-hover/item:bg-green-200 transition-colors duration-200">
-                            <Check className="w-3 h-3 text-green-600" />
+                        <li key={index} className="flex items-start gap-2.5 group/item">
+                          <div className="flex-shrink-0 w-4 h-4 rounded-full bg-green-100 flex items-center justify-center mt-0.5 group-hover/item:bg-green-200 transition-colors duration-200">
+                            <Check className="w-2.5 h-2.5 text-green-600" />
                           </div>
                           <span className="text-sm leading-relaxed group-hover/item:text-slate-700 transition-colors duration-200">
                             {feature}
@@ -326,9 +325,9 @@ const Index = () => {
                       ))}
                     </ul>
 
-                    {/* Botón mejorado */}
+                    {/* Botón */}
                     <Button 
-                      className={`w-full py-3 font-semibold text-base transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl ${
+                      className={`w-full py-2.5 font-semibold text-sm transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl ${
                         plan.id === 'pro' 
                           ? 'bg-gradient-to-r from-homi-purple to-purple-600 hover:from-purple-600 hover:to-homi-purple text-white' 
                           : plan.id === 'founder'
@@ -345,16 +344,16 @@ const Index = () => {
               ))}
             </div>
 
-            {/* Call to action mejorado */}
+            {/* Call to action más compacto */}
             <div className="text-center">
-              <div className="inline-flex flex-col items-center gap-4">
+              <div className="inline-flex flex-col items-center gap-3">
                 <p className="text-muted-foreground text-sm">
                   ¿Necesitas más información?
                 </p>
                 <Link to="/precios">
                   <Button 
                     variant="outline" 
-                    className="rounded-full px-8 py-3 bg-white/80 backdrop-blur-sm border-purple-200 text-homi-purple hover:bg-purple-50 hover:border-homi-purple transition-all duration-300 shadow-lg hover:shadow-xl"
+                    className="rounded-full px-6 py-2 bg-white/80 backdrop-blur-sm border-purple-200 text-homi-purple hover:bg-purple-50 hover:border-homi-purple transition-all duration-300 shadow-lg hover:shadow-xl text-sm"
                   >
                     Ver detalles completos
                   </Button>
