@@ -146,12 +146,12 @@ const Index = () => {
       id: 'founder',
       name: 'Plan Fundador',
       price: '24,99€',
+      originalPrice: '59,99€',
       period: '/año',
       icon: <Crown className="w-6 h-6 text-yellow-500" />,
       description: 'Acceso exclusivo',
       features: [
         'Todas las ventajas PRO',
-        'Más del 50% de descuento',
         'Distintivo especial',
         'Acceso anticipado',
         'Soporte prioritario'
@@ -283,14 +283,31 @@ const Index = () => {
                     
                     {/* Precio con mejor styling */}
                     <div className="mb-6">
-                      <div className="flex items-baseline justify-center gap-1">
-                        <span className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
-                          {plan.price}
-                        </span>
-                        {plan.period && (
-                          <span className="text-muted-foreground text-lg">{plan.period}</span>
-                        )}
-                      </div>
+                      {plan.originalPrice ? (
+                        <div className="flex flex-col items-center gap-1">
+                          <div className="flex items-baseline justify-center gap-1 text-muted-foreground">
+                            <span className="text-lg line-through">
+                              {plan.originalPrice}
+                            </span>
+                            <span className="text-sm">{plan.period}</span>
+                          </div>
+                          <div className="flex items-baseline justify-center gap-1">
+                            <span className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
+                              {plan.price}
+                            </span>
+                            <span className="text-muted-foreground text-lg">{plan.period}</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex items-baseline justify-center gap-1">
+                          <span className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
+                            {plan.price}
+                          </span>
+                          {plan.period && (
+                            <span className="text-muted-foreground text-lg">{plan.period}</span>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </CardHeader>
 

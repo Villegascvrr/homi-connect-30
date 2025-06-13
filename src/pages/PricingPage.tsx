@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -51,12 +52,12 @@ const PricingPage = () => {
       id: 'founder',
       name: 'Plan Fundador',
       price: '24,99€',
+      originalPrice: '59,99€',
       period: '/año',
       icon: <Crown className="w-8 h-8 text-yellow-500" />,
       description: 'Acceso exclusivo para los primeros usuarios',
       features: [
         'Incluye todas las ventajas del Plan PRO',
-        'Acceso a precio exclusivo con más del 50% de descuento',
         'Distintivo visual especial en el perfil',
         'Acceso anticipado a funcionalidades futuras',
         'Prioridad en soporte y feedback directo con el equipo'
@@ -132,8 +133,25 @@ const PricingPage = () => {
                     {plan.description}
                   </CardDescription>
                   <div className="mt-4">
-                    <span className="text-4xl font-bold">{plan.price}</span>
-                    {plan.period && <span className="text-muted-foreground">{plan.period}</span>}
+                    {plan.originalPrice ? (
+                      <div className="flex flex-col items-center gap-1">
+                        <div className="flex items-baseline justify-center gap-1 text-muted-foreground">
+                          <span className="text-lg line-through">
+                            {plan.originalPrice}
+                          </span>
+                          <span className="text-sm">{plan.period}</span>
+                        </div>
+                        <div className="flex items-baseline justify-center gap-1">
+                          <span className="text-4xl font-bold">{plan.price}</span>
+                          <span className="text-muted-foreground">{plan.period}</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div>
+                        <span className="text-4xl font-bold">{plan.price}</span>
+                        {plan.period && <span className="text-muted-foreground">{plan.period}</span>}
+                      </div>
+                    )}
                   </div>
                 </CardHeader>
 
