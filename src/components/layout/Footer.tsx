@@ -1,10 +1,7 @@
-
 import { Link } from 'react-router-dom';
 import { Instagram, MessageCircle } from 'lucide-react';
-
 const Footer = () => {
-  return (
-    <footer className="bg-white dark:bg-homi-dark border-t border-border py-12">
+  return <footer className="bg-white dark:bg-homi-dark border-t border-border py-12">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Logo and description */}
@@ -20,29 +17,11 @@ const Footer = () => {
             <div className="mt-6 flex flex-col gap-3">
               <div className="flex items-center gap-2">
                 <Instagram className="w-5 h-5 text-homi-purple" />
-                <a 
-                  href="https://instagram.com/homimatch" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="text-muted-foreground hover:text-homi-purple transition-colors"
-                >
+                <a href="https://instagram.com/homimatch" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-homi-purple transition-colors">
                   @homimatch
                 </a>
               </div>
-              <div className="flex items-center gap-2">
-                <MessageCircle className="w-5 h-5 text-green-600" />
-                <p className="text-sm text-muted-foreground">
-                  Mientras la app no esté disponible, busca piso y compañeros en nuestro 
-                  <a 
-                    href="https://chat.whatsapp.com/FPqg8M2kGdm9G49j4YIAMB" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="ml-1 text-green-600 hover:underline"
-                  >
-                    grupo de WhatsApp
-                  </a>
-                </p>
-              </div>
+              
             </div>
           </div>
 
@@ -108,8 +87,6 @@ const Footer = () => {
           </div>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 };
-
 export default Footer;
