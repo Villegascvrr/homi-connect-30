@@ -13,7 +13,6 @@ import ProfileStatusToggle from "@/components/profiles/ProfileStatusToggle";
 import { Separator } from "@/components/ui/separator";
 import ProfileBasicInfo from "./ProfileBasicInfo";
 import ProfileInterests from "./ProfileInterests";
-import ProfileApartmentPreferences from "./ProfileApartmentPreferences";
 import ProfileLifestyle from "./ProfileLifestyle";
 
 // Define the form schema with all necessary fields
@@ -36,15 +35,6 @@ const formSchema = z.object({
   profileImage: z.string().optional(),
   interests: z.array(z.string()).default([]),
   isProfileActive: z.boolean().default(true),
-  apartmentStatus: z.enum(['looking', 'have']).default('looking'),
-  ciudad: z.string().optional(),
-  ciudad_otra: z.string().optional(),
-  sevilla_zonas: z.array(z.string()).default([]),
-  companeros_count: z.string().optional(),
-  budget: z.string().optional(),
-  room_count: z.string().optional(),
-  room_price: z.string().optional(),
-  apartment_description: z.string().optional(),
   completed: z.boolean().default(false),
   lifestyle: z.object({
     schedule: z.enum(['morning_person', 'night_owl', 'flexible']).optional(),
@@ -69,7 +59,6 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [initialFormData, setInitialFormData] = useState<FormValues | null>(null);
   const { user, refreshUser } = useAuth();
-  const [apartmentStatus, setApartmentStatus] = useState<'looking' | 'have'>('looking');
   const [showUniversityField, setShowUniversityField] = useState(false);
   
   const form = useForm<FormValues>({
@@ -88,15 +77,6 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
       profileImage: "",
       interests: [],
       isProfileActive: true,
-      apartmentStatus: 'looking',
-      ciudad: "",
-      ciudad_otra: "",
-      sevilla_zonas: [],
-      companeros_count: "",
-      budget: "",
-      room_count: "",
-      room_price: "",
-      apartment_description: "",
       completed: false,
       lifestyle: {
         schedule: undefined,
@@ -113,22 +93,6 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
     if (!user || isLoading) return false;
     
     try {
-      // Handle city and zone logic
-      let finalCity = values.ciudad;
-      if (values.ciudad === 'Otro' && values.ciudad_otra) {
-        finalCity = values.ciudad_otra;
-      }
-      
-      // For backwards compatibility, store the location info in sevilla_zona
-      let sevilla_zona_value = "";
-      if (values.apartmentStatus === 'have') {
-        sevilla_zona_value = 'tengo_piso';
-      } else if (finalCity === 'Sevilla' && values.sevilla_zonas && values.sevilla_zonas.length > 0) {
-        sevilla_zona_value = values.sevilla_zonas[0];
-      } else if (finalCity) {
-        sevilla_zona_value = finalCity;
-      }
-      
       let occupation = values.occupation;
       if (values.occupationType === "student") {
         occupation = "Estudiante";
@@ -142,13 +106,6 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
       
       const lifestyle = {
         ...(values.lifestyle || {}),
-        budget: values.budget,
-        ciudad: finalCity,
-        sevilla_zona: values.ciudad === 'Sevilla' && values.sevilla_zonas && values.sevilla_zonas.length > 0 ? values.sevilla_zonas[0] : undefined,
-        sevilla_zonas: values.sevilla_zonas,
-        room_count: values.room_count,
-        room_price: values.room_price,
-        apartment_description: values.apartment_description,
         field_of_study: values.fieldOfStudy,
       };
       
@@ -165,9 +122,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
         profile_image: values.profileImage || '',
         interests: values.interests,
         is_profile_active: values.isProfileActive,
-        sevilla_zona: sevilla_zona_value,
         completed: completed,
-        companeros_count: values.companeros_count || '',
         lifestyle: lifestyle,
         updated_at: new Date().toISOString()
       };
@@ -272,50 +227,10 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
             throw error;
           }
           
-          let currentApartmentStatus: 'looking' | 'have' = 'looking';
-          
-          // Extract city and zone information
-          let ciudad = "";
-          let ciudad_otra = "";
-          let sevilla_zonas: string[] = [];
-          
-          if (profileData.sevilla_zona) {
-            // Check if it's the old format (just a zone) or new format
-            const sevillaZones = [
-              "Casco Antiguo", "Triana", "Los Remedios", "Nervión", 
-              "San Pablo - Santa Justa", "Este - Alcosa - Torreblanca", 
-              "Cerro - Amate", "Sur", "Bellavista - La Palmera", 
-              "Macarena", "Norte", "Viapol", "El Plantinar", "El Juncal", 
-              "Gran Plaza", "Otro/Alrededores"
-            ];
-            
-            if (sevillaZones.includes(profileData.sevilla_zona)) {
-              // Old format: it's a Sevilla zone
-              ciudad = "Sevilla";
-              sevilla_zonas = [profileData.sevilla_zona];
-            } else if (profileData.sevilla_zona === 'tengo_piso') {
-              currentApartmentStatus = 'have';
-              ciudad = "Sevilla"; // Default to Sevilla for backwards compatibility
-            } else {
-              // It might be a city name
-              ciudad = profileData.sevilla_zona;
-            }
-          }
-
-          // Handle new format where sevilla_zonas might be stored in lifestyle
+          // Extract lifestyle data
           const lifestyleData = typeof profileData.lifestyle === 'object' && profileData.lifestyle !== null
             ? profileData.lifestyle as Record<string, unknown>
             : {};
-          
-          // Check if sevilla_zonas is stored in lifestyle object
-          if (lifestyleData.sevilla_zonas && Array.isArray(lifestyleData.sevilla_zonas)) {
-            sevilla_zonas = lifestyleData.sevilla_zonas as string[];
-            if (sevilla_zonas.length > 0) {
-              ciudad = "Sevilla";
-            }
-          }
-          
-          setApartmentStatus(currentApartmentStatus);
           
           let occupationType: 'student' | 'professional' | 'entrepreneur' | 'other' = "other";
           if (profileData.ocupacion === "Estudiante") {
@@ -344,15 +259,6 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
             profileImage: profileData.profile_image || "",
             interests: profileData.interests || [],
             isProfileActive: profileData.is_profile_active !== false,
-            apartmentStatus: currentApartmentStatus,
-            ciudad: ciudad,
-            ciudad_otra: ciudad_otra,
-            sevilla_zonas: sevilla_zonas,
-            companeros_count: profileData.companeros_count || "",
-            budget: lifestyleData.budget as string || "",
-            room_count: lifestyleData.room_count as string || "",
-            room_price: lifestyleData.room_price as string || "",
-            apartment_description: lifestyleData.apartment_description as string || "",
             completed: profileData.completed || false,
             lifestyle: {
               schedule: lifestyleData.schedule as any,
@@ -382,15 +288,6 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
             profileImage: "",
             interests: [],
             isProfileActive: true,
-            apartmentStatus: 'looking',
-            ciudad: "",
-            ciudad_otra: "",
-            sevilla_zonas: [],
-            companeros_count: "",
-            budget: "",
-            room_count: "",
-            room_price: "",
-            apartment_description: "",
             completed: false,
             lifestyle: {
               schedule: undefined,
@@ -453,11 +350,6 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
   const handleProfileStatusToggle = (active: boolean) => {
     form.setValue('isProfileActive', active);
   };
-  
-  const handleApartmentStatusChange = (status: 'looking' | 'have') => {
-    setApartmentStatus(status);
-    form.setValue('apartmentStatus', status);
-  };
 
   const handleOccupationTypeChange = (type: string) => {
     form.setValue('occupationType', type as any);
@@ -514,12 +406,6 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
           <ProfileInterests form={form} />
           
           <ProfileLifestyle form={form} />
-          
-          <ProfileApartmentPreferences 
-            form={form} 
-            apartmentStatus={apartmentStatus}
-            onApartmentStatusChange={handleApartmentStatusChange}
-          />
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-end mt-6">
