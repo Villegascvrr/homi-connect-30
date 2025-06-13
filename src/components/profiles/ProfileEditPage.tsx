@@ -27,24 +27,6 @@ const ProfileEditPage = () => {
     }
   }, [user, loading, navigate, authCheckComplete]);
 
-  // Add handler for beforeunload to prevent blank page on form submission
-  useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      // Only prevent unload if the form is in a dirty state
-      const isFormDirty = document.querySelector('form[data-dirty="true"]');
-      if (isFormDirty) {
-        e.preventDefault();
-        e.returnValue = '';
-        return '';
-      }
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, []);
-
   if (loading && !authCheckComplete) {
     return (
       <div className="min-h-screen flex flex-col">

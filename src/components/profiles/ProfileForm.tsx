@@ -65,9 +65,9 @@ interface ProfileFormProps {
 const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [initialFormData, setInitialFormData] = useState<FormValues | null>(null);
   const { user, refreshUser } = useAuth();
   const [apartmentStatus, setApartmentStatus] = useState<'looking' | 'have'>('looking');
   const [showUniversityField, setShowUniversityField] = useState(false);
@@ -108,11 +108,9 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
     },
   });
 
-  // Auto-save function
-  const autoSave = useCallback(async (values: FormValues) => {
-    if (!user || isLoading) return;
-    
-    setIsAutoSaving(true);
+  // Save function
+  const saveProfile = useCallback(async (values: FormValues) => {
+    if (!user || isLoading) return false;
     
     try {
       // Handle city and zone logic
@@ -189,42 +187,68 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
       try {
         await refreshUser();
       } catch (refreshError) {
-        console.error("Error refreshing user after auto-save:", refreshError);
+        console.error("Error refreshing user after save:", refreshError);
       }
       
+      return true;
+      
     } catch (error: any) {
-      console.error("Error auto-saving profile:", error);
+      console.error("Error saving profile:", error);
       toast({
-        title: "Error al guardar automáticamente",
-        description: "Los cambios no se pudieron guardar automáticamente.",
+        title: "Error al guardar",
+        description: "Los cambios no se pudieron guardar.",
         variant: "destructive",
       });
-    } finally {
-      setIsAutoSaving(false);
+      return false;
     }
   }, [user, refreshUser, toast, isLoading]);
 
-  // Debounced auto-save
+  // Save when leaving the page or component
   useEffect(() => {
-    if (!hasUnsavedChanges) return;
-    
-    const timeoutId = setTimeout(() => {
-      const values = form.getValues();
-      autoSave(values);
-    }, 2000); // Auto-save after 2 seconds of inactivity
+    const handleBeforeUnload = async (e: BeforeUnloadEvent) => {
+      if (hasUnsavedChanges) {
+        e.preventDefault();
+        e.returnValue = '';
+        
+        // Try to save the data
+        const values = form.getValues();
+        await saveProfile(values);
+      }
+    };
 
-    return () => clearTimeout(timeoutId);
-  }, [hasUnsavedChanges, autoSave, form]);
+    const handleVisibilityChange = async () => {
+      if (document.visibilityState === 'hidden' && hasUnsavedChanges) {
+        const values = form.getValues();
+        await saveProfile(values);
+      }
+    };
 
-  // Watch for form changes
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      
+      // Save on unmount if there are unsaved changes
+      if (hasUnsavedChanges) {
+        const values = form.getValues();
+        saveProfile(values);
+      }
+    };
+  }, [hasUnsavedChanges, form, saveProfile]);
+
+  // Watch for form changes to detect unsaved changes
   useEffect(() => {
-    const subscription = form.watch(() => {
-      if (!isLoading) {
-        setHasUnsavedChanges(true);
+    const subscription = form.watch((values) => {
+      if (!isLoading && initialFormData) {
+        // Compare current values with initial data to detect changes
+        const hasChanges = JSON.stringify(values) !== JSON.stringify(initialFormData);
+        setHasUnsavedChanges(hasChanges);
       }
     });
     return () => subscription.unsubscribe();
-  }, [form, isLoading]);
+  }, [form, isLoading, initialFormData]);
 
   useEffect(() => {
     const occupationType = form.watch("occupationType");
@@ -306,7 +330,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
           
           setShowUniversityField(occupationType === "student");
           
-          form.reset({
+          const formData = {
             firstName: profileData.first_name || '',
             lastName: profileData.last_name || '',
             username: profileData.username || '',
@@ -336,12 +360,15 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
               pets: lifestyleData.pets as any,
               guests: lifestyleData.guests as any,
             },
-          });
+          };
+          
+          form.reset(formData);
+          setInitialFormData(formData);
           
         } catch (err) {
           console.error("Error loading profile data:", err);
           // ... keep existing code (default form reset)
-          form.reset({
+          const defaultData = {
             firstName: user.user_metadata?.firstName || "",
             lastName: user.user_metadata?.lastName || "",
             username: user.user_metadata?.username || "",
@@ -351,6 +378,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
             occupation: "",
             occupationType: "other" as any,
             university: "",
+            fieldOfStudy: "",
             profileImage: "",
             interests: [],
             isProfileActive: true,
@@ -370,7 +398,9 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
               pets: undefined,
               guests: undefined,
             },
-          });
+          };
+          form.reset(defaultData);
+          setInitialFormData(defaultData);
         } finally {
           setIsLoading(false);
         }
@@ -381,25 +411,43 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
   }, [user, form]);
 
   async function onSubmit(values: FormValues) {
-    await autoSave(values);
+    setIsSubmitting(true);
     
-    toast({
-      title: "Perfil actualizado",
-      description: "Tu información de perfil ha sido guardada.",
-    });
+    const success = await saveProfile(values);
     
-    if (onSaved) {
-      setTimeout(() => {
-        window.scrollTo({
-          top: 0,
-          left: 0,
-          behavior: 'instant'
-        });
-        
-        onSaved();
-      }, 100);
+    if (success) {
+      toast({
+        title: "Perfil actualizado",
+        description: "Tu información de perfil ha sido guardada.",
+      });
+      
+      if (onSaved) {
+        setTimeout(() => {
+          window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'instant'
+          });
+          
+          onSaved();
+        }, 100);
+      }
     }
+    
+    setIsSubmitting(false);
   }
+
+  const handleCancelEdit = async () => {
+    if (hasUnsavedChanges) {
+      // Save before canceling
+      const values = form.getValues();
+      await saveProfile(values);
+    }
+    
+    if (cancelEdit) {
+      cancelEdit();
+    }
+  };
 
   const handleProfileStatusToggle = (active: boolean) => {
     form.setValue('isProfileActive', active);
@@ -430,20 +478,11 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div className="space-y-4">
-          {/* Auto-save indicator */}
-          {(isAutoSaving || hasUnsavedChanges) && (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              {isAutoSaving ? (
-                <>
-                  <div className="animate-spin rounded-full h-3 w-3 border border-homi-purple border-t-transparent"></div>
-                  Guardando automáticamente...
-                </>
-              ) : hasUnsavedChanges ? (
-                <>
-                  <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                  Cambios pendientes (se guardarán automáticamente)
-                </>
-              ) : null}
+          {/* Unsaved changes indicator */}
+          {hasUnsavedChanges && (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground bg-amber-50 p-3 rounded-lg border border-amber-200">
+              <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
+              Tienes cambios sin guardar. Se guardarán automáticamente al salir de esta página.
             </div>
           )}
           
@@ -487,7 +526,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
             <Button 
               type="button" 
               variant="outline" 
-              onClick={cancelEdit}
+              onClick={handleCancelEdit}
               className="w-full sm:w-auto"
             >
               Cancelar
