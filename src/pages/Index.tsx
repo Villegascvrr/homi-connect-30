@@ -11,6 +11,7 @@ import ProfileCard from '@/components/profiles/ProfileCard';
 import { useAuth } from '@/context/AuthContext';
 import MatchCard from '@/components/matching/MatchCard';
 import { Check, Crown, Star, Zap, Sparkles } from 'lucide-react';
+import { useSubscription } from '@/hooks/useSubscription';
 import { supabase } from '@/integrations/supabase/client';
 
 const Index = () => {
@@ -18,6 +19,8 @@ const Index = () => {
     user
   } = useAuth();
   const navigate = useNavigate();
+  const { createCheckout } = useSubscription();
+  
   const featuredProfiles = [{
     id: '1',
     name: 'Elenita',
@@ -91,7 +94,7 @@ const Index = () => {
   const handleRegisterClick = () => {
     navigate('/register');
   };
-  const handlePlanSelect = (planId: string) => {
+  const handlePlanSelect = async (planId: string) => {
     if (planId === 'free') {
       if (user) {
         navigate('/matching');
@@ -99,8 +102,12 @@ const Index = () => {
         navigate('/register');
       }
     } else {
-      // For premium plans, redirect to pricing page with plan preselected
-      navigate(`/precios?plan=${planId}`);
+      // For premium plans, create checkout session directly
+      if (user) {
+        await createCheckout(planId);
+      } else {
+        navigate('/register');
+      }
     }
   };
 
