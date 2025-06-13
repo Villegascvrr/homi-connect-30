@@ -161,7 +161,7 @@ const Index = () => {
       features: [
         'Todas las ventajas PRO',
         'Distintivo especial',
-        'Acceso anticipado',
+        'Acceso anticipado a nuevas funciones',
         'Soporte prioritario'
       ],
       buttonText: 'Quiero ser Fundador',
