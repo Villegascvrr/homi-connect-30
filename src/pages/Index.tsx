@@ -6,9 +6,11 @@ import Hero from '@/components/home/Hero';
 import Features from '@/components/home/Features';
 import HowItWorks from '@/components/home/HowItWorks';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import ProfileCard from '@/components/profiles/ProfileCard';
 import { useAuth } from '@/context/AuthContext';
-import MatchCard from '@/components/matching/MatchCard'; // Import MatchCard instead of ProfileCard
+import MatchCard from '@/components/matching/MatchCard';
+import { Check, Crown, Star, Zap } from 'lucide-react';
 
 const Index = () => {
   const {
@@ -88,6 +90,77 @@ const Index = () => {
   const handleRegisterClick = () => {
     navigate('/register');
   };
+  const handlePlanSelect = (planId: string) => {
+    if (planId === 'free') {
+      if (user) {
+        navigate('/matching');
+      } else {
+        navigate('/register');
+      }
+    } else {
+      navigate('/suscripcion');
+    }
+  };
+
+  const plans = [
+    {
+      id: 'free',
+      name: 'Plan Gratuito',
+      price: 'Gratis',
+      period: '',
+      icon: <Zap className="w-6 h-6 text-green-500" />,
+      description: 'Perfecto para empezar',
+      features: [
+        'Hasta 20 swipes diarios',
+        'Hasta 10 matches diarios',
+        'Sin filtros personalizados',
+        'Perfil básico'
+      ],
+      buttonText: 'Usar gratis',
+      buttonVariant: 'outline' as const,
+      popular: false,
+      urgent: false
+    },
+    {
+      id: 'pro',
+      name: 'Plan PRO',
+      price: '4,99€',
+      period: '/mes',
+      icon: <Star className="w-6 h-6 text-homi-purple" />,
+      description: 'La experiencia completa',
+      features: [
+        'Swipes y matches ilimitados',
+        'Filtros personalizados',
+        'Visibilidad prioritaria',
+        'Estadísticas avanzadas'
+      ],
+      buttonText: 'Hazte PRO',
+      buttonVariant: 'default' as const,
+      popular: true,
+      urgent: false
+    },
+    {
+      id: 'founder',
+      name: 'Plan Fundador',
+      price: '24,99€',
+      period: '/año',
+      icon: <Crown className="w-6 h-6 text-yellow-500" />,
+      description: 'Acceso exclusivo',
+      features: [
+        'Todas las ventajas PRO',
+        'Más del 50% de descuento',
+        'Distintivo especial',
+        'Acceso anticipado',
+        'Soporte prioritario'
+      ],
+      buttonText: 'Quiero ser Fundador',
+      buttonVariant: 'default' as const,
+      popular: false,
+      urgent: true,
+      urgentText: 'Solo para los 50 primeros usuarios'
+    }
+  ];
+
   return <div className="min-h-screen flex flex-col overflow-x-hidden w-full">
       <div className="pt-16 w-full">
         <Navbar />
@@ -116,7 +189,6 @@ const Index = () => {
               </p>
             </div>
             
-            {/* Replace ProfileCard with MatchCard and use compact prop */}
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6 mb-12">
               {featuredProfiles.map(profile => <div key={profile.id} className="animate-on-scroll">
                   <MatchCard {...profile} compact={true} onLike={id => console.log('Liked:', id)} onPass={id => console.log('Passed:', id)} onView={id => navigate('/profile')} />
@@ -135,7 +207,7 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Nueva sección de precios */}
+        {/* Sección de precios con planes visibles */}
         <section className="py-16 md:py-20 bg-gradient-to-br from-homi-ultraLightPurple to-purple-50 overflow-x-hidden w-full">
           <div className="container mx-auto px-4 md:px-6">
             <div className="text-center max-w-3xl mx-auto mb-12 md:mb-16 animate-on-scroll">
@@ -147,17 +219,78 @@ const Index = () => {
               </p>
             </div>
             
-            <div className="flex justify-center">
+            {/* Mostrar los planes directamente */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto mb-8">
+              {plans.map((plan) => (
+                <Card 
+                  key={plan.id} 
+                  className={`relative overflow-hidden transition-all duration-300 hover:shadow-lg ${
+                    plan.popular ? 'border-homi-purple shadow-lg scale-105' : ''
+                  } ${plan.urgent ? 'border-yellow-400 shadow-yellow-100' : ''}`}
+                >
+                  {plan.popular && (
+                    <div className="absolute top-0 left-0 right-0 bg-homi-purple text-white text-center py-2 text-sm font-medium">
+                      ✨ Más Popular
+                    </div>
+                  )}
+                  
+                  {plan.urgent && (
+                    <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-yellow-400 to-orange-400 text-black text-center py-2 text-xs font-bold">
+                      ⚠️ {plan.urgentText}
+                    </div>
+                  )}
+
+                  <CardHeader className={`text-center ${plan.popular || plan.urgent ? 'pt-12' : 'pt-6'}`}>
+                    <div className="flex justify-center mb-3">
+                      {plan.icon}
+                    </div>
+                    <CardTitle className="text-xl font-bold">{plan.name}</CardTitle>
+                    <CardDescription className="text-muted-foreground text-sm">
+                      {plan.description}
+                    </CardDescription>
+                    <div className="mt-3">
+                      <span className="text-3xl font-bold">{plan.price}</span>
+                      {plan.period && <span className="text-muted-foreground text-sm">{plan.period}</span>}
+                    </div>
+                  </CardHeader>
+
+                  <CardContent className="space-y-4">
+                    <ul className="space-y-2">
+                      {plan.features.map((feature, index) => (
+                        <li key={index} className="flex items-start gap-2">
+                          <Check className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                          <span className="text-sm">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <Button 
+                      className={`w-full mt-4 ${
+                        plan.id === 'pro' 
+                          ? 'bg-homi-purple hover:bg-homi-purple/90' 
+                          : plan.id === 'founder'
+                          ? 'bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 text-black font-bold'
+                          : ''
+                      }`}
+                      variant={plan.buttonVariant}
+                      onClick={() => handlePlanSelect(plan.id)}
+                    >
+                      {plan.buttonText}
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            <div className="text-center">
               <Link to="/precios">
-                <Button size="lg" className="rounded-full bg-homi-purple hover:bg-homi-purple/90 px-8">
-                  Ver todos los planes
+                <Button variant="outline" className="rounded-full px-6">
+                  Ver detalles completos
                 </Button>
               </Link>
             </div>
           </div>
         </section>
-        
-        
         
         <section className="py-16 md:py-20 bg-homi-purple text-white overflow-x-hidden w-full">
           <div className="container mx-auto px-4 md:px-6">
