@@ -7,9 +7,10 @@ import Navbar from "../layout/Navbar";
 import Footer from "../layout/Footer";
 import { useToast } from "@/hooks/use-toast";
 import { Card } from "@/components/ui/card";
-import { AtSign, MapPin, GraduationCap, Briefcase, Edit, User, Heart, Tag, Clock, Trash2, Cigarette, PawPrint, Users } from 'lucide-react';
+import { AtSign, MapPin, GraduationCap, Briefcase, Edit, User, Heart, Tag, Clock, Trash2, Cigarette, PawPrint, Users, Crown, CreditCard } from 'lucide-react';
 import ProfileForm from "./ProfileForm";
 import ProfileAuthGate from '../auth/ProfileAuthGate';
+import { useSubscription } from '@/hooks/useSubscription';
 
 const ProfilePage = () => {
   const { user, session, loading } = useAuth();
@@ -19,6 +20,7 @@ const ProfilePage = () => {
   const [profile, setProfile] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const { subscriptionInfo, createCheckout, openCustomerPortal } = useSubscription();
   
   // Early return if not authenticated and not loading
   if (!loading && !user && !session) {
@@ -83,6 +85,16 @@ const ProfilePage = () => {
 
   const handleEditClick = () => {
     navigate('/profile/edit');
+  };
+
+  const handleSubscriptionClick = async () => {
+    if (subscriptionInfo.subscribed) {
+      // If user has a subscription, open customer portal
+      await openCustomerPortal();
+    } else {
+      // If user is on free plan, redirect to pricing or create checkout for pro plan
+      navigate('/precios');
+    }
   };
 
   if (loading || profileLoading) {
@@ -234,13 +246,52 @@ const ProfilePage = () => {
             <div className="bg-white rounded-lg shadow-md p-6 mb-6">
               <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-4">
                 <h1 className="text-2xl md:text-3xl font-bold">Tu Perfil</h1>
-                <Button 
-                  onClick={handleEditClick}
-                  className="rounded-full bg-homi-purple hover:bg-homi-purple/90"
-                >
-                  <Edit className="mr-2 h-4 w-4" /> Editar Perfil
-                </Button>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Button 
+                    onClick={handleSubscriptionClick}
+                    className={`rounded-full ${
+                      subscriptionInfo.subscribed 
+                        ? 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700' 
+                        : 'bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 hover:from-yellow-500 hover:via-orange-500 hover:to-red-500 text-black font-bold'
+                    }`}
+                  >
+                    {subscriptionInfo.subscribed ? (
+                      <>
+                        <CreditCard className="mr-2 h-4 w-4" />
+                        Gestionar Suscripción
+                      </>
+                    ) : (
+                      <>
+                        <Crown className="mr-2 h-4 w-4" />
+                        ¡Hazte Premium!
+                      </>
+                    )}
+                  </Button>
+                  <Button 
+                    onClick={handleEditClick}
+                    className="rounded-full bg-homi-purple hover:bg-homi-purple/90"
+                  >
+                    <Edit className="mr-2 h-4 w-4" /> Editar Perfil
+                  </Button>
+                </div>
               </div>
+              
+              {/* Subscription Status Display */}
+              {subscriptionInfo.subscribed && (
+                <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-4 mb-4">
+                  <div className="flex items-center gap-2">
+                    <Crown className="h-5 w-5 text-green-600" />
+                    <span className="font-semibold text-green-800">
+                      Plan {subscriptionInfo.subscription_tier || 'Premium'}
+                    </span>
+                  </div>
+                  {subscriptionInfo.subscription_end && (
+                    <p className="text-sm text-green-700 mt-1">
+                      Activo hasta: {new Date(subscriptionInfo.subscription_end).toLocaleDateString('es-ES')}
+                    </p>
+                  )}
+                </div>
+              )}
               
               <div className="bg-gray-100 h-4 w-full rounded-full mb-2">
                 <div 
