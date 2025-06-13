@@ -10,6 +10,7 @@ import { Card } from "@/components/ui/card";
 import { AtSign, MapPin, GraduationCap, Briefcase, Edit, User, Heart, Tag, Clock, Trash2, Cigarette, PawPrint, Users, Crown, CreditCard, Home } from 'lucide-react';
 import ProfileForm from "./ProfileForm";
 import ProfileAuthGate from '../auth/ProfileAuthGate';
+import ProfileStatusToggle from './ProfileStatusToggle';
 import { useSubscription } from '@/hooks/useSubscription';
 
 const ProfilePage = () => {
@@ -92,6 +93,41 @@ const ProfilePage = () => {
       await openCustomerPortal();
     } else {
       navigate('/precios');
+    }
+  };
+
+  const handleProfileVisibilityToggle = async (isActive: boolean) => {
+    if (!user?.id) return;
+
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ is_profile_active: isActive })
+        .eq('id', user.id);
+
+      if (error) {
+        console.error('Error updating profile visibility:', error);
+        toast({
+          title: "Error",
+          description: "No se pudo actualizar la visibilidad del perfil",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Update local state
+      setProfile((prev: any) => ({
+        ...prev,
+        is_profile_active: isActive
+      }));
+
+    } catch (error) {
+      console.error('Error updating profile visibility:', error);
+      toast({
+        title: "Error",
+        description: "No se pudo actualizar la visibilidad del perfil",
+        variant: "destructive"
+      });
     }
   };
 
@@ -316,6 +352,14 @@ const ProfilePage = () => {
                     <Edit className="mr-2 h-4 w-4" /> Editar Perfil
                   </Button>
                 </div>
+              </div>
+              
+              {/* Profile Status Toggle */}
+              <div className="mb-4">
+                <ProfileStatusToggle
+                  isActive={profile.is_profile_active}
+                  onToggle={handleProfileVisibilityToggle}
+                />
               </div>
               
               {/* Subscription Status Display */}
