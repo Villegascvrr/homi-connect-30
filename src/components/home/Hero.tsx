@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Check, Instagram } from 'lucide-react';
@@ -105,18 +106,6 @@ const Hero = () => {
               <Link to="/matching">Explorar perfiles</Link>
             </Button>
           </div>
-          
-          <div className="mt-6 flex justify-center">
-            <div>
-              <p className="text-sm text-muted-foreground mb-3">
-                Síguenos para las últimas novedades:
-              </p>
-              <Button variant="outline" className="rounded-full gap-2 bg-purple-50 text-purple-600 border-purple-200 hover:bg-purple-100 hover:text-purple-700" onClick={() => window.open('https://instagram.com/homimatch', '_blank')}>
-                <Instagram size={18} />
-                @homimatch
-              </Button>
-            </div>
-          </div>
         </>;
     }
     return <>
@@ -165,6 +154,18 @@ const Hero = () => {
       <div className="container mx-auto px-4 md:px-6">
         <div className="max-w-4xl mx-auto text-center space-y-8">
           {renderContent()}
+          
+          <div className="mt-6 flex justify-center">
+            <div>
+              <p className="text-sm text-muted-foreground mb-3">
+                Síguenos para las últimas novedades:
+              </p>
+              <Button variant="outline" className="rounded-full gap-2 bg-purple-50 text-purple-600 border-purple-200 hover:bg-purple-100 hover:text-purple-700" onClick={() => window.open('https://instagram.com/homimatch', '_blank')}>
+                <Instagram size={18} />
+                @homimatch
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </section>;
