@@ -198,7 +198,7 @@ const Index = () => {
               </h2>
               <p className="text-muted-foreground text-lg">
                 HomiMatch está activo y ayudando a estudiantes y jóvenes profesionales a encontrar 
-                compañeros de piso compatibles en Sevilla. ¡Únete ahora!
+                compañeros de piso compatibles en tu ciudad. ¡Únete ahora!
               </p>
             </div>
             
@@ -234,7 +234,7 @@ const Index = () => {
                 <Sparkles className="w-4 h-4 text-homi-purple" />
                 <span className="text-sm font-medium text-homi-purple">Planes diseñados para ti</span>
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 leading-tight py-1 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
                 Elige tu plan perfecto
               </h2>
               <p className="text-muted-foreground text-base md:text-lg max-w-2xl mx-auto">
