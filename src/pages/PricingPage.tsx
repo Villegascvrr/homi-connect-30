@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -24,8 +23,7 @@ const PricingPage = () => {
       features: [
         'Hasta 20 swipes diarios',
         'Hasta 10 matches diarios',
-        'Sin filtros personalizados',
-        'Perfil básico'
+        'Sin filtros personalizados'
       ],
       buttonText: 'Usar gratis',
       buttonVariant: 'outline' as const,
@@ -42,8 +40,7 @@ const PricingPage = () => {
       features: [
         'Swipes y matches ilimitados',
         'Filtros personalizados (zona, edad, género, presupuesto...)',
-        'Visibilidad prioritaria en los resultados de búsqueda',
-        'Estadísticas avanzadas del perfil'
+        'Visibilidad prioritaria en los resultados de búsqueda'
       ],
       buttonText: 'Hazte PRO',
       buttonVariant: 'default' as const,

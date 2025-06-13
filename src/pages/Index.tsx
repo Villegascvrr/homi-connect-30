@@ -113,8 +113,7 @@ const Index = () => {
       features: [
         'Hasta 20 swipes diarios',
         'Hasta 10 matches diarios',
-        'Sin filtros personalizados',
-        'Perfil básico'
+        'Sin filtros personalizados'
       ],
       buttonText: 'Usar gratis',
       buttonVariant: 'outline' as const,
@@ -131,8 +130,7 @@ const Index = () => {
       features: [
         'Swipes y matches ilimitados',
         'Filtros personalizados',
-        'Visibilidad prioritaria',
-        'Estadísticas avanzadas'
+        'Visibilidad prioritaria'
       ],
       buttonText: 'Hazte PRO',
       buttonVariant: 'default' as const,
