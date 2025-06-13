@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Check, Instagram, CreditCard } from 'lucide-react';
@@ -9,7 +8,6 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { signInWithGoogleOAuth } from '@/integrations/supabase/client';
-
 const Hero = () => {
   const [email, setEmail] = useState('');
   const [showSignupForm, setShowSignupForm] = useState(false);
@@ -26,7 +24,6 @@ const Hero = () => {
   const {
     toast
   } = useToast();
-
   useEffect(() => {
     if (user) {
       const urlParams = new URLSearchParams(window.location.search);
@@ -53,17 +50,14 @@ const Hero = () => {
       setJustLoggedIn(false);
     }
   }, [user, location.search]);
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Subscribed with email:', email);
     setEmail('');
   };
-
   const handleRegisterClick = () => {
     navigate('/register');
   };
-
   const handleGoogleSignIn = async () => {
     try {
       setIsGoogleLoading(true);
@@ -79,7 +73,6 @@ const Hero = () => {
       setIsGoogleLoading(false);
     }
   };
-
   const renderContent = () => {
     if (user && (justRegistered || justLoggedIn)) {
       return <WelcomeMessage firstName={user?.user_metadata?.firstName || user?.user_metadata?.first_name || user?.user_metadata?.name || user?.user_metadata?.full_name} showWelcomeToast={true} isNewUser={justRegistered} />;
@@ -94,9 +87,7 @@ const Hero = () => {
             ¡Bienvenido a <span className="homi-gradient-text">HomiMatch</span>!
           </h1>
           
-          <p className="text-base md:text-lg text-muted-foreground mb-6 max-w-2xl mx-auto px-2">
-            Completa tu perfil y empieza a encontrar compañeros de piso compatibles en Sevilla.
-          </p>
+          <p className="text-base md:text-lg text-muted-foreground mb-6 max-w-2xl mx-auto px-2">Completa tu perfil y empieza a encontrar compañeros de piso compatibles (tanto si tienes piso o no)</p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 mb-8">
             <Button size={isMobile ? "default" : "lg"} className="rounded-full bg-gradient-to-r from-homi-purple to-homi-lightPurple hover:from-homi-lightPurple hover:to-homi-purple text-white font-bold shadow-lg shadow-purple-500/30 transform hover:scale-105 transition-all duration-300 w-full sm:w-auto" asChild>
@@ -156,7 +147,6 @@ const Hero = () => {
         
       </>;
   };
-
   return <section className="relative overflow-hidden w-full lg:py-[30px] py-[5px]">
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-0 left-0 w-64 md:w-96 h-64 md:h-96 bg-homi-ultraLightPurple rounded-full opacity-50 blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
@@ -182,5 +172,4 @@ const Hero = () => {
       </div>
     </section>;
 };
-
 export default Hero;
