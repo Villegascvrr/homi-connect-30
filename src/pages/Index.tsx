@@ -1,4 +1,3 @@
-
 import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
@@ -136,7 +135,7 @@ const Index = () => {
         'Filtros personalizados',
         'Visibilidad prioritaria'
       ],
-      buttonText: 'Ver más información',
+      buttonText: 'Hazte PRO',
       buttonVariant: 'default' as const,
       popular: true,
       urgent: false,
@@ -157,7 +156,7 @@ const Index = () => {
         'Acceso anticipado',
         'Soporte prioritario'
       ],
-      buttonText: 'Ver más información',
+      buttonText: 'Quiero ser Fundador',
       buttonVariant: 'default' as const,
       popular: false,
       urgent: true,
