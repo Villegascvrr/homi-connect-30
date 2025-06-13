@@ -50,17 +50,19 @@ serve(async (req) => {
       logStep("No existing customer found");
     }
 
-    // Define plan configurations
+    // Define plan configurations with enhanced descriptions
     const planConfigs = {
       pro: {
         amount: 499, // 4.99€ in cents
         interval: "month",
-        name: "Plan PRO",
+        name: "Suscripción Plan PRO",
+        description: "Acceso completo a HomiMatch con funcionalidades premium: swipes ilimitados, filtros avanzados y visibilidad prioritaria para encontrar a tu compañero de piso ideal.",
       },
       founder: {
         amount: 2499, // 24.99€ in cents
         interval: "year", 
-        name: "Plan Fundador",
+        name: "Suscripción Plan Fundador",
+        description: "Plan exclusivo para los primeros usuarios de HomiMatch. Incluye todas las ventajas PRO más acceso anticipado a nuevas funciones y distintivo especial en tu perfil.",
       }
     };
 
@@ -80,7 +82,8 @@ serve(async (req) => {
             currency: "eur",
             product_data: { 
               name: config.name,
-              description: `Suscripción ${config.name} - HomiMatch`
+              description: config.description,
+              images: ["https://homimatch.lovable.app/lovable-uploads/efbbb383-cff5-4e9e-8b43-141970c0e74c.png"], // Logo de HomiMatch
             },
             unit_amount: config.amount,
             recurring: { interval: config.interval as "month" | "year" },
@@ -95,6 +98,18 @@ serve(async (req) => {
         user_id: user.id,
         plan_id: planId,
       },
+      // Customize checkout appearance
+      payment_method_types: ['card'],
+      billing_address_collection: 'auto',
+      // Custom checkout page configuration
+      locale: 'es', // Spanish locale
+      allow_promotion_codes: true, // Enable promo codes
+      // Additional customization options
+      custom_text: {
+        submit: {
+          message: "Al confirmar tu suscripción, podrás acceder inmediatamente a todas las funcionalidades premium de HomiMatch."
+        }
+      }
     });
 
     logStep("Checkout session created", { sessionId: session.id, url: session.url });
