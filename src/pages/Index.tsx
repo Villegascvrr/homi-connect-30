@@ -1,3 +1,4 @@
+
 import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
@@ -7,6 +8,7 @@ import Features from '@/components/home/Features';
 import HowItWorks from '@/components/home/HowItWorks';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import ProfileCard from '@/components/profiles/ProfileCard';
 import { useAuth } from '@/context/AuthContext';
 import MatchCard from '@/components/matching/MatchCard';
@@ -38,7 +40,8 @@ const Index = () => {
     }, {
       id: 3,
       name: 'Estudiante'
-    }]
+    }],
+    compatibility: 92
   }, {
     id: '2',
     name: 'Carlos',
@@ -55,7 +58,8 @@ const Index = () => {
     }, {
       id: 5,
       name: 'Profesional'
-    }]
+    }],
+    compatibility: 88
   }, {
     id: '3',
     name: 'Laurita',
@@ -72,7 +76,8 @@ const Index = () => {
     }, {
       id: 3,
       name: 'Estudiante'
-    }]
+    }],
+    compatibility: 95
   }];
 
   const successStories = [
@@ -141,6 +146,51 @@ const Index = () => {
       rating: 5,
       comment: 'Lo que más me gusta es que puedes filtrar por estilo de vida. Encontré compañeros que respetan mis horarios de estudio.',
       image: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=1000'
+    },
+    {
+      id: 4,
+      name: 'Alejandro T.',
+      age: 26,
+      location: 'Bilbao',
+      rating: 5,
+      comment: 'La mejor decisión que tomé fue usar HomiMatch. No solo encontré piso, sino que hice amigos para toda la vida.',
+      image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=1000'
+    },
+    {
+      id: 5,
+      name: 'Sofia K.',
+      age: 21,
+      location: 'Granada',
+      rating: 5,
+      comment: 'Perfecta para estudiantes como yo. La interfaz es súper intuitiva y encontré compañeros de piso en pocos días.',
+      image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1000'
+    },
+    {
+      id: 6,
+      name: 'Javier M.',
+      age: 28,
+      location: 'Zaragoza',
+      rating: 5,
+      comment: 'Como profesional que se mudó por trabajo, HomiMatch me facilitó muchísimo encontrar un hogar en una ciudad nueva.',
+      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000'
+    },
+    {
+      id: 7,
+      name: 'Natalia P.',
+      age: 25,
+      location: 'Murcia',
+      rating: 5,
+      comment: 'Me encanta lo segura que me siento usando la app. Todos los perfiles están verificados y la comunidad es increíble.',
+      image: 'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?q=80&w=1000'
+    },
+    {
+      id: 8,
+      name: 'Roberto L.',
+      age: 23,
+      location: 'Salamanca',
+      rating: 5,
+      comment: 'La función de compatibilidad es genial. Mi compañero de piso y yo tenemos estilos de vida muy parecidos.',
+      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=1000'
     }
   ];
 
@@ -333,7 +383,7 @@ const Index = () => {
               </div>
             </div>
 
-            {/* Testimonials Section */}
+            {/* Testimonials Section with Carousel */}
             <div className="mb-12">
               <div className="text-center mb-12">
                 <h3 className="text-2xl font-bold mb-4">
@@ -344,37 +394,51 @@ const Index = () => {
                 </p>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {testimonials.map(testimonial => (
-                  <Card key={testimonial.id} className="hover:shadow-lg transition-all duration-300">
-                    <CardContent className="p-6">
-                      <div className="flex items-center gap-3 mb-4">
-                        <img 
-                          src={testimonial.image} 
-                          alt={testimonial.name}
-                          className="w-12 h-12 rounded-full object-cover"
-                        />
-                        <div>
-                          <h4 className="font-semibold">{testimonial.name}</h4>
-                          <p className="text-sm text-muted-foreground">
-                            {testimonial.age} años • {testimonial.location}
-                          </p>
-                        </div>
-                      </div>
-                      
-                      <div className="flex gap-1 mb-3">
-                        {[...Array(testimonial.rating)].map((_, i) => (
-                          <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                        ))}
-                      </div>
-                      
-                      <blockquote className="text-muted-foreground text-sm leading-relaxed">
-                        <Quote className="w-4 h-4 inline mr-1 text-gray-400" />
-                        {testimonial.comment}
-                      </blockquote>
-                    </CardContent>
-                  </Card>
-                ))}
+              <div className="relative max-w-6xl mx-auto">
+                <Carousel
+                  opts={{
+                    align: "start",
+                    loop: true,
+                  }}
+                  className="w-full"
+                >
+                  <CarouselContent className="-ml-2 md:-ml-4">
+                    {testimonials.map(testimonial => (
+                      <CarouselItem key={testimonial.id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
+                        <Card className="hover:shadow-lg transition-all duration-300 h-full">
+                          <CardContent className="p-6 flex flex-col h-full">
+                            <div className="flex items-center gap-3 mb-4">
+                              <img 
+                                src={testimonial.image} 
+                                alt={testimonial.name}
+                                className="w-12 h-12 rounded-full object-cover"
+                              />
+                              <div>
+                                <h4 className="font-semibold">{testimonial.name}</h4>
+                                <p className="text-sm text-muted-foreground">
+                                  {testimonial.age} años • {testimonial.location}
+                                </p>
+                              </div>
+                            </div>
+                            
+                            <div className="flex gap-1 mb-3">
+                              {[...Array(5)].map((_, i) => (
+                                <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                              ))}
+                            </div>
+                            
+                            <blockquote className="text-muted-foreground text-sm leading-relaxed flex-grow">
+                              <Quote className="w-4 h-4 inline mr-1 text-gray-400" />
+                              {testimonial.comment}
+                            </blockquote>
+                          </CardContent>
+                        </Card>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious className="hidden md:flex" />
+                  <CarouselNext className="hidden md:flex" />
+                </Carousel>
               </div>
             </div>
             
