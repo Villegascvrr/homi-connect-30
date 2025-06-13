@@ -10,9 +10,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import ProfileCard from '@/components/profiles/ProfileCard';
 import { useAuth } from '@/context/AuthContext';
 import MatchCard from '@/components/matching/MatchCard';
-import { Check, Crown, Star, Zap, Sparkles } from 'lucide-react';
+import { Check, Crown, Star, Zap, Sparkles, Users, Home } from 'lucide-react';
 import { useSubscription } from '@/hooks/useSubscription';
 import { supabase } from '@/integrations/supabase/client';
+
 const Index = () => {
   const {
     user
@@ -163,8 +164,6 @@ const Index = () => {
       <main className="flex-grow overflow-x-hidden w-full">
         <Hero />
         
-        
-        
         <div id="how-it-works" className="overflow-x-hidden w-full">
           <HowItWorks />
         </div>
@@ -173,11 +172,43 @@ const Index = () => {
           <div className="container mx-auto px-4 md:px-6">
             <div className="text-center max-w-3xl mx-auto mb-12 md:mb-16 animate-on-scroll">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Encuentra tu <span className="homi-gradient-text">compañero ideal</span>
+                Para <span className="homi-gradient-text">todo tipo de personas</span>
               </h2>
-              <p className="text-muted-foreground text-lg">
-                HomiMatch está activo y ayudando a estudiantes y jóvenes profesionales a encontrar 
-                compañeros de piso compatibles en tu ciudad. ¡Únete ahora!
+              <p className="text-muted-foreground text-lg mb-6">
+                HomiMatch está diseñado para conectar a estudiantes y jóvenes profesionales, 
+                sin importar tu situación actual de vivienda.
+              </p>
+              
+              {/* New section explaining who HomiMatch is for */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-8">
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-100">
+                  <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full mb-4 mx-auto">
+                    <Home className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <h3 className="font-semibold text-lg mb-2 text-blue-900">¿Tienes piso?</h3>
+                  <p className="text-blue-700 text-sm">
+                    Si ya tienes un piso y buscas compañeros compatibles para compartir gastos y experiencias
+                  </p>
+                </div>
+                
+                <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-xl border border-purple-100">
+                  <div className="flex items-center justify-center w-12 h-12 bg-purple-100 rounded-full mb-4 mx-auto">
+                    <Users className="w-6 h-6 text-purple-600" />
+                  </div>
+                  <h3 className="font-semibold text-lg mb-2 text-purple-900">¿Buscas piso?</h3>
+                  <p className="text-purple-700 text-sm">
+                    Si necesitas encontrar tanto piso como compañeros de habitación para empezar esta nueva etapa
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="text-center mb-8">
+              <h3 className="text-2xl font-bold mb-4">
+                Conoce a algunos de nuestros <span className="homi-gradient-text">usuarios</span>
+              </h3>
+              <p className="text-muted-foreground">
+                Perfiles reales de personas que ya están usando HomiMatch para encontrar su hogar ideal
               </p>
             </div>
             
@@ -340,4 +371,5 @@ const Index = () => {
       <Footer />
     </div>;
 };
+
 export default Index;
