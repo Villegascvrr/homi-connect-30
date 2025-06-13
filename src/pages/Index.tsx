@@ -98,7 +98,8 @@ const Index = () => {
       story: 'Nos conocimos en HomiMatch y ahora compartimos un increíble piso en el centro de Madrid. ¡La convivencia es perfecta!',
       location: 'Madrid',
       rating: 5,
-      testimonial: 'HomiMatch cambió mi vida completamente. No solo encontré una compañera de piso, sino una hermana. Vivimos en armonía total y nos apoyamos en todo.'
+      testimonial: 'HomiMatch cambió mi vida completamente. No solo encontré una compañera de piso, sino una hermana. Vivimos en armonía total y nos apoyamos en todo.',
+      author: 'Ana'
     },
     {
       id: 2,
@@ -117,7 +118,8 @@ const Index = () => {
       story: 'Encontramos el piso perfecto juntos en Barcelona. HomiMatch nos ayudó a conectar por nuestros horarios similares.',
       location: 'Barcelona',
       rating: 5,
-      testimonial: 'El algoritmo de HomiMatch es increíble. Diego y yo tenemos estilos de vida muy compatibles, trabajamos desde casa y respetamos nuestros espacios. ¡Perfecto!'
+      testimonial: 'El algoritmo de HomiMatch es increíble. Diego y yo tenemos estilos de vida muy compatibles, trabajamos desde casa y respetamos nuestros espacios. ¡Perfecto!',
+      author: 'Alex'
     },
     {
       id: 3,
@@ -136,7 +138,8 @@ const Index = () => {
       story: 'Estudiantes de medicina que se conocieron en HomiMatch. Ahora compartimos apartamento cerca de la universidad.',
       location: 'Valencia',
       rating: 5,
-      testimonial: 'Como estudiantes de medicina, necesitábamos compañeras que entendieran nuestros horarios de estudio. Carmen es la compañera perfecta, estudiamos juntas y nos motivamos.'
+      testimonial: 'Como estudiantes de medicina, necesitábamos compañeras que entendieran nuestros horarios de estudio. Carmen es la compañera perfecta, estudiamos juntas y nos motivamos.',
+      author: 'Laura'
     },
     {
       id: 4,
@@ -155,7 +158,8 @@ const Index = () => {
       story: 'Profesionales que se mudaron por trabajo y encontraron el hogar perfecto juntos en Sevilla.',
       location: 'Sevilla',
       rating: 5,
-      testimonial: 'Me mudé a Sevilla por trabajo sin conocer a nadie. Gracias a HomiMatch encontré a Miguel, ahora somos como hermanos y Sevilla se siente como hogar.'
+      testimonial: 'Me mudé a Sevilla por trabajo sin conocer a nadie. Gracias a HomiMatch encontré a Miguel, ahora somos como hermanos y Sevilla se siente como hogar.',
+      author: 'Roberto'
     },
     {
       id: 5,
@@ -174,7 +178,8 @@ const Index = () => {
       story: 'Se conocieron en HomiMatch y ahora viven en un apartamento increíble en Bilbao. La amistad que formaron es para toda la vida.',
       location: 'Bilbao',
       rating: 5,
-      testimonial: 'Nunca pensé que una app para encontrar piso me daría una amiga para toda la vida. Sofía y yo conectamos desde el primer día, compartimos todo.'
+      testimonial: 'Nunca pensé que una app para encontrar piso me daría una amiga para toda la vida. Sofía y yo conectamos desde el primer día, compartimos todo.',
+      author: 'Natalia'
     },
     {
       id: 6,
@@ -193,7 +198,8 @@ const Index = () => {
       story: 'Dos desarrolladores que se conectaron por su amor a la tecnología. Ahora comparten piso y proyectos en Zaragoza.',
       location: 'Zaragoza',
       rating: 5,
-      testimonial: 'Encontrar a Javier fue como ganar la lotería. Compartimos la pasión por la programación, trabajamos juntos en proyectos y vivimos en perfecta armonía.'
+      testimonial: 'Encontrar a Javier fue como ganar la lotería. Compartimos la pasión por la programación, trabajamos juntos en proyectos y vivimos en perfecta armonía.',
+      author: 'Alejandro'
     },
     {
       id: 7,
@@ -212,7 +218,8 @@ const Index = () => {
       story: 'Artistas que se conocieron por su amor al arte y la creatividad. Ahora comparten un estudio-hogar en Granada.',
       location: 'Granada',
       rating: 5,
-      testimonial: 'Cristina y yo somos almas gemelas creativas. Nuestro piso es nuestro santuario artístico donde creamos, inspiramos y vivimos nuestros sueños juntas.'
+      testimonial: 'Cristina y yo somos almas gemelas creativas. Nuestro piso es nuestro santuario artístico donde creamos, inspiramos y vivimos nuestros sueños juntas.',
+      author: 'Elena'
     },
     {
       id: 8,
@@ -231,7 +238,8 @@ const Index = () => {
       story: 'Deportistas que compartían la pasión por el fitness y encontraron el compañero perfecto en Málaga.',
       location: 'Málaga',
       rating: 5,
-      testimonial: 'Marcos es el compañero de piso ideal. Entrenamos juntos, cocinamos saludable y nos motivamos mutuamente. HomiMatch acertó al 100% con nosotros.'
+      testimonial: 'Marcos es el compañero de piso ideal. Entrenamos juntos, cocinamos saludable y nos motivamos mutuamente. HomiMatch acertó al 100% con nosotros.',
+      author: 'Pablo'
     }
   ];
 
@@ -452,7 +460,7 @@ const Index = () => {
                 </div>)}
             </div>
 
-            {/* Enhanced Success Stories Section with Reviews */}
+            {/* Enhanced Success Stories Section */}
             <div className="mb-16">
               <div className="text-center mb-12">
                 <h3 className="text-3xl font-bold mb-4">
@@ -511,9 +519,10 @@ const Index = () => {
                             </blockquote>
                             
                             <div className="mt-auto pt-4 border-t border-pink-200">
-                              <blockquote className="text-sm text-muted-foreground italic">
+                              <blockquote className="text-sm text-muted-foreground italic mb-2">
                                 "{story.testimonial}"
                               </blockquote>
+                              <p className="text-xs text-muted-foreground font-medium">- {story.author}</p>
                             </div>
                           </CardContent>
                         </Card>
