@@ -1,4 +1,3 @@
-
 import { MessageSquare, Users, Search, Filter } from 'lucide-react';
 const Features = () => {
   const features = [{
@@ -19,28 +18,7 @@ const Features = () => {
     description: "Garantizamos la seguridad con verificación opcional de identidad para crear un entorno de confianza."
   }];
   return <section className="bg-muted features-section my-[21px] py-[12px]">
-      <div className="container mx-auto px-4 py-[17px]">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Todo lo que necesitas para encontrar 
-            <span className="homi-gradient-text"> al compañero ideal</span>
-          </h2>
-          <p className="text-muted-foreground text-lg">
-            HomiMatch ofrece todas las herramientas necesarias para hacer de la búsqueda
-            de compañeros de piso una experiencia sencilla y efectiva.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {features.map((feature, index) => <div key={index} className="glass-card p-6 rounded-xl transition-all duration-300 hover:shadow-hover">
-              <div className="w-16 h-16 rounded-full bg-purple-gradient flex items-center justify-center mb-5">
-                {feature.icon}
-              </div>
-              <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
-              <p className="text-muted-foreground">{feature.description}</p>
-            </div>)}
-        </div>
-      </div>
+      
     </section>;
 };
 export default Features;
