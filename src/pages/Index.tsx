@@ -98,7 +98,7 @@ const Index = () => {
         navigate('/register');
       }
     } else {
-      navigate('/suscripcion');
+      navigate(`/precios?plan=${planId}`);
     }
   };
 

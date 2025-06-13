@@ -2,16 +2,21 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Check, Crown, Star, Zap, Users, Filter, Eye, HeadphonesIcon, Sparkles } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Check, Crown, Star, Zap, Users, Filter, Eye, HeadphonesIcon, Sparkles, Loader2 } from 'lucide-react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { useAuth } from '@/context/AuthContext';
+import { useSubscription } from '@/hooks/useSubscription';
+import { useToast } from '@/hooks/use-toast';
 
 const PricingPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const { subscriptionInfo, loading, createCheckout, openCustomerPortal } = useSubscription();
+  const { toast } = useToast();
+  const [searchParams] = useSearchParams();
+  const selectedPlan = searchParams.get('plan');
 
   const plans = [
     {
@@ -70,19 +75,33 @@ const PricingPage = () => {
     }
   ];
 
-  const handlePlanSelect = (planId: string) => {
-    setSelectedPlan(planId);
-    
+  const handlePlanSelect = async (planId: string) => {
     if (planId === 'free') {
       if (user) {
         navigate('/matching');
       } else {
         navigate('/register');
       }
-    } else {
-      // Por ahora redirigir a una página de suscripción placeholder
-      navigate('/suscripcion');
+      return;
     }
+
+    if (!user) {
+      toast({
+        title: "Inicia sesión",
+        description: "Necesitas una cuenta para suscribirte a un plan premium",
+      });
+      navigate('/register');
+      return;
+    }
+
+    await createCheckout(planId);
+  };
+
+  const isCurrentPlan = (planId: string) => {
+    if (planId === 'free') return !subscriptionInfo.subscribed;
+    if (planId === 'pro') return subscriptionInfo.subscription_tier === 'PRO';
+    if (planId === 'founder') return subscriptionInfo.subscription_tier === 'Fundador';
+    return false;
   };
 
   return (
@@ -103,6 +122,29 @@ const PricingPage = () => {
             </p>
           </div>
 
+          {/* Subscription Status */}
+          {user && subscriptionInfo.subscribed && (
+            <div className="max-w-md mx-auto mb-8 p-4 bg-green-50 border border-green-200 rounded-lg text-center">
+              <div className="text-green-700 font-medium">
+                Plan actual: {subscriptionInfo.subscription_tier}
+              </div>
+              {subscriptionInfo.subscription_end && (
+                <div className="text-green-600 text-sm mt-1">
+                  Válido hasta: {new Date(subscriptionInfo.subscription_end).toLocaleDateString('es-ES')}
+                </div>
+              )}
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="mt-2"
+                onClick={openCustomerPortal}
+                disabled={loading}
+              >
+                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Gestionar suscripción"}
+              </Button>
+            </div>
+          )}
+
           {/* Planes */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto">
             {plans.map((plan) => (
@@ -110,7 +152,9 @@ const PricingPage = () => {
                 key={plan.id} 
                 className={`relative overflow-hidden transition-all duration-300 hover:shadow-lg ${
                   plan.popular ? 'border-homi-purple shadow-lg scale-105' : ''
-                } ${plan.urgent ? 'border-yellow-400 shadow-yellow-100' : ''}`}
+                } ${plan.urgent ? 'border-yellow-400 shadow-yellow-100' : ''} ${
+                  isCurrentPlan(plan.id) ? 'ring-2 ring-green-500 bg-green-50' : ''
+                }`}
               >
                 {plan.popular && (
                   <div className="absolute top-0 left-0 right-0 bg-homi-purple text-white text-center py-2 text-sm font-medium">
@@ -124,7 +168,13 @@ const PricingPage = () => {
                   </div>
                 )}
 
-                <CardHeader className={`text-center ${plan.popular || plan.urgent ? 'pt-12' : 'pt-6'}`}>
+                {isCurrentPlan(plan.id) && (
+                  <div className="absolute top-0 left-0 right-0 bg-green-500 text-white text-center py-2 text-sm font-medium">
+                    ✅ Tu Plan Actual
+                  </div>
+                )}
+
+                <CardHeader className={`text-center ${plan.popular || plan.urgent || isCurrentPlan(plan.id) ? 'pt-12' : 'pt-6'}`}>
                   <div className="flex justify-center mb-4">
                     {plan.icon}
                   </div>
@@ -175,8 +225,12 @@ const PricingPage = () => {
                     }`}
                     variant={plan.buttonVariant}
                     onClick={() => handlePlanSelect(plan.id)}
+                    disabled={loading || isCurrentPlan(plan.id)}
                   >
-                    {plan.buttonText}
+                    {loading ? (
+                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                    ) : null}
+                    {isCurrentPlan(plan.id) ? 'Plan Actual' : plan.buttonText}
                   </Button>
                 </CardContent>
               </Card>
@@ -192,7 +246,7 @@ const PricingPage = () => {
               <div className="p-6 rounded-lg bg-muted">
                 <h3 className="font-semibold mb-2">¿Puedo cambiar de plan en cualquier momento?</h3>
                 <p className="text-muted-foreground">
-                  Sí, puedes actualizar o cancelar tu plan en cualquier momento desde tu perfil.
+                  Sí, puedes actualizar o cancelar tu plan en cualquier momento desde tu perfil o el portal de gestión de Stripe.
                 </p>
               </div>
               <div className="p-6 rounded-lg bg-muted">
