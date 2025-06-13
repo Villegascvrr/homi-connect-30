@@ -317,7 +317,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
           
           setApartmentStatus(currentApartmentStatus);
           
-          let occupationType = "other";
+          let occupationType: 'student' | 'professional' | 'entrepreneur' | 'other' = "other";
           if (profileData.ocupacion === "Estudiante") {
             occupationType = "student";
           } else if (profileData.ocupacion === "Profesional") {
@@ -330,7 +330,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
           
           setShowUniversityField(occupationType === "student");
           
-          const formData = {
+          const formData: FormValues = {
             firstName: profileData.first_name || '',
             lastName: profileData.last_name || '',
             username: profileData.username || '',
@@ -338,7 +338,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
             bio: profileData.bio || "",
             age: profileData.edad || "",
             occupation: profileData.ocupacion || "",
-            occupationType: occupationType as any,
+            occupationType: occupationType,
             university: profileData.universidad || "",
             fieldOfStudy: lifestyleData.field_of_study as string || "",
             profileImage: profileData.profile_image || "",
@@ -353,6 +353,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
             room_count: lifestyleData.room_count as string || "",
             room_price: lifestyleData.room_price as string || "",
             apartment_description: lifestyleData.apartment_description as string || "",
+            completed: profileData.completed || false,
             lifestyle: {
               schedule: lifestyleData.schedule as any,
               cleanliness: lifestyleData.cleanliness as any,
@@ -367,8 +368,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
           
         } catch (err) {
           console.error("Error loading profile data:", err);
-          // ... keep existing code (default form reset)
-          const defaultData = {
+          const defaultData: FormValues = {
             firstName: user.user_metadata?.firstName || "",
             lastName: user.user_metadata?.lastName || "",
             username: user.user_metadata?.username || "",
@@ -376,7 +376,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
             bio: "",
             age: "",
             occupation: "",
-            occupationType: "other" as any,
+            occupationType: "other",
             university: "",
             fieldOfStudy: "",
             profileImage: "",
@@ -391,6 +391,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
             room_count: "",
             room_price: "",
             apartment_description: "",
+            completed: false,
             lifestyle: {
               schedule: undefined,
               cleanliness: undefined,
