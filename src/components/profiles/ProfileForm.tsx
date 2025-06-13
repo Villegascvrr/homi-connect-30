@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -42,9 +41,8 @@ const formSchema = z.object({
   sevilla_zona: z.string().optional(),
   companeros_count: z.string().optional(),
   budget: z.string().optional(),
-  apartment_price: z.string().optional(),
+  room_count: z.string().optional(),
   room_price: z.string().optional(),
-  apartment_address: z.string().optional(),
   apartment_description: z.string().optional(),
   completed: z.boolean().default(false),
   lifestyle: z.object({
@@ -92,9 +90,8 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
       sevilla_zona: "",
       companeros_count: "",
       budget: "",
-      apartment_price: "",
+      room_count: "",
       room_price: "",
-      apartment_address: "",
       apartment_description: "",
       completed: false,
       lifestyle: {
@@ -171,6 +168,8 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
             occupationType = "professional";
           } else if (profileData.ocupacion === "Emprendedor") {
             occupationType = "entrepreneur";
+          } else if (profileData.ocupacion === "Otro") {
+            occupationType = "other";
           }
           
           setShowUniversityField(occupationType === "student");
@@ -194,9 +193,8 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
             sevilla_zona: sevilla_zona,
             companeros_count: profileData.companeros_count || "",
             budget: lifestyleData.budget as string || "",
-            apartment_price: lifestyleData.apartment_price as string || "",
+            room_count: lifestyleData.room_count as string || "",
             room_price: lifestyleData.room_price as string || "",
-            apartment_address: lifestyleData.apartment_address as string || "",
             apartment_description: lifestyleData.apartment_description as string || "",
             lifestyle: {
               schedule: lifestyleData.schedule as any,
@@ -228,9 +226,8 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
             sevilla_zona: "",
             companeros_count: "",
             budget: "",
-            apartment_price: "",
+            room_count: "",
             room_price: "",
-            apartment_address: "",
             apartment_description: "",
             lifestyle: {
               schedule: undefined,
@@ -287,9 +284,8 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
         budget: values.budget,
         ciudad: finalCity,
         sevilla_zona: values.ciudad === 'Sevilla' ? values.sevilla_zona : undefined,
-        apartment_price: values.apartment_price,
+        room_count: values.room_count,
         room_price: values.room_price,
-        apartment_address: values.apartment_address,
         apartment_description: values.apartment_description,
       };
       

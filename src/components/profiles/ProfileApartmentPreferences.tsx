@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
-import { MapPin, Users, Euro, Home, DollarSign } from "lucide-react";
+import { MapPin, Users, Euro, Home } from "lucide-react";
 
 // Principales ciudades universitarias de España
 const spanishCities = [
@@ -63,16 +63,8 @@ const budgetRanges = [
   "Más de 700€"
 ];
 
-// Apartment price ranges
-const apartmentPriceRanges = [
-  "Menos de 500€",
-  "500€ - 700€",
-  "700€ - 900€",
-  "900€ - 1200€",
-  "1200€ - 1500€",
-  "1500€ - 2000€",
-  "Más de 2000€"
-];
+// Número de habitaciones options
+const roomCountOptions = ["2", "3", "4", "5", "6+"];
 
 interface ProfileApartmentPreferencesProps {
   form: any;
@@ -285,33 +277,30 @@ const ProfileApartmentPreferences = ({
                 Detalles del piso
               </h3>
               
-              {/* Apartment price */}
+              {/* Number of rooms */}
               <FormField
                 control={form.control}
-                name="apartment_price"
+                name="room_count"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center gap-2">
-                      <DollarSign className="text-homi-purple" size={18} />
-                      Precio total del piso
-                    </FormLabel>
+                    <FormLabel>Número de habitaciones</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       value={field.value || ""}
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Selecciona el rango de precio" />
+                          <SelectValue placeholder="Selecciona el número de habitaciones" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {apartmentPriceRanges.map((range) => (
-                          <SelectItem key={range} value={range}>{range}</SelectItem>
+                        {roomCountOptions.map((count) => (
+                          <SelectItem key={count} value={count}>{count}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                     <FormDescription>
-                      Precio total mensual del alquiler del piso
+                      Número total de habitaciones en el piso
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -339,27 +328,6 @@ const ProfileApartmentPreferences = ({
                 )}
               />
 
-              {/* Apartment address */}
-              <FormField
-                control={form.control}
-                name="apartment_address"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Dirección del piso</FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="ej. Calle Sierpes, 15"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Dirección o zona específica (opcional)
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
               {/* Apartment description */}
               <FormField
                 control={form.control}
@@ -369,7 +337,7 @@ const ProfileApartmentPreferences = ({
                     <FormLabel>Descripción del piso</FormLabel>
                     <FormControl>
                       <Textarea 
-                        placeholder="Describe tu piso: número de habitaciones, baños, características especiales, etc."
+                        placeholder="Describe tu piso: características, ubicación, servicios incluidos, etc."
                         className="min-h-[100px]"
                         {...field}
                       />
