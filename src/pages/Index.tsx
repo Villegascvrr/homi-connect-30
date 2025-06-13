@@ -10,7 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import ProfileCard from '@/components/profiles/ProfileCard';
 import { useAuth } from '@/context/AuthContext';
 import MatchCard from '@/components/matching/MatchCard';
-import { Check, Crown, Star, Zap, Sparkles, Users, Home } from 'lucide-react';
+import { Check, Crown, Star, Zap, Sparkles, Users, Home, Quote, Heart } from 'lucide-react';
 import { useSubscription } from '@/hooks/useSubscription';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -38,8 +38,7 @@ const Index = () => {
     }, {
       id: 3,
       name: 'Estudiante'
-    }],
-    compatibility: 87
+    }]
   }, {
     id: '2',
     name: 'Carlos',
@@ -56,8 +55,7 @@ const Index = () => {
     }, {
       id: 5,
       name: 'Profesional'
-    }],
-    compatibility: 75
+    }]
   }, {
     id: '3',
     name: 'Laurita',
@@ -74,9 +72,78 @@ const Index = () => {
     }, {
       id: 3,
       name: 'Estudiante'
-    }],
-    compatibility: 92
+    }]
   }];
+
+  const successStories = [
+    {
+      id: 1,
+      couple: {
+        person1: {
+          name: 'Ana',
+          age: 24,
+          image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1000'
+        },
+        person2: {
+          name: 'María',
+          age: 23,
+          image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1000'
+        }
+      },
+      story: 'Nos conocimos en HomiMatch y ahora compartimos un increíble piso en el centro de Madrid. ¡La convivencia es perfecta!',
+      location: 'Madrid',
+      matchDate: 'Marzo 2024'
+    },
+    {
+      id: 2,
+      couple: {
+        person1: {
+          name: 'Diego',
+          age: 26,
+          image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000'
+        },
+        person2: {
+          name: 'Alex',
+          age: 25,
+          image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=1000'
+        }
+      },
+      story: 'Encontramos el piso perfecto juntos en Barcelona. HomiMatch nos ayudó a conectar por nuestros horarios similares.',
+      location: 'Barcelona',
+      matchDate: 'Febrero 2024'
+    }
+  ];
+
+  const testimonials = [
+    {
+      id: 1,
+      name: 'Laura S.',
+      age: 22,
+      location: 'Sevilla',
+      rating: 5,
+      comment: 'HomiMatch me ayudó a encontrar a mi compañera de piso ideal. El algoritmo realmente funciona, tenemos gustos muy similares.',
+      image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1000'
+    },
+    {
+      id: 2,
+      name: 'Miguel R.',
+      age: 24,
+      location: 'Valencia',
+      rating: 5,
+      comment: 'Increíble app. En una semana ya tenía varios matches y ahora vivo con dos personas geniales que conocí aquí.',
+      image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=1000'
+    },
+    {
+      id: 3,
+      name: 'Carmen M.',
+      age: 23,
+      location: 'Madrid',
+      rating: 5,
+      comment: 'Lo que más me gusta es que puedes filtrar por estilo de vida. Encontré compañeros que respetan mis horarios de estudio.',
+      image: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=1000'
+    }
+  ];
+
   useEffect(() => {
     const handleScroll = () => {
       const elements = document.querySelectorAll('.animate-on-scroll');
@@ -156,6 +223,7 @@ const Index = () => {
     bgGradient: 'from-yellow-50 to-orange-50',
     borderColor: 'border-yellow-400 hover:border-yellow-500'
   }];
+
   return <div className="min-h-screen flex flex-col overflow-x-hidden w-full">
       <div className="pt-16 w-full">
         <Navbar />
@@ -212,10 +280,102 @@ const Index = () => {
               </p>
             </div>
             
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6 mb-12">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6 mb-16">
               {featuredProfiles.map(profile => <div key={profile.id} className="animate-on-scroll">
                   <MatchCard {...profile} compact={true} onLike={id => console.log('Liked:', id)} onPass={id => console.log('Passed:', id)} onView={id => navigate('/profile')} />
                 </div>)}
+            </div>
+
+            {/* Success Stories Section */}
+            <div className="mb-16">
+              <div className="text-center mb-12">
+                <h3 className="text-2xl font-bold mb-4">
+                  <span className="homi-gradient-text">Historias de éxito</span>
+                </h3>
+                <p className="text-muted-foreground">
+                  Usuarios que se conocieron en HomiMatch y ahora comparten hogar
+                </p>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                {successStories.map(story => (
+                  <Card key={story.id} className="overflow-hidden hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-pink-50 to-purple-50 border-pink-200">
+                    <CardContent className="p-6">
+                      <div className="flex items-center gap-4 mb-4">
+                        <div className="flex -space-x-2">
+                          <img 
+                            src={story.couple.person1.image} 
+                            alt={story.couple.person1.name}
+                            className="w-12 h-12 rounded-full border-2 border-white object-cover"
+                          />
+                          <img 
+                            src={story.couple.person2.image} 
+                            alt={story.couple.person2.name}
+                            className="w-12 h-12 rounded-full border-2 border-white object-cover"
+                          />
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-lg">
+                            {story.couple.person1.name} & {story.couple.person2.name}
+                          </h4>
+                          <p className="text-sm text-muted-foreground">
+                            {story.location} • {story.matchDate}
+                          </p>
+                        </div>
+                        <Heart className="w-5 h-5 text-pink-500 ml-auto" />
+                      </div>
+                      <blockquote className="text-muted-foreground italic">
+                        "{story.story}"
+                      </blockquote>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+
+            {/* Testimonials Section */}
+            <div className="mb-12">
+              <div className="text-center mb-12">
+                <h3 className="text-2xl font-bold mb-4">
+                  Lo que dicen nuestros <span className="homi-gradient-text">usuarios</span>
+                </h3>
+                <p className="text-muted-foreground">
+                  Valoraciones reales de nuestra comunidad
+                </p>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {testimonials.map(testimonial => (
+                  <Card key={testimonial.id} className="hover:shadow-lg transition-all duration-300">
+                    <CardContent className="p-6">
+                      <div className="flex items-center gap-3 mb-4">
+                        <img 
+                          src={testimonial.image} 
+                          alt={testimonial.name}
+                          className="w-12 h-12 rounded-full object-cover"
+                        />
+                        <div>
+                          <h4 className="font-semibold">{testimonial.name}</h4>
+                          <p className="text-sm text-muted-foreground">
+                            {testimonial.age} años • {testimonial.location}
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex gap-1 mb-3">
+                        {[...Array(testimonial.rating)].map((_, i) => (
+                          <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                        ))}
+                      </div>
+                      
+                      <blockquote className="text-muted-foreground text-sm leading-relaxed">
+                        <Quote className="w-4 h-4 inline mr-1 text-gray-400" />
+                        {testimonial.comment}
+                      </blockquote>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
             </div>
             
             <div className="text-center">
