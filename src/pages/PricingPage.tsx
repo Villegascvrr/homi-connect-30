@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -29,7 +28,8 @@ const PricingPage = () => {
       features: [
         'Hasta 20 swipes diarios',
         'Hasta 10 matches diarios', 
-        'Sin filtros personalizados'
+        'Filtros básicos',
+        'Chat integrado'
       ],
       buttonText: 'Usar gratis',
       buttonVariant: 'outline' as const,
@@ -47,8 +47,9 @@ const PricingPage = () => {
       description: 'La experiencia completa',
       features: [
         'Swipes y matches ilimitados',
-        'Filtros personalizados (zona, edad, género, presupuesto...)',
-        'Visibilidad prioritaria en los resultados de búsqueda'
+        'Filtros avanzados (zona, edad, género, presupuesto...)',
+        'Visibilidad prioritaria en los resultados de búsqueda',
+        'Chat integrado'
       ],
       buttonText: 'Hazte PRO',
       buttonVariant: 'default' as const,
@@ -294,7 +295,7 @@ const PricingPage = () => {
                 </p>
               </div>
               <div className="p-6 rounded-lg bg-white/80 backdrop-blur-sm border border-purple-100 shadow-lg">
-                <h3 className="font-semibold mb-2">¿Qué incluyen los filtros personalizados?</h3>
+                <h3 className="font-semibold mb-2">¿Qué incluyen los filtros avanzados?</h3>
                 <p className="text-muted-foreground">
                   Puedes filtrar por zona de Sevilla, rango de edad, género, presupuesto máximo, tipo de vivienda y preferencias de convivencia.
                 </p>
