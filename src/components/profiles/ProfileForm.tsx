@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -65,7 +65,9 @@ interface ProfileFormProps {
 const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const { user, refreshUser } = useAuth();
   const [apartmentStatus, setApartmentStatus] = useState<'looking' | 'have'>('looking');
   const [showUniversityField, setShowUniversityField] = useState(false);
@@ -105,6 +107,124 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
       },
     },
   });
+
+  // Auto-save function
+  const autoSave = useCallback(async (values: FormValues) => {
+    if (!user || isLoading) return;
+    
+    setIsAutoSaving(true);
+    
+    try {
+      // Handle city and zone logic
+      let finalCity = values.ciudad;
+      if (values.ciudad === 'Otro' && values.ciudad_otra) {
+        finalCity = values.ciudad_otra;
+      }
+      
+      // For backwards compatibility, store the location info in sevilla_zona
+      let sevilla_zona_value = "";
+      if (values.apartmentStatus === 'have') {
+        sevilla_zona_value = 'tengo_piso';
+      } else if (finalCity === 'Sevilla' && values.sevilla_zonas && values.sevilla_zonas.length > 0) {
+        sevilla_zona_value = values.sevilla_zonas[0];
+      } else if (finalCity) {
+        sevilla_zona_value = finalCity;
+      }
+      
+      let occupation = values.occupation;
+      if (values.occupationType === "student") {
+        occupation = "Estudiante";
+      } else if (values.occupationType === "professional") {
+        occupation = "Profesional";
+      } else if (values.occupationType === "entrepreneur") {
+        occupation = "Emprendedor";
+      } else if (values.occupationType === "other" && !values.occupation) {
+        occupation = "Otro";
+      }
+      
+      const lifestyle = {
+        ...(values.lifestyle || {}),
+        budget: values.budget,
+        ciudad: finalCity,
+        sevilla_zona: values.ciudad === 'Sevilla' && values.sevilla_zonas && values.sevilla_zonas.length > 0 ? values.sevilla_zonas[0] : undefined,
+        sevilla_zonas: values.sevilla_zonas,
+        room_count: values.room_count,
+        room_price: values.room_price,
+        apartment_description: values.apartment_description,
+        field_of_study: values.fieldOfStudy,
+      };
+      
+      const completed = (values.profileImage && values.firstName && values.age && values.occupation && values.lifestyle) ? true : false;
+
+      const updateData = {
+        first_name: values.firstName,
+        last_name: values.lastName,
+        username: values.username,
+        bio: values.bio || '',
+        edad: values.age || '',
+        ocupacion: occupation || '',
+        universidad: values.university || '',
+        profile_image: values.profileImage || '',
+        interests: values.interests,
+        is_profile_active: values.isProfileActive,
+        sevilla_zona: sevilla_zona_value,
+        completed: completed,
+        companeros_count: values.companeros_count || '',
+        lifestyle: lifestyle,
+        updated_at: new Date().toISOString()
+      };
+      
+      const { error } = await supabase
+        .from('profiles')
+        .update(updateData)
+        .eq('id', user.id);
+        
+      if (error) {
+        throw error;
+      }
+      
+      setHasUnsavedChanges(false);
+      
+      // Refresh user data
+      try {
+        await refreshUser();
+      } catch (refreshError) {
+        console.error("Error refreshing user after auto-save:", refreshError);
+      }
+      
+    } catch (error: any) {
+      console.error("Error auto-saving profile:", error);
+      toast({
+        title: "Error al guardar automáticamente",
+        description: "Los cambios no se pudieron guardar automáticamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsAutoSaving(false);
+    }
+  }, [user, refreshUser, toast, isLoading]);
+
+  // Debounced auto-save
+  useEffect(() => {
+    if (!hasUnsavedChanges) return;
+    
+    const timeoutId = setTimeout(() => {
+      const values = form.getValues();
+      autoSave(values);
+    }, 2000); // Auto-save after 2 seconds of inactivity
+
+    return () => clearTimeout(timeoutId);
+  }, [hasUnsavedChanges, autoSave, form]);
+
+  // Watch for form changes
+  useEffect(() => {
+    const subscription = form.watch(() => {
+      if (!isLoading) {
+        setHasUnsavedChanges(true);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form, isLoading]);
 
   useEffect(() => {
     const occupationType = form.watch("occupationType");
@@ -220,6 +340,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
           
         } catch (err) {
           console.error("Error loading profile data:", err);
+          // ... keep existing code (default form reset)
           form.reset({
             firstName: user.user_metadata?.firstName || "",
             lastName: user.user_metadata?.lastName || "",
@@ -260,121 +381,23 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
   }, [user, form]);
 
   async function onSubmit(values: FormValues) {
-    if (!user) return;
+    await autoSave(values);
     
-    setIsSubmitting(true);
+    toast({
+      title: "Perfil actualizado",
+      description: "Tu información de perfil ha sido guardada.",
+    });
     
-    try {
-      // Handle city and zone logic
-      let finalCity = values.ciudad;
-      if (values.ciudad === 'Otro' && values.ciudad_otra) {
-        finalCity = values.ciudad_otra;
-      }
-      
-      // For backwards compatibility, store the location info in sevilla_zona
-      let sevilla_zona_value = "";
-      if (values.apartmentStatus === 'have') {
-        sevilla_zona_value = 'tengo_piso';
-      } else if (finalCity === 'Sevilla' && values.sevilla_zonas && values.sevilla_zonas.length > 0) {
-        // For backwards compatibility, store the first zone in sevilla_zona
-        sevilla_zona_value = values.sevilla_zonas[0];
-      } else if (finalCity) {
-        sevilla_zona_value = finalCity;
-      }
-      
-      let occupation = values.occupation;
-      if (values.occupationType === "student") {
-        occupation = "Estudiante";
-      } else if (values.occupationType === "professional") {
-        occupation = "Profesional";
-      } else if (values.occupationType === "entrepreneur") {
-        occupation = "Emprendedor";
-      } else if (values.occupationType === "other" && !values.occupation) {
-        occupation = "Otro";
-      }
-      
-      const lifestyle = {
-        ...(values.lifestyle || {}),
-        budget: values.budget,
-        ciudad: finalCity,
-        sevilla_zona: values.ciudad === 'Sevilla' && values.sevilla_zonas && values.sevilla_zonas.length > 0 ? values.sevilla_zonas[0] : undefined,
-        sevilla_zonas: values.sevilla_zonas,
-        room_count: values.room_count,
-        room_price: values.room_price,
-        apartment_description: values.apartment_description,
-        field_of_study: values.fieldOfStudy,
-      };
-      
-      const completed = (values.profileImage && values.firstName && values.age && values.occupation && values.lifestyle) ? true : false;
-
-      const updateData = {
-        first_name: values.firstName,
-        last_name: values.lastName,
-        username: values.username,
-        bio: values.bio || '',
-        edad: values.age || '',
-        ocupacion: occupation || '',
-        universidad: values.university || '',
-        profile_image: values.profileImage || '',
-        interests: values.interests,
-        is_profile_active: values.isProfileActive,
-        sevilla_zona: sevilla_zona_value,
-        completed: completed,
-        companeros_count: values.companeros_count || '',
-        lifestyle: lifestyle,
-        updated_at: new Date().toISOString()
-      };
-      
-      const { data, error } = await supabase
-        .from('profiles')
-        .update(updateData)
-        .eq('id', user.id)
-        .select();
+    if (onSaved) {
+      setTimeout(() => {
+        window.scrollTo({
+          top: 0,
+          left: 0,
+          behavior: 'instant'
+        });
         
-      if (error) {
-        console.error("Error from Supabase:", error);
-        throw error;
-      }
-      
-      try {
-        await refreshUser();
-      } catch (refreshError) {
-        console.error("Error refreshing user after profile update:", refreshError);
-      }
-      
-      toast({
-        title: "Perfil actualizado",
-        description: "Tu información de perfil ha sido guardada.",
-      });
-      
-      try {
-        const { data: sessionData } = await supabase.auth.refreshSession();
-        if (sessionData && sessionData.session) {
-        }
-      } catch (sessionError) {
-        console.error("Error refreshing session after profile update:", sessionError);
-      }
-      
-      if (onSaved) {
-        setTimeout(() => {
-          window.scrollTo({
-            top: 0,
-            left: 0,
-            behavior: 'instant'
-          });
-          
-          onSaved();
-        }, 100);
-      }
-    } catch (error: any) {
-      console.error("Error updating profile:", error);
-      toast({
-        title: "Error al actualizar el perfil",
-        description: error.message || "Ha ocurrido un error al guardar los cambios.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
+        onSaved();
+      }, 100);
     }
   }
 
@@ -407,6 +430,23 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div className="space-y-4">
+          {/* Auto-save indicator */}
+          {(isAutoSaving || hasUnsavedChanges) && (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              {isAutoSaving ? (
+                <>
+                  <div className="animate-spin rounded-full h-3 w-3 border border-homi-purple border-t-transparent"></div>
+                  Guardando automáticamente...
+                </>
+              ) : hasUnsavedChanges ? (
+                <>
+                  <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                  Cambios pendientes (se guardarán automáticamente)
+                </>
+              ) : null}
+            </div>
+          )}
+          
           <div className="mb-4">
             <ProfileStatusToggle 
               isActive={form.watch('isProfileActive')} 
