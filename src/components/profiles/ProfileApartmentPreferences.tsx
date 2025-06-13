@@ -6,7 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
-import { MapPin, Users, Euro, Home } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { MapPin, Users, Euro, Home, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 // Principales ciudades universitarias de España
 const spanishCities = [
@@ -46,6 +48,10 @@ const sevillaZones = [
   "Bellavista - La Palmera",
   "Macarena",
   "Norte",
+  "Viapol",
+  "El Plantinar",
+  "El Juncal",
+  "Gran Plaza",
   "Otro/Alrededores"
 ];
 
@@ -79,6 +85,26 @@ const ProfileApartmentPreferences = ({
 }: ProfileApartmentPreferencesProps) => {
   const selectedCity = form.watch('ciudad');
   const isSevilla = selectedCity === 'Sevilla';
+  const selectedZones = form.watch('sevilla_zonas') || [];
+
+  const handleZoneChange = (zone: string, checked: boolean) => {
+    const currentZones = selectedZones || [];
+    
+    if (checked) {
+      // Add zone if less than 3 are selected
+      if (currentZones.length < 3) {
+        form.setValue('sevilla_zonas', [...currentZones, zone]);
+      }
+    } else {
+      // Remove zone
+      form.setValue('sevilla_zonas', currentZones.filter((z: string) => z !== zone));
+    }
+  };
+
+  const removeZone = (zoneToRemove: string) => {
+    const currentZones = selectedZones || [];
+    form.setValue('sevilla_zonas', currentZones.filter((z: string) => z !== zoneToRemove));
+  };
 
   return (
     <Card className="border-homi-purple/30">
@@ -129,9 +155,9 @@ const ProfileApartmentPreferences = ({
                 <Select 
                   onValueChange={(value) => {
                     field.onChange(value);
-                    // Reset zona when city changes
+                    // Reset zonas when city changes
                     if (value !== 'Sevilla') {
-                      form.setValue('sevilla_zona', '');
+                      form.setValue('sevilla_zonas', []);
                     }
                   }}
                   value={field.value}
@@ -176,27 +202,59 @@ const ProfileApartmentPreferences = ({
           {isSevilla && (
             <FormField
               control={form.control}
-              name="sevilla_zona"
+              name="sevilla_zonas"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>¿En qué zona de Sevilla?</FormLabel>
-                  <Select 
-                    onValueChange={field.onChange}
-                    value={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecciona una zona" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {sevillaZones.map((zone) => (
-                        <SelectItem key={zone} value={zone}>{zone}</SelectItem>
+                  <FormLabel>¿En qué zonas de Sevilla? (máximo 3)</FormLabel>
+                  
+                  {/* Selected zones display */}
+                  {selectedZones.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      {selectedZones.map((zone: string) => (
+                        <div
+                          key={zone}
+                          className="flex items-center gap-1 bg-homi-purple/10 text-homi-purple px-3 py-1 rounded-full text-sm"
+                        >
+                          <span>{zone}</span>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="h-4 w-4 p-0 hover:bg-transparent"
+                            onClick={() => removeZone(zone)}
+                          >
+                            <X size={12} />
+                          </Button>
+                        </div>
                       ))}
-                    </SelectContent>
-                  </Select>
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto">
+                    {sevillaZones.map((zone) => (
+                      <div key={zone} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={zone}
+                          checked={selectedZones.includes(zone)}
+                          onCheckedChange={(checked) => handleZoneChange(zone, !!checked)}
+                          disabled={!selectedZones.includes(zone) && selectedZones.length >= 3}
+                        />
+                        <label
+                          htmlFor={zone}
+                          className={`text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ${
+                            !selectedZones.includes(zone) && selectedZones.length >= 3 
+                              ? 'text-gray-400' 
+                              : 'cursor-pointer'
+                          }`}
+                        >
+                          {zone}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                  
                   <FormDescription>
-                    Especifica la zona de Sevilla para mejorar las coincidencias
+                    Selecciona hasta 3 zonas de Sevilla donde te gustaría vivir o donde está tu piso
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

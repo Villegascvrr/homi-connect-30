@@ -38,7 +38,7 @@ const formSchema = z.object({
   apartmentStatus: z.enum(['looking', 'have']).default('looking'),
   ciudad: z.string().optional(),
   ciudad_otra: z.string().optional(),
-  sevilla_zona: z.string().optional(),
+  sevilla_zonas: z.array(z.string()).default([]),
   companeros_count: z.string().optional(),
   budget: z.string().optional(),
   room_count: z.string().optional(),
@@ -87,7 +87,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
       apartmentStatus: 'looking',
       ciudad: "",
       ciudad_otra: "",
-      sevilla_zona: "",
+      sevilla_zonas: [],
       companeros_count: "",
       budget: "",
       room_count: "",
@@ -131,7 +131,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
           // Extract city and zone information
           let ciudad = "";
           let ciudad_otra = "";
-          let sevilla_zona = "";
+          let sevilla_zonas: string[] = [];
           
           if (profileData.sevilla_zona) {
             // Check if it's the old format (just a zone) or new format
@@ -139,19 +139,28 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
               "Casco Antiguo", "Triana", "Los Remedios", "Nervión", 
               "San Pablo - Santa Justa", "Este - Alcosa - Torreblanca", 
               "Cerro - Amate", "Sur", "Bellavista - La Palmera", 
-              "Macarena", "Norte", "Otro/Alrededores"
+              "Macarena", "Norte", "Viapol", "El Plantinar", "El Juncal", 
+              "Gran Plaza", "Otro/Alrededores"
             ];
             
             if (sevillaZones.includes(profileData.sevilla_zona)) {
               // Old format: it's a Sevilla zone
               ciudad = "Sevilla";
-              sevilla_zona = profileData.sevilla_zona;
+              sevilla_zonas = [profileData.sevilla_zona];
             } else if (profileData.sevilla_zona === 'tengo_piso') {
               currentApartmentStatus = 'have';
               ciudad = "Sevilla"; // Default to Sevilla for backwards compatibility
             } else {
               // It might be a city name
               ciudad = profileData.sevilla_zona;
+            }
+          }
+
+          // Handle new format where sevilla_zonas might be an array
+          if (profileData.sevilla_zonas && Array.isArray(profileData.sevilla_zonas)) {
+            sevilla_zonas = profileData.sevilla_zonas;
+            if (sevilla_zonas.length > 0) {
+              ciudad = "Sevilla";
             }
           }
           
@@ -190,7 +199,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
             apartmentStatus: currentApartmentStatus,
             ciudad: ciudad,
             ciudad_otra: ciudad_otra,
-            sevilla_zona: sevilla_zona,
+            sevilla_zonas: sevilla_zonas,
             companeros_count: profileData.companeros_count || "",
             budget: lifestyleData.budget as string || "",
             room_count: lifestyleData.room_count as string || "",
@@ -223,7 +232,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
             apartmentStatus: 'looking',
             ciudad: "",
             ciudad_otra: "",
-            sevilla_zona: "",
+            sevilla_zonas: [],
             companeros_count: "",
             budget: "",
             room_count: "",
@@ -262,8 +271,9 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
       let sevilla_zona_value = "";
       if (values.apartmentStatus === 'have') {
         sevilla_zona_value = 'tengo_piso';
-      } else if (finalCity === 'Sevilla' && values.sevilla_zona) {
-        sevilla_zona_value = values.sevilla_zona;
+      } else if (finalCity === 'Sevilla' && values.sevilla_zonas && values.sevilla_zonas.length > 0) {
+        // For backwards compatibility, store the first zone in sevilla_zona
+        sevilla_zona_value = values.sevilla_zonas[0];
       } else if (finalCity) {
         sevilla_zona_value = finalCity;
       }
@@ -283,7 +293,8 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
         ...(values.lifestyle || {}),
         budget: values.budget,
         ciudad: finalCity,
-        sevilla_zona: values.ciudad === 'Sevilla' ? values.sevilla_zona : undefined,
+        sevilla_zona: values.ciudad === 'Sevilla' && values.sevilla_zonas && values.sevilla_zonas.length > 0 ? values.sevilla_zonas[0] : undefined,
+        sevilla_zonas: values.sevilla_zonas,
         room_count: values.room_count,
         room_price: values.room_price,
         apartment_description: values.apartment_description,
@@ -303,6 +314,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
         interests: values.interests,
         is_profile_active: values.isProfileActive,
         sevilla_zona: sevilla_zona_value,
+        sevilla_zonas: values.sevilla_zonas,
         completed: completed,
         companeros_count: values.companeros_count || '',
         lifestyle: lifestyle,
