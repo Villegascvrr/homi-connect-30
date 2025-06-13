@@ -1,10 +1,12 @@
+
 import React from 'react';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { MapPin, Users, Euro } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { MapPin, Users, Euro, Home, DollarSign } from "lucide-react";
 
 // Principales ciudades universitarias de España
 const spanishCities = [
@@ -59,6 +61,17 @@ const budgetRanges = [
   "500€ - 600€",
   "600€ - 700€",
   "Más de 700€"
+];
+
+// Apartment price ranges
+const apartmentPriceRanges = [
+  "Menos de 500€",
+  "500€ - 700€",
+  "700€ - 900€",
+  "900€ - 1200€",
+  "1200€ - 1500€",
+  "1500€ - 2000€",
+  "Más de 2000€"
 ];
 
 interface ProfileApartmentPreferencesProps {
@@ -262,6 +275,113 @@ const ProfileApartmentPreferences = ({
                 </FormItem>
               )}
             />
+          )}
+
+          {/* Apartment details - only for those who have an apartment */}
+          {apartmentStatus === 'have' && (
+            <div className="space-y-4 border-t pt-4">
+              <h3 className="text-lg font-medium flex items-center gap-2">
+                <Home className="text-homi-purple" size={18} />
+                Detalles del piso
+              </h3>
+              
+              {/* Apartment price */}
+              <FormField
+                control={form.control}
+                name="apartment_price"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2">
+                      <DollarSign className="text-homi-purple" size={18} />
+                      Precio total del piso
+                    </FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value || ""}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecciona el rango de precio" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {apartmentPriceRanges.map((range) => (
+                          <SelectItem key={range} value={range}>{range}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>
+                      Precio total mensual del alquiler del piso
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Room price */}
+              <FormField
+                control={form.control}
+                name="room_price"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Precio por habitación</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="ej. 300€"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Precio que cobraría cada compañero por su habitación
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Apartment address */}
+              <FormField
+                control={form.control}
+                name="apartment_address"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Dirección del piso</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="ej. Calle Sierpes, 15"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Dirección o zona específica (opcional)
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Apartment description */}
+              <FormField
+                control={form.control}
+                name="apartment_description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Descripción del piso</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        placeholder="Describe tu piso: número de habitaciones, baños, características especiales, etc."
+                        className="min-h-[100px]"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Información adicional que ayude a los posibles compañeros
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           )}
         </div>
       </CardContent>
