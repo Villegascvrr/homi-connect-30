@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Check, Instagram } from 'lucide-react';
+import { Check, Instagram, MessageCircle } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import EmailSignup from './EmailSignup';
 import WelcomeMessage from './WelcomeMessage';
@@ -8,7 +8,6 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { signInWithGoogleOAuth } from '@/integrations/supabase/client';
-
 const Hero = () => {
   const [email, setEmail] = useState('');
   const [showSignupForm, setShowSignupForm] = useState(false);
@@ -25,7 +24,6 @@ const Hero = () => {
   const {
     toast
   } = useToast();
-
   useEffect(() => {
     if (user) {
       const urlParams = new URLSearchParams(window.location.search);
@@ -52,17 +50,14 @@ const Hero = () => {
       setJustLoggedIn(false);
     }
   }, [user, location.search]);
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Subscribed with email:', email);
     setEmail('');
   };
-
   const handleRegisterClick = () => {
     navigate('/register');
   };
-
   const handleGoogleSignIn = async () => {
     try {
       setIsGoogleLoading(true);
@@ -78,7 +73,6 @@ const Hero = () => {
       setIsGoogleLoading(false);
     }
   };
-
   const renderContent = () => {
     if (user && (justRegistered || justLoggedIn)) {
       return <WelcomeMessage firstName={user?.user_metadata?.firstName || user?.user_metadata?.first_name || user?.user_metadata?.name || user?.user_metadata?.full_name} showWelcomeToast={true} isNewUser={justRegistered} />;
@@ -106,7 +100,7 @@ const Hero = () => {
             </Button>
           </div>
           
-          <div className="mt-6 flex justify-center">
+          <div className="mt-6 flex flex-wrap justify-center gap-8">
             <div>
               <p className="text-sm text-muted-foreground mb-3">
                 Síguenos para las últimas novedades:
@@ -114,6 +108,15 @@ const Hero = () => {
               <Button variant="outline" className="rounded-full gap-2 bg-purple-50 text-purple-600 border-purple-200 hover:bg-purple-100 hover:text-purple-700" onClick={() => window.open('https://instagram.com/homimatch', '_blank')}>
                 <Instagram size={18} />
                 @homimatch
+              </Button>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground mb-3">
+                Conecta con otros usuarios:
+              </p>
+              <Button variant="outline" className="rounded-full gap-2 bg-green-50 text-green-600 border-green-200 hover:bg-green-100 hover:text-green-700" onClick={() => window.open('https://chat.whatsapp.com/FPqg8M2kGdm9G49j4YIAMB', '_blank')}>
+                <MessageCircle size={18} />
+                Grupo de WhatsApp
               </Button>
             </div>
           </div>
@@ -155,7 +158,6 @@ const Hero = () => {
         
       </>;
   };
-
   return <section className="relative overflow-hidden w-full lg:py-[30px] py-[5px]">
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-0 left-0 w-64 md:w-96 h-64 md:h-96 bg-homi-ultraLightPurple rounded-full opacity-50 blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
@@ -169,5 +171,4 @@ const Hero = () => {
       </div>
     </section>;
 };
-
 export default Hero;
