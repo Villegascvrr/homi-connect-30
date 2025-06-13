@@ -416,28 +416,6 @@ const ProfileApartmentPreferences = ({
                   </FormItem>
                 )}
               />
-
-              {/* Apartment description */}
-              <FormField
-                control={form.control}
-                name="apartment_description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Descripción del piso</FormLabel>
-                    <FormControl>
-                      <Textarea 
-                        placeholder="Describe tu piso: características, ubicación, servicios incluidos, etc."
-                        className="min-h-[100px]"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Información adicional que ayude a los posibles compañeros
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
             </div>
           )}
         </div>
