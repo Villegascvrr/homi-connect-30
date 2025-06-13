@@ -24,6 +24,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
   enableCropping = false
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const { toast } = useToast();
   const [isUploading, setIsUploading] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -113,17 +114,96 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
     }
   };
 
-  const applyImageCrop = () => {
-    // In a real implementation, we would apply the crop transformation
-    // For now, we'll just use the selected image as-is
-    if (selectedImage) {
-      onChange(selectedImage);
+  const processImageWithCanvas = useCallback((imageSrc: string, scale: number, position: { x: number, y: number }): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        if (!ctx) {
+          reject(new Error('Could not get canvas context'));
+          return;
+        }
+
+        // Set canvas size to a standard profile picture size
+        const outputSize = 400;
+        canvas.width = outputSize;
+        canvas.height = outputSize;
+
+        // Calculate scaled dimensions
+        const scaledWidth = img.width * scale;
+        const scaledHeight = img.height * scale;
+
+        // Calculate the position to center the image with offset
+        const offsetX = (outputSize - scaledWidth) / 2 + position.x;
+        const offsetY = (outputSize - scaledHeight) / 2 + position.y;
+
+        // Fill background with white
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, outputSize, outputSize);
+
+        // Draw the image with transformations
+        ctx.drawImage(
+          img,
+          offsetX,
+          offsetY,
+          scaledWidth,
+          scaledHeight
+        );
+
+        // Convert to blob and then to data URL
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const reader = new FileReader();
+            reader.onload = () => {
+              resolve(reader.result as string);
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+          } else {
+            reject(new Error('Failed to create blob'));
+          }
+        }, 'image/jpeg', 0.9);
+      };
+
+      img.onerror = () => {
+        reject(new Error('Failed to load image'));
+      };
+
+      img.src = imageSrc;
+    });
+  }, []);
+
+  const applyImageCrop = async () => {
+    if (!selectedImage) return;
+
+    try {
+      setIsUploading(true);
+      
+      // Process the image with the current scale and position
+      const processedImageUrl = await processImageWithCanvas(selectedImage, scale, position);
+      
+      onChange(processedImageUrl);
+      
       toast({
         title: "Imagen actualizada",
         description: "Los ajustes de la imagen se han aplicado correctamente"
       });
+      
+      resetCropper();
+    } catch (error) {
+      console.error('Error processing image:', error);
+      toast({
+        title: "Error al procesar la imagen",
+        description: "Hubo un problema al aplicar los ajustes",
+        variant: "destructive"
+      });
+    } finally {
+      setIsUploading(false);
     }
-    resetCropper();
   };
 
   const zoomIn = () => {
@@ -170,6 +250,8 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
         onBlur={onBlur} 
         className="hidden" 
       />
+      
+      <canvas ref={canvasRef} style={{ display: 'none' }} />
       
       <div className="flex flex-col items-center gap-4">
         {value ? (
@@ -276,8 +358,12 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
             </p>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={resetCropper} type="button">Cancelar</Button>
-            <Button onClick={applyImageCrop} type="button">Guardar cambios</Button>
+            <Button variant="outline" onClick={resetCropper} type="button" disabled={isUploading}>
+              Cancelar
+            </Button>
+            <Button onClick={applyImageCrop} type="button" disabled={isUploading}>
+              {isUploading ? "Procesando..." : "Guardar cambios"}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
