@@ -1,4 +1,3 @@
-
 import { User, Users, MessageSquare, Home } from 'lucide-react';
 
 const HowItWorks = () => {
@@ -9,7 +8,7 @@ const HowItWorks = () => {
   }, {
     icon: <Users className="w-8 h-8 text-white" />,
     title: "Encuentra matches",
-    description: "Nuestro algoritmo te mostrará posibles compañeros ordenados por porcentaje de compatibilidad."
+    description: "Nuestro algoritmo te mostrará posibles compañeros compatibles contigo."
   }, {
     icon: <MessageSquare className="w-8 h-8 text-white" />,
     title: "Conecta y conversa",
