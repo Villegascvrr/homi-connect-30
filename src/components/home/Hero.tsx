@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Check, Instagram } from 'lucide-react';
+import { Check, Instagram, CreditCard } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import EmailSignup from './EmailSignup';
 import WelcomeMessage from './WelcomeMessage';
@@ -105,6 +105,12 @@ const Hero = () => {
             <Button size={isMobile ? "default" : "lg"} variant="outline" className="rounded-full w-full sm:w-auto" asChild>
               <Link to="/matching">Explorar perfiles</Link>
             </Button>
+            <Button size={isMobile ? "default" : "lg"} variant="outline" className="rounded-full w-full sm:w-auto flex items-center gap-2" asChild>
+              <Link to="/precios">
+                <CreditCard size={18} />
+                Ver planes
+              </Link>
+            </Button>
           </div>
         </>;
     }
@@ -138,6 +144,12 @@ const Hero = () => {
                 </svg>
                 Acceder con Google
               </>}
+          </Button>
+          <Button size={isMobile ? "default" : "lg"} variant="outline" className="rounded-full w-full sm:w-auto flex items-center gap-2" asChild>
+            <Link to="/precios">
+              <CreditCard size={18} />
+              Ver planes
+            </Link>
           </Button>
         </div>
 
