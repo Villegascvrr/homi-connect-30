@@ -1,3 +1,4 @@
+
 import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
@@ -10,7 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import ProfileCard from '@/components/profiles/ProfileCard';
 import { useAuth } from '@/context/AuthContext';
 import MatchCard from '@/components/matching/MatchCard';
-import { Check, Crown, Star, Zap } from 'lucide-react';
+import { Check, Crown, Star, Zap, Sparkles } from 'lucide-react';
 
 const Index = () => {
   const {
@@ -118,7 +119,9 @@ const Index = () => {
       buttonText: 'Usar gratis',
       buttonVariant: 'outline' as const,
       popular: false,
-      urgent: false
+      urgent: false,
+      bgGradient: 'from-green-50 to-emerald-50',
+      borderColor: 'border-green-200 hover:border-green-300'
     },
     {
       id: 'pro',
@@ -135,7 +138,9 @@ const Index = () => {
       buttonText: 'Hazte PRO',
       buttonVariant: 'default' as const,
       popular: true,
-      urgent: false
+      urgent: false,
+      bgGradient: 'from-purple-50 to-violet-50',
+      borderColor: 'border-homi-purple hover:border-homi-purple/80'
     },
     {
       id: 'founder',
@@ -155,7 +160,9 @@ const Index = () => {
       buttonVariant: 'default' as const,
       popular: false,
       urgent: true,
-      urgentText: 'Solo para los 50 primeros usuarios'
+      urgentText: 'Solo para los 50 primeros usuarios',
+      bgGradient: 'from-yellow-50 to-orange-50',
+      borderColor: 'border-yellow-400 hover:border-yellow-500'
     }
   ];
 
@@ -205,70 +212,111 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Sección de precios con planes visibles */}
-        <section className="py-16 md:py-20 bg-gradient-to-br from-homi-ultraLightPurple to-purple-50 overflow-x-hidden w-full">
-          <div className="container mx-auto px-4 md:px-6">
-            <div className="text-center max-w-3xl mx-auto mb-12 md:mb-16 animate-on-scroll">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Planes diseñados <span className="homi-gradient-text">para ti</span>
+        {/* Sección de precios mejorada visualmente */}
+        <section className="py-20 md:py-28 bg-gradient-to-br from-slate-50 via-white to-purple-50 overflow-x-hidden w-full relative">
+          {/* Decorative elements */}
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-100 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-float"></div>
+            <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-100 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-float" style={{animationDelay: '2s'}}></div>
+          </div>
+          
+          <div className="container mx-auto px-4 md:px-6 relative z-10">
+            <div className="text-center max-w-4xl mx-auto mb-16 md:mb-20 animate-on-scroll">
+              <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full border border-purple-200 mb-6">
+                <Sparkles className="w-4 h-4 text-homi-purple" />
+                <span className="text-sm font-medium text-homi-purple">Planes diseñados para ti</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
+                Elige tu plan perfecto
               </h2>
-              <p className="text-muted-foreground text-lg">
-                Desde gratuito hasta funcionalidades premium. Elige el plan que mejor se adapte a tus necesidades.
+              <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto">
+                Desde gratuito hasta funcionalidades premium. Encuentra compañeros compatibles con el plan que mejor se adapte a ti.
               </p>
             </div>
             
-            {/* Mostrar los planes directamente */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto mb-8">
-              {plans.map((plan) => (
+            {/* Grid de planes mejorado */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6 max-w-6xl mx-auto mb-12">
+              {plans.map((plan, index) => (
                 <Card 
                   key={plan.id} 
-                  className={`relative overflow-hidden transition-all duration-300 hover:shadow-lg ${
-                    plan.popular ? 'border-homi-purple shadow-lg scale-105' : ''
-                  } ${plan.urgent ? 'border-yellow-400 shadow-yellow-100' : ''}`}
+                  className={`relative overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-purple-100/50 group ${
+                    plan.popular ? 'scale-105 shadow-xl border-2 border-homi-purple' : 'hover:scale-105'
+                  } ${plan.urgent ? 'border-2 border-yellow-400 shadow-lg shadow-yellow-100' : plan.borderColor} bg-gradient-to-br ${plan.bgGradient} backdrop-blur-sm`}
+                  style={{
+                    animationDelay: `${index * 100}ms`
+                  }}
                 >
+                  {/* Popular badge mejorado */}
                   {plan.popular && (
-                    <div className="absolute top-0 left-0 right-0 bg-homi-purple text-white text-center py-2 text-sm font-medium">
-                      ✨ Más Popular
+                    <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-homi-purple to-purple-600 text-white text-center py-3 text-sm font-semibold shadow-lg">
+                      <div className="flex items-center justify-center gap-2">
+                        <Star className="w-4 h-4 fill-current" />
+                        Más Popular
+                        <Star className="w-4 h-4 fill-current" />
+                      </div>
                     </div>
                   )}
                   
+                  {/* Urgent badge mejorado */}
                   {plan.urgent && (
-                    <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-yellow-400 to-orange-400 text-black text-center py-2 text-xs font-bold">
-                      ⚠️ {plan.urgentText}
+                    <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 text-black text-center py-3 text-sm font-bold shadow-lg animate-pulse">
+                      <div className="flex items-center justify-center gap-1">
+                        ⚡ {plan.urgentText} ⚡
+                      </div>
                     </div>
                   )}
 
-                  <CardHeader className={`text-center ${plan.popular || plan.urgent ? 'pt-12' : 'pt-6'}`}>
-                    <div className="flex justify-center mb-3">
-                      {plan.icon}
+                  <CardHeader className={`text-center relative ${plan.popular || plan.urgent ? 'pt-16' : 'pt-8'} pb-6`}>
+                    {/* Icon con efecto de glow */}
+                    <div className="flex justify-center mb-4">
+                      <div className="p-3 rounded-full bg-white/80 backdrop-blur-sm shadow-lg group-hover:shadow-xl transition-all duration-300">
+                        {plan.icon}
+                      </div>
                     </div>
-                    <CardTitle className="text-xl font-bold">{plan.name}</CardTitle>
-                    <CardDescription className="text-muted-foreground text-sm">
+                    
+                    <CardTitle className="text-2xl font-bold mb-2 group-hover:text-homi-purple transition-colors duration-300">
+                      {plan.name}
+                    </CardTitle>
+                    <CardDescription className="text-muted-foreground mb-4">
                       {plan.description}
                     </CardDescription>
-                    <div className="mt-3">
-                      <span className="text-3xl font-bold">{plan.price}</span>
-                      {plan.period && <span className="text-muted-foreground text-sm">{plan.period}</span>}
+                    
+                    {/* Precio con mejor styling */}
+                    <div className="mb-6">
+                      <div className="flex items-baseline justify-center gap-1">
+                        <span className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
+                          {plan.price}
+                        </span>
+                        {plan.period && (
+                          <span className="text-muted-foreground text-lg">{plan.period}</span>
+                        )}
+                      </div>
                     </div>
                   </CardHeader>
 
-                  <CardContent className="space-y-4">
-                    <ul className="space-y-2">
+                  <CardContent className="px-6 pb-8">
+                    {/* Lista de características mejorada */}
+                    <ul className="space-y-4 mb-8">
                       {plan.features.map((feature, index) => (
-                        <li key={index} className="flex items-start gap-2">
-                          <Check className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                          <span className="text-sm">{feature}</span>
+                        <li key={index} className="flex items-start gap-3 group/item">
+                          <div className="flex-shrink-0 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mt-0.5 group-hover/item:bg-green-200 transition-colors duration-200">
+                            <Check className="w-3 h-3 text-green-600" />
+                          </div>
+                          <span className="text-sm leading-relaxed group-hover/item:text-slate-700 transition-colors duration-200">
+                            {feature}
+                          </span>
                         </li>
                       ))}
                     </ul>
 
+                    {/* Botón mejorado */}
                     <Button 
-                      className={`w-full mt-4 ${
+                      className={`w-full py-3 font-semibold text-base transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl ${
                         plan.id === 'pro' 
-                          ? 'bg-homi-purple hover:bg-homi-purple/90' 
+                          ? 'bg-gradient-to-r from-homi-purple to-purple-600 hover:from-purple-600 hover:to-homi-purple text-white' 
                           : plan.id === 'founder'
-                          ? 'bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 text-black font-bold'
-                          : ''
+                          ? 'bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 hover:from-yellow-500 hover:via-orange-500 hover:to-red-500 text-black font-bold shadow-yellow-200'
+                          : 'bg-white border-2 border-green-200 text-green-700 hover:bg-green-50 hover:border-green-300'
                       }`}
                       variant={plan.buttonVariant}
                       onClick={() => handlePlanSelect(plan.id)}
@@ -280,12 +328,21 @@ const Index = () => {
               ))}
             </div>
 
+            {/* Call to action mejorado */}
             <div className="text-center">
-              <Link to="/precios">
-                <Button variant="outline" className="rounded-full px-6">
-                  Ver detalles completos
-                </Button>
-              </Link>
+              <div className="inline-flex flex-col items-center gap-4">
+                <p className="text-muted-foreground text-sm">
+                  ¿Necesitas más información?
+                </p>
+                <Link to="/precios">
+                  <Button 
+                    variant="outline" 
+                    className="rounded-full px-8 py-3 bg-white/80 backdrop-blur-sm border-purple-200 text-homi-purple hover:bg-purple-50 hover:border-homi-purple transition-all duration-300 shadow-lg hover:shadow-xl"
+                  >
+                    Ver detalles completos
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
         </section>
