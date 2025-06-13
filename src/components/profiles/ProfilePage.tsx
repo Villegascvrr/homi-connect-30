@@ -183,45 +183,48 @@ const ProfilePage = () => {
     );
   }
 
-  // Helper function to get city and zone display
-  const getLocationDisplay = () => {
+  // Helper function to get apartment status and location display
+  const getLocationAndStatusDisplay = () => {
     const lifestyleData = typeof profile.lifestyle === 'object' && profile.lifestyle !== null
       ? profile.lifestyle
       : {};
     
-    // Check if we have new format data
-    if (lifestyleData.ciudad) {
-      let cityText = lifestyleData.ciudad;
-      if (lifestyleData.ciudad === 'Sevilla' && lifestyleData.sevilla_zona) {
-        cityText += ` - ${lifestyleData.sevilla_zona}`;
-      }
-      return cityText;
+    let status = 'Buscando piso';
+    let location = 'No especificado';
+    
+    // Determine apartment status
+    if (profile.sevilla_zona === 'tengo_piso') {
+      status = 'Ya tiene piso';
     }
     
-    // Backwards compatibility: check sevilla_zona field
-    if (profile.sevilla_zona) {
-      if (profile.sevilla_zona === 'tengo_piso') {
-        return 'Ya tiene piso';
+    // Get location information
+    if (lifestyleData.ciudad) {
+      location = lifestyleData.ciudad;
+      // If it's Sevilla and has zones, show them
+      if (lifestyleData.ciudad === 'Sevilla' && lifestyleData.sevilla_zonas && Array.isArray(lifestyleData.sevilla_zonas) && lifestyleData.sevilla_zonas.length > 0) {
+        location += ` (${lifestyleData.sevilla_zonas.join(', ')})`;
       }
-      
-      // Check if it's a Sevilla zone
+    } else if (profile.sevilla_zona && profile.sevilla_zona !== 'tengo_piso') {
+      // Backwards compatibility: check sevilla_zona field
       const sevillaZones = [
         "Casco Antiguo", "Triana", "Los Remedios", "Nervión", 
         "San Pablo - Santa Justa", "Este - Alcosa - Torreblanca", 
         "Cerro - Amate", "Sur", "Bellavista - La Palmera", 
-        "Macarena", "Norte", "Otro/Alrededores"
+        "Macarena", "Norte", "Viapol", "El Plantinar", "El Juncal", 
+        "Gran Plaza", "Otro/Alrededores"
       ];
       
       if (sevillaZones.includes(profile.sevilla_zona)) {
-        return `Sevilla - ${profile.sevilla_zona}`;
+        location = `Sevilla (${profile.sevilla_zona})`;
+      } else {
+        location = profile.sevilla_zona;
       }
-      
-      // It's probably a city name
-      return profile.sevilla_zona;
     }
     
-    return 'No especificado';
+    return { status, location };
   };
+
+  const { status: apartmentStatus, location } = getLocationAndStatusDisplay();
 
   const requiredFields = ['first_name', 'last_name', 'username', 'bio', 'edad', 'profile_image', 'interests'];
   const completedFields = requiredFields.filter(field => {
@@ -387,13 +390,23 @@ const ProfilePage = () => {
                 </Card>
 
                 <Card className="mt-4 p-4">
-                  <h3 className="font-medium text-sm mb-2 flex items-center gap-1">
+                  <h3 className="font-medium text-sm mb-3 flex items-center gap-1">
                     <Heart size={16} className="text-homi-purple" /> Estado de búsqueda
                   </h3>
-                  <div className="text-sm">
-                    <p className="mb-1">Ubicación: <span className="font-medium">{getLocationDisplay()}</span></p>
+                  <div className="text-sm space-y-2">
+                    <div>
+                      <span className="text-muted-foreground">Estado:</span>
+                      <p className="font-medium">{apartmentStatus}</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Ubicación:</span>
+                      <p className="font-medium">{location}</p>
+                    </div>
                     {profile.companeros_count && (
-                      <p>Compañeros: <span className="font-medium">{profile.companeros_count}</span></p>
+                      <div>
+                        <span className="text-muted-foreground">Compañeros:</span>
+                        <p className="font-medium">{profile.companeros_count}</p>
+                      </div>
                     )}
                   </div>
                 </Card>
@@ -421,6 +434,11 @@ const ProfilePage = () => {
                       <div>
                         <p className="text-sm text-muted-foreground">Universidad</p>
                         <p className="font-medium">{profile.universidad || 'No especificado'}</p>
+                        {lifestyleData.field_of_study && (
+                          <p className="text-sm text-muted-foreground mt-1">
+                            Estudios: {lifestyleData.field_of_study}
+                          </p>
+                        )}
                       </div>
                     </div>
                     
@@ -474,8 +492,12 @@ const ProfilePage = () => {
                     </h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
+                        <p className="text-sm text-muted-foreground">Estado</p>
+                        <p className="font-medium">{apartmentStatus}</p>
+                      </div>
+                      <div>
                         <p className="text-sm text-muted-foreground">Ubicación</p>
-                        <p className="font-medium">{getLocationDisplay()}</p>
+                        <p className="font-medium">{location}</p>
                       </div>
                       <div>
                         <p className="text-sm text-muted-foreground">Compañeros</p>
@@ -487,7 +509,25 @@ const ProfilePage = () => {
                           <p className="font-medium">{lifestyleData.budget}</p>
                         </div>
                       )}
+                      {lifestyleData.room_count && apartmentStatus === 'Ya tiene piso' && (
+                        <div>
+                          <p className="text-sm text-muted-foreground">Habitaciones</p>
+                          <p className="font-medium">{lifestyleData.room_count}</p>
+                        </div>
+                      )}
+                      {lifestyleData.room_price && apartmentStatus === 'Ya tiene piso' && (
+                        <div>
+                          <p className="text-sm text-muted-foreground">Precio por habitación</p>
+                          <p className="font-medium">{lifestyleData.room_price}</p>
+                        </div>
+                      )}
                     </div>
+                    {lifestyleData.apartment_description && apartmentStatus === 'Ya tiene piso' && (
+                      <div className="mt-4">
+                        <p className="text-sm text-muted-foreground">Descripción del piso</p>
+                        <p className="font-medium bg-gray-50 p-3 rounded-md">{lifestyleData.apartment_description}</p>
+                      </div>
+                    )}
                   </div>
                   
                   <div>
