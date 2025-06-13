@@ -29,7 +29,7 @@ const HowItWorksPage = () => {
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-10">
               Homi es la plataforma que te ayuda a encontrar compañeros de piso 
-              que encajan perfectamente con tu estilo de vida y preferencias.
+              que encajan perfectamente con tu estilo de vida y preferencias en múltiples ciudades.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Button asChild size="lg" className="rounded-full bg-homi-purple hover:bg-homi-purple/90">

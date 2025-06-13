@@ -10,7 +10,7 @@ const DevelopmentBanner = () => {
             <Info size={16} className="text-white" />
           </div>
           <p className="text-xs sm:text-sm font-medium">
-            <span className="font-bold">¡HomiMatch ya está disponible en Sevilla!</span> Encuentra tu compañero de piso ideal ahora.
+            <span className="font-bold">¡HomiMatch ya está disponible!</span> Encuentra tu compañero de piso ideal en tu ciudad.
           </p>
         </div>
       </div>
