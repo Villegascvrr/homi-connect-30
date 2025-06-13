@@ -154,19 +154,15 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
           scaledHeight
         );
 
-        // Convert to blob and then to data URL
-        canvas.toBlob((blob) => {
-          if (blob) {
-            const reader = new FileReader();
-            reader.onload = () => {
-              resolve(reader.result as string);
-            };
-            reader.onerror = reject;
-            reader.readAsDataURL(blob);
-          } else {
-            reject(new Error('Failed to create blob'));
-          }
-        }, 'image/jpeg', 0.9);
+        // Convert to data URL directly (more reliable than blob)
+        try {
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+          console.log('Processed image data URL length:', dataUrl.length);
+          resolve(dataUrl);
+        } catch (error) {
+          console.error('Error converting canvas to data URL:', error);
+          reject(error);
+        }
       };
 
       img.onerror = () => {
@@ -182,11 +178,19 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
 
     try {
       setIsUploading(true);
+      console.log('Starting image processing with scale:', scale, 'position:', position);
       
       // Process the image with the current scale and position
       const processedImageUrl = await processImageWithCanvas(selectedImage, scale, position);
+      console.log('Image processed successfully, calling onChange...');
       
+      // Ensure the onChange is called with the processed image
       onChange(processedImageUrl);
+      
+      // Force a small delay to ensure the change is propagated
+      setTimeout(() => {
+        console.log('Image change should be applied now');
+      }, 100);
       
       toast({
         title: "Imagen actualizada",
