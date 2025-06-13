@@ -103,7 +103,6 @@ serve(async (req) => {
       billing_address_collection: 'auto',
       // Custom checkout page configuration
       locale: 'es', // Spanish locale
-      allow_promotion_codes: true, // Enable promo codes
       // Additional customization options
       custom_text: {
         submit: {
