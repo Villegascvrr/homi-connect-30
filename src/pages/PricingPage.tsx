@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,72 +8,61 @@ import Footer from '@/components/layout/Footer';
 import { useAuth } from '@/context/AuthContext';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useToast } from '@/hooks/use-toast';
-
 const PricingPage = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const { subscriptionInfo, loading, createCheckout, openCustomerPortal } = useSubscription();
-  const { toast } = useToast();
+  const {
+    user
+  } = useAuth();
+  const {
+    subscriptionInfo,
+    loading,
+    createCheckout,
+    openCustomerPortal
+  } = useSubscription();
+  const {
+    toast
+  } = useToast();
   const [searchParams] = useSearchParams();
   const selectedPlan = searchParams.get('plan');
-
-  const plans = [
-    {
-      id: 'free',
-      name: 'Plan Gratuito',
-      price: 'Gratis',
-      period: '',
-      icon: <Zap className="w-8 h-8 text-green-500" />,
-      description: 'Perfecto para empezar a conectar',
-      features: [
-        'Hasta 20 swipes diarios',
-        'Hasta 10 matches diarios',
-        'Sin filtros personalizados'
-      ],
-      buttonText: 'Usar gratis',
-      buttonVariant: 'outline' as const,
-      popular: false,
-      urgent: false
-    },
-    {
-      id: 'pro',
-      name: 'Plan PRO',
-      price: '4,99€',
-      period: '/mes',
-      icon: <Star className="w-8 h-8 text-homi-purple" />,
-      description: 'La experiencia completa de HomiMatch',
-      features: [
-        'Swipes y matches ilimitados',
-        'Filtros personalizados (zona, edad, género, presupuesto...)',
-        'Visibilidad prioritaria en los resultados de búsqueda'
-      ],
-      buttonText: 'Hazte PRO',
-      buttonVariant: 'default' as const,
-      popular: true,
-      urgent: false
-    },
-    {
-      id: 'founder',
-      name: 'Plan Fundador',
-      price: '24,99€',
-      originalPrice: '59,99€',
-      period: '/año',
-      icon: <Crown className="w-8 h-8 text-yellow-500" />,
-      description: 'Acceso exclusivo para los primeros usuarios',
-      features: [
-        'Incluye todas las ventajas del Plan PRO',
-        'Distintivo visual especial en el perfil',
-        'Acceso anticipado a funcionalidades futuras',
-        'Prioridad en soporte y feedback directo con el equipo'
-      ],
-      buttonText: 'Quiero ser Fundador',
-      buttonVariant: 'default' as const,
-      popular: false,
-      urgent: true,
-      urgentText: 'Solo para los 50 primeros usuarios'
-    }
-  ];
-
+  const plans = [{
+    id: 'free',
+    name: 'Plan Gratuito',
+    price: 'Gratis',
+    period: '',
+    icon: <Zap className="w-8 h-8 text-green-500" />,
+    description: 'Perfecto para empezar a conectar',
+    features: ['Hasta 20 swipes diarios', 'Hasta 10 matches diarios', 'Sin filtros personalizados'],
+    buttonText: 'Usar gratis',
+    buttonVariant: 'outline' as const,
+    popular: false,
+    urgent: false
+  }, {
+    id: 'pro',
+    name: 'Plan PRO',
+    price: '4,99€',
+    period: '/mes',
+    icon: <Star className="w-8 h-8 text-homi-purple" />,
+    description: 'La experiencia completa de HomiMatch',
+    features: ['Swipes y matches ilimitados', 'Filtros personalizados (zona, edad, género, presupuesto...)', 'Visibilidad prioritaria en los resultados de búsqueda'],
+    buttonText: 'Hazte PRO',
+    buttonVariant: 'default' as const,
+    popular: true,
+    urgent: false
+  }, {
+    id: 'founder',
+    name: 'Plan Fundador',
+    price: '24,99€',
+    originalPrice: '59,99€',
+    period: '/año',
+    icon: <Crown className="w-8 h-8 text-yellow-500" />,
+    description: 'Acceso exclusivo para los primeros usuarios',
+    features: ['Incluye todas las ventajas del Plan PRO', 'Distintivo visual especial en el perfil', 'Acceso anticipado a funcionalidades futuras', 'Prioridad en soporte y feedback directo con el equipo'],
+    buttonText: 'Quiero ser Fundador',
+    buttonVariant: 'default' as const,
+    popular: false,
+    urgent: true,
+    urgentText: 'Solo para los 50 primeros usuarios'
+  }];
   const handlePlanSelect = async (planId: string) => {
     if (planId === 'free') {
       if (user) {
@@ -84,28 +72,23 @@ const PricingPage = () => {
       }
       return;
     }
-
     if (!user) {
       toast({
         title: "Inicia sesión",
-        description: "Necesitas una cuenta para suscribirte a un plan premium",
+        description: "Necesitas una cuenta para suscribirte a un plan premium"
       });
       navigate('/register');
       return;
     }
-
     await createCheckout(planId);
   };
-
   const isCurrentPlan = (planId: string) => {
     if (planId === 'free') return !subscriptionInfo.subscribed;
     if (planId === 'pro') return subscriptionInfo.subscription_tier === 'PRO';
     if (planId === 'founder') return subscriptionInfo.subscription_tier === 'Fundador';
     return false;
   };
-
-  return (
-    <div className="min-h-screen flex flex-col">
+  return <div className="min-h-screen flex flex-col">
       <div className="pt-16">
         <Navbar />
       </div>
@@ -115,7 +98,7 @@ const PricingPage = () => {
           {/* Header */}
           <div className="text-center max-w-3xl mx-auto mb-12 md:mb-16">
             <h1 className="text-3xl md:text-5xl font-bold mb-6">
-              Elige el plan perfecto para <span className="homi-gradient-text">encontrar tu hogar</span>
+              Elige el plan perfecto para <span className="homi-gradient-text">encontrar lo que buscas</span>
             </h1>
             <p className="text-muted-foreground text-lg md:text-xl">
               Encuentra compañeros de piso compatibles con el plan que mejor se adapte a tus necesidades
@@ -123,56 +106,32 @@ const PricingPage = () => {
           </div>
 
           {/* Subscription Status */}
-          {user && subscriptionInfo.subscribed && (
-            <div className="max-w-md mx-auto mb-8 p-4 bg-green-50 border border-green-200 rounded-lg text-center">
+          {user && subscriptionInfo.subscribed && <div className="max-w-md mx-auto mb-8 p-4 bg-green-50 border border-green-200 rounded-lg text-center">
               <div className="text-green-700 font-medium">
                 Plan actual: {subscriptionInfo.subscription_tier}
               </div>
-              {subscriptionInfo.subscription_end && (
-                <div className="text-green-600 text-sm mt-1">
+              {subscriptionInfo.subscription_end && <div className="text-green-600 text-sm mt-1">
                   Válido hasta: {new Date(subscriptionInfo.subscription_end).toLocaleDateString('es-ES')}
-                </div>
-              )}
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="mt-2"
-                onClick={openCustomerPortal}
-                disabled={loading}
-              >
+                </div>}
+              <Button variant="outline" size="sm" className="mt-2" onClick={openCustomerPortal} disabled={loading}>
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Gestionar suscripción"}
               </Button>
-            </div>
-          )}
+            </div>}
 
           {/* Planes */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto">
-            {plans.map((plan) => (
-              <Card 
-                key={plan.id} 
-                className={`relative overflow-hidden transition-all duration-300 hover:shadow-lg ${
-                  plan.popular ? 'border-homi-purple shadow-lg scale-105' : ''
-                } ${plan.urgent ? 'border-yellow-400 shadow-yellow-100' : ''} ${
-                  isCurrentPlan(plan.id) ? 'ring-2 ring-green-500 bg-green-50' : ''
-                }`}
-              >
-                {plan.popular && (
-                  <div className="absolute top-0 left-0 right-0 bg-homi-purple text-white text-center py-2 text-sm font-medium">
+            {plans.map(plan => <Card key={plan.id} className={`relative overflow-hidden transition-all duration-300 hover:shadow-lg ${plan.popular ? 'border-homi-purple shadow-lg scale-105' : ''} ${plan.urgent ? 'border-yellow-400 shadow-yellow-100' : ''} ${isCurrentPlan(plan.id) ? 'ring-2 ring-green-500 bg-green-50' : ''}`}>
+                {plan.popular && <div className="absolute top-0 left-0 right-0 bg-homi-purple text-white text-center py-2 text-sm font-medium">
                     ✨ Más Popular
-                  </div>
-                )}
+                  </div>}
                 
-                {plan.urgent && (
-                  <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-yellow-400 to-orange-400 text-black text-center py-2 text-sm font-bold">
+                {plan.urgent && <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-yellow-400 to-orange-400 text-black text-center py-2 text-sm font-bold">
                     ⚠️ {plan.urgentText}
-                  </div>
-                )}
+                  </div>}
 
-                {isCurrentPlan(plan.id) && (
-                  <div className="absolute top-0 left-0 right-0 bg-green-500 text-white text-center py-2 text-sm font-medium">
+                {isCurrentPlan(plan.id) && <div className="absolute top-0 left-0 right-0 bg-green-500 text-white text-center py-2 text-sm font-medium">
                     ✅ Tu Plan Actual
-                  </div>
-                )}
+                  </div>}
 
                 <CardHeader className={`text-center ${plan.popular || plan.urgent || isCurrentPlan(plan.id) ? 'pt-12' : 'pt-6'}`}>
                   <div className="flex justify-center mb-4">
@@ -183,8 +142,7 @@ const PricingPage = () => {
                     {plan.description}
                   </CardDescription>
                   <div className="mt-4">
-                    {plan.originalPrice ? (
-                      <div className="flex flex-col items-center gap-1">
+                    {plan.originalPrice ? <div className="flex flex-col items-center gap-1">
                         <div className="flex items-baseline justify-center gap-1 text-muted-foreground">
                           <span className="text-lg line-through">
                             {plan.originalPrice}
@@ -195,46 +153,27 @@ const PricingPage = () => {
                           <span className="text-4xl font-bold">{plan.price}</span>
                           <span className="text-muted-foreground">{plan.period}</span>
                         </div>
-                      </div>
-                    ) : (
-                      <div>
+                      </div> : <div>
                         <span className="text-4xl font-bold">{plan.price}</span>
                         {plan.period && <span className="text-muted-foreground">{plan.period}</span>}
-                      </div>
-                    )}
+                      </div>}
                   </div>
                 </CardHeader>
 
                 <CardContent className="space-y-4">
                   <ul className="space-y-3">
-                    {plan.features.map((feature, index) => (
-                      <li key={index} className="flex items-start gap-3">
+                    {plan.features.map((feature, index) => <li key={index} className="flex items-start gap-3">
                         <Check className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
                         <span className="text-sm">{feature}</span>
-                      </li>
-                    ))}
+                      </li>)}
                   </ul>
 
-                  <Button 
-                    className={`w-full mt-6 ${
-                      plan.id === 'pro' 
-                        ? 'bg-homi-purple hover:bg-homi-purple/90' 
-                        : plan.id === 'founder'
-                        ? 'bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 text-black font-bold'
-                        : ''
-                    }`}
-                    variant={plan.buttonVariant}
-                    onClick={() => handlePlanSelect(plan.id)}
-                    disabled={loading || isCurrentPlan(plan.id)}
-                  >
-                    {loading ? (
-                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                    ) : null}
+                  <Button className={`w-full mt-6 ${plan.id === 'pro' ? 'bg-homi-purple hover:bg-homi-purple/90' : plan.id === 'founder' ? 'bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 text-black font-bold' : ''}`} variant={plan.buttonVariant} onClick={() => handlePlanSelect(plan.id)} disabled={loading || isCurrentPlan(plan.id)}>
+                    {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                     {isCurrentPlan(plan.id) ? 'Plan Actual' : plan.buttonText}
                   </Button>
                 </CardContent>
-              </Card>
-            ))}
+              </Card>)}
           </div>
 
           {/* FAQ Section */}
@@ -267,8 +206,6 @@ const PricingPage = () => {
       </main>
       
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default PricingPage;
