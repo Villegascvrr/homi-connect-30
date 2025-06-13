@@ -351,7 +351,7 @@ const Index = () => {
     period: '',
     icon: <Zap className="w-6 h-6 text-green-500" />,
     description: 'Perfecto para empezar',
-    features: ['Hasta 20 swipes diarios', 'Hasta 10 matches diarios', 'Sin filtros personalizados'],
+    features: ['Hasta 20 swipes diarios', 'Hasta 10 matches diarios', 'Filtros básicos', 'Chat integrado'],
     buttonText: 'Usar gratis',
     buttonVariant: 'outline' as const,
     popular: false,
