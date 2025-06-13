@@ -23,6 +23,7 @@ const Index = () => {
   const {
     createCheckout
   } = useSubscription();
+  
   const featuredProfiles = [{
     id: '1',
     name: 'Elenita',
@@ -96,9 +97,8 @@ const Index = () => {
       },
       story: 'Nos conocimos en HomiMatch y ahora compartimos un increíble piso en el centro de Madrid. ¡La convivencia es perfecta!',
       location: 'Madrid',
-      matchDate: 'Marzo 2024',
       rating: 5,
-      testimonial: 'HomiMatch cambió mi vida. Encontré no solo una compañera de piso, sino una gran amiga.'
+      testimonial: 'HomiMatch cambió mi vida completamente. No solo encontré una compañera de piso, sino una hermana. Vivimos en armonía total y nos apoyamos en todo.'
     },
     {
       id: 2,
@@ -116,9 +116,8 @@ const Index = () => {
       },
       story: 'Encontramos el piso perfecto juntos en Barcelona. HomiMatch nos ayudó a conectar por nuestros horarios similares.',
       location: 'Barcelona',
-      matchDate: 'Febrero 2024',
       rating: 5,
-      testimonial: 'El algoritmo realmente funciona. Tenemos estilos de vida muy compatibles y la convivencia es genial.'
+      testimonial: 'El algoritmo de HomiMatch es increíble. Diego y yo tenemos estilos de vida muy compatibles, trabajamos desde casa y respetamos nuestros espacios. ¡Perfecto!'
     },
     {
       id: 3,
@@ -136,9 +135,8 @@ const Index = () => {
       },
       story: 'Estudiantes de medicina que se conocieron en HomiMatch. Ahora compartimos apartamento cerca de la universidad.',
       location: 'Valencia',
-      matchDate: 'Enero 2024',
       rating: 5,
-      testimonial: 'Perfecto para estudiantes. Encontramos compañeras que respetan nuestros horarios de estudio.'
+      testimonial: 'Como estudiantes de medicina, necesitábamos compañeras que entendieran nuestros horarios de estudio. Carmen es la compañera perfecta, estudiamos juntas y nos motivamos.'
     },
     {
       id: 4,
@@ -156,9 +154,8 @@ const Index = () => {
       },
       story: 'Profesionales que se mudaron por trabajo y encontraron el hogar perfecto juntos en Sevilla.',
       location: 'Sevilla',
-      matchDate: 'Abril 2024',
       rating: 5,
-      testimonial: 'Como profesional que se mudó por trabajo, HomiMatch me facilitó encontrar un hogar en una ciudad nueva.'
+      testimonial: 'Me mudé a Sevilla por trabajo sin conocer a nadie. Gracias a HomiMatch encontré a Miguel, ahora somos como hermanos y Sevilla se siente como hogar.'
     },
     {
       id: 5,
@@ -176,9 +173,8 @@ const Index = () => {
       },
       story: 'Se conocieron en HomiMatch y ahora viven en un apartamento increíble en Bilbao. La amistad que formaron es para toda la vida.',
       location: 'Bilbao',
-      matchDate: 'Mayo 2024',
       rating: 5,
-      testimonial: 'No solo encontré piso, sino que hice una amiga para toda la vida. La app es increíble.'
+      testimonial: 'Nunca pensé que una app para encontrar piso me daría una amiga para toda la vida. Sofía y yo conectamos desde el primer día, compartimos todo.'
     },
     {
       id: 6,
@@ -196,9 +192,46 @@ const Index = () => {
       },
       story: 'Dos desarrolladores que se conectaron por su amor a la tecnología. Ahora comparten piso y proyectos en Zaragoza.',
       location: 'Zaragoza',
-      matchDate: 'Marzo 2024',
       rating: 5,
-      testimonial: 'Encontramos compañeros con intereses similares. Compartimos tanto el piso como la pasión por la tecnología.'
+      testimonial: 'Encontrar a Javier fue como ganar la lotería. Compartimos la pasión por la programación, trabajamos juntos en proyectos y vivimos en perfecta armonía.'
+    },
+    {
+      id: 7,
+      couple: {
+        person1: {
+          name: 'Elena',
+          age: 22,
+          image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1000'
+        },
+        person2: {
+          name: 'Cristina',
+          age: 24,
+          image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1000'
+        }
+      },
+      story: 'Artistas que se conocieron por su amor al arte y la creatividad. Ahora comparten un estudio-hogar en Granada.',
+      location: 'Granada',
+      rating: 5,
+      testimonial: 'Cristina y yo somos almas gemelas creativas. Nuestro piso es nuestro santuario artístico donde creamos, inspiramos y vivimos nuestros sueños juntas.'
+    },
+    {
+      id: 8,
+      couple: {
+        person1: {
+          name: 'Pablo',
+          age: 26,
+          image: 'https://images.unsplash.com/photo-1500648741775-53994a69daeb?q=80&w=1000'
+        },
+        person2: {
+          name: 'Marcos',
+          age: 28,
+          image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=1000'
+        }
+      },
+      story: 'Deportistas que compartían la pasión por el fitness y encontraron el compañero perfecto en Málaga.',
+      location: 'Málaga',
+      rating: 5,
+      testimonial: 'Marcos es el compañero de piso ideal. Entrenamos juntos, cocinamos saludable y nos motivamos mutuamente. HomiMatch acertó al 100% con nosotros.'
     }
   ];
 
@@ -461,7 +494,7 @@ const Index = () => {
                                   {story.couple.person1.name} & {story.couple.person2.name}
                                 </h4>
                                 <p className="text-sm text-muted-foreground">
-                                  {story.location} • {story.matchDate}
+                                  {story.location}
                                 </p>
                               </div>
                               <Heart className="w-5 h-5 text-pink-500" />
