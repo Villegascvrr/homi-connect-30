@@ -158,19 +158,20 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
             }
           }
 
-          // Handle new format where sevilla_zonas might be an array (if it exists)
-          if (profileData.sevilla_zonas && Array.isArray(profileData.sevilla_zonas)) {
-            sevilla_zonas = profileData.sevilla_zonas;
+          // Handle new format where sevilla_zonas might be stored in lifestyle
+          const lifestyleData = typeof profileData.lifestyle === 'object' && profileData.lifestyle !== null
+            ? profileData.lifestyle as Record<string, unknown>
+            : {};
+          
+          // Check if sevilla_zonas is stored in lifestyle object
+          if (lifestyleData.sevilla_zonas && Array.isArray(lifestyleData.sevilla_zonas)) {
+            sevilla_zonas = lifestyleData.sevilla_zonas as string[];
             if (sevilla_zonas.length > 0) {
               ciudad = "Sevilla";
             }
           }
           
           setApartmentStatus(currentApartmentStatus);
-          
-          const lifestyleData = typeof profileData.lifestyle === 'object' && profileData.lifestyle !== null
-            ? profileData.lifestyle as Record<string, unknown>
-            : {};
           
           let occupationType = "other";
           if (profileData.ocupacion === "Estudiante") {
