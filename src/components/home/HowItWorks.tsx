@@ -21,7 +21,7 @@ const HowItWorks = () => {
   }];
   
   return (
-    <section className="py-[27px] bg-gradient-to-br from-slate-50 via-white to-gray-50 relative overflow-hidden">
+    <section className="py-[27px] bg-gradient-to-br from-purple-100 via-purple-50 to-homi-ultraLightPurple relative overflow-hidden">
       {/* Modern decorative background elements */}
       <div className="absolute inset-0">
         <div className="absolute top-20 left-10 w-40 h-40 bg-gradient-to-br from-homi-purple/5 to-purple-200/10 rounded-full blur-3xl"></div>
