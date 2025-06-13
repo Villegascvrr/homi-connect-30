@@ -112,6 +112,12 @@ const ProfileApartmentPreferences = ({
 
   const maxZones = apartmentStatus === 'have' ? 1 : 3;
 
+  const handlePriceChange = (value: string) => {
+    // Remove any non-numeric characters
+    const numericValue = value.replace(/\D/g, '');
+    form.setValue('room_price', numericValue);
+  };
+
   return (
     <Card className="border-homi-purple/30">
       <CardHeader className="pb-3">
@@ -395,12 +401,16 @@ const ProfileApartmentPreferences = ({
                     <FormLabel>Precio por habitación</FormLabel>
                     <FormControl>
                       <Input 
-                        placeholder="ej. 300€"
-                        {...field}
+                        placeholder="300"
+                        value={field.value || ""}
+                        onChange={(e) => handlePriceChange(e.target.value)}
+                        leftIcon={<Euro size={16} />}
+                        inputMode="numeric"
+                        pattern="[0-9]*"
                       />
                     </FormControl>
                     <FormDescription>
-                      Precio que cobraría cada compañero por su habitación
+                      Precio en euros que cobraría cada compañero por su habitación
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
