@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Check, Instagram, CreditCard } from 'lucide-react';
@@ -113,7 +114,7 @@ const Hero = () => {
     }
     return <>
         <div className="inline-block px-4 py-1.5 mb-1 md:mb-2 rounded-full bg-homi-ultraLightPurple text-homi-purple text-xs md:text-sm font-medium animate-pulse-soft">
-          ¡Ya disponible en Sevilla!
+          ¡Ya disponible en todas las ciudades universitarias!
         </div>
         
         <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6 animate-slide-up leading-tight px-2 my-0">
