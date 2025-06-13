@@ -32,6 +32,7 @@ const formSchema = z.object({
   occupation: z.string().optional(),
   occupationType: z.enum(['student', 'professional', 'entrepreneur', 'other']).optional(),
   university: z.string().optional(),
+  fieldOfStudy: z.string().optional(),
   profileImage: z.string().optional(),
   interests: z.array(z.string()).default([]),
   isProfileActive: z.boolean().default(true),
@@ -81,6 +82,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
       occupation: "",
       occupationType: undefined,
       university: "",
+      fieldOfStudy: "",
       profileImage: "",
       interests: [],
       isProfileActive: true,
@@ -156,7 +158,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
             }
           }
 
-          // Handle new format where sevilla_zonas might be an array
+          // Handle new format where sevilla_zonas might be an array (if it exists)
           if (profileData.sevilla_zonas && Array.isArray(profileData.sevilla_zonas)) {
             sevilla_zonas = profileData.sevilla_zonas;
             if (sevilla_zonas.length > 0) {
@@ -193,6 +195,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
             occupation: profileData.ocupacion || "",
             occupationType: occupationType as any,
             university: profileData.universidad || "",
+            fieldOfStudy: lifestyleData.field_of_study as string || "",
             profileImage: profileData.profile_image || "",
             interests: profileData.interests || [],
             isProfileActive: profileData.is_profile_active !== false,
@@ -298,6 +301,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
         room_count: values.room_count,
         room_price: values.room_price,
         apartment_description: values.apartment_description,
+        field_of_study: values.fieldOfStudy,
       };
       
       const completed = (values.profileImage && values.firstName && values.age && values.occupation && values.lifestyle) ? true : false;
@@ -314,7 +318,6 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
         interests: values.interests,
         is_profile_active: values.isProfileActive,
         sevilla_zona: sevilla_zona_value,
-        sevilla_zonas: values.sevilla_zonas,
         completed: completed,
         companeros_count: values.companeros_count || '',
         lifestyle: lifestyle,

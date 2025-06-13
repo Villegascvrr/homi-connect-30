@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Briefcase, GraduationCap } from "lucide-react";
+import { Briefcase, GraduationCap, BookOpen } from "lucide-react";
 
 interface ProfileBasicInfoProps {
   form: any;
@@ -136,24 +136,43 @@ const ProfileBasicInfo = ({ form, showUniversityField = false, onOccupationTypeC
           )}
         />
         
-        {/* Show university field only for students */}
+        {/* Show university and field of study fields only for students */}
         {showUniversityField && (
-          <FormField
-            control={form.control}
-            name="university"
-            render={({ field }) => (
-              <FormItem className={isMobile ? "col-span-1" : "col-span-2"}>
-                <FormLabel className="flex items-center gap-2">
-                  <GraduationCap className="text-homi-purple" size={18} />
-                  Universidad
-                </FormLabel>
-                <FormControl>
-                  <Input placeholder="Tu universidad o centro de estudios" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <>
+            <FormField
+              control={form.control}
+              name="university"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center gap-2">
+                    <GraduationCap className="text-homi-purple" size={18} />
+                    Universidad
+                  </FormLabel>
+                  <FormControl>
+                    <Input placeholder="Tu universidad o centro de estudios" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
+              name="fieldOfStudy"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center gap-2">
+                    <BookOpen className="text-homi-purple" size={18} />
+                    Qué estudias
+                  </FormLabel>
+                  <FormControl>
+                    <Input placeholder="Tu carrera o área de estudios" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </>
         )}
         
         {/* Custom occupation field for "other" option */}
