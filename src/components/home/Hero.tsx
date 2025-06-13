@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Check, Instagram, CreditCard } from 'lucide-react';
@@ -9,7 +8,6 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { signInWithGoogleOAuth } from '@/integrations/supabase/client';
-
 const Hero = () => {
   const [email, setEmail] = useState('');
   const [showSignupForm, setShowSignupForm] = useState(false);
@@ -26,7 +24,6 @@ const Hero = () => {
   const {
     toast
   } = useToast();
-
   useEffect(() => {
     if (user) {
       const urlParams = new URLSearchParams(window.location.search);
@@ -53,17 +50,14 @@ const Hero = () => {
       setJustLoggedIn(false);
     }
   }, [user, location.search]);
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Subscribed with email:', email);
     setEmail('');
   };
-
   const handleRegisterClick = () => {
     navigate('/register');
   };
-
   const handleGoogleSignIn = async () => {
     try {
       setIsGoogleLoading(true);
@@ -79,7 +73,6 @@ const Hero = () => {
       setIsGoogleLoading(false);
     }
   };
-
   const renderContent = () => {
     if (user && (justRegistered || justLoggedIn)) {
       return <WelcomeMessage firstName={user?.user_metadata?.firstName || user?.user_metadata?.first_name || user?.user_metadata?.name || user?.user_metadata?.full_name} showWelcomeToast={true} isNewUser={justRegistered} />;
@@ -121,7 +114,7 @@ const Hero = () => {
           Conecta con <span className="homi-gradient-text">compañeros de piso</span> compatibles
         </h1>
         
-        <p className="text-base md:text-xl text-muted-foreground mb-6 max-w-2xl mx-auto px-2">HomiMatch utiliza un sistema de matching inteligente para conectarte con compañeros de piso que comparten tus intereses y estilo de vida.</p>
+        <p className="text-base md:text-xl text-muted-foreground mb-6 max-w-2xl mx-auto px-2">HomiMatch utiliza un sistema de matching para conectarte con compañeros de piso que comparten tus intereses y estilo de vida.</p>
 
         
 
@@ -148,7 +141,6 @@ const Hero = () => {
         
       </>;
   };
-
   return <section className="relative overflow-hidden w-full lg:py-[30px] py-[5px]">
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-0 left-0 w-64 md:w-96 h-64 md:h-96 bg-homi-ultraLightPurple rounded-full opacity-50 blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
@@ -174,5 +166,4 @@ const Hero = () => {
       </div>
     </section>;
 };
-
 export default Hero;
