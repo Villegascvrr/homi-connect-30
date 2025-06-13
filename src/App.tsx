@@ -5,7 +5,6 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from '@/context/AuthContext';
-import DevelopmentBanner from '@/components/layout/DevelopmentBanner';
 import ScrollToTop from '@/components/layout/ScrollToTop';
 
 // Lazy load components
@@ -47,7 +46,6 @@ function App() {
           <BrowserRouter>
             <ScrollToTop />
             <div className="relative min-h-screen">
-              <DevelopmentBanner />
               <Suspense fallback={
                 <div className="min-h-screen flex items-center justify-center">
                   <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-homi-purple"></div>
