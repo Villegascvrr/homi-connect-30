@@ -10,6 +10,7 @@ import PricingPage from '@/pages/PricingPage';
 import SubscriptionPage from '@/pages/SubscriptionPage';
 import SuccessPage from '@/pages/SuccessPage';
 import ProfilePage from '@/components/profiles/ProfilePage';
+import ProfileEditPage from '@/components/profiles/ProfileEditPage';
 import ScrollToTop from '@/components/layout/ScrollToTop';
 import { AuthProvider } from '@/context/AuthContext';
 import { Toaster } from '@/components/ui/toaster';
@@ -32,6 +33,7 @@ function App() {
               <Route path="/suscripcion" element={<SubscriptionPage />} />
               <Route path="/success" element={<SuccessPage />} />
               <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/profile/edit" element={<ProfileEditPage />} />
             </Routes>
             <Toaster />
           </div>
