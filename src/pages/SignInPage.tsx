@@ -144,17 +144,17 @@ const SignInPage = () => {
             <div className="glass-card p-4 md:p-8 rounded-xl mb-20">
               <div className="text-center mb-8">
                 <h1 className="text-2xl md:text-3xl font-bold mb-2">
-                  <span className="homi-gradient-text">Iniciar sesión</span>
+                  <span className="homi-gradient-text">Acceder a tu cuenta</span>
                 </h1>
                 <p className="text-muted-foreground">
-                  Accede a tu cuenta para conectar con compañeros ideales
+                  Accede a HomiMatch y conecta con compañeros ideales
                 </p>
               </div>
               
               {showEmailVerificationAlert && (
                 <Alert className="mb-6 bg-amber-50 text-amber-800 border border-amber-200">
                   <AlertDescription>
-                    Por favor, verifica tu correo electrónico antes de iniciar sesión. Revisa tu bandeja de entrada y spam.
+                    Por favor, verifica tu correo electrónico antes de acceder. Revisa tu bandeja de entrada y spam.
                   </AlertDescription>
                 </Alert>
               )}
@@ -182,7 +182,7 @@ const SignInPage = () => {
                 ) : (
                   <>
                     <GoogleIcon />
-                    <span>Continuar con Google</span>
+                    <span>Acceder con Google</span>
                   </>
                 )}
               </Button>
@@ -266,11 +266,11 @@ const SignInPage = () => {
                     {isLoading ? (
                       <>
                         <div className="h-4 w-4 animate-spin rounded-full border-2 border-b-transparent"></div>
-                        Iniciando sesión...
+                        Accediendo...
                       </>
                     ) : (
                       <>
-                        Iniciar sesión
+                        Acceder a HomiMatch
                         <ArrowRight className="ml-1 h-4 w-4" />
                       </>
                     )}
@@ -280,7 +280,7 @@ const SignInPage = () => {
                     <p>
                       ¿No tienes cuenta?{' '}
                       <Link to="/register" className="text-homi-purple hover:underline font-medium">
-                        Regístrate ahora
+                        Crear cuenta ahora
                       </Link>
                     </p>
                   </div>

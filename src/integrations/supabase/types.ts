@@ -92,22 +92,25 @@ export type Database = {
       }
       profile_discards: {
         Row: {
-          id: string
           created_at: string
+          id: string
           profile_id: string
           target_profile_id: string
+          updated_at: string
         }
         Insert: {
-          id?: string
           created_at?: string
+          id?: string
           profile_id: string
           target_profile_id: string
+          updated_at?: string
         }
         Update: {
-          id?: string
           created_at?: string
+          id?: string
           profile_id?: string
           target_profile_id?: string
+          updated_at?: string
         }
         Relationships: [
           {
@@ -123,7 +126,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       profile_matches: {
@@ -169,6 +172,7 @@ export type Database = {
         Row: {
           bio: string | null
           companeros_count: string | null
+          completed: boolean | null
           created_at: string
           edad: string | null
           email: string
@@ -182,15 +186,15 @@ export type Database = {
           ocupacion: string | null
           profile_image: string | null
           sevilla_zona: string | null
+          skips: number
           universidad: string | null
           updated_at: string
           username: string
-          skips: number
-          completed: boolean
         }
         Insert: {
           bio?: string | null
           companeros_count?: string | null
+          completed?: boolean | null
           created_at?: string
           edad?: string | null
           email: string
@@ -204,15 +208,15 @@ export type Database = {
           ocupacion?: string | null
           profile_image?: string | null
           sevilla_zona?: string | null
+          skips?: number
           universidad?: string | null
           updated_at?: string
           username: string
-          skips?: number | 0
-          completed?: boolean
         }
         Update: {
           bio?: string | null
           companeros_count?: string | null
+          completed?: boolean | null
           created_at?: string
           edad?: string | null
           email?: string
@@ -226,11 +230,10 @@ export type Database = {
           ocupacion?: string | null
           profile_image?: string | null
           sevilla_zona?: string | null
+          skips?: number
           universidad?: string | null
           updated_at?: string
           username?: string
-          skips?: number
-          completed?: boolean
         }
         Relationships: []
       }

@@ -12,7 +12,7 @@ const DevelopmentBanner = () => {
               <Info size={16} className="text-white" />
             </div>
             <p className="text-xs sm:text-sm font-medium">
-              <span className="font-bold">Homi estará disponible pronto.</span> ¡Necesitamos llegar a 1000 usuarios registrados para lanzar la app!
+              <span className="font-bold">¡HomiMatch ya está disponible en Sevilla!</span> Encuentra tu compañero de piso ideal ahora.
             </p>
           </div>
           <Button 

@@ -116,8 +116,8 @@ const Index = () => {
                 Encuentra tu <span className="homi-gradient-text">compañero ideal</span>
               </h2>
               <p className="text-muted-foreground text-lg">
-                HomiMatch está diseñado para ayudar a estudiantes y jóvenes profesionales a encontrar 
-                compañeros de piso compatibles. ¡Sé de los primeros en probarlo!
+                HomiMatch está activo y ayudando a estudiantes y jóvenes profesionales a encontrar 
+                compañeros de piso compatibles en Sevilla. ¡Únete ahora!
               </p>
             </div>
             
@@ -140,7 +140,7 @@ const Index = () => {
               {user ? (
                 <Link to="/matching">
                   <Button size="lg" className="rounded-full bg-homi-purple hover:bg-homi-purple/90 px-8">
-                    Ver más perfiles
+                    Explorar perfiles
                   </Button>
                 </Link>
               ) : (
@@ -149,7 +149,7 @@ const Index = () => {
                   className="rounded-full bg-homi-purple hover:bg-homi-purple/90 px-8"
                   onClick={handleRegisterClick}
                 >
-                  Ver más perfiles
+                  Crear mi cuenta
                 </Button>
               )}
             </div>
@@ -225,7 +225,7 @@ const Index = () => {
                 className="rounded-full bg-white text-homi-purple hover:bg-white/90 px-8"
                 onClick={() => navigate('/register')}
               >
-                Comenzar Ahora
+                Crear mi cuenta
               </Button>
             </div>
           </div>

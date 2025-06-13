@@ -10,7 +10,7 @@ interface DemoBannerProps {
 }
 
 const DemoBanner = ({ 
-  message = "Estás viendo una demostración de cómo funciona Homi",
+  message = "¡HomiMatch ya está disponible! Empieza a encontrar compañeros de piso compatibles",
   customMessage
 }: DemoBannerProps) => {
   const { user } = useAuth();
@@ -47,20 +47,20 @@ const DemoBanner = ({
   // Message for different user states and pages
   const getMessage = () => {
     if (justRegistered && user) {
-      return "¡Gracias por registrarte en Homi! Completa tu perfil y síguenos en @homimatch para recibir todas las novedades.";
+      return "¡Bienvenido a HomiMatch! Completa tu perfil y empieza a conectar con compañeros de piso ideales.";
     } 
     
     // Page-specific messages
     if (location.pathname === '/chat') {
-      return "Estás viendo una demostración de la función de chat. Pronto podrás conectar con compañeros de piso compatibles.";
+      return "Conecta y chatea con compañeros de piso compatibles. ¡HomiMatch ya está activo!";
     }
     
     if (location.pathname === '/matching') {
-      return "Estás viendo una demostración de la función de matching. Pronto podrás encontrar compañeros de piso compatibles.";
+      return "Encuentra tu compañero de piso ideal con nuestro sistema de matching inteligente.";
     }
     
     if (user) {
-      return customMessage || "Estás viendo una demostración de Homi. La aplicación completa estará disponible próximamente.";
+      return customMessage || "¡HomiMatch está activo! Encuentra tu compañero de piso ideal ahora.";
     }
     
     return customMessage || message;
@@ -71,7 +71,7 @@ const DemoBanner = ({
       <p className="text-sm font-medium max-w-4xl mx-auto">
         {getMessage()}
         {!user && (
-          <> <Link to="/register" className="underline font-bold hover:text-white/80 transition-colors">Regístrate</Link> para acceder a todas las funciones.</>
+          <> <Link to="/register" className="underline font-bold hover:text-white/80 transition-colors">Crea tu cuenta</Link> para acceder a todas las funciones.</>
         )}
       </p>
     </div>

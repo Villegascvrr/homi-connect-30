@@ -99,7 +99,7 @@ const Hero = () => {
           </h1>
           
           <p className="text-base md:text-lg text-muted-foreground mb-6 max-w-2xl mx-auto px-2">
-            Gracias por iniciar sesión. Deberás completar tu perfil para poder empezar a encontrar compañeros.
+            Completa tu perfil y empieza a encontrar compañeros de piso compatibles en Sevilla.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 mb-8">
@@ -114,7 +114,7 @@ const Hero = () => {
           <div className="mt-6 flex flex-wrap justify-center gap-8">
             <div>
               <p className="text-sm text-muted-foreground mb-3">
-                Entérate de las últimas novedades:
+                Síguenos para las últimas novedades:
               </p>
               <Button variant="outline" className="rounded-full gap-2 bg-purple-50 text-purple-600 border-purple-200 hover:bg-purple-100 hover:text-purple-700" onClick={() => window.open('https://instagram.com/homimatch', '_blank')}>
                 <Instagram size={18} />
@@ -123,7 +123,7 @@ const Hero = () => {
             </div>
             <div>
               <p className="text-sm text-muted-foreground mb-3">
-                Busca compañeros y piso en nuestro grupo:
+                Conecta con otros usuarios:
               </p>
               <Button variant="outline" className="rounded-full gap-2 bg-green-50 text-green-600 border-green-200 hover:bg-green-100 hover:text-green-700" onClick={() => window.open('https://chat.whatsapp.com/FPqg8M2kGdm9G49j4YIAMB', '_blank')}>
                 <MessageCircle size={18} />
@@ -138,7 +138,7 @@ const Hero = () => {
     return (
       <>
         <div className="inline-block px-4 py-1.5 mb-1 md:mb-2 rounded-full bg-homi-ultraLightPurple text-homi-purple text-xs md:text-sm font-medium animate-pulse-soft">
-          ¡Ayúdanos a alcanzar los primeros 1000 usuarios!
+          ¡Ya disponible en Sevilla!
         </div>
         
         <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6 animate-slide-up leading-tight px-2 my-0">
@@ -149,13 +149,13 @@ const Hero = () => {
 
         <div className="bg-homi-ultraLightPurple/50 p-4 md:p-5 rounded-xl mb-6 max-w-2xl mx-auto">
           <p className="text-sm md:text-base font-medium text-homi-purple">
-            HomiMatch estará disponible próximamente - ¡Regístrate ahora para ser de los primeros en usarlo!
+            ¡HomiMatch ya está activo en Sevilla! Crea tu cuenta y empieza a encontrar tu compañero ideal.
           </p>
         </div>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 mt-6">
           <Button size={isMobile ? "default" : "lg"} className="rounded-full bg-gradient-to-r from-homi-purple to-homi-lightPurple hover:from-homi-lightPurple hover:to-homi-purple text-white font-bold shadow-lg shadow-purple-500/30 transform hover:scale-105 transition-all duration-300 w-full sm:w-auto" onClick={handleRegisterClick}>
-            ¡Regístrate ahora!
+            ¡Crear cuenta ahora!
           </Button>
           <Button 
             type="button"
@@ -178,18 +178,18 @@ const Hero = () => {
                   <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
                   <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
                 </svg>
-                Iniciar con Google
+                Acceder con Google
               </>
             )}
           </Button>
         </div>
 
         <div className="mt-6 pt-6 border-t border-border/30">
-          <p className="text-sm font-medium mb-3 text-muted-foreground">Mientras tanto,</p>
+          <p className="text-sm font-medium mb-3 text-muted-foreground">Además,</p>
           <div className="flex flex-wrap justify-center gap-8">
             <div>
               <p className="text-sm font-medium mb-3 text-muted-foreground">
-                Busca compañeros y piso en nuestro grupo:
+                Conecta con otros usuarios:
               </p>
               <Button variant="outline" className="rounded-full gap-2 bg-green-50 text-green-600 border-green-200 hover:bg-green-100 hover:text-green-700" onClick={() => window.open('https://chat.whatsapp.com/FPqg8M2kGdm9G49j4YIAMB', '_blank')}>
                 <MessageCircle size={18} />
@@ -198,7 +198,7 @@ const Hero = () => {
             </div>
             <div>
               <p className="text-sm font-medium mb-3 text-muted-foreground">
-                Entérate de las últimas novedades:
+                Síguenos para más novedades:
               </p>
               <Button variant="outline" className="rounded-full gap-2 bg-purple-50 text-purple-600 border-purple-200 hover:bg-purple-100 hover:text-purple-700" onClick={() => window.open('https://instagram.com/homimatch', '_blank')}>
                 <Instagram size={18} />
