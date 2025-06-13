@@ -71,7 +71,12 @@ const Navbar = () => {
     )}>
       <div className="container mx-auto px-4 w-full">
         <div className="flex items-center justify-between h-16 md:h-20">
-          <Link to="/" className="flex items-center">
+          <Link to="/" className="flex items-center gap-2">
+            <img 
+              src="/lovable-uploads/efbbb383-cff5-4e9e-8b43-141970c0e74c.png" 
+              alt="HomiMatch Logo" 
+              className="w-8 h-8 md:w-10 md:h-10"
+            />
             <span className="text-xl md:text-2xl font-bold homi-gradient-text">HomiMatch</span>
           </Link>
 
