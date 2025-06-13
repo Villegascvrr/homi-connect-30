@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -91,9 +90,14 @@ const ProfileApartmentPreferences = ({
     const currentZones = selectedZones || [];
     
     if (checked) {
-      // Add zone if less than 3 are selected
-      if (currentZones.length < 3) {
-        form.setValue('sevilla_zonas', [...currentZones, zone]);
+      // If user has apartment, only allow one zone selection
+      if (apartmentStatus === 'have') {
+        form.setValue('sevilla_zonas', [zone]);
+      } else {
+        // For those looking for apartment, allow up to 3 zones
+        if (currentZones.length < 3) {
+          form.setValue('sevilla_zonas', [...currentZones, zone]);
+        }
       }
     } else {
       // Remove zone
@@ -105,6 +109,8 @@ const ProfileApartmentPreferences = ({
     const currentZones = selectedZones || [];
     form.setValue('sevilla_zonas', currentZones.filter((z: string) => z !== zoneToRemove));
   };
+
+  const maxZones = apartmentStatus === 'have' ? 1 : 3;
 
   return (
     <Card className="border-homi-purple/30">
@@ -120,7 +126,14 @@ const ProfileApartmentPreferences = ({
           <FormLabel>¿Cuál es tu situación actual?</FormLabel>
           <RadioGroup 
             defaultValue={apartmentStatus} 
-            onValueChange={(value) => onApartmentStatusChange(value as 'looking' | 'have')}
+            onValueChange={(value) => {
+              onApartmentStatusChange(value as 'looking' | 'have');
+              // Reset zones when changing apartment status
+              if (value === 'have' && selectedZones.length > 1) {
+                // Keep only the first zone if switching to "have apartment"
+                form.setValue('sevilla_zonas', selectedZones.slice(0, 1));
+              }
+            }}
             className="flex flex-col space-y-1"
           >
             <FormItem className="flex items-center space-x-3 space-y-0">
@@ -205,7 +218,12 @@ const ProfileApartmentPreferences = ({
               name="sevilla_zonas"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>¿En qué zonas de Sevilla? (máximo 3)</FormLabel>
+                  <FormLabel>
+                    {apartmentStatus === 'have' 
+                      ? '¿En qué zona de Sevilla está tu piso?' 
+                      : '¿En qué zonas de Sevilla? (máximo 3)'
+                    }
+                  </FormLabel>
                   
                   {/* Selected zones display */}
                   {selectedZones.length > 0 && (
@@ -237,12 +255,12 @@ const ProfileApartmentPreferences = ({
                           id={zone}
                           checked={selectedZones.includes(zone)}
                           onCheckedChange={(checked) => handleZoneChange(zone, !!checked)}
-                          disabled={!selectedZones.includes(zone) && selectedZones.length >= 3}
+                          disabled={!selectedZones.includes(zone) && selectedZones.length >= maxZones}
                         />
                         <label
                           htmlFor={zone}
                           className={`text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ${
-                            !selectedZones.includes(zone) && selectedZones.length >= 3 
+                            !selectedZones.includes(zone) && selectedZones.length >= maxZones 
                               ? 'text-gray-400' 
                               : 'cursor-pointer'
                           }`}
@@ -254,7 +272,10 @@ const ProfileApartmentPreferences = ({
                   </div>
                   
                   <FormDescription>
-                    Selecciona hasta 3 zonas de Sevilla donde te gustaría vivir o donde está tu piso
+                    {apartmentStatus === 'have' 
+                      ? 'Selecciona la zona donde está ubicado tu piso'
+                      : 'Selecciona hasta 3 zonas de Sevilla donde te gustaría vivir'
+                    }
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

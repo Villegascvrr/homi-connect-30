@@ -225,6 +225,7 @@ const ProfilePage = () => {
   };
 
   const { status: apartmentStatus, location } = getLocationAndStatusDisplay();
+  const hasApartment = profile.sevilla_zona === 'tengo_piso';
 
   const requiredFields = ['first_name', 'last_name', 'username', 'bio', 'edad', 'profile_image', 'interests'];
   const completedFields = requiredFields.filter(field => {
@@ -399,16 +400,20 @@ const ProfilePage = () => {
                       <p className="font-medium">{apartmentStatus}</p>
                     </div>
                     <div>
-                      <span className="text-muted-foreground">Ubicación preferida:</span>
+                      <span className="text-muted-foreground">
+                        {hasApartment ? 'Ubicación de mi piso:' : 'Ubicación preferida:'}
+                      </span>
                       <p className="font-medium">{location}</p>
                     </div>
                     {profile.companeros_count && (
                       <div>
-                        <span className="text-muted-foreground">Compañeros que busco:</span>
+                        <span className="text-muted-foreground">
+                          {hasApartment ? 'Compañeros que busco:' : 'Compañeros que busco:'}
+                        </span>
                         <p className="font-medium">{profile.companeros_count}</p>
                       </div>
                     )}
-                    {lifestyleData.budget && (
+                    {lifestyleData.budget && !hasApartment && (
                       <div>
                         <span className="text-muted-foreground">Mi presupuesto:</span>
                         <p className="font-medium">{lifestyleData.budget}</p>
@@ -418,7 +423,7 @@ const ProfilePage = () => {
                 </Card>
 
                 {/* Apartment details for users who have a flat */}
-                {apartmentStatus === 'Ya tengo piso' && (
+                {hasApartment && (
                   <Card className="mt-4 p-4">
                     <h3 className="font-medium text-sm mb-3 flex items-center gap-1">
                       <Home size={16} className="text-homi-purple" /> Mi piso
