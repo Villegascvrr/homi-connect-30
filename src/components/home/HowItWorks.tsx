@@ -1,4 +1,6 @@
+
 import { User, Users, MessageSquare, Home } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
 
 const HowItWorks = () => {
   const steps = [{
@@ -20,53 +22,68 @@ const HowItWorks = () => {
   }];
   
   return (
-    <section className="py-20 bg-gradient-to-br from-homi-purple/5 via-homi-lightPurple/5 to-homi-ultraLightPurple/10 relative overflow-hidden">
-      {/* Subtle geometric background elements */}
-      <div className="absolute inset-0">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-homi-purple/3 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-homi-lightPurple/4 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/3 w-40 h-40 bg-homi-ultraLightPurple/5 rounded-full blur-2xl"></div>
+    <>
+      {/* Top Separator */}
+      <div className="relative">
+        <Separator className="bg-gradient-to-r from-transparent via-homi-purple/20 to-transparent" />
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white px-4">
+          <div className="w-2 h-2 rounded-full bg-homi-purple animate-pulse"></div>
+        </div>
       </div>
-      
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="text-center max-w-4xl mx-auto mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">
-            Cómo funciona <span className="homi-gradient-text">HomiMatch</span>
-          </h2>
-          <p className="text-gray-600 text-lg md:text-xl leading-relaxed">
-            Un proceso simple y efectivo para encontrar compañeros de piso compatibles
-            con tus preferencias y estilo de vida.
-          </p>
+
+      <section className="py-[27px] bg-gradient-to-br from-slate-50/50 via-purple-50/30 to-blue-50/20 relative overflow-hidden">
+        {/* Decorative background elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-10 left-10 w-32 h-32 bg-gradient-to-br from-homi-purple/5 to-transparent rounded-full blur-xl"></div>
+          <div className="absolute bottom-10 right-10 w-40 h-40 bg-gradient-to-br from-blue-500/5 to-transparent rounded-full blur-xl"></div>
+          <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-gradient-to-br from-purple-300/10 to-transparent rounded-full blur-lg"></div>
         </div>
 
-        <div className="relative">
-          {/* Modern connection line */}
-          <div className="absolute top-28 left-1/2 h-2/3 w-px bg-gradient-to-b from-homi-purple/20 via-homi-purple/40 to-homi-purple/20 -translate-x-1/2 hidden lg:block"></div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6">
-            {steps.map((step, index) => (
-              <div key={index} className="flex flex-col items-center text-center relative group">
-                {/* Modern card container */}
-                <div className="w-full max-w-sm p-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 group-hover:transform group-hover:scale-105">
-                  {/* Icon container */}
-                  <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-homi-ultraLightPurple to-white flex items-center justify-center mb-6 mx-auto shadow-md border border-homi-purple/10">
+        <div className="container mx-auto px-4 overflow-hidden relative z-10">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full border border-homi-purple/20 mb-4 shadow-sm">
+              <div className="w-2 h-2 rounded-full bg-homi-purple animate-pulse"></div>
+              <span className="text-sm font-medium text-homi-purple">Proceso simple</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              <span className="homi-gradient-text">Cómo funciona</span> HomiMatch
+            </h2>
+            <p className="text-muted-foreground text-lg">
+              Un proceso simple y efectivo para encontrar compañeros de piso compatibles
+              con tus preferencias y estilo de vida.
+            </p>
+          </div>
+
+          <div className="relative">
+            {/* Enhanced connection line with gradient */}
+            <div className="absolute top-24 left-1/2 h-2/3 w-1 bg-gradient-to-b from-homi-purple via-homi-lightPurple to-homi-ultraLightPurple -translate-x-1/2 hidden md:block rounded-full shadow-sm"></div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
+              {steps.map((step, index) => (
+                <div key={index} className="flex flex-col items-center text-center relative z-10 group">
+                  <div className="w-20 h-20 rounded-full glass-card flex items-center justify-center mb-6 shadow-lg border border-homi-purple/10 group-hover:shadow-xl group-hover:scale-105 transition-all duration-300 bg-white/90 backdrop-blur-sm">
                     {step.icon}
                   </div>
-                  
-                  {/* Step number */}
-                  <div className="absolute -top-3 -right-3 bg-homi-purple text-white text-sm font-bold w-8 h-8 rounded-full flex items-center justify-center shadow-lg">
+                  <span className="absolute top-6 bg-gradient-to-r from-homi-purple to-homi-lightPurple text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center -right-1 md:right-auto md:-right-3 shadow-lg">
                     {index + 1}
-                  </div>
-                  
-                  <h3 className="text-xl font-semibold mb-4 text-gray-900">{step.title}</h3>
-                  <p className="text-gray-600 leading-relaxed">{step.description}</p>
+                  </span>
+                  <h3 className="text-xl font-semibold mb-3 group-hover:text-homi-purple transition-colors duration-300">{step.title}</h3>
+                  <p className="text-muted-foreground group-hover:text-slate-600 transition-colors duration-300">{step.description}</p>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
+      </section>
+
+      {/* Bottom Separator */}
+      <div className="relative">
+        <Separator className="bg-gradient-to-r from-transparent via-homi-purple/20 to-transparent" />
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white px-4">
+          <div className="w-2 h-2 rounded-full bg-homi-purple animate-pulse"></div>
+        </div>
       </div>
-    </section>
+    </>
   );
 };
 
