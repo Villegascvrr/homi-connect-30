@@ -41,16 +41,18 @@ export const hasStoredSession = (): boolean => {
 
 export const checkEmailExists = async (email: string): Promise<boolean> => {
   try {
-    const { data, error } = await supabase.rpc('check_email_exists', {
-      email_to_check: email
-    });
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('email')
+      .eq('email', email)
+      .maybeSingle();
     
     if (error) {
       console.error('Error checking email exists:', error);
       return false;
     }
     
-    return data === true;
+    return data !== null;
   } catch (error) {
     console.error('Error in checkEmailExists:', error);
     return false;
