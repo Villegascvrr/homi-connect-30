@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -50,11 +51,8 @@ const SignInPage = () => {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [showEmailVerificationAlert, setShowEmailVerificationAlert] = useState(false);
   const [loginError, setLoginError] = useState('');
-  const [isNavigatingAway, setIsNavigatingAway] = useState(false);
   
-  const [pageKey] = useState(`signin-${Date.now()}`);
-  
-  const { user, signIn } = useAuth();
+  const { user, signIn, loading: authLoading } = useAuth();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -64,9 +62,11 @@ const SignInPage = () => {
     },
   });
 
+  // Handle URL parameters
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const emailVerified = params.get('email_verified');
+    const needsVerification = params.get('needs_verification');
     
     if (emailVerified === 'true') {
       toast({
@@ -74,27 +74,24 @@ const SignInPage = () => {
         description: "Tu correo electrónico ha sido verificado correctamente.",
         variant: "default",
       });
-      
-      navigate('/signin', { replace: true });
+      // Clean URL
+      window.history.replaceState({}, '', '/signin');
     }
     
-    const needsVerification = params.get('needs_verification');
     if (needsVerification === 'true') {
       setShowEmailVerificationAlert(true);
     }
 
     setLoginError('');
-  }, [location, navigate, toast]);
+  }, [location.search, toast]);
   
+  // Redirect if user is already logged in
   useEffect(() => {
-    if (user && !isNavigatingAway) {
-      
-      setIsNavigatingAway(true);
-      setTimeout(() => {
-        navigate('/', { replace: true });
-      }, 0);
+    if (user && !authLoading) {
+      console.log('User is logged in, redirecting to home');
+      navigate('/', { replace: true });
     }
-  }, [user, navigate, isNavigatingAway]);
+  }, [user, authLoading, navigate]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (isLoading) return;
@@ -103,10 +100,13 @@ const SignInPage = () => {
     setLoginError('');
     
     try {
+      console.log('Attempting sign in with:', values.email);
       await signIn(values.email, values.password);
+      // Don't manually redirect here - let the useEffect handle it
     } catch (error: any) {
       console.error("Error during sign in:", error);
       setLoginError(error.message || 'Error al iniciar sesión. Verifica tus credenciales.');
+    } finally {
       setIsLoading(false);
     }
   };
@@ -117,15 +117,28 @@ const SignInPage = () => {
     try {
       setIsGoogleLoading(true);
       setLoginError('');
+      console.log('Attempting Google sign in');
       await signInWithGoogleOAuth();
     } catch (error: any) {
       console.error("Error durante la autenticación con Google:", error);
       setLoginError(error.message || 'Error al iniciar sesión con Google.');
+    } finally {
       setIsGoogleLoading(false);
     }
   };
 
-  if (user && isNavigatingAway) {
+  // Show loading while checking auth state
+  if (authLoading) {
+    return (
+      <div className="flex flex-col justify-center items-center h-screen bg-background">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-dotted border-homi-purple"></div>
+        <p className="text-sm text-muted-foreground mt-4">Verificando sesión...</p>
+      </div>
+    );
+  }
+
+  // Don't render if user is already logged in
+  if (user) {
     return (
       <div className="flex flex-col justify-center items-center h-screen bg-background">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-dotted border-homi-purple"></div>
@@ -135,7 +148,7 @@ const SignInPage = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col" key={pageKey}>
+    <div className="min-h-screen flex flex-col">
       <Navbar />
       
       <main className="flex-grow pt-20 pb-12">
