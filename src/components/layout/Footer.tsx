@@ -1,5 +1,7 @@
+
 import { Link } from 'react-router-dom';
-import { Instagram, MessageCircle } from 'lucide-react';
+import { Instagram, MessageCircle, Mail } from 'lucide-react';
+
 const Footer = () => {
   return <footer className="bg-white dark:bg-homi-dark border-t border-border py-12">
       <div className="container mx-auto px-4">
@@ -16,12 +18,18 @@ const Footer = () => {
 
             <div className="mt-6 flex flex-col gap-3">
               <div className="flex items-center gap-2">
+                <Mail className="w-5 h-5 text-homi-purple" />
+                <a href="mailto:hi@homimatch.com" className="text-muted-foreground hover:text-homi-purple transition-colors">
+                  hi@homimatch.com
+                </a>
+              </div>
+              
+              <div className="flex items-center gap-2">
                 <Instagram className="w-5 h-5 text-homi-purple" />
                 <a href="https://instagram.com/homimatch" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-homi-purple transition-colors">
                   @homimatch
                 </a>
               </div>
-              
             </div>
           </div>
 
@@ -75,15 +83,18 @@ const Footer = () => {
             © {new Date().getFullYear()} HomiMatch. Todos los derechos reservados.
           </p>
           <div className="mt-4 md:mt-0 flex items-center gap-4">
+            <a href="mailto:hi@homimatch.com" className="text-muted-foreground hover:text-homi-purple transition-colors flex items-center gap-1">
+              <Mail size={16} />
+              Contacto
+            </a>
             <a href="https://instagram.com/homimatch" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-homi-purple transition-colors flex items-center gap-1">
               <Instagram size={16} />
               Instagram
             </a>
-            
-            {/* LinkedIn link has been removed */}
           </div>
         </div>
       </div>
     </footer>;
 };
+
 export default Footer;
