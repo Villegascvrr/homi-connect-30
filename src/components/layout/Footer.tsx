@@ -79,10 +79,7 @@ const Footer = () => {
               <Instagram size={16} />
               Instagram
             </a>
-            <a href="https://chat.whatsapp.com/FPqg8M2kGdm9G49j4YIAMB" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-green-600 transition-colors flex items-center gap-1">
-              <MessageCircle size={16} />
-              WhatsApp
-            </a>
+            
             {/* LinkedIn link has been removed */}
           </div>
         </div>
