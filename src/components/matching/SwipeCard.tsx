@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from 'react';
 import CompatibilityBadge from '@/components/ui/CompatibilityBadge';
 import { Heart, X, MessageSquare, User, DollarSign, Calendar, Home, ShieldCheck, Clock, Undo2 } from 'lucide-react';
@@ -7,6 +8,17 @@ import { Button } from '@/components/ui/button';
 interface Tag {
   id: number;
   name: string;
+}
+
+interface ApartmentInfo {
+  address?: string;
+  rooms?: number;
+  bathrooms?: number;
+  size?: number;
+  rent?: number;
+  description?: string;
+  amenities?: string[];
+  available_from?: string;
 }
 
 interface SwipeCardProps {
@@ -30,6 +42,7 @@ interface SwipeCardProps {
     max: number;
   };
   moveInDate?: string;
+  apartment?: ApartmentInfo;
   onLike: (id: string) => void;
   onPass: (id: string) => void;
   onView: (id: string) => void;
@@ -48,6 +61,7 @@ const SwipeCard = ({
   lifestyle,
   budget,
   moveInDate,
+  apartment,
   onLike,
   onPass,
   onView,
@@ -326,47 +340,131 @@ const SwipeCard = ({
           </div>
           
           {/* Additional details */}
-          {showDetails && lifestyleData && (
-            <div className="mb-3 animate-fade-in">
-              <h4 className="font-medium mb-1 text-xs">Estilo de vida</h4>
-              <div className="grid grid-cols-2 gap-2">
-                <div className="flex items-center gap-1 text-xs">
-                  <span className="w-6 h-6 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
-                    <Clock size={14} />
-                  </span>
-                  <div>
-                    <span className="text-xs text-muted-foreground block">Horario</span>
-                    <span className="text-xs">{lifestyleData.schedule}</span>
+          {showDetails && (
+            <div className="mb-3 animate-fade-in space-y-3">
+              {/* Lifestyle information */}
+              {lifestyleData && (
+                <div>
+                  <h4 className="font-medium mb-1 text-xs text-homi-purple">Estilo de vida</h4>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="flex items-center gap-1 text-xs">
+                      <span className="w-6 h-6 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
+                        <Clock size={14} />
+                      </span>
+                      <div>
+                        <span className="text-xs text-muted-foreground block">Horario</span>
+                        <span className="text-xs">{lifestyleData.schedule}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1 text-xs">
+                      <span className="w-6 h-6 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
+                        <User size={14} />
+                      </span>
+                      <div>
+                        <span className="text-xs text-muted-foreground block">Limpieza</span>
+                        <span className="text-xs">{lifestyleData.cleanliness}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1 text-xs">
+                      <span className="w-6 h-6 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
+                        <MessageSquare size={14} />
+                      </span>
+                      <div>
+                        <span className="text-xs text-muted-foreground block">Invitados</span>
+                        <span className="text-xs">{lifestyleData.guests}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1 text-xs">
+                      <span className="w-6 h-6 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
+                        <span className="text-xs">🚬</span>
+                      </span>
+                      <div>
+                        <span className="text-xs text-muted-foreground block">Fumar</span>
+                        <span className="text-xs">{lifestyleData.smoking}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-1 text-xs">
-                  <span className="w-6 h-6 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
-                    <User size={14} />
-                  </span>
-                  <div>
-                    <span className="text-xs text-muted-foreground block">Limpieza</span>
-                    <span className="text-xs">{lifestyleData.cleanliness}</span>
+              )}
+
+              {/* Apartment information */}
+              {apartment && (
+                <div>
+                  <h4 className="font-medium mb-1 text-xs text-homi-purple">Información del piso</h4>
+                  <div className="space-y-1">
+                    {apartment.address && (
+                      <div className="flex items-center gap-1 text-xs">
+                        <Home size={10} className="text-homi-purple flex-shrink-0" />
+                        <span className="text-muted-foreground">Dirección:</span>
+                        <span className="truncate">{apartment.address}</span>
+                      </div>
+                    )}
+                    <div className="grid grid-cols-2 gap-1">
+                      {apartment.rooms && (
+                        <div className="flex items-center gap-1 text-xs">
+                          <span className="w-4 h-4 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple text-xs">
+                            🏠
+                          </span>
+                          <div>
+                            <span className="text-xs text-muted-foreground block">Hab.</span>
+                            <span className="text-xs">{apartment.rooms}</span>
+                          </div>
+                        </div>
+                      )}
+                      {apartment.bathrooms && (
+                        <div className="flex items-center gap-1 text-xs">
+                          <span className="w-4 h-4 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple text-xs">
+                            🚿
+                          </span>
+                          <div>
+                            <span className="text-xs text-muted-foreground block">Baños</span>
+                            <span className="text-xs">{apartment.bathrooms}</span>
+                          </div>
+                        </div>
+                      )}
+                      {apartment.size && (
+                        <div className="flex items-center gap-1 text-xs">
+                          <span className="w-4 h-4 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple text-xs">
+                            📐
+                          </span>
+                          <div>
+                            <span className="text-xs text-muted-foreground block">m²</span>
+                            <span className="text-xs">{apartment.size}</span>
+                          </div>
+                        </div>
+                      )}
+                      {apartment.rent && (
+                        <div className="flex items-center gap-1 text-xs">
+                          <span className="w-4 h-4 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
+                            <DollarSign size={8} />
+                          </span>
+                          <div>
+                            <span className="text-xs text-muted-foreground block">Alquiler</span>
+                            <span className="text-xs">{apartment.rent}€</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    {apartment.amenities && apartment.amenities.length > 0 && (
+                      <div className="mt-1">
+                        <span className="text-xs text-muted-foreground">Comodidades:</span>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {apartment.amenities.slice(0, 3).map((amenity, index) => (
+                            <span key={index} className="px-1 py-0.5 text-xs rounded-full bg-green-100 text-green-700">
+                              {amenity}
+                            </span>
+                          ))}
+                          {apartment.amenities.length > 3 && (
+                            <span className="px-1 py-0.5 text-xs rounded-full bg-muted text-muted-foreground">
+                              +{apartment.amenities.length - 3}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
-                <div className="flex items-center gap-1 text-xs">
-                  <span className="w-6 h-6 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
-                    <MessageSquare size={14} />
-                  </span>
-                  <div>
-                    <span className="text-xs text-muted-foreground block">Invitados</span>
-                    <span className="text-xs">{lifestyleData.guests}</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-1 text-xs">
-                  <span className="w-6 h-6 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
-                    <span className="text-xs">🚬</span>
-                  </span>
-                  <div>
-                    <span className="text-xs text-muted-foreground block">Fumar</span>
-                    <span className="text-xs">{lifestyleData.smoking}</span>
-                  </div>
-                </div>
-              </div>
+              )}
             </div>
           )}
         </div>

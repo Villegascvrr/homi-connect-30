@@ -344,51 +344,75 @@ const Index = () => {
       }
     }
   };
-  const plans = [{
-    id: 'free',
-    name: 'Plan Gratuito',
-    price: 'Gratis',
-    period: '',
-    icon: <Zap className="w-6 h-6 text-green-500" />,
-    description: 'Perfecto para empezar',
-    features: ['Hasta 20 swipes diarios', 'Hasta 10 matches diarios', 'Filtros básicos', 'Chat integrado'],
-    buttonText: 'Usar gratis',
-    buttonVariant: 'outline' as const,
-    popular: false,
-    urgent: false,
-    bgGradient: 'from-green-50 to-emerald-50',
-    borderColor: 'border-green-200 hover:border-green-300'
-  }, {
-    id: 'pro',
-    name: 'Plan PRO',
-    price: '4,99€',
-    period: '/mes',
-    icon: <Star className="w-6 h-6 text-homi-purple" />,
-    description: 'Encuentra compañero en tiempo récord',
-    features: ['Swipes y matches ilimitados', 'Filtros personalizados', 'Visibilidad prioritaria'],
-    buttonText: 'Hazte PRO',
-    buttonVariant: 'default' as const,
-    popular: true,
-    urgent: false,
-    bgGradient: 'from-purple-50 to-violet-50',
-    borderColor: 'border-homi-purple hover:border-homi-purple/80'
-  }, {
-    id: 'founder',
-    name: 'Plan Fundador',
-    price: '24,99€',
-    originalPrice: '59,99€',
-    period: '/año',
-    icon: <Crown className="w-6 h-6 text-yellow-500" />,
-    description: 'Acceso exclusivo',
-    features: ['Todas las ventajas PRO', 'Distintivo especial', 'Acceso anticipado a nuevas funciones', 'Soporte prioritario'],
-    buttonText: 'Quiero ser Fundador',
-    buttonVariant: 'default' as const,
-    popular: false,
-    urgent: true,
-    urgentText: 'Solo para los 50 primeros usuarios',
-    bgGradient: 'from-yellow-50 to-orange-50',
-    borderColor: 'border-yellow-400 hover:border-yellow-500'
-  }];
+  const pricingPlans = [
+    {
+      id: 'basic',
+      name: 'Plan Básico',
+      price: '0',
+      period: '/mes',
+      originalPrice: null,
+      icon: <User className="h-5 w-5" />,
+      description: 'Perfecto para comenzar a buscar compañeros de piso',
+      features: [
+        'Ver hasta 10 perfiles por día',
+        'Mensaje básico de presentación',
+        'Filtros básicos de búsqueda',
+        'Acceso a la comunidad'
+      ],
+      buttonText: 'Comenzar gratis',
+      buttonVariant: 'outline' as const,
+      popular: false,
+      urgent: false,
+      bgGradient: 'from-gray-50 to-slate-50',
+      borderColor: 'border-gray-200 hover:border-gray-300'
+    },
+    {
+      id: 'pro',
+      name: 'Plan Pro',
+      price: '9.99',
+      period: '/mes',
+      originalPrice: '19.99',
+      icon: <Star className="h-5 w-5" />,
+      description: 'Ideal para una búsqueda más efectiva y rápida',
+      features: [
+        'Perfiles ilimitados por día',
+        'Filtros avanzados de compatibilidad',
+        'Ver quién ha visto tu perfil',
+        'Mensajes personalizados',
+        'Prioridad en el matching',
+        'Soporte prioritario'
+      ],
+      buttonText: 'Comenzar Pro',
+      buttonVariant: 'default' as const,
+      popular: true,
+      urgent: false,
+      bgGradient: 'from-purple-50 to-violet-50',
+      borderColor: 'border-homi-purple hover:border-homi-purple/80'
+    }, {
+      id: 'founder',
+      name: 'Plan Fundador',
+      price: '4.99',
+      period: '/mes',
+      originalPrice: '29.99',
+      icon: <Crown className="h-5 w-5" />,
+      description: 'Oferta especial de lanzamiento - ¡Solo por tiempo limitado!',
+      features: [
+        'Todas las funciones Pro',
+        'Acceso de por vida a nuevas funciones',
+        'Badge exclusivo de "Fundador"',
+        'Acceso anticipado a nuevas características',
+        'Soporte VIP 24/7',
+        'Sin anuncios para siempre'
+      ],
+      buttonText: 'Ser Fundador',
+      buttonVariant: 'default' as const,
+      popular: false,
+      urgent: true,
+      urgentText: '¡Solo quedan 47 espacios!',
+      bgGradient: 'from-amber-50 to-orange-50',
+      borderColor: 'border-amber-400 hover:border-amber-500'
+    }
+  ];
 
   return <div className="min-h-screen flex flex-col overflow-x-hidden w-full">
       <div className="pt-16 w-full">
@@ -561,88 +585,95 @@ const Index = () => {
             
             {/* Grid de planes más compacto */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-8">
-              {plans.map((plan, index) => <Card key={plan.id} className={`relative overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-purple-100/50 group ${plan.popular ? 'scale-105 shadow-xl border-2 border-homi-purple' : 'hover:scale-105'} ${plan.urgent ? 'border-2 border-yellow-400 shadow-lg shadow-yellow-100' : plan.borderColor} bg-gradient-to-br ${plan.bgGradient} backdrop-blur-sm`} style={{
-              animationDelay: `${index * 100}ms`
-            }}>
+              {pricingPlans.map((plan) => (
+                <div
+                  key={plan.id}
+                  className={cn(
+                    "relative rounded-2xl shadow-lg transition-all duration-300 hover:shadow-xl border-2 p-6",
+                    plan.bgGradient && `bg-gradient-to-br ${plan.bgGradient}`,
+                    plan.borderColor,
+                    plan.popular && "ring-2 ring-homi-purple/20",
+                    plan.urgent && "ring-2 ring-amber-400/30"
+                  )}
+                >
                   {/* Popular badge */}
-                  {plan.popular && <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-homi-purple to-purple-600 text-white text-center py-2 text-sm font-semibold shadow-lg">
-                      <div className="flex items-center justify-center gap-2">
-                        <Star className="w-4 h-4 fill-current" />
+                  {plan.popular && (
+                    <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                      <span className="bg-homi-purple text-white px-4 py-1 rounded-full text-sm font-medium">
                         Más Popular
-                        <Star className="w-4 h-4 fill-current" />
-                      </div>
-                    </div>}
-                  
+                      </span>
+                    </div>
+                  )}
+
                   {/* Urgent badge */}
-                  {plan.urgent && <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 text-black text-center py-2 text-sm font-bold shadow-lg animate-pulse">
-                      <div className="flex items-center justify-center gap-1">
-                        ⚡ {plan.urgentText} ⚡
-                      </div>
-                    </div>}
+                  {plan.urgent && (
+                    <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                      <span className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-1 rounded-full text-sm font-bold animate-pulse">
+                        ⚡ Oferta Limitada
+                      </span>
+                    </div>
+                  )}
 
-                  {/* Special highlight for PRO plan */}
-                  {plan.highlight && <div className="absolute top-12 left-0 right-0 bg-gradient-to-r from-orange-400 to-red-400 text-white text-center py-1.5 text-xs font-semibold">
-                      {plan.highlight}
-                    </div>}
-
-                  <CardHeader className={`text-center relative ${plan.popular || plan.urgent ? 'pt-12' : 'pt-6'} ${plan.highlight ? 'pt-16' : ''} pb-4`}>
-                    {/* Icon con efecto de glow */}
-                    <div className="flex justify-center mb-3">
-                      <div className="p-2.5 rounded-full bg-white/80 backdrop-blur-sm shadow-lg group-hover:shadow-xl transition-all duration-300">
+                  <div className="text-center">
+                    <div className="flex justify-center mb-4">
+                      <div className={cn(
+                        "p-3 rounded-full",
+                        plan.popular ? "bg-homi-purple text-white" : "bg-white text-homi-purple border border-homi-purple/20"
+                      )}>
                         {plan.icon}
                       </div>
                     </div>
                     
-                    <CardTitle className="text-xl font-bold mb-2 group-hover:text-homi-purple transition-colors duration-300">
-                      {plan.name}
-                    </CardTitle>
-                    <CardDescription className="text-muted-foreground mb-3 text-sm">
-                      {plan.description}
-                    </CardDescription>
+                    <h3 className="text-xl font-bold mb-2">{plan.name}</h3>
+                    <p className="text-muted-foreground mb-4 text-sm">{plan.description}</p>
                     
-                    {/* Precio con mejor styling */}
-                    <div className="mb-4">
-                      {plan.originalPrice ? <div className="flex flex-col items-center gap-1">
-                          <div className="flex items-baseline justify-center gap-1 text-muted-foreground">
-                            <span className="text-base line-through">
-                              {plan.originalPrice}
-                            </span>
-                            <span className="text-sm">{plan.period}</span>
-                          </div>
-                          <div className="flex items-baseline justify-center gap-1">
-                            <span className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
-                              {plan.price}
-                            </span>
-                            <span className="text-muted-foreground text-base">{plan.period}</span>
-                          </div>
-                        </div> : <div className="flex items-baseline justify-center gap-1">
-                          <span className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
-                            {plan.price}
+                    <div className="mb-6">
+                      <div className="flex items-baseline justify-center mb-1">
+                        <span className="text-4xl font-bold">{plan.price}€</span>
+                        <span className="text-muted-foreground ml-1">{plan.period}</span>
+                      </div>
+                      {plan.originalPrice && (
+                        <div className="flex items-center justify-center gap-2">
+                          <span className="text-muted-foreground line-through text-sm">
+                            {plan.originalPrice}€/mes
                           </span>
-                          {plan.period && <span className="text-muted-foreground text-base">{plan.period}</span>}
-                        </div>}
+                          <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-medium">
+                            ¡{Math.round(((parseFloat(plan.originalPrice) - parseFloat(plan.price)) / parseFloat(plan.originalPrice)) * 100)}% OFF!
+                          </span>
+                        </div>
+                      )}
+                      {plan.urgent && plan.urgentText && (
+                        <p className="text-amber-600 text-sm font-medium mt-2">
+                          {plan.urgentText}
+                        </p>
+                      )}
                     </div>
-                  </CardHeader>
-
-                  <CardContent className="px-5 pb-6">
-                    {/* Lista de características más compacta */}
-                    <ul className="space-y-2.5 mb-6">
-                      {plan.features.map((feature, index) => <li key={index} className="flex items-start gap-2.5 group/item">
-                          <div className="flex-shrink-0 w-4 h-4 rounded-full bg-green-100 flex items-center justify-center mt-0.5 group-hover/item:bg-green-200 transition-colors duration-200">
-                            <Check className="w-2.5 h-2.5 text-green-600" />
-                          </div>
-                          <span className="text-sm leading-relaxed group-hover/item:text-slate-700 transition-colors duration-200">
-                            {feature}
-                          </span>
-                        </li>)}
+                    
+                    <ul className="space-y-3 mb-8 text-left">
+                      {plan.features.map((feature, index) => (
+                        <li key={index} className="flex items-start gap-3">
+                          <Check className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                          <span className="text-sm">{feature}</span>
+                        </li>
+                      ))}
                     </ul>
-
-                    {/* Botón */}
-                    <Button className={`w-full py-2.5 font-semibold text-sm transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl ${plan.id === 'pro' ? 'bg-gradient-to-r from-homi-purple to-purple-600 hover:from-purple-600 hover:to-homi-purple text-white' : plan.id === 'founder' ? 'bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 hover:from-yellow-500 hover:via-orange-500 hover:to-red-500 text-black font-bold shadow-yellow-200' : 'bg-white border-2 border-green-200 text-green-700 hover:bg-green-50 hover:border-green-300'}`} variant={plan.buttonVariant} onClick={() => handlePlanSelect(plan.id)}>
-                      {plan.buttonText}
+                    
+                    <Button 
+                      className={cn(
+                        "w-full rounded-full font-semibold transition-all",
+                        plan.buttonVariant === 'default' 
+                          ? "bg-homi-purple hover:bg-homi-purple/90 text-white shadow-lg hover:shadow-xl transform hover:scale-105" 
+                          : "border-2 border-homi-purple text-homi-purple hover:bg-homi-purple hover:text-white"
+                      )}
+                      variant={plan.buttonVariant}
+                      size="lg"
+                      asChild
+                    >
+                      <Link to="/register">{plan.buttonText}</Link>
                     </Button>
-                  </CardContent>
-                </Card>)}
+                  </div>
+                </div>
+              ))}
             </div>
 
             {/* Call to action más compacto */}
