@@ -371,8 +371,7 @@ const Index = () => {
     popular: true,
     urgent: false,
     bgGradient: 'from-purple-50 to-violet-50',
-    borderColor: 'border-homi-purple hover:border-homi-purple/80',
-    highlight: '⚡ Perfecto para encontrar compañero rápidamente'
+    borderColor: 'border-homi-purple hover:border-homi-purple/80'
   }, {
     id: 'founder',
     name: 'Plan Fundador',
