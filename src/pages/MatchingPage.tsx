@@ -94,9 +94,8 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
   const [openPreferences, setOpenPreferences] = useState(false);
   const isMobile = useIsMobile();
   const { data: profiles, isLoading, error, refetch } = useProfiles(user?.id);
-  const { data: matches, isLoading: matchesLoading, error: matchesError } = useMatches(user?.id);
+  const { data: matches, isLoading: matchesLoading, error: matchesError, refetch: refetchMatches } = useMatches(user?.id);
   const hasProfileCompleted = user?.completed;
-
   
   const [removedProfiles, setRemovedProfiles] = useState<Set<string>>(new Set());
   const [ availableProfiles, setAvailableProfiles ]= useState<any[]>([]);
@@ -376,6 +375,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
             variant: "default"
           });
         }
+        refetchMatches();
       },
       "¡Nuevo match!"
     );
@@ -469,7 +469,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
             const { data: deleteData, error: deleteError } = await supabase
               .from('profile_matches')
               .delete()
-              .eq('profile_id', user?.id)
+              .eq('profile_id', deletedMatch.profile_one_id)
               .eq('target_profile_id', deletedMatch.profile_two_id);
           } catch (error) {
             console.error('Error deleting profile_matches:', error);
@@ -479,7 +479,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
             const { data: deleteData, error: deleteError } = await supabase
               .from('profile_matches')
               .delete()
-              .eq('profile_id', id)
+              .eq('profile_id', deletedMatch.profile_two_id)
               .eq('target_profile_id', deletedMatch.profile_one_id);
           } catch (error) {
             console.error('Error deleting profile_matches:', error);
@@ -487,7 +487,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
         } catch (error) {
           console.error('Error deleting match:', error);
         }
-
+        refetchMatches();
       },
       "Función de deshacer match"
     );
@@ -540,7 +540,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
             <p className="text-muted-foreground max-w-2xl font-normal text-left">Explora los perfiles y conecta con potenciales compañeros de piso.</p>
           </div>
           
-          <Tabs defaultValue="discover" value={activeTab} onValueChange={value => setActiveTab(value as 'discover' | 'matches')} className="mb-4">
+          <Tabs defaultValue="discover" value={activeTab} onValueChange={value => {setActiveTab(value as 'discover' | 'matches'); refetch(); refetchMatches()}} className="mb-4">
             <div className="flex justify-between items-center mb-6">
               <TabsList className="bg-muted/60">
                 <TabsTrigger value="discover" className="flex items-center gap-2">
