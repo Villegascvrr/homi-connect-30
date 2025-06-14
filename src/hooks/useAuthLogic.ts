@@ -1,4 +1,3 @@
-
 import { useState, useCallback, useEffect } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase, checkEmailExists } from '@/integrations/supabase/client';
@@ -113,7 +112,6 @@ export const useAuthLogic = () => {
           .select('profile_image, completed')
           .eq('id', refreshedUser.id)
           .maybeSingle();
-        
         if (!profileError && profileData) {
           
           setUser({
@@ -490,7 +488,7 @@ export const useAuthLogic = () => {
               try {
                 let { data: profileData, error } = await supabase
                   .from('profiles')
-                  .select('profile_image, first_name, last_name')
+                  .select('profile_image, completed, first_name, last_name')
                   .eq('id', authUser.id)
                   .maybeSingle();
                 
@@ -514,7 +512,8 @@ export const useAuthLogic = () => {
                       last_name: lastName,
                       username: usernameFromEmail,
                       email: authUser.email,
-                      profile_image: null
+                      profile_image: null,
+                      completed: false
                     };
                     
                     console.log("Creating profile for Google user:", newProfile);
@@ -535,13 +534,16 @@ export const useAuthLogic = () => {
                 }
                 
                 if (profileData && isMounted) {
-                  
-                  setUser({
+                  console.log('Profile data before setting user:', profileData);
+                  const userWithProfile = {
                     ...authUser,
-                    profile_image: profileData.profile_image
-                  });
+                    profile_image: profileData.profile_image,
+                    completed: profileData.completed
+                  };
+                  console.log('User with profile data:', userWithProfile);
+                  setUser(userWithProfile);
                 } else if (isMounted) {
-                  
+                  console.log('No profile data found, setting basic user:', authUser);
                   setUser(authUser);
                 }
               } catch (error) {
@@ -591,20 +593,23 @@ export const useAuthLogic = () => {
           try {
             const { data: profileData, error } = await supabase
               .from('profiles')
-              .select('profile_image')
+              .select('profile_image, completed')
               .eq('id', authUser.id)
               .maybeSingle();
             
             if (!isMounted) return;
             
             if (!error && profileData) {
-              
-              setUser({
+              console.log('Existing session profile data:', profileData);
+              const userWithProfile = {
                 ...authUser,
-                profile_image: profileData.profile_image
-              });
+                profile_image: profileData.profile_image,
+                completed: profileData.completed
+              };
+              console.log('Setting user with existing session profile:', userWithProfile);
+              setUser(userWithProfile);
             } else {
-              
+              console.log('No profile data in existing session, setting basic user:', authUser);
               setUser(authUser);
             }
           } catch (error) {
