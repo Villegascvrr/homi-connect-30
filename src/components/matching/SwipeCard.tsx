@@ -383,17 +383,6 @@ const SwipeCard = ({
           <X size={20} />
         </Button>
         
-        {onUndo && (
-          <Button 
-            variant="outline"
-            size="icon"
-            className="w-8 h-8 rounded-full border-2 border-gray-400 text-gray-500 flex items-center justify-center shadow-md transition-all hover:bg-gray-100 active:scale-95"
-            onClick={onUndo}
-          >
-            <Undo2 size={16} />
-          </Button>
-        )}
-        
         
         <Button 
           variant="outline"
