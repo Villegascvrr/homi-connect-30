@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import ChatList from '@/components/chat/ChatList';
@@ -8,6 +8,8 @@ import { useAuth } from '@/context/AuthContext';
 import { useMessages } from '@/hooks/use-messages';
 import { useMatches } from '@/hooks/use-matches';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Button } from '@/components/ui/button';
+import { Heart } from 'lucide-react';
 
 
 interface ChatPageProps {
@@ -15,6 +17,7 @@ interface ChatPageProps {
 }
 
 const ChatPage = ({ isPreview = false }: ChatPageProps) => {
+  const navigate = useNavigate();
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
@@ -80,7 +83,42 @@ const ChatPage = ({ isPreview = false }: ChatPageProps) => {
     );
   }
 
+  if(!(parsedMatches && parsedMatches.length > 0)){
+    return (
+      <div className="min-h-screen flex flex-col bg-background">
+      <Navbar />
+      
+      {/* Content container with proper spacing */}
+      <main className="flex-grow flex flex-col">
+        <div className="h-full flex flex-col">
+          <div className="flex">
+          <div className="text-center py-16 w-full">
+            <div className="mb-6">
+              <div className="inline-block p-4 rounded-full bg-muted mb-4">
+                <Heart className="h-10 w-10 text-muted-foreground" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">No tienes matches aún</h3>
+              <p className="text-muted-foreground max-w-md mx-auto">
+                ¡Sigue explorando perfiles y encontrarás compañeros de piso compatibles!
+              </p>
+            </div>
+            <Button 
+              onClick={() => navigate('/matching')}
+              className="rounded-full bg-homi-purple hover:bg-homi-purple/90"
+            >
+              Explorar perfiles
+            </Button>
+          </div>
+            
+          </div>
+        </div>
+      </main>
+      
+      <Footer />
+    </div>
 
+    );
+  }
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
