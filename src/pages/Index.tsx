@@ -647,7 +647,7 @@ const Index = () => {
                   ¿Necesitas más información?
                 </p>
                 <Link to="/precios">
-                  <Button variant="outline" className="rounded-full px-6 py-2 bg-white/80 backdrop-blur-sm border-purple-200 text-homi-purple hover:bg-purple-50 hover:border-homi-purple transition-all duration-300 shadow-lg hover:shadow-xl text-sm">
+                  <Button variant="outline" className="rounded-full px-6 py-2 bg-white/80 backdrop-blur-sm border-purple-200 text-homi-purple hover:bg-purple-50 hover:border-homi-purple transition-all duration-300 text-sm">
                     Ver detalles completos
                   </Button>
                 </Link>
