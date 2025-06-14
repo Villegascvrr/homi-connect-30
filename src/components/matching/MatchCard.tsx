@@ -9,17 +9,6 @@ interface Tag {
   name: string;
 }
 
-interface ApartmentInfo {
-  address?: string;
-  rooms?: number;
-  bathrooms?: number;
-  size?: number;
-  rent?: number;
-  description?: string;
-  amenities?: string[];
-  available_from?: string;
-}
-
 interface MatchCardProps {
   id: string;
   name: string;
@@ -41,7 +30,6 @@ interface MatchCardProps {
     max: number;
   };
   moveInDate?: string;
-  apartment?: ApartmentInfo;
   onLike: (id: string) => void;
   onPass: (id: string) => void;
   onView: (id: string) => void;
@@ -60,7 +48,6 @@ const MatchCard = ({
   lifestyle,
   budget,
   moveInDate,
-  apartment,
   onLike,
   onPass,
   onView,
@@ -235,126 +222,47 @@ const MatchCard = ({
         </div>
         
         {/* Additional details */}
-        {showDetails && (
-          <div className="mb-3 animate-fade-in space-y-3">
-            {/* Lifestyle information */}
-            {lifestyleData && (
-              <div>
-                <h4 className="font-medium mb-2 text-sm text-homi-purple">Estilo de vida</h4>
-                <div className="grid grid-cols-2 gap-2">
-                  <div className="flex items-center gap-1 text-xs">
-                    <span className="w-6 h-6 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
-                      <Clock size={14} />
-                    </span>
-                    <div>
-                      <span className="text-xs text-muted-foreground">Horario</span>
-                      <span className="block">{lifestyleData.schedule}</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1 text-xs">
-                    <span className="w-6 h-6 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
-                      <User size={14} />
-                    </span>
-                    <div>
-                      <span className="text-xs text-muted-foreground">Limpieza</span>
-                      <span className="block">{lifestyleData.cleanliness}</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1 text-xs">
-                    <span className="w-6 h-6 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
-                      <MessageSquare size={14} />
-                    </span>
-                    <div>
-                      <span className="text-xs text-muted-foreground">Invitados</span>
-                      <span className="block">{lifestyleData.guests}</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1 text-xs">
-                    <span className="w-6 h-6 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
-                      <span className="text-xs">🚬</span>
-                    </span>
-                    <div>
-                      <span className="text-xs text-muted-foreground">Fumar</span>
-                      <span className="block">{lifestyleData.smoking}</span>
-                    </div>
-                  </div>
+        {showDetails && lifestyleData && (
+          <div className="mb-3 animate-fade-in">
+            <h4 className="font-medium mb-1 text-xs">Estilo de vida</h4>
+            <div className="grid grid-cols-2 gap-2">
+              <div className="flex items-center gap-1 text-xs">
+                <span className="w-6 h-6 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
+                  <Clock size={14} />
+                </span>
+                <div>
+                  <span className="text-xs text-muted-foreground">Horario</span>
+                  <span className="block">{lifestyleData.schedule}</span>
                 </div>
               </div>
-            )}
-
-            {/* Apartment information */}
-            {apartment && (
-              <div>
-                <h4 className="font-medium mb-2 text-sm text-homi-purple">Información del piso</h4>
-                <div className="space-y-2">
-                  {apartment.address && (
-                    <div className="flex items-center gap-2 text-xs">
-                      <Home size={12} className="text-homi-purple" />
-                      <span className="text-muted-foreground">Dirección:</span>
-                      <span>{apartment.address}</span>
-                    </div>
-                  )}
-                  <div className="grid grid-cols-2 gap-2">
-                    {apartment.rooms && (
-                      <div className="flex items-center gap-1 text-xs">
-                        <span className="w-6 h-6 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
-                          🏠
-                        </span>
-                        <div>
-                          <span className="text-xs text-muted-foreground">Habitaciones</span>
-                          <span className="block">{apartment.rooms}</span>
-                        </div>
-                      </div>
-                    )}
-                    {apartment.bathrooms && (
-                      <div className="flex items-center gap-1 text-xs">
-                        <span className="w-6 h-6 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
-                          🚿
-                        </span>
-                        <div>
-                          <span className="text-xs text-muted-foreground">Baños</span>
-                          <span className="block">{apartment.bathrooms}</span>
-                        </div>
-                      </div>
-                    )}
-                    {apartment.size && (
-                      <div className="flex items-center gap-1 text-xs">
-                        <span className="w-6 h-6 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
-                          📐
-                        </span>
-                        <div>
-                          <span className="text-xs text-muted-foreground">Tamaño</span>
-                          <span className="block">{apartment.size}m²</span>
-                        </div>
-                      </div>
-                    )}
-                    {apartment.rent && (
-                      <div className="flex items-center gap-1 text-xs">
-                        <span className="w-6 h-6 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
-                          <DollarSign size={12} />
-                        </span>
-                        <div>
-                          <span className="text-xs text-muted-foreground">Alquiler</span>
-                          <span className="block">{apartment.rent}€/mes</span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  {apartment.amenities && apartment.amenities.length > 0 && (
-                    <div className="mt-2">
-                      <span className="text-xs text-muted-foreground">Comodidades:</span>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {apartment.amenities.map((amenity, index) => (
-                          <span key={index} className="px-2 py-0.5 text-xs rounded-full bg-green-100 text-green-700">
-                            {amenity}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+              <div className="flex items-center gap-1 text-xs">
+                <span className="w-6 h-6 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
+                  <User size={14} />
+                </span>
+                <div>
+                  <span className="text-xs text-muted-foreground">Limpieza</span>
+                  <span className="block">{lifestyleData.cleanliness}</span>
                 </div>
               </div>
-            )}
+              <div className="flex items-center gap-1 text-xs">
+                <span className="w-6 h-6 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
+                  <MessageSquare size={14} />
+                </span>
+                <div>
+                  <span className="text-xs text-muted-foreground">Invitados</span>
+                  <span className="block">{lifestyleData.guests}</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-1 text-xs">
+                <span className="w-6 h-6 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
+                  <span className="text-xs">🚬</span>
+                </span>
+                <div>
+                  <span className="text-xs text-muted-foreground">Fumar</span>
+                  <span className="block">{lifestyleData.smoking}</span>
+                </div>
+              </div>
+            </div>
           </div>
         )}
         
