@@ -1,5 +1,5 @@
 
-import { createContext, useContext } from "react";
+import React, { createContext, useContext } from "react";
 import { Session } from "@supabase/supabase-js";
 import { useAuthLogic, UserSignUpData, ExtendedUser } from "@/hooks/useAuthLogic";
 
