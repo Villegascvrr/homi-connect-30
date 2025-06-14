@@ -442,8 +442,52 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
 
   const handleUnmatch = (id: string) => {
     handleAction(
-      () => {
+      async () => {
         console.log("deshacer match", id);
+        //borrar de la tabla matches
+        try {
+          const { data: deleteData, error: deleteError } = await supabase
+            .from('matches')
+            .delete()
+            .eq('id', id)
+            .select();
+          
+          if (deleteError) {
+            console.error('Error deleting match:', deleteError);
+            return;
+          }
+
+          // deleteData contendrá la fila eliminada
+          const deletedMatch = deleteData[0];
+          console.log("Match eliminado:", deletedMatch);
+          
+          // Ahora podemos usar deletedMatch.profile_one_id y deletedMatch.profile_two_id
+          // para las siguientes operaciones
+            
+          //borrar de la tabla profile_matches
+          try {
+            const { data: deleteData, error: deleteError } = await supabase
+              .from('profile_matches')
+              .delete()
+              .eq('profile_id', user?.id)
+              .eq('target_profile_id', deletedMatch.profile_two_id);
+          } catch (error) {
+            console.error('Error deleting profile_matches:', error);
+          }
+
+          try {
+            const { data: deleteData, error: deleteError } = await supabase
+              .from('profile_matches')
+              .delete()
+              .eq('profile_id', id)
+              .eq('target_profile_id', deletedMatch.profile_one_id);
+          } catch (error) {
+            console.error('Error deleting profile_matches:', error);
+          }
+        } catch (error) {
+          console.error('Error deleting match:', error);
+        }
+
       },
       "Función de deshacer match"
     );
