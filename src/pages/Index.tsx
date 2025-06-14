@@ -364,14 +364,15 @@ const Index = () => {
     price: '4,99€',
     period: '/mes',
     icon: <Star className="w-6 h-6 text-homi-purple" />,
-    description: 'La experiencia completa',
+    description: 'Encuentra compañero en tiempo récord',
     features: ['Swipes y matches ilimitados', 'Filtros personalizados', 'Visibilidad prioritaria'],
     buttonText: 'Hazte PRO',
     buttonVariant: 'default' as const,
     popular: true,
     urgent: false,
     bgGradient: 'from-purple-50 to-violet-50',
-    borderColor: 'border-homi-purple hover:border-homi-purple/80'
+    borderColor: 'border-homi-purple hover:border-homi-purple/80',
+    highlight: '⚡ Perfecto para encontrar compañero rápidamente'
   }, {
     id: 'founder',
     name: 'Plan Fundador',
@@ -580,7 +581,12 @@ const Index = () => {
                       </div>
                     </div>}
 
-                  <CardHeader className={`text-center relative ${plan.popular || plan.urgent ? 'pt-12' : 'pt-6'} pb-4`}>
+                  {/* Special highlight for PRO plan */}
+                  {plan.highlight && <div className="absolute top-12 left-0 right-0 bg-gradient-to-r from-orange-400 to-red-400 text-white text-center py-1.5 text-xs font-semibold">
+                      {plan.highlight}
+                    </div>}
+
+                  <CardHeader className={`text-center relative ${plan.popular || plan.urgent ? 'pt-12' : 'pt-6'} ${plan.highlight ? 'pt-16' : ''} pb-4`}>
                     {/* Icon con efecto de glow */}
                     <div className="flex justify-center mb-3">
                       <div className="p-2.5 rounded-full bg-white/80 backdrop-blur-sm shadow-lg group-hover:shadow-xl transition-all duration-300">
