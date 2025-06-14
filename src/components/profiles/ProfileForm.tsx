@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -15,6 +15,7 @@ import ProfileBasicInfo from "./ProfileBasicInfo";
 import ProfileInterests from "./ProfileInterests";
 import ProfileApartmentPreferences from "./ProfileApartmentPreferences";
 import ProfileLifestyle from "./ProfileLifestyle";
+import { useIsMobile } from '@/hooks/use-mobile';
 
 // Define the form schema with all necessary fields
 const formSchema = z.object({
@@ -71,7 +72,11 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
   const { user, refreshUser } = useAuth();
   const [apartmentStatus, setApartmentStatus] = useState<'looking' | 'have'>('looking');
   const [showUniversityField, setShowUniversityField] = useState(false);
-  
+  const [showFixedButtons, setShowFixedButtons] = useState(true);
+  const formRef = useRef<HTMLFormElement>(null);
+  const formEndRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -107,6 +112,26 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
       },
     },
   });
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!formEndRef.current) return;
+      
+      const formEnd = formEndRef.current.getBoundingClientRect().top;
+      const viewportHeight = window.innerHeight;
+      
+      setShowFixedButtons(formEnd + (isMobile ? 150 : 30) > viewportHeight);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('resize', handleScroll);
+    handleScroll();
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, []);
 
   // Save function
   const saveProfile = useCallback(async (values: FormValues) => {
@@ -464,6 +489,32 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
     setShowUniversityField(type === "student");
   };
 
+  const renderButtons = () => (
+    <div className="flex flex-col sm:flex-row gap-4 justify-end">
+      <Button 
+        type="submit" 
+        className={`w-full sm:w-auto bg-homi-purple hover:bg-homi-purple/90 transition-all duration-200 shadow-lg hover:shadow-xl`}
+        size="auto" 
+        wrap="normal" 
+        disabled={isSubmitting}
+      >
+        <span className="button-text-container">
+          {isSubmitting ? "Guardando..." : "Guardar cambios"}
+        </span>
+      </Button>     
+      {cancelEdit && (
+        <Button 
+          type="button" 
+          variant="outline" 
+          onClick={cancelEdit}
+          className={`w-full sm:w-auto transition-all duration-200 shadow-lg hover:shadow-xl`}
+        >
+          Cancelar
+        </Button>
+      )}
+    </div>
+  );
+
   if (isLoading) {
     return (
       <div className="min-h-[400px] flex items-center justify-center">
@@ -477,7 +528,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div className="space-y-4">
           {/* Unsaved changes indicator */}
           {hasUnsavedChanges && (
@@ -522,28 +573,23 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
           />
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-end mt-6">
-          {cancelEdit && (
-            <Button 
-              type="button" 
-              variant="outline" 
-              onClick={handleCancelEdit}
-              className="w-full sm:w-auto"
-            >
-              Cancelar
-            </Button>
-          )}
-          <Button 
-            type="submit" 
-            className="w-full sm:w-auto bg-homi-purple hover:bg-homi-purple/90" 
-            size="auto" 
-            wrap="normal" 
-            disabled={isSubmitting}
-          >
-            <span className="button-text-container">
-              {isSubmitting ? "Guardando..." : "Guardar cambios"}
-            </span>
-          </Button>
+        {/* Botones flotantes */}
+        {showFixedButtons && (
+          <div className="fixed bottom-0 left-0 right-0 z-50 sm:bottom-4">
+            <div className="max-w-4xl mx-auto px-0 sm:px-6">
+              <div className={`bg-white p-4 ${isMobile ? '' : 'rounded-lg'} sm:w-fit sm:ml-auto border border-homi-purple/30`}>
+                {renderButtons()}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Elemento para detectar el final del formulario */}
+        <div ref={formEndRef} className="h-1" />
+        
+        {/* Botones fijos al final */}
+        <div className="bg-white p-4 rounded-lg sm:w-fit sm:ml-auto border border-homi-purple/30">
+          {renderButtons()}
         </div>
       </form>
     </Form>
