@@ -580,12 +580,7 @@ const Index = () => {
                       </div>
                     </div>}
 
-                  {/* Special highlight for PRO plan */}
-                  {plan.highlight && <div className="absolute top-12 left-0 right-0 bg-gradient-to-r from-orange-400 to-red-400 text-white text-center py-1.5 text-xs font-semibold">
-                      {plan.highlight}
-                    </div>}
-
-                  <CardHeader className={`text-center relative ${plan.popular || plan.urgent ? 'pt-12' : 'pt-6'} ${plan.highlight ? 'pt-16' : ''} pb-4`}>
+                  <CardHeader className={`text-center relative ${plan.popular || plan.urgent ? 'pt-12' : 'pt-6'} pb-4`}>
                     {/* Icon con efecto de glow */}
                     <div className="flex justify-center mb-3">
                       <div className="p-2.5 rounded-full bg-white/80 backdrop-blur-sm shadow-lg group-hover:shadow-xl transition-all duration-300">
