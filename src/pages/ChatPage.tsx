@@ -9,131 +9,6 @@ import { useMessages } from '@/hooks/use-messages';
 import { useMatches } from '@/hooks/use-matches';
 import { useIsMobile } from '@/hooks/use-mobile';
 
-// Define a mock chat match for demo purposes
-const mockChatMatches = [
-  {
-    id: "1",
-    name: "Laura García",
-    lastMessage: "¡Hola! Vi tu perfil y creo que podríamos ser buenos compañeros de piso.",
-    timestamp: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
-    unread: 2,
-    online: true,
-    typing: false,
-    imgUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3"
-  },
-  {
-    id: "2",
-    name: "Carlos Martínez",
-    lastMessage: "Me interesa el piso que comentaste cerca de la universidad.",
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 3).toISOString(),
-    unread: 0,
-    online: true,
-    typing: true,
-    imgUrl: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3"
-  },
-  {
-    id: "3",
-    name: "Ana López",
-    lastMessage: "¿Cuándo podríamos quedar para ver el piso?",
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 12).toISOString(),
-    unread: 0,
-    online: false,
-    typing: false,
-    imgUrl: "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1961&auto=format&fit=crop&ixlib=rb-4.0.3"
-  },
-  {
-    id: "4",
-    name: "Miguel Sánchez",
-    lastMessage: "Perfecto, entonces nos vemos mañana a las 6.",
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
-    unread: 1,
-    online: false,
-    typing: false,
-    imgUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3"
-  }
-];
-
-// Define sample messages for each chat
-const mockMessages = {
-  "1": [
-    {
-      id: '1-1',
-      senderId: 'other',
-      text: '¡Hola! Vi tu perfil y creo que podríamos ser buenos compañeros de piso. ¿Buscas algo cerca de la universidad?',
-      timestamp: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
-      read: true
-    }, 
-    {
-      id: '1-2',
-      senderId: 'me',
-      text: 'Hola Laura, sí estoy buscando cerca del campus. Me encantaría hablar más sobre ello.',
-      timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
-      read: true
-    },
-    {
-      id: '1-3',
-      senderId: 'other',
-      text: '¡Genial! Tengo un piso compartido a 10 minutos de la facultad. Es amplio y luminoso.',
-      timestamp: new Date(Date.now() - 1000 * 60 * 20).toISOString(),
-      read: false
-    }
-  ],
-  "2": [
-    {
-      id: '2-1',
-      senderId: 'other',
-      text: 'Me interesa el piso que comentaste cerca de la universidad. ¿Sigue disponible?',
-      timestamp: new Date(Date.now() - 1000 * 60 * 180).toISOString(),
-      read: true
-    },
-    {
-      id: '2-2',
-      senderId: 'me',
-      text: 'Sí, aún está disponible. ¿Te gustaría verlo esta semana?',
-      timestamp: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
-      read: true
-    }
-  ],
-  "3": [
-    {
-      id: '3-1',
-      senderId: 'me',
-      text: 'Hola Ana, vi que estás buscando compañeros de piso en la zona centro.',
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 13).toISOString(),
-      read: true
-    },
-    {
-      id: '3-2',
-      senderId: 'other',
-      text: 'Sí, estoy buscando en esa zona. ¿Cuándo podríamos quedar para ver el piso?',
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 12).toISOString(),
-      read: true
-    }
-  ],
-  "4": [
-    {
-      id: '4-1',
-      senderId: 'other',
-      text: '¿Te parece bien quedar mañana para ver el piso?',
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 25).toISOString(),
-      read: true
-    },
-    {
-      id: '4-2',
-      senderId: 'me',
-      text: 'Sí, perfecto. ¿A las 6 de la tarde?',
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24.5).toISOString(),
-      read: true
-    },
-    {
-      id: '4-3',
-      senderId: 'other',
-      text: 'Perfecto, entonces nos vemos mañana a las 6.',
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
-      read: false
-    }
-  ]
-};
 
 interface ChatPageProps {
   isPreview?: boolean;
@@ -147,14 +22,14 @@ const ChatPage = ({ isPreview = false }: ChatPageProps) => {
   
   const { data: matches, isLoading: matchesLoading, error: matchesError } = useMatches(user?.id);
   //console.log("matches", matches);
- 
+ console.log("matchesLoading", matches);
   const { data: messages, isLoading: messagesLoading, error: messagesError } = useMessages(matches);
   //console.log("messages", messages);
-  
-  const parsedMatches = matches?.map((match) => {
+  console.log("messagesLoading", messages);
+  const parsedMatches = matches?.flatMap((match) => { 
     const matchMessages = messages?.filter((message) => message.match_id === match.id)
-    const lastMessage = matchMessages[matchMessages.length - 1]
-    return {
+    const lastMessage = matchMessages && matchMessages.length > 0 ? matchMessages[matchMessages.length - 1] : null
+    return [{
       id: match.id,
       name: match.name,
       imgUrl: match.imgUrl,
@@ -163,7 +38,7 @@ const ChatPage = ({ isPreview = false }: ChatPageProps) => {
       lastMessage: lastMessage?.content || "No hay mensajes aún",
       timestamp: match.matchDate,
       unread: 0
-    }
+    }]
   });
   useEffect(() => {
     // Set initial selected chat
@@ -185,9 +60,9 @@ const ChatPage = ({ isPreview = false }: ChatPageProps) => {
     setSelectedChatId(id);
     console.log("Selected chat changed to:", id);
   };
-  
+  console.log("parsedMatches", parsedMatches);
   // Find the currently selected chat
-  const selectedChat = useMemo(() => parsedMatches ? parsedMatches?.find(match => match.id === selectedChatId) || parsedMatches[0] : null, [parsedMatches, selectedChatId]);
+  const selectedChat = useMemo(() => parsedMatches && parsedMatches.length > 0 ? parsedMatches?.find(match => match.id === selectedChatId) || parsedMatches[0] : null, [parsedMatches, selectedChatId]);
   //console.log("selectedChat", selectedChat);
   // Show a more visible loading indicator
   if (isLoading) {
@@ -204,6 +79,7 @@ const ChatPage = ({ isPreview = false }: ChatPageProps) => {
       </div>
     );
   }
+
 
   return (
     <div className="min-h-screen flex flex-col bg-background">

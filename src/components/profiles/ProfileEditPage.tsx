@@ -59,7 +59,7 @@ const ProfileEditPage = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <main className="flex-grow pt-20 pb-12 bg-gray-50">
+      <main className="flex-grow pt-5 pb-12 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             {/* Header */}

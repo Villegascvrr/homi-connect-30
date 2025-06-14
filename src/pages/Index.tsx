@@ -391,9 +391,9 @@ const Index = () => {
   }];
 
   return <div className="min-h-screen flex flex-col overflow-x-hidden w-full">
-      <div className="pt-16 w-full">
-        <Navbar />
-      </div>
+      
+    <Navbar />
+
       
       <main className="flex-grow overflow-x-hidden w-full">
         <Hero />
