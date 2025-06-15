@@ -30,6 +30,65 @@ export interface Profile {
 }
 
 export const useProfiles = (profileId?: string) => {
+  if(!profileId ){
+    return useQuery({
+      queryKey: ['profiles', profileId],
+      queryFn: async () => {
+        try {
+          const { data, error } = await Promise.race([
+            supabase
+              .from('profiles')
+              .select(`
+                id,
+                first_name,
+                last_name,
+                username,
+                email,
+                edad,
+                ocupacion,
+                universidad,
+                bio,
+                profile_image,
+                gallery_images,
+                interests,
+                lifestyle,
+                is_profile_active,
+                sevilla_zona,
+                companeros_count,
+                completed,
+                discards:profile_discards!profile_discards_target_profile_id_fkey (id, profile_id, target_profile_id),
+                matches:profile_matches!profile_matches_target_profile_id_fkey (id, profile_id, target_profile_id)
+              `)
+              .eq('completed', true)
+              .range(0, 50),
+            new Promise((_, reject) => 
+              setTimeout(() => reject(new Error('Timeout')), 10000)
+            ),
+          ]) as { data: any; error: any };
+          
+          if (error) {
+            console.error('Error fetching profiles:', error);
+            throw error;
+          }
+  
+          if (!data) {
+            throw new Error('No data received');
+          }
+  
+          console.log("data", data);
+          return data;
+        } catch (error) {
+          console.error('Query error:', error);
+          throw error;
+        }
+      },
+      enabled: !!profileId,
+      retry: 1,
+      gcTime: 1000 * 60 * 30,
+      staleTime: 1000 * 60 * 5,
+    });
+  }
+
   return useQuery({
     queryKey: ['profiles', profileId],
     queryFn: async () => {

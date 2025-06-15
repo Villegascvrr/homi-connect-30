@@ -95,7 +95,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
   const isMobile = useIsMobile();
   const { data: profiles, isLoading, error, refetch } = useProfiles(user?.id);
   const { data: matches, isLoading: matchesLoading, error: matchesError, refetch: refetchMatches } = useMatches(user?.id);
-  const hasProfileCompleted = user?.completed;
+  const hasProfileCompleted = user ? user?.completed : true;
   
   const [removedProfiles, setRemovedProfiles] = useState<Set<string>>(new Set());
   const [ availableProfiles, setAvailableProfiles ]= useState<any[]>([]);
@@ -311,6 +311,10 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
   };
 
   const handleLike = (id: string) => {
+    if(!user){
+      navigate('/signin');
+      return;
+    }
     handleAction(
       async () => {
         try{
@@ -382,6 +386,10 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
   };
 
   const handlePass = (id: string) => {
+    if(!user){
+      navigate('/signin');
+      return;
+    }
     handleAction(
       async () => {
         const newFilteredProfiles = filteredProfiles.filter(profile => profile.id !== id);
