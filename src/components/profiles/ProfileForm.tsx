@@ -177,7 +177,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
         field_of_study: values.fieldOfStudy,
       };
       
-      const completed = (values.profileImage && values.firstName && values.age && values.occupation && values.lifestyle) ? true : false;
+      const completed = (values.profileImage && values.firstName && values.age && values.interests.length > 0 && values.lifestyle) ? true : false;
 
       const updateData = {
         first_name: values.firstName,

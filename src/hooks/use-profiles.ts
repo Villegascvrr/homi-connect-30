@@ -134,12 +134,13 @@ export const useProfiles = (profileId?: string) => {
               matches:profile_matches!profile_matches_target_profile_id_fkey (id, profile_id, target_profile_id)
             `)
             .not('id', 'eq', profileId)
+            .eq('completed', true)
             .range(skips, skips + 9),
           new Promise((_, reject) => 
             setTimeout(() => reject(new Error('Timeout')), 10000)
           ),
         ]) as { data: any; error: any };
-        
+
         if (error) {
           console.error('Error fetching profiles:', error);
           throw error;

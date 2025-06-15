@@ -263,7 +263,7 @@ const ProfilePage = () => {
   const { status: apartmentStatus, location } = getLocationAndStatusDisplay();
   const hasApartment = profile.sevilla_zona === 'tengo_piso';
 
-  const requiredFields = ['first_name', 'last_name', 'username', 'bio', 'edad', 'profile_image', 'interests'];
+  const requiredFields = ['first_name', 'edad', 'profile_image', 'interests', 'lifestyle'];
   const completedFields = requiredFields.filter(field => {
     if (field === 'interests') {
       return profile.interests && Array.isArray(profile.interests) && profile.interests.length > 0;
@@ -393,6 +393,10 @@ const ProfilePage = () => {
                     - Completa tu perfil para mejorar tus coincidencias
                   </span>
                 )}
+              </p>
+
+              <p className="text-sm text-muted-foreground mt-2">
+               Es necesario añadir foto de <span className="font-medium"> perfil, nombre, edad, intereses y estilo de vida </span> para que tu perfil sea visible para otros usuarios.
               </p>
             </div>
             
