@@ -73,7 +73,7 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-16 md:h-20">
           <Link to="/" className="flex items-center gap-2">
             <img 
-              src="/lovable-uploads/efbbb383-cff5-4e9e-8b43-141970c0e74c.png" 
+              src="/lovable-uploads/e5ed243f-ce37-4556-9a8d-2c8ca65a01a5.png" 
               alt="HomiMatch Logo" 
               className="w-8 h-8 md:w-10 md:h-10"
             />
