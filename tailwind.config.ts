@@ -111,9 +111,8 @@ export default {
         "swipe-left": "swipe-left 0.3s forwards ease-out",
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
-        inter: ['Inter', 'sans-serif'],
         poppins: ["Poppins", "sans-serif"],
+        inter: ["Inter", "sans-serif"],
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',

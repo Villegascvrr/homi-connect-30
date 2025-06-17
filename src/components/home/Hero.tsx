@@ -8,7 +8,6 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { signInWithGoogleOAuth } from '@/integrations/supabase/client';
-
 const Hero = () => {
   const [email, setEmail] = useState('');
   const [showSignupForm, setShowSignupForm] = useState(false);
@@ -84,11 +83,11 @@ const Hero = () => {
             <Check className="inline-block mr-1 h-4 w-4" /> Usuario conectado
           </div>
           
-          <h1 className="font-inter text-2xl md:text-3xl lg:text-4xl font-bold mb-6 animate-slide-up leading-tight px-2">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 animate-slide-up leading-tight px-2">
             ¡Bienvenido a <span className="homi-gradient-text">HomiMatch</span>!
           </h1>
           
-          <p className="font-inter text-base md:text-lg text-muted-foreground mb-6 max-w-2xl mx-auto px-2">Completa tu perfil y empieza a encontrar compañeros de piso compatibles (tanto si tienes piso o no)</p>
+          <p className="text-base md:text-lg text-muted-foreground mb-6 max-w-2xl mx-auto px-2">Completa tu perfil y empieza a encontrar compañeros de piso compatibles (tanto si tienes piso o no)</p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 mb-8">
             <Button size={isMobile ? "default" : "lg"} className="rounded-full bg-gradient-to-r from-homi-purple to-homi-lightPurple hover:from-homi-lightPurple hover:to-homi-purple text-white font-bold shadow-lg shadow-purple-500/30 transform hover:scale-105 transition-all duration-300 w-full sm:w-auto" asChild>
@@ -111,11 +110,11 @@ const Hero = () => {
           ¡Ya disponible en todas las ciudades universitarias!
         </div>
         
-        <h1 className="font-inter text-2xl md:text-4xl lg:text-5xl font-bold mb-6 animate-slide-up leading-tight px-2 my-0 tracking-tight">
+        <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6 animate-slide-up leading-tight px-2 my-0">
           Conecta con <span className="homi-gradient-text">compañeros de piso</span> compatibles
         </h1>
         
-        <p className="font-inter text-base md:text-lg text-muted-foreground mb-6 max-w-2xl mx-auto px-2">HomiMatch utiliza un sistema de matching para conectarte con compañeros de piso que comparten tus intereses y estilo de vida.</p>
+        <p className="text-base md:text-xl text-muted-foreground mb-6 max-w-2xl mx-auto px-2">HomiMatch utiliza un sistema de matching para conectarte con compañeros de piso que comparten tus intereses y estilo de vida.</p>
 
         
 
@@ -167,5 +166,4 @@ const Hero = () => {
       </div>
     </section>;
 };
-
 export default Hero;
