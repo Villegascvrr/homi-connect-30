@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   FormControl,
@@ -10,6 +9,7 @@ import {
 } from "@/components/ui/form";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { ControllerRenderProps, FieldValues, Path, useFormContext } from "react-hook-form";
+import { useAuth } from '@/context/AuthContext';
 
 interface FormImageUploadProps<TFieldValues extends FieldValues> {
   name: Path<TFieldValues>;
@@ -32,6 +32,7 @@ export function FormImageUpload<TFieldValues extends FieldValues>({
 }: FormImageUploadProps<TFieldValues>) {
   // Get form context to log state for debugging
   const formContext = useFormContext();
+  const { user } = useAuth();
   
   // Make sure this component is only used within a form context
   if (!formContext) {
@@ -42,6 +43,7 @@ export function FormImageUpload<TFieldValues extends FieldValues>({
         {label && !hideLabel && <div className="mb-2 font-medium">{label}</div>}
         <ImageUpload
           value={''}
+          userId={user.id}
           onChange={(value) => {
             if (customOnChange) customOnChange(value);
           }}
@@ -78,6 +80,7 @@ export function FormImageUpload<TFieldValues extends FieldValues>({
                 onBlur={field.onBlur}
                 disableCompression={true}
                 enableCropping={true}
+                userId={user?.id || ''}
               />
             </FormControl>
             {description && <FormDescription>{description}</FormDescription>}

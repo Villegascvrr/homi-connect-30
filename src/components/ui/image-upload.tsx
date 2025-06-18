@@ -1,10 +1,10 @@
-
 import React, { useState, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Camera, Upload, X, Move, ZoomIn, ZoomOut } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { supabase } from '@/integrations/supabase/client';
 
 interface ImageUploadProps {
   onChange: (value: string) => void;
@@ -13,6 +13,7 @@ interface ImageUploadProps {
   className?: string;
   disableCompression?: boolean;
   enableCropping?: boolean;
+  userId: string;
 }
 
 export const ImageUpload: React.FC<ImageUploadProps> = ({
@@ -21,7 +22,8 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
   value = "",
   className,
   disableCompression = false,
-  enableCropping = false
+  enableCropping = false,
+  userId,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -173,37 +175,52 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
     });
   }, []);
 
+  const uploadToSupabase = async (file: File): Promise<string | null> => {
+    const filePath = `user_${userId}/profile.jpg`;
+    // Elimina la imagen anterior si existe (opcional, para evitar basura)
+    await supabase.storage.from('profile-images').remove([filePath]);
+    const { data, error } = await supabase.storage
+      .from('profile-images')
+      .upload(filePath, file, { upsert: true, contentType: 'image/jpeg' });
+    if (error) {
+      toast({
+        title: 'Error al subir la imagen',
+        description: error.message,
+        variant: 'destructive',
+      });
+      return null;
+    }
+    // Obtener la URL pública
+    const { data:{publicUrl} } = supabase.storage.from('profile-images').getPublicUrl(filePath);
+    return publicUrl || null;
+  };
+
   const applyImageCrop = async () => {
     if (!selectedImage) return;
-
     try {
       setIsUploading(true);
-      console.log('Starting image processing with scale:', scale, 'position:', position);
-      
-      // Process the image with the current scale and position
+      // Procesar la imagen (base64)
       const processedImageUrl = await processImageWithCanvas(selectedImage, scale, position);
-      console.log('Image processed successfully, calling onChange...');
-      
-      // Ensure the onChange is called with the processed image
-      onChange(processedImageUrl);
-      
-      // Force a small delay to ensure the change is propagated
-      setTimeout(() => {
-        console.log('Image change should be applied now');
-      }, 100);
-      
-      toast({
-        title: "Imagen actualizada",
-        description: "Los ajustes de la imagen se han aplicado correctamente"
-      });
-      
+      // Convertir base64 a Blob
+      const res = await fetch(processedImageUrl);
+      const blob = await res.blob();
+      const file = new File([blob], 'profile.jpg', { type: 'image/jpeg' });
+      // Subir a Supabase Storage
+      const publicUrl = await uploadToSupabase(file);
+      if (publicUrl) {
+        onChange(publicUrl);
+        toast({
+          title: 'Imagen subida',
+          description: 'Tu imagen se ha subido correctamente',
+        });
+      }
       resetCropper();
     } catch (error) {
-      console.error('Error processing image:', error);
+      console.error('Error processing/uploading image:', error);
       toast({
-        title: "Error al procesar la imagen",
-        description: "Hubo un problema al aplicar los ajustes",
-        variant: "destructive"
+        title: 'Error al procesar la imagen',
+        description: 'Hubo un problema al aplicar los ajustes',
+        variant: 'destructive',
       });
     } finally {
       setIsUploading(false);
