@@ -61,7 +61,8 @@ export const useProfiles = (profileId?: string) => {
                 discards:profile_discards!profile_discards_target_profile_id_fkey (id, profile_id, target_profile_id),
                 matches:profile_matches!profile_matches_target_profile_id_fkey (id, profile_id, target_profile_id)
               `)
-              .eq('completed', true),
+              .eq('completed', true)
+              .eq('is_profile_active', true),
             new Promise((_, reject) => 
               setTimeout(() => reject(new Error('Timeout')), 10000)
             ),
@@ -142,7 +143,8 @@ export const useProfiles = (profileId?: string) => {
               matches:profile_matches!profile_matches_target_profile_id_fkey (id, profile_id, target_profile_id)
             `)
             .not('id', 'eq', profileId)
-            .eq('completed', true),
+            .eq('completed', true)
+            .eq('is_profile_active', true),
           new Promise((_, reject) => 
             setTimeout(() => reject(new Error('Timeout')), 10000)
           ),
