@@ -12,6 +12,7 @@ import ProfileForm from "./ProfileForm";
 import ProfileAuthGate from '../auth/ProfileAuthGate';
 import ProfileStatusToggle from './ProfileStatusToggle';
 import { useSubscription } from '@/hooks/useSubscription';
+import useProfileImage from '@/hooks/use-profile-image';
 
 const ProfilePage = () => {
   const { user, session, loading } = useAuth();
@@ -22,6 +23,7 @@ const ProfilePage = () => {
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const { subscriptionInfo, createCheckout, openCustomerPortal } = useSubscription();
+
   
   // Early return if not authenticated and not loading
   if (!loading && !user && !session) {
@@ -68,8 +70,10 @@ const ProfilePage = () => {
           navigate('/profile/create');
           return;
         }
-        
-        setProfile(data);
+
+        const profileImage = await useProfileImage(user.id, data.profile_image_id);
+        console.log("profileImage", data.profile_image_id, profileImage);
+        setProfile({ ...data, profile_image: profileImage });
       } catch (err) {
         console.error("Error in fetchProfileData:", err);
       } finally {

@@ -185,6 +185,7 @@ export type Database = {
           lifestyle: Json | null
           ocupacion: string | null
           profile_image: string | null
+          profile_image_id: string | null
           sevilla_zona: string | null
           skips: number
           universidad: string | null
@@ -207,6 +208,7 @@ export type Database = {
           lifestyle?: Json | null
           ocupacion?: string | null
           profile_image?: string | null
+          profile_image_id: string | null
           sevilla_zona?: string | null
           skips?: number
           universidad?: string | null
@@ -229,6 +231,7 @@ export type Database = {
           lifestyle?: Json | null
           ocupacion?: string | null
           profile_image?: string | null
+          profile_image_id?: string | null
           sevilla_zona?: string | null
           skips?: number
           universidad?: string | null

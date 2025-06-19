@@ -3,6 +3,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase, checkEmailExists } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import useProfileImage from './use-profile-image';
 
 export interface UserSignUpData {
   email: string;
@@ -15,6 +16,7 @@ export interface UserSignUpData {
 export interface ExtendedUser extends User {
   profile_image?: string | null;
   completed?: boolean;
+  profile_image_id?: string | null;
 }
 
 /**
@@ -110,14 +112,15 @@ export const useAuthLogic = () => {
       if (refreshedUser) {
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
-          .select('profile_image, completed')
+          .select('profile_image_id, completed')
           .eq('id', refreshedUser.id)
           .maybeSingle();
         if (!profileError && profileData) {
-          
+          const profileImage = await useProfileImage(refreshedUser.id, profileData.profile_image_id);
           setUser({
             ...refreshedUser,
-            profile_image: profileData.profile_image,
+            profile_image: profileImage,
+            profile_image_id: profileData.profile_image_id,
             completed: profileData.completed
           });
         } else {
@@ -263,7 +266,10 @@ export const useAuthLogic = () => {
           first_name: userData.firstName,
           last_name: userData.lastName,
           username: userData.username,
-          email: userData.email
+          email: userData.email,
+          profile_image_id: null,
+          profile_image: null,
+          completed: false
         };
 
         const { error: profileError } = await supabase
@@ -489,7 +495,7 @@ export const useAuthLogic = () => {
               try {
                 let { data: profileData, error } = await supabase
                   .from('profiles')
-                  .select('profile_image, completed, first_name, last_name')
+                  .select('profile_image_id, completed, first_name, last_name')
                   .eq('id', authUser.id)
                   .maybeSingle();
                 
@@ -514,6 +520,7 @@ export const useAuthLogic = () => {
                       username: usernameFromEmail,
                       email: authUser.email,
                       profile_image: null,
+                      profile_image_id: null,
                       completed: false
                     };
                     
@@ -536,9 +543,11 @@ export const useAuthLogic = () => {
                 
                 if (profileData && isMounted) {
                   console.log('Profile data before setting user:', profileData);
+                  const profileImage = await useProfileImage(authUser.id, profileData.profile_image_id);
                   const userWithProfile = {
                     ...authUser,
-                    profile_image: profileData.profile_image,
+                    profile_image: profileImage,
+                    profile_image_id: profileData.profile_image_id,
                     completed: profileData.completed
                   };
                   console.log('User with profile data:', userWithProfile);
@@ -594,7 +603,7 @@ export const useAuthLogic = () => {
           try {
             const { data: profileData, error } = await supabase
               .from('profiles')
-              .select('profile_image, completed')
+              .select('profile_image_id, completed')
               .eq('id', authUser.id)
               .maybeSingle();
             
@@ -602,9 +611,11 @@ export const useAuthLogic = () => {
             
             if (!error && profileData) {
               console.log('Existing session profile data:', profileData);
+              const profileImage = await useProfileImage(authUser.id, profileData.profile_image_id);
               const userWithProfile = {
                 ...authUser,
-                profile_image: profileData.profile_image,
+                profile_image: profileImage,
+                profile_image_id: profileData.profile_image_id,
                 completed: profileData.completed
               };
               console.log('Setting user with existing session profile:', userWithProfile);

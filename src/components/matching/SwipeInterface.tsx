@@ -39,9 +39,10 @@ interface SwipeInterfaceProps {
   onLike: (id: string) => void;
   onPass: (id: string) => void;
   onView: (id: string) => void;
+  refetch: () => void;
 }
 
-const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProps) => {
+const   SwipeInterface = ({ profiles, onLike, onPass, onView, refetch }: SwipeInterfaceProps) => {
   const { toast } = useToast();
   const updatedProfiles = profiles.map(profile => {
     const profileId = parseInt(profile.id) || Math.floor(Math.random() * 1000);
@@ -169,6 +170,7 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
   };
   
   if (!hasMoreProfiles) {
+    refetch();
     return (
       <div className="h-full flex flex-col items-center justify-center py-8 px-4">
         <div className="text-center">
@@ -180,10 +182,10 @@ const SwipeInterface = ({ profiles, onLike, onPass, onView }: SwipeInterfaceProp
           {updatedProfiles.length > 0 && (
             <Button 
               className="rounded-full bg-homi-purple hover:bg-homi-purple/90 button-glow"
-              onClick={handleReset}
+              onClick={refetch}
             >
               <RefreshCw className="mr-2 h-4 w-4" />
-              Ver perfiles de nuevo
+              Buscar más perfiles
             </Button>
           )}
         </div>
