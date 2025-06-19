@@ -71,7 +71,6 @@ const ProfilePage = () => {
         }
 
         const profileImage = await useProfileImage(user.id, data.profile_image_id);
-        console.log("profileImage", data.profile_image_id, profileImage);
         setProfile({ ...data, profile_image: profileImage });
       } catch (err) {
         console.error("Error in fetchProfileData:", err);
