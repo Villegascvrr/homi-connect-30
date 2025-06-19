@@ -24,9 +24,6 @@ const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const { subscriptionInfo, createCheckout, openCustomerPortal } = useSubscription();
 
-  // Estado para saber si ha llegado al límite de swipes diarios
-  const [hasReachedDailyLimit, setHasReachedDailyLimit] = useState(false);
-
   // Early return if not authenticated and not loading
   if (!loading && !user && !session) {
     return (
@@ -90,18 +87,6 @@ const ProfilePage = () => {
     }
   }, [user, navigate, loading]);
 
-  useEffect(() => {
-    const checkDailyLimit = async () => {
-      if (profile?.id) {
-        const total = await getTodayCounts(profile.id);
-        setHasReachedDailyLimit(total >= 20);
-      }
-    };
-    checkDailyLimit();
-    // Solo queremos comprobar cuando el perfil esté cargado
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profile?.id]);
-
   const handleEditClick = () => {
     navigate('/profile/edit');
   };
@@ -147,38 +132,6 @@ const ProfilePage = () => {
         variant: "destructive"
       });
     }
-  };
-
-  // Función para obtener el recuento de matches y discards de hoy
-  const getTodayCounts = async (userId: string) => {
-    const today = new Date();
-    const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const dd = String(today.getDate()).padStart(2, '0');
-    const todayStr = `${yyyy}-${mm}-${dd}`;
-
-    // Rango de hoy
-    const from = `${todayStr}T00:00:00.000Z`;
-    const to = `${todayStr}T23:59:59.999Z`;
-
-    // profile_matches
-    const { count: matchesCount } = await supabase
-      .from('profile_matches')
-      .select('*', { count: 'exact', head: true })
-      .eq('profile_id', userId)
-      .gte('created_at', from)
-      .lte('created_at', to);
-
-    // profile_discards
-    const { count: discardsCount } = await supabase
-      .from('profile_discards')
-      .select('*', { count: 'exact', head: true })
-      .eq('profile_id', userId)
-      .gte('created_at', from)
-      .lte('created_at', to);
-
-    const totalTodayActions = (matchesCount || 0) + (discardsCount || 0);
-    return totalTodayActions;
   };
 
   if (loading || profileLoading) {
@@ -262,24 +215,6 @@ const ProfilePage = () => {
                 cancelEdit={() => setIsEditing(false)}
               />
             </div>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
-
-  if (hasReachedDailyLimit) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <Navbar />
-        <main className="flex-grow flex items-center justify-center">
-          <div className="text-center py-16 px-4 max-w-md mx-auto">
-            <h1 className="text-2xl font-bold mb-4">¡Has llegado al límite diario!</h1>
-            <p className="text-muted-foreground mb-6">
-              Ha llegado a los swipes máximos diarios, mañana será otro día genial para conectar.
-            </p>
-            <Button variant="outline" onClick={() => window.location.reload()}>Volver a intentar mañana</Button>
           </div>
         </main>
         <Footer />
