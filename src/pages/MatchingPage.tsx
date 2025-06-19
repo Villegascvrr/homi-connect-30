@@ -12,7 +12,7 @@ import { useProfiles } from '@/hooks/use-profiles';
 import type { Profile } from '@/hooks/use-profiles';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Filter, UserRound, LayoutGrid, SwatchBook, Heart, Users, Settings } from 'lucide-react';
+import { Filter, UserRound, LayoutGrid, SwatchBook, Heart, Users, Settings, Crown } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Link, useNavigate } from 'react-router-dom';
 import { useMatches } from '@/hooks/use-matches';
@@ -464,8 +464,15 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
           <div className="text-center py-16 px-4 max-w-md mx-auto">
             <h1 className="text-2xl font-bold mb-4">¡Has llegado al límite diario!</h1>
             <p className="text-muted-foreground mb-6">
-              Ha llegado a los swipes máximos diarios, mañana será otro día genial para conectar.
+              Has llegado a los swipes máximos diarios, puedes seguir hoy sin límites si te conviertes en un Homi: 
             </p>
+            <Button 
+              onClick={() => navigate('/precios')}
+              className={`rounded-full bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 hover:from-yellow-500 hover:via-orange-500 hover:to-red-500 text-black font-bold`}
+            >
+              <Crown className="mr-2 h-4 w-4" />
+              ¡Hazte Premium!
+            </Button>
           </div>
         </main>
         <Footer />

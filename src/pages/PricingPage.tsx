@@ -113,7 +113,7 @@ const PricingPage = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <div className="pt-16">
+      <div className="pt-0">
         <Navbar />
       </div>
       
