@@ -135,6 +135,7 @@ export const useProfiles = (profileId?: string) => {
               interests,
               lifestyle,
               is_profile_active,
+              profile_image_id,
               sevilla_zona,
               companeros_count,
               discards:profile_discards!profile_discards_target_profile_id_fkey (id, profile_id, target_profile_id),
