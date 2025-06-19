@@ -73,7 +73,6 @@ const MatchCard = ({
     return (
       <div 
         className="relative glass-card overflow-hidden transition-all duration-300 hover:shadow-md cursor-pointer h-full rounded-xl"
-        onClick={() => onView(id)}
       >
         <div className="relative aspect-square overflow-hidden bg-gray-100 rounded-t-xl">
           <img
@@ -84,19 +83,16 @@ const MatchCard = ({
           <div 
             className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2 text-white"
           >
-            <h3 className="text-base font-bold">{age && age !== 0 ? name+", "+age : name}</h3>
-            <p className="text-xs opacity-90 flex items-center gap-1">
-              <Home size={10} />
+            <h3 className="text-xl font-bold">{age && age !== 0 ? name+", "+age : name}</h3>
+            {location && (<p className="text-lg opacity-90 flex items-center gap-1">
+              <Home size={18} />
               {location}
-            </p>
-          </div>
-          <div className="absolute top-2 right-2">
-            <CompatibilityBadge percentage={compatibility} size="sm" />
+            </p>)}
           </div>
         </div>
         
         <div className="p-3">
-          <p className="text-xs mb-2 line-clamp-2">{bio}</p>
+          <p className="text-sm mb-2 line-clamp-2">{bio}</p>
           
           <div className="flex flex-wrap gap-1 mb-2">
             {tags.slice(0, 2).map((tag) => (
@@ -122,24 +118,24 @@ const MatchCard = ({
               </span>
             )}
             
-            <div className="flex gap-1">
+            <div className="flex gap-1 justify-between w-full" >
               <button 
-                className="w-6 h-6 rounded-full bg-white border border-red-500 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white"
+                className="w-10 h-10 rounded-full bg-white border border-red-500 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white"
                 onClick={(e) => {
                   e.stopPropagation();
                   onPass(id);
                 }}
               >
-                <X size={12} />
+                <X size={18} />
               </button>
               <button 
-                className="w-6 h-6 rounded-full bg-white border border-homi-purple text-homi-purple flex items-center justify-center hover:bg-homi-purple hover:text-white"
+                className="w-10 h-10 rounded-full bg-white border border-homi-purple text-homi-purple flex items-center justify-center hover:bg-homi-purple hover:text-white"
                 onClick={(e) => {
                   e.stopPropagation();
                   onLike(id);
                 }}
               >
-                <Heart size={12} />
+                <Heart size={18} />
               </button>
             </div>
           </div>

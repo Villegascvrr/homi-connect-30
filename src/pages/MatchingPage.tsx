@@ -478,7 +478,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                 </TabsTrigger>
               </TabsList>
               
-              {activeTab === 'discover' && false && (
+              {activeTab === 'discover' && (
                 <div className="flex gap-2">
                   {isMobile && (
                     <div className="flex items-center mr-auto">
@@ -513,7 +513,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                     </PopoverContent>
                   </Popover>
                   
-                  <Popover open={openPreferences} onOpenChange={setOpenPreferences}>
+                  {/*<Popover open={openPreferences} onOpenChange={setOpenPreferences}>
                     <PopoverTrigger asChild>
                       <Button variant="outline" size="md" className="flex items-center gap-1.5" onClick={() => setOpenPreferences(!openPreferences)}>
                         <Settings className="h-4 w-4" />
@@ -533,7 +533,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                         />
                       </div>
                     </PopoverContent>
-                  </Popover>
+                  </Popover>*/}
                 </div>
               )}
             </div>

@@ -141,7 +141,7 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
             </CardHeader>
             <CardContent className="p-3">
               <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div className="space-y-1">
                     <Label className="text-xs font-medium">Ubicación</Label>
                     <Select value={ubicacion} onValueChange={setUbicacion}>
@@ -165,7 +165,7 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                   </div>
                   
                   <div className="space-y-1">
-                    <Label className="text-xs font-medium">Rango de edad</Label>
+                    <Label className="text-xs font-medium">Edades</Label>
                     <Select value={rangoEdad} onValueChange={setRangoEdad}>
                       <SelectTrigger className="w-full bg-background h-9 text-sm">
                         <div className="flex items-center gap-1.5">
@@ -175,15 +175,15 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                       </SelectTrigger>
                       <SelectContent position="popper" className="bg-background z-50">
                         <SelectItem value="todas">Todas las edades</SelectItem>
-                        <SelectItem value="18-25">18-25 años</SelectItem>
-                        <SelectItem value="26-30">26-30 años</SelectItem>
-                        <SelectItem value="31-40">31-40 años</SelectItem>
-                        <SelectItem value="41+">Más de 41 años</SelectItem>
+                        <SelectItem value="18-19">18-19 años</SelectItem>
+                        <SelectItem value="20-21">20-21 años</SelectItem>
+                        <SelectItem value="22-25">22-25 años</SelectItem>
+                        <SelectItem value="26+">Más de 25 años</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   
-                  <div className="space-y-1">
+                  {/*<div className="space-y-1">
                     <Label className="text-xs font-medium">Fecha de mudanza</Label>
                     <Select value={fechaMudanza} onValueChange={setFechaMudanza}>
                       <SelectTrigger className="w-full bg-background h-9 text-sm">
@@ -193,17 +193,17 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                         </div>
                       </SelectTrigger>
                       <SelectContent position="popper" className="bg-background z-50">
-                        <SelectItem value="cualquiera">Cualquier fecha</SelectItem>
+                        <SelectItem value="cualquiera">Cualquiera</SelectItem>
                         <SelectItem value="inmediata">Inmediata</SelectItem>
                         <SelectItem value="1-mes">Próximo mes</SelectItem>
                         <SelectItem value="3-meses">Próximos 3 meses</SelectItem>
                         <SelectItem value="6-meses">Próximos 6 meses</SelectItem>
                       </SelectContent>
                     </Select>
-                  </div>
+                  </div>*/}
                 </div>
                 
-                <div className="space-y-1">
+                {/*<div className="space-y-1">
                   <Label className="text-xs font-medium flex items-center gap-1.5">
                     <DollarSign className="h-4 w-4" />
                     Presupuesto: {presupuesto[0]}€ - {presupuesto[1]}€
@@ -218,7 +218,7 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                       className="bg-purple-100"
                     />
                   </div>
-                </div>
+                </div>*/}
                 
                 <div className="space-y-1">
                   <Label className="text-xs font-medium">Estilo de vida</Label>
