@@ -226,8 +226,9 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
       console.error("Error saving profile:", error);
       toast({
         title: "Error al guardar",
-        description: "Los cambios no se pudieron guardar.",
+        description: "Recuerda completar todos los campos requeridos.",
         variant: "destructive",
+        duration: 3000,
       });
       return false;
     }
@@ -558,7 +559,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
               name="profileImage"
               label="Foto de perfil"
               description="Esta será tu imagen principal en tu perfil"
-              required={false}
+              required={true}
             />
           </div>
           
