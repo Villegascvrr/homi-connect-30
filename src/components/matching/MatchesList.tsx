@@ -111,7 +111,7 @@ const MatchesList = ({ matches, onMessage, onUnmatch, onViewProfile }: MatchesLi
             animatingCards[match.id] === 'unmatch' ? 'animate-swipe-left' : 
             animatingCards[match.id] === 'message' ? 'animate-swipe-right' : ''
           }`}
-          onClick={() => onViewProfile(match.id)}
+          onClick={() => navigate(`/chat`)}
         >
           <div className="relative">
             <div className="aspect-[4/3] overflow-hidden rounded-t-md">
@@ -120,10 +120,6 @@ const MatchesList = ({ matches, onMessage, onUnmatch, onViewProfile }: MatchesLi
                 alt={match.name}
                 className="w-full h-full object-cover transition-transform hover:scale-105 duration-300" 
               />
-            </div>
-            
-            <div className="absolute top-3 right-3 bg-white/90 text-homi-purple px-2 py-1 rounded-full text-xs font-semibold">
-              {match.compatibility}% compatible
             </div>
 
             <div className="absolute top-3 left-3 bg-homi-purple/90 text-white px-2 py-1 rounded-full text-xs flex items-center gap-1">
@@ -143,7 +139,7 @@ const MatchesList = ({ matches, onMessage, onUnmatch, onViewProfile }: MatchesLi
           <div className="p-4 pt-6">
             <div className="flex justify-between items-start mb-2">
               <div>
-                <h3 className="font-semibold text-lg">{match.name}, {match.age}</h3>
+                <h3 className="font-semibold text-lg">{match.name}{match.age && match.age !== 0 ? `, ${match.age}` : ""}</h3>
                 <p className="text-sm text-muted-foreground">{match.location}</p>
               </div>
               <div className="text-xs text-muted-foreground">
