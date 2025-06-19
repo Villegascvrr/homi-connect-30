@@ -5,6 +5,7 @@ import { Camera, Upload, X, Move, ZoomIn, ZoomOut } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { supabase } from '@/integrations/supabase/client';
+import { v4 as uuidv4 } from 'uuid';
 
 interface ImageUploadProps {
   onChange: (value: string) => void;
@@ -14,6 +15,7 @@ interface ImageUploadProps {
   disableCompression?: boolean;
   enableCropping?: boolean;
   userId: string;
+  profileImageId?: string;
 }
 
 export const ImageUpload: React.FC<ImageUploadProps> = ({
@@ -24,6 +26,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
   disableCompression = false,
   enableCropping = false,
   userId,
+  profileImageId,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -44,10 +47,16 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
     setIsDragging(false);
   }, []);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
     setIsUploading(true);
     const file = e.target.files[0];
+
+    const base64 = await new Promise<string>((resolve) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.readAsDataURL(file);
+    });
 
     // If cropping is enabled for image upload
     if (enableCropping) {
@@ -77,7 +86,8 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
         
         toast({
           title: "Imagen subida",
-          description: "Tu imagen se ha subido correctamente"
+          description: "Tu imagen se ha subido correctamente",
+          duration: 700
         });
       } catch (error) {
         toast({
@@ -92,7 +102,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
           fileInputRef.current.value = '';
         }
       }
-    }, 1000);
+    }, 500);
   };
 
   const handleRemoveImage = () => {
@@ -175,13 +185,19 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
     });
   }, []);
 
-  const uploadToSupabase = async (file: File): Promise<string | null> => {
-    const filePath = `user_${userId}/profile.jpg`;
+  const uploadToSupabase = async (rawFile: File): Promise<string | null> => {
+    const id = uuidv4();
+    const filePath = `user_${userId}/profile_${id}.jpeg`;
+    const file = await compressImage(rawFile);
+
     // Elimina la imagen anterior si existe (opcional, para evitar basura)
     await supabase.storage.from('profile-images').remove([filePath]);
+
     const { data, error } = await supabase.storage
       .from('profile-images')
       .upload(filePath, file, { upsert: true, contentType: 'image/jpeg' });
+
+    
     if (error) {
       toast({
         title: 'Error al subir la imagen',
@@ -195,6 +211,74 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
     return publicUrl || null;
   };
 
+// Función para comprimir imagen
+async function compressImage(
+  file: File, 
+  maxWidth: number = 800, 
+  maxHeight: number = 800, 
+  quality: number = 0.9
+): Promise<File> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    
+    // Crear URL temporal para cargar la imagen
+    const imageUrl = URL.createObjectURL(file);
+    
+    img.onload = () => {
+      // Limpiar URL temporal inmediatamente
+      URL.revokeObjectURL(imageUrl);
+      
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      
+      if (!ctx) {
+        reject(new Error('No se pudo obtener el contexto del canvas'));
+        return;
+      }
+
+      // Calcular nuevas dimensiones manteniendo la proporción
+      let { width, height } = img;
+      if (width > maxWidth) {
+        height = (height * maxWidth) / width;
+        width = maxWidth;
+      }
+      if (height > maxHeight) {
+        width = (width * maxHeight) / height;
+        height = maxHeight;
+      }
+
+      // Configurar canvas con las nuevas dimensiones
+      canvas.width = width;
+      canvas.height = height;
+
+      // Dibujar imagen redimensionada
+      ctx.drawImage(img, 0, 0, width, height);
+
+      // Convertir canvas a blob
+      canvas.toBlob((blob) => {
+        if (blob) {
+          // Crear un nuevo File con el blob comprimido
+          const compressedFile = new File([blob], file.name, {
+            type: 'image/jpeg',
+            lastModified: Date.now()
+          });
+          resolve(compressedFile);
+        } else {
+          reject(new Error('Error al convertir la imagen comprimida'));
+        }
+      }, 'image/jpeg', quality);
+    };
+
+    img.onerror = () => {
+      // Limpiar URL temporal en caso de error
+      URL.revokeObjectURL(imageUrl);
+      reject(new Error('Error al cargar la imagen'));
+    };
+
+    img.src = imageUrl;
+  });
+}
+
   const applyImageCrop = async () => {
     if (!selectedImage) return;
     try {
@@ -204,7 +288,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
       // Convertir base64 a Blob
       const res = await fetch(processedImageUrl);
       const blob = await res.blob();
-      const file = new File([blob], 'profile.jpg', { type: 'image/jpeg' });
+      const file = new File([blob], 'profile.jpeg', { type: 'image/jpeg' });
       // Subir a Supabase Storage
       const publicUrl = await uploadToSupabase(file);
       if (publicUrl) {
@@ -212,6 +296,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
         toast({
           title: 'Imagen subida',
           description: 'Tu imagen se ha subido correctamente',
+          duration: 700
         });
       }
       resetCropper();

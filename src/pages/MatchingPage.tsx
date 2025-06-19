@@ -177,99 +177,6 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
     );
   };
 
-  const calculateSimilarityScore = (profile: any, filters: FilterValues) => {
-    let score = 0;
-    let possiblePoints = 0;
-    if (filters.ubicacion) {
-      possiblePoints += 10;
-      if (profile.location === filters.ubicacion) {
-        score += 10;
-      }
-    }
-    if (filters.presupuesto && profile.budget) {
-      possiblePoints += 10;
-      const [minFilter, maxFilter] = filters.presupuesto;
-      const {
-        min: minProfile,
-        max: maxProfile
-      } = profile.budget;
-
-      if (maxProfile >= minFilter && minProfile <= maxFilter) {
-        const overlapStart = Math.max(minFilter, minProfile);
-        const overlapEnd = Math.min(maxFilter, maxProfile);
-        const overlapSize = overlapEnd - overlapStart;
-        const filterSize = maxFilter - minFilter;
-        const overlapPercentage = overlapSize / filterSize;
-        score += Math.round(10 * overlapPercentage);
-      }
-    }
-    if (filters.rangoEdad) {
-      possiblePoints += 10;
-      let matches = false;
-      if (filters.rangoEdad === '18-25' && profile.age >= 18 && profile.age <= 25) {
-        matches = true;
-      } else if (filters.rangoEdad === '26-30' && profile.age >= 26 && profile.age <= 30) {
-        matches = true;
-      } else if (filters.rangoEdad === '31-40' && profile.age >= 31 && profile.age <= 40) {
-        matches = true;
-      } else if (filters.rangoEdad === '41+' && profile.age >= 41) {
-        matches = true;
-      }
-      if (matches) {
-        score += 10;
-      }
-    }
-    if (filters.estiloVida && filters.estiloVida.length > 0 && profile.lifestyle) {
-      possiblePoints += 15;
-      const estiloVidaTerms = filters.estiloVida.map(ev => ev.toLowerCase());
-      let matchCount = 0;
-      if (estiloVidaTerms.includes('ordenado') && profile.lifestyle.cleanliness === "Muy ordenada") {
-        matchCount++;
-      }
-      if (estiloVidaTerms.includes('tranquilo') && profile.lifestyle.noise === "Tranquila") {
-        matchCount++;
-      }
-      if (estiloVidaTerms.includes('nocturno') && profile.lifestyle.schedule === "nocturno") {
-        matchCount++;
-      }
-      if (estiloVidaTerms.includes('madrugador') && profile.lifestyle.schedule === "diurno") {
-        matchCount++;
-      }
-      if (estiloVidaTerms.includes('no-fumador') && profile.lifestyle.smoking === "No") {
-        matchCount++;
-      }
-      const matchPercentage = matchCount / estiloVidaTerms.length;
-      score += Math.round(15 * matchPercentage);
-    }
-    if (filters.intereses && filters.intereses.length > 0) {
-      possiblePoints += 15;
-      const matchCount = filters.intereses.filter(interest => profile.interests.includes(interest)).length;
-      const matchPercentage = matchCount / filters.intereses.length;
-      score += Math.round(15 * matchPercentage);
-    }
-
-    if (filters.nivelLimpieza && profile.lifestyle) {
-      possiblePoints += 5;
-      if (filters.nivelLimpieza === 'alta' && profile.lifestyle.cleanliness === "Muy ordenada" || filters.nivelLimpieza === 'media' && profile.lifestyle.cleanliness === "Normal") {
-        score += 5;
-      }
-    }
-    if (filters.nivelRuido && profile.lifestyle) {
-      possiblePoints += 5;
-      if (filters.nivelRuido === 'bajo' && profile.lifestyle.noise === "Tranquila" || filters.nivelRuido === 'moderado' && profile.lifestyle.noise === "Normal" || filters.nivelRuido === 'alto' && profile.lifestyle.noise === "Sociable") {
-        score += 5;
-      }
-    }
-    if (filters.horarioHabitual && profile.lifestyle) {
-      possiblePoints += 5;
-      if (filters.horarioHabitual === 'madrugador' && profile.lifestyle.schedule === "diurno" || filters.horarioHabitual === 'nocturno' && profile.lifestyle.schedule === "nocturno" || filters.horarioHabitual === 'flexible' && profile.lifestyle.schedule === "flexible") {
-        score += 5;
-      }
-    }
-
-    return possiblePoints > 0 ? score / possiblePoints * 100 : 0;
-  };
-
   const applyFiltersAndSearch = (query: string, filters: FilterValues | null) => {
     if (!profiles) return;
 
@@ -279,7 +186,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
     if (query) {
       const searchLower = query.toLowerCase();
       results = results.filter(profile =>
-        profile.name.toLowerCase().includes(searchLower) ||
+        profile.first_name.toLowerCase().includes(searchLower) ||
         profile.location.toLowerCase().includes(searchLower) ||
         profile.bio.toLowerCase().includes(searchLower)
       );
@@ -335,7 +242,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
         } catch (error) {
           console.error('Error updating skips:', error);
         }
-        console.log("user?.id", user?.id, "id", id);
+        
         //insertar en la tabla profile_matches
         try {
           const { data: insertData, error: insertError } = await supabase
@@ -380,6 +287,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
           });
         }
         refetchMatches();
+        if(newFilteredProfiles.length === 0){refetch();}
       },
       "¡Nuevo match!"
     );
@@ -424,6 +332,8 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
         } catch (error) {
           console.error('Error updating skips:', error);
         }
+
+        if(newFilteredProfiles.length === 0){refetch();}
 
         toast({
           title: "Pasas",
@@ -534,6 +444,8 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
   if (error) {
     return <div className="flex items-center justify-center min-h-screen">Error al cargar los perfiles</div>;
   }
+
+  if(filteredProfiles.length === 0){ refetch();}
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -664,6 +576,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                         onLike={handleLike} 
                         onPass={handlePass} 
                         onView={handleView} 
+                        refetch={refetch}
                       />
                     </div>
                   )}

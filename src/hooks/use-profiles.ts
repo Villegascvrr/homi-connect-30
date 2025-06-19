@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import useProfileImage from './use-profile-image';
 
 export interface Profile {
   id: string;
@@ -14,6 +15,7 @@ export interface Profile {
   bio: string;
   compatibility: number;
   profile_image: string;
+  profile_image_id: string;
   interests: string[];
   is_profile_active: boolean;
   lifestyle: {
@@ -48,8 +50,8 @@ export const useProfiles = (profileId?: string) => {
                 ocupacion,
                 universidad,
                 bio,
-                profile_image,
                 gallery_images,
+                profile_image_id,
                 interests,
                 lifestyle,
                 is_profile_active,
@@ -59,8 +61,7 @@ export const useProfiles = (profileId?: string) => {
                 discards:profile_discards!profile_discards_target_profile_id_fkey (id, profile_id, target_profile_id),
                 matches:profile_matches!profile_matches_target_profile_id_fkey (id, profile_id, target_profile_id)
               `)
-              .eq('completed', true)
-              .range(0, 50),
+              .eq('completed', true),
             new Promise((_, reject) => 
               setTimeout(() => reject(new Error('Timeout')), 10000)
             ),
@@ -70,13 +71,19 @@ export const useProfiles = (profileId?: string) => {
             console.error('Error fetching profiles:', error);
             throw error;
           }
-  
+
           if (!data) {
             throw new Error('No data received');
           }
   
-          console.log("data", data);
-          return data;
+          const profiles: Profile[] = [];
+          
+          for (const profile of data) {
+            const profileImage = await useProfileImage(profile.id, profile.profile_image_id);
+            profiles.push({ ...profile, profile_image: profileImage });
+          }
+          
+          return profiles;
         } catch (error) {
           console.error('Query error:', error);
           throw error;
@@ -89,13 +96,14 @@ export const useProfiles = (profileId?: string) => {
     });
   }
 
+  
   return useQuery({
     queryKey: ['profiles', profileId],
     queryFn: async () => {
       if (!profileId) {
         throw new Error('ProfileId is required');
       }
-
+     
       let skips = 0;
       try {
         const { data } = await supabase
@@ -123,7 +131,6 @@ export const useProfiles = (profileId?: string) => {
               ocupacion,
               universidad,
               bio,
-              profile_image,
               gallery_images,
               interests,
               lifestyle,
@@ -134,8 +141,7 @@ export const useProfiles = (profileId?: string) => {
               matches:profile_matches!profile_matches_target_profile_id_fkey (id, profile_id, target_profile_id)
             `)
             .not('id', 'eq', profileId)
-            .eq('completed', true)
-            .range(skips, skips + 9),
+            .eq('completed', true),
           new Promise((_, reject) => 
             setTimeout(() => reject(new Error('Timeout')), 10000)
           ),
@@ -150,30 +156,41 @@ export const useProfiles = (profileId?: string) => {
           throw new Error('No data received');
         }
 
-        const profiles = data.reduce((acc: Profile[], profile) => {
+        const profiles: Profile[] = [];
+        
+        for (const profile of data) {
           if (profile.discards.length === 0 && profile.matches.length === 0) {
-            acc.push(profile);
-            return acc;
+            const profileImage = await useProfileImage(profile.id, profile.profile_image_id);
+            profiles.push({ ...profile, profile_image: profileImage });
+            continue;
           }
 
           if (profile.matches.length > 0) {
+            let shouldSkip = false;
             for (const match of profile.matches) {
               if (match.profile_id === profileId) {
-                return acc;
+                shouldSkip = true;
+                break;
               }
             }
+            if (shouldSkip) continue;
           }
 
           if (profile.discards.length > 0) {
+            let shouldSkip = false;
             for (const discard of profile.discards) {
               if (discard.profile_id === profileId) {
-                return acc;
+                shouldSkip = true;
+                break;
               }
             }
+            if (shouldSkip) continue;
           }
-          acc.push(profile)
-          return acc;
-        }, []);
+          
+          const profileImage = await useProfileImage(profile.id, profile.profile_image_id);
+          profiles.push({ ...profile, profile_image: profileImage });
+        }
+        
         return profiles;
       } catch (error) {
         console.error('Query error:', error);

@@ -16,6 +16,7 @@ import ProfileInterests from "./ProfileInterests";
 import ProfileApartmentPreferences from "./ProfileApartmentPreferences";
 import ProfileLifestyle from "./ProfileLifestyle";
 import { useIsMobile } from '@/hooks/use-mobile';
+import useProfileImage from '@/hooks/use-profile-image';
 
 // Define the form schema with all necessary fields
 const formSchema = z.object({
@@ -178,6 +179,10 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
       };
       
       const completed = (values.profileImage && values.firstName && values.age && values.interests.length > 0 && values.lifestyle) ? true : false;
+      const newProfileImageId = values.profileImage?.split('_')[2].split('.')[0] || '';
+      if(user.profile_image_id !== newProfileImageId) {
+        await supabase.storage.from('profile-images').remove([`user_${user.id}/profile_${user.profile_image_id}.jpeg`]);
+      }
 
       const updateData = {
         first_name: values.firstName,
@@ -187,7 +192,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
         edad: values.age || '',
         ocupacion: occupation || '',
         universidad: values.university || '',
-        profile_image: values.profileImage || '',
+        profile_image_id: newProfileImageId,
         interests: values.interests,
         is_profile_active: values.isProfileActive,
         sevilla_zona: sevilla_zona_value,
@@ -237,28 +242,28 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
         
         // Try to save the data
         const values = form.getValues();
-        await saveProfile(values);
+        //await saveProfile(values);
       }
     };
 
     const handleVisibilityChange = async () => {
       if (document.visibilityState === 'hidden' && hasUnsavedChanges) {
         const values = form.getValues();
-        await saveProfile(values);
+        //await saveProfile(values);
       }
     };
 
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+    //window.addEventListener('beforeunload', handleBeforeUnload);
+    //document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      //window.removeEventListener('beforeunload', handleBeforeUnload);
+      //document.removeEventListener('visibilitychange', handleVisibilityChange);
       
       // Save on unmount if there are unsaved changes
       if (hasUnsavedChanges) {
         const values = form.getValues();
-        saveProfile(values);
+        //saveProfile(values);
       }
     };
   }, [hasUnsavedChanges, form, saveProfile]);
@@ -288,7 +293,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
         try {
           const { data: profileData, error } = await supabase
             .from('profiles')
-            .select('*')
+            .select('first_name, last_name, username, email, bio, edad, ocupacion, universidad, interests, is_profile_active, sevilla_zona, completed, companeros_count, lifestyle, profile_image_id')
             .eq('id', user.id)
             .single();
           
@@ -354,7 +359,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
           }
           
           setShowUniversityField(occupationType === "student");
-          
+          const profileImage = await useProfileImage(user.id, profileData.profile_image_id);
           const formData: FormValues = {
             firstName: profileData.first_name || '',
             lastName: profileData.last_name || '',
@@ -366,7 +371,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
             occupationType: occupationType,
             university: profileData.universidad || "",
             fieldOfStudy: lifestyleData.field_of_study as string || "",
-            profileImage: profileData.profile_image || "",
+            profileImage: profileImage || "",
             interests: profileData.interests || [],
             isProfileActive: profileData.is_profile_active !== false,
             apartmentStatus: currentApartmentStatus,
@@ -434,6 +439,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
     };
     
     fetchUserProfile();
+    //cada vez que se cambia de pestaña en otro lado se actualiza el user lo que hace que se recargue el form y es incomodo. Revisar
   }, [user, form]);
 
   async function onSubmit(values: FormValues) {
@@ -467,7 +473,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
     if (hasUnsavedChanges) {
       // Save before canceling
       const values = form.getValues();
-      await saveProfile(values);
+      //await saveProfile(values);
     }
     
     if (cancelEdit) {
@@ -531,12 +537,12 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
       <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div className="space-y-4">
           {/* Unsaved changes indicator */}
-          {hasUnsavedChanges && (
+          {/*hasUnsavedChanges && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground bg-amber-50 p-3 rounded-lg border border-amber-200">
               <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
               Tienes cambios sin guardar. Se guardarán automáticamente al salir de esta página.
             </div>
-          )}
+          )*/}
           
           <div className="mb-4">
             <ProfileStatusToggle 

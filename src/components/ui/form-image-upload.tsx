@@ -44,6 +44,7 @@ export function FormImageUpload<TFieldValues extends FieldValues>({
         <ImageUpload
           value={''}
           userId={user.id}
+          profileImageId={user.profile_image_id}
           onChange={(value) => {
             if (customOnChange) customOnChange(value);
           }}
@@ -54,11 +55,12 @@ export function FormImageUpload<TFieldValues extends FieldValues>({
       </div>
     );
   }
-  
+
   return (
     <FormField
       name={name}
       render={({ field }) => {
+        
         return (
           <FormItem className={className}>
             {label && !hideLabel && (
@@ -80,6 +82,7 @@ export function FormImageUpload<TFieldValues extends FieldValues>({
                 onBlur={field.onBlur}
                 disableCompression={true}
                 enableCropping={true}
+                profileImageId={user.profile_image_id}
                 userId={user?.id || ''}
               />
             </FormControl>
