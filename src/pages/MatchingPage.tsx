@@ -19,6 +19,7 @@ import { useMatches } from '@/hooks/use-matches';
 import DemoBanner from '@/components/layout/DemoBanner';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
+import { useSwipes } from '@/hooks/use-swipes';
 
 const formatProfileForMatchCard = (profile: Profile) => {
   const tags = profile?.interests?.map((interest: string, index: number) => ({
@@ -80,6 +81,38 @@ interface MatchingPageProps {
   isPreview?: boolean;
 }
 
+// Función para obtener el recuento de matches y discards de hoy para el usuario
+const getTodayCounts = async (userId: string) => {
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, '0');
+  const dd = String(today.getDate()).padStart(2, '0');
+  const todayStr = `${yyyy}-${mm}-${dd}`;
+
+  // Rango de hoy
+  const from = `${todayStr}T00:00:00.000Z`;
+  const to = `${todayStr}T23:59:59.999Z`;
+
+  // profile_matches
+  const { count: matchesCount } = await supabase
+    .from('profile_matches')
+    .select('*', { count: 'exact', head: true })
+    .eq('profile_id', userId)
+    .gte('created_at', from)
+    .lte('created_at', to);
+
+  // profile_discards
+  const { count: discardsCount } = await supabase
+    .from('profile_discards')
+    .select('*', { count: 'exact', head: true })
+    .eq('profile_id', userId)
+    .gte('created_at', from)
+    .lte('created_at', to);
+
+  const totalTodayActions = (matchesCount || 0) + (discardsCount || 0);
+  return totalTodayActions;
+};
+
 const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -99,7 +132,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
   
   const [removedProfiles, setRemovedProfiles] = useState<Set<string>>(new Set());
   const [ availableProfiles, setAvailableProfiles ]= useState<any[]>([]);
-
+  const { hasReachedDailyLimit, checkDailyLimit, updateDailyLimitAfterAction } = useSwipes(user?.id);
 
   React.useEffect(() => {
     if (profiles) {
@@ -121,6 +154,10 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
       setViewMode('grid');
     }
   }, [isMobile]);
+
+  React.useEffect(() => {
+    checkDailyLimit();
+  }, [checkDailyLimit]);
 
   const handleAction = (action: () => void, message: string) => {
     if (isPreview) {
@@ -251,6 +288,9 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
               profile_id: user?.id,
               target_profile_id: id
             })
+          // Comprobar límite tras la inserción
+          const reached = await updateDailyLimitAfterAction();
+          if (reached) return;
         } catch (error) {
           console.error('Error inserting in profile_matches:', error);
         }
@@ -311,6 +351,9 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
               profile_id: user?.id,
               target_profile_id: id
             })
+          // Comprobar límite tras la inserción
+          const reached = await updateDailyLimitAfterAction();
+          if (reached) return;
         } catch (error) {
           console.error('Error inserting in profile_discards:', error);
         }
@@ -443,6 +486,23 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
 
   if (error) {
     return <div className="flex items-center justify-center min-h-screen">Error al cargar los perfiles</div>;
+  }
+
+  if (hasReachedDailyLimit) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <main className="flex-grow flex items-center justify-center">
+          <div className="text-center py-16 px-4 max-w-md mx-auto">
+            <h1 className="text-2xl font-bold mb-4">¡Has llegado al límite diario!</h1>
+            <p className="text-muted-foreground mb-6">
+              Ha llegado a los swipes máximos diarios, mañana será otro día genial para conectar.
+            </p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
   }
 
   if(filteredProfiles.length === 0){ refetch();}
