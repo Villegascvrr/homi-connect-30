@@ -12,13 +12,14 @@ import { useProfiles } from '@/hooks/use-profiles';
 import type { Profile } from '@/hooks/use-profiles';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Filter, UserRound, LayoutGrid, SwatchBook, Heart, Users, Settings } from 'lucide-react';
+import { Filter, UserRound, LayoutGrid, SwatchBook, Heart, Users, Settings, Crown } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Link, useNavigate } from 'react-router-dom';
 import { useMatches } from '@/hooks/use-matches';
 import DemoBanner from '@/components/layout/DemoBanner';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
+import { useSwipes } from '@/hooks/use-swipes';
 
 const formatProfileForMatchCard = (profile: Profile) => {
   const tags = profile?.interests?.map((interest: string, index: number) => ({
@@ -99,7 +100,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
   
   const [removedProfiles, setRemovedProfiles] = useState<Set<string>>(new Set());
   const [ availableProfiles, setAvailableProfiles ]= useState<any[]>([]);
-
+  const { hasReachedDailyLimit, checkDailyLimit, updateDailyLimitAfterAction } = useSwipes(user?.id);
 
   React.useEffect(() => {
     if (profiles) {
@@ -121,6 +122,10 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
       setViewMode('grid');
     }
   }, [isMobile]);
+
+  React.useEffect(() => {
+    checkDailyLimit();
+  }, [checkDailyLimit]);
 
   const handleAction = (action: () => void, message: string) => {
     if (isPreview) {
@@ -251,6 +256,9 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
               profile_id: user?.id,
               target_profile_id: id
             })
+          // Comprobar límite tras la inserción
+          const reached = await updateDailyLimitAfterAction();
+          if (reached) return;
         } catch (error) {
           console.error('Error inserting in profile_matches:', error);
         }
@@ -311,6 +319,9 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
               profile_id: user?.id,
               target_profile_id: id
             })
+          // Comprobar límite tras la inserción
+          const reached = await updateDailyLimitAfterAction();
+          if (reached) return;
         } catch (error) {
           console.error('Error inserting in profile_discards:', error);
         }
@@ -443,6 +454,30 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
 
   if (error) {
     return <div className="flex items-center justify-center min-h-screen">Error al cargar los perfiles</div>;
+  }
+
+  if (hasReachedDailyLimit) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <main className="flex-grow flex items-center justify-center">
+          <div className="text-center py-16 px-4 max-w-md mx-auto">
+            <h1 className="text-2xl font-bold mb-4">¡Has llegado al límite diario!</h1>
+            <p className="text-muted-foreground mb-6">
+              Has llegado a los swipes máximos diarios, puedes seguir hoy sin límites si te conviertes en un Homi: 
+            </p>
+            <Button 
+              onClick={() => navigate('/precios')}
+              className={`rounded-full bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 hover:from-yellow-500 hover:via-orange-500 hover:to-red-500 text-black font-bold`}
+            >
+              <Crown className="mr-2 h-4 w-4" />
+              ¡Hazte Premium!
+            </Button>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
   }
 
   if(filteredProfiles.length === 0){ refetch();}

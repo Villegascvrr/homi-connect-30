@@ -24,7 +24,6 @@ const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const { subscriptionInfo, createCheckout, openCustomerPortal } = useSubscription();
 
-  
   // Early return if not authenticated and not loading
   if (!loading && !user && !session) {
     return (
