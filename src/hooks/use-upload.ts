@@ -11,7 +11,7 @@ export async function compressImage(
   base64String: string, 
   maxWidth: number = 800, 
   maxHeight: number = 800, 
-  quality: number = 0.85
+  quality: number = 0.9
 ): Promise<string> {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -55,21 +55,23 @@ export async function compressImage(
   });
 }
 
-async function useUpload(index: number) {
+export async function useUpload(index: number) {
   // 1. Obtener todos los perfiles con imagen en base64
+  
   const { data: profiles, error } = await supabase
     .from('profiles')
     .select('id, profile_image')
     .not('profile_image', 'is', null)
     .not('profile_image', 'eq', '')
-    .range(index+0,index+4);
-
+    .range(index+0,index+1);
+  
   if (error) {
     console.error('Error al obtener perfiles:', error);
     return;
   }
 
   console.log(profiles);
+
 
   for (const profile of profiles) {
     const { id, profile_image } = profile;
@@ -98,8 +100,14 @@ async function useUpload(index: number) {
         bytes[i] = binaryString.charCodeAt(i);
       }
 
+      const { data, error: error2 } = await supabase
+        .from('profiles')
+        .update({ profile_image_id: id })
+        .eq('id', id);
+        console.log("updated id");
+
       // 4. Subir a Supabase Storage
-      const filePath = `user_${id}/profile.${ext}`;
+      const filePath = `user_${id}/profile_${id}.jpeg`;
       // Elimina la imagen anterior si existe (opcional)
       await supabase.storage.from('profile-images').remove([filePath]);
       const { error: uploadError } = await supabase.storage
@@ -119,6 +127,19 @@ async function useUpload(index: number) {
   }
 
   console.log('¡Subida de imágenes comprimidas completada!');
+}
+
+export async function updateProfileImage(id: string, profile_image_id: string) {
+  const { data: profiles, error } = await supabase
+    .from('profiles')
+    .select('id')
+    .not('profile_image', 'is', null)
+    .not('profile_image', 'eq', '')
+    
+  const { data, error: error2 } = await supabase
+    .from('profiles')
+    .update({ profile_image_id: profile_image_id })
+    .eq('id', id);
 }
 
 export default useUpload;
