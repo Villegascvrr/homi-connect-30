@@ -83,7 +83,8 @@ const MatchCard = ({
   
   // Simular datos de vivienda (en una implementación real vendría de la base de datos)
   const hasApartment = Math.random() > 0.5; // Esto debería venir de los datos del perfil
-  const housingStatus = sevilla_zona && sevilla_zona.trim() !== ''
+  const isZonaValida = sevilla_zona && sevilla_zona.trim() !== '' && sevilla_zona !== 'tengo_piso';
+  const housingStatus = isZonaValida
     ? (hasApartment ? `Tengo piso en ${sevilla_zona}` : `Busco piso en ${sevilla_zona}`)
     : (hasApartment ? 'Tengo piso' : 'Busco piso');
   console.log('Housing status:', housingStatus);
