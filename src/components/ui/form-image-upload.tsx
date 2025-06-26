@@ -49,7 +49,7 @@ export function FormImageUpload<TFieldValues extends FieldValues>({
             if (customOnChange) customOnChange(value);
           }}
           disableCompression={true}
-          enableCropping={true}
+          enableCropping={false}
         />
         {description && <p className="text-sm text-muted-foreground mt-2">{description}</p>}
       </div>
@@ -81,7 +81,7 @@ export function FormImageUpload<TFieldValues extends FieldValues>({
                 }}
                 onBlur={field.onBlur}
                 disableCompression={true}
-                enableCropping={true}
+                enableCropping={false}
                 profileImageId={user.profile_image_id}
                 userId={user?.id || ''}
               />

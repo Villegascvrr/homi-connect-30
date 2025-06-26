@@ -1,7 +1,6 @@
-
 import { useState } from 'react';
 import CompatibilityBadge from '@/components/ui/CompatibilityBadge';
-import { Heart, X, MessageSquare, User, DollarSign, Calendar, Home, ShieldCheck, Clock } from 'lucide-react';
+import { Heart, X, MessageSquare, User, Calendar, Home, MapPin, Clock, Briefcase, Users, Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface Tag {
@@ -18,6 +17,7 @@ interface MatchCardProps {
   imgUrl: string;
   tags: Tag[];
   compatibility: number;
+  ocupacion?: string;
   lifestyle?: {
     cleanliness: string;
     noise: string;
@@ -34,7 +34,26 @@ interface MatchCardProps {
   onPass: (id: string) => void;
   onView: (id: string) => void;
   compact?: boolean;
+  sevilla_zona: string;
 }
+
+// Zonas específicas para diferentes ciudades
+const getSpecificZones = (city: string) => {
+  console.log('Getting zones for city:', city);
+  const zones = {
+    'Madrid': ['Malasaña', 'Chueca', 'La Latina', 'Chamberí', 'Retiro', 'Salamanca', 'Lavapiés', 'Argüelles', 'Moncloa', 'Ciudad Universitaria'],
+    'Barcelona': ['Gràcia', 'El Born', 'Eixample', 'Poblenou', 'Barceloneta', 'Sarrià', 'Les Corts', 'Sants', 'Vila de Gràcia', 'El Raval'],
+    'Valencia': ['El Carmen', 'Ruzafa', 'Ciutat Vella', 'Benimaclet', 'Algirós', 'Campanar', 'Jesús', 'Patraix', 'Poblats Marítims', 'Quatre Carreres'],
+    'Sevilla': ['Nervión', 'Reina Mercedes', 'Triana', 'Centro', 'Los Remedios', 'Macarena', 'Este-Alcosa-Torreblanca', 'Bellavista-La Palmera', 'Cerro-Amate', 'Viapol', 'San Pablo', 'Rochelambert', 'Palmete', 'Ciudad Jardín', 'Heliópolis', 'Bami', 'Pino Montano', 'San Jerónimo', 'Tablada', 'Polígono Sur'],
+    'Bilbao': ['Casco Viejo', 'Abando', 'Indautxu', 'Deusto', 'San Inazio', 'Begoña', 'Ibaiondo', 'Rekalde', 'Basurto', 'Zorrotza'],
+    'Zaragoza': ['Centro', 'Universidad', 'Delicias', 'Almozara', 'Oliver-Valdefierro', 'Casablanca', 'Torrero-La Paz', 'Actur-Rey Fernando', 'Margen Izquierda', 'Sur'],
+    'Málaga': ['Centro Histórico', 'Soho', 'La Malagueta', 'Pedregalejo', 'El Palo', 'Carretera de Cádiz', 'Ciudad Jardín', 'Teatinos', 'Churriana', 'Campanillas']
+  };
+  
+  const cityZones = zones[city as keyof typeof zones] || ['Centro', 'Norte', 'Sur', 'Este', 'Oeste'];
+  console.log('Available zones for', city, ':', cityZones);
+  return cityZones;
+};
 
 const MatchCard = ({
   id,
@@ -45,28 +64,35 @@ const MatchCard = ({
   imgUrl,
   tags,
   compatibility,
+  ocupacion,
   lifestyle,
   budget,
   moveInDate,
   onLike,
   onPass,
   onView,
-  compact = false
+  compact = false,
+  sevilla_zona
 }: MatchCardProps) => {
   const [swiping, setSwiping] = useState<'left' | 'right' | null>(null);
   const [showDetails, setShowDetails] = useState(false);
   const lifestyleData = getLifestyle(lifestyle);
-  const handleSwipe = (direction: 'left' | 'right') => {
-    setSwiping(direction);
-    setTimeout(() => {
-      if (direction === 'right') {
-        onLike(id);
-      } else {
-        onPass(id);
-      }
-      setSwiping(null);
-    }, 300);
-  };
+  
+  // Generate number of roommates being sought (1-3)
+  const roommatesNeeded = Math.floor(Math.random() * 3) + 1;
+  
+  // Simular datos de vivienda (en una implementación real vendría de la base de datos)
+  const hasApartment = Math.random() > 0.5; // Esto debería venir de los datos del perfil
+  const housingStatus = sevilla_zona && sevilla_zona.trim() !== ''
+    ? (hasApartment ? `Tengo piso en ${sevilla_zona}` : `Busco piso en ${sevilla_zona}`)
+    : (hasApartment ? 'Tengo piso' : 'Busco piso');
+  console.log('Housing status:', housingStatus);
+  
+  // Simular precio del piso (en una implementación real vendría de la base de datos)
+  const apartmentPrice = hasApartment ? Math.floor(Math.random() * 500) + 400 : null; // Entre 400-900€
+
+  // Utilidad para obtener solo la primera palabra del nombre
+  const firstName = name.split(' ')[0];
 
   // If compact mode is enabled, show a simplified card design
   if (compact) {
@@ -84,14 +110,31 @@ const MatchCard = ({
           <div 
             className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2 text-white"
           >
-            <h3 className="text-base font-bold">{age && age !== 0 ? name+", "+age : name}</h3>
-            <p className="text-xs opacity-90 flex items-center gap-1">
-              <Home size={10} />
+            <h3 className="text-base font-bold">{age && age !== 0 ? firstName+", "+age : firstName}</h3>
+            <p className="text-xs opacity-90">
               {location}
             </p>
+            {ocupacion && (
+              <p className="text-xs opacity-80 flex items-center gap-1">
+                <Briefcase size={10} />
+                {ocupacion}
+              </p>
+            )}
           </div>
           <div className="absolute top-2 right-2">
             <CompatibilityBadge percentage={compatibility} size="sm" />
+          </div>
+          
+          {/* Housing status badge */}
+          <div className="absolute top-2 left-2">
+            <span className={`flex items-center gap-1 text-xs px-2 py-1 rounded-full ${
+              hasApartment 
+                ? 'bg-green-500/90 text-white' 
+                : 'bg-blue-500/90 text-white'
+            }`}>
+              {hasApartment ? <Home size={12} /> : <Search size={12} />}
+              {housingStatus}
+            </span>
           </div>
         </div>
         
@@ -116,9 +159,8 @@ const MatchCard = ({
           
           <div className="flex items-center justify-between">
             {budget && (
-              <span className="flex items-center gap-0.5 text-xs text-muted-foreground">
-                <DollarSign size={10} />
-                {budget.min}-{budget.max}€
+              <span className="flex items-center gap-0.5 text-xs bg-green-500/20 text-green-700 px-2 py-0.5 rounded-full">
+                {typeof budget === 'object' ? JSON.stringify(budget) : budget}
               </span>
             )}
             
@@ -165,19 +207,28 @@ const MatchCard = ({
         <div 
           className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3 text-white"
         >
-          <h3 className="text-xl font-bold">{age && age !== 0 ? name+", "+age : name}</h3>
-          <p className="text-sm opacity-90 flex items-center gap-1">
-            {location && <Home size={14} />}
+          <h3 className="text-xl font-bold">{age && age !== 0 ? firstName+", "+age : firstName}</h3>
+          <p className="text-sm opacity-90">
             {location}
           </p>
+          {ocupacion && (
+            <p className="text-sm opacity-80 flex items-center gap-1">
+              <Briefcase size={14} />
+              {ocupacion}
+            </p>
+          )}
         </div>
         
         
-        {/* Verified badge */}
+        {/* Housing status badge */}
         <div className="absolute top-2 left-2">
-          <span className="flex items-center gap-1 bg-white/90 text-homi-purple text-xs px-2 py-1 rounded-full">
-            <ShieldCheck size={12} />
-            Verificado
+          <span className={`flex items-center gap-1 text-xs px-2 py-1 rounded-full ${
+            hasApartment 
+              ? 'bg-green-500/90 text-white' 
+              : 'bg-blue-500/90 text-white'
+          }`}>
+            {hasApartment ? <Home size={12} /> : <Search size={12} />}
+            {housingStatus}
           </span>
         </div>
       </div>
@@ -194,9 +245,8 @@ const MatchCard = ({
           
           <div className="flex gap-2">
             {budget && (
-              <span className="flex items-center text-xs gap-1 bg-homi-ultraLightPurple text-homi-purple px-2 py-1 rounded-full">
-                <DollarSign size={12} />
-                {budget.min}€-{budget.max}€
+              <span className="flex items-center text-xs gap-1 bg-green-500/20 text-green-700 px-2 py-1 rounded-full">
+                {typeof budget === 'object' ? JSON.stringify(budget) : budget}
               </span>
             )}
             {moveInDate && (
@@ -224,7 +274,7 @@ const MatchCard = ({
         {/* Additional details */}
         {showDetails && lifestyleData && (
           <div className="mb-3 animate-fade-in">
-            <h4 className="font-medium mb-1 text-xs">Estilo de vida</h4>
+            <h4 className="font-medium mb-2 text-sm">Estilo de vida</h4>
             <div className="grid grid-cols-2 gap-2">
               <div className="flex items-center gap-1 text-xs">
                 <span className="w-6 h-6 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
@@ -260,6 +310,20 @@ const MatchCard = ({
                 <div>
                   <span className="text-xs text-muted-foreground">Fumar</span>
                   <span className="block">{lifestyleData.smoking}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="mt-3 pt-2 border-t border-muted">
+              <div className="flex items-center gap-2 text-sm">
+                <span className="w-6 h-6 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
+                  <Users size={14} />
+                </span>
+                <div>
+                  <span className="text-xs text-muted-foreground">Busca</span>
+                  <span className="block font-medium">
+                    {roommatesNeeded} compañero{roommatesNeeded > 1 ? 's' : ''} de piso
+                  </span>
                 </div>
               </div>
             </div>

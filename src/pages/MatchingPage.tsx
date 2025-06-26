@@ -26,6 +26,7 @@ const formatProfileForMatchCard = (profile: Profile) => {
     id: index + 1,
     name: interest
   }));
+  const budget = profile.budget || (profile.lifestyle && profile.lifestyle.budget) || undefined;
   return {
     id: profile.id.toString(),
     name: profile.first_name + " "+ profile.last_name,
@@ -39,7 +40,8 @@ const formatProfileForMatchCard = (profile: Profile) => {
     }],
     compatibility: profile.compatibility,
     lifestyle: profile.lifestyle,
-    budget: profile.budget,
+    budget,
+    sevilla_zona: profile.sevilla_zona,
     onLike: () => {},
     onPass: () => {},
     onView: () => {}
@@ -132,7 +134,8 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
       toast({
         title: "Demostración",
         description: "Esta es una vista previa. Regístrate para utilizar esta función.",
-        variant: "default"
+        variant: "default",
+        duration: 1500
       });
     } else {
       action();
@@ -160,7 +163,8 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
         toast({
           title: `Filtros aplicados (${filterCount})`,
           description: filterCount > 0 ? "Se han aplicado los filtros seleccionados" : "No se han seleccionado filtros específicos",
-          variant: "default"
+          variant: "default",
+          duration: 1500
         });
       },
       "Función de filtros"
@@ -175,7 +179,8 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
         toast({
           title: "Filtros eliminados",
           description: "Se han eliminado todos los filtros",
-          variant: "default"
+          variant: "default",
+          duration: 1500
         });
       },
       "Función de limpiar filtros"
@@ -205,7 +210,9 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
         // Filtrar por presupuesto
         if (filters.presupuesto) {
           const [min, max] = filters.presupuesto;
-          match = match && profile.budget.min >= min && profile.budget.max <= max;
+          // Buscar budget en profile.budget o en profile.lifestyle.budget
+          const budget = profile.budget || (profile.lifestyle && profile.lifestyle.budget);
+          match = match && budget && budget.min >= min && budget.max <= max;
         }
 
         // Filtrar por ubicación
@@ -291,7 +298,8 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
           toast({
             title: "¡Nuevo match!",
             description: "Has coincidido con este perfil",
-            variant: "default"
+            variant: "default",
+            duration: 1500
           });
         }
         refetchMatches();
@@ -349,7 +357,8 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
         toast({
           title: "Pasas",
           description: "Has pasado de este perfil",
-          variant: "default"
+          variant: "default",
+          duration: 1500
         });
       },
       "Función de pasar"
@@ -362,7 +371,8 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
         toast({
           title: "Ver perfil",
           description: "Viendo el perfil completo",
-          variant: "default"
+          variant: "default",
+          duration: 1500
         });
       },
       "Función de ver perfil"
@@ -428,7 +438,8 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
         toast({
           title: "Abrir chat",
           description: "Redirigiendo al chat con este usuario",
-          variant: "default"
+          variant: "default",
+          duration: 1500
         });
       },
       "Función de mensaje"
@@ -441,7 +452,8 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
         toast({
           title: "Ver perfil completo",
           description: "Viendo el perfil completo del usuario",
-          variant: "default"
+          variant: "default",
+          duration: 1500
         });
       },
       "Función de ver perfil completo"

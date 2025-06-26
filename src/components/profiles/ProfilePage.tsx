@@ -208,7 +208,8 @@ const ProfilePage = () => {
                   setIsEditing(false);
                   toast({
                     title: "Perfil actualizado",
-                    description: "Tu información de perfil ha sido guardada."
+                    description: "Tu información de perfil ha sido guardada.",
+                    duration: 1500
                   });
                 }}
                 cancelEdit={() => setIsEditing(false)}

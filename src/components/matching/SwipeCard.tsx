@@ -278,12 +278,7 @@ const SwipeCard = ({
           
           
           {/* Verified badge */}
-          <div className="absolute top-2 left-2">
-            <span className="flex items-center gap-1 bg-white/90 text-homi-purple text-xs px-2 py-1 rounded-full">
-              <ShieldCheck size={12} />
-              Verificado
-            </span>
-          </div>
+          
         </div>
         
         {/* Profile Details Section - more compact */}
