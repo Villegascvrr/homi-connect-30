@@ -600,7 +600,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                   {viewMode === 'swipe' && (
                     <div className="mb-6">
                       <SwipeInterface 
-                        profiles={filteredProfiles.map(profile => ({
+                        profiles={filteredProfiles.slice(0, 3).map(profile => ({
                           id: profile.id.toString(),
                           name: profile.name,
                           first_name: profile.first_name,
@@ -630,7 +630,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                   
                   {viewMode === 'grid' && (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {filteredProfiles.map(profile => {
+                      {filteredProfiles.slice(0, 3).map(profile => {
                         const cardProps = formatProfileForMatchCard(profile);
                         return (
                           <MatchCard 
