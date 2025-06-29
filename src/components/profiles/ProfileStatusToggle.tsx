@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -25,6 +24,7 @@ const ProfileStatusToggle: React.FC<ProfileStatusToggleProps> = ({
       description: checked 
         ? "Tu perfil es ahora público y visible para otros usuarios."
         : "Tu perfil ha sido ocultado. Has indicado que ya tienes compañero.",
+      duration: 1500
     });
   };
 

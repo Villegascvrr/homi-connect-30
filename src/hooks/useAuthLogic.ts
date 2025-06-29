@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useEffect } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase, checkEmailExists } from '@/integrations/supabase/client';
@@ -163,6 +162,7 @@ export const useAuthLogic = () => {
         title: "Error al autenticar con Google",
         description: error.message || "Ha ocurrido un error durante la autenticación con Google.",
         variant: "destructive",
+        duration: 1500
       });
       setLoading(false);
       setIsInternalAction(false);
@@ -219,6 +219,7 @@ export const useAuthLogic = () => {
           title: "Datos incompletos",
           description: "Todos los campos son obligatorios para crear una cuenta.",
           variant: "destructive",
+          duration: 1500
         });
         setLoading(false);
         setIsInternalAction(false);
@@ -233,6 +234,7 @@ export const useAuthLogic = () => {
           title: "Correo ya registrado",
           description: "Este correo electrónico ya está registrado. Por favor, inicia sesión o usa otro correo.",
           variant: "destructive",
+          duration: 1500
         });
         setLoading(false);
         setIsInternalAction(false);
@@ -297,6 +299,7 @@ export const useAuthLogic = () => {
       toast({
         title: "Cuenta creada con éxito",
         description: "Ya puedes comenzar a usar tu cuenta.",
+        duration: 1500
       });
       
       // Allow the UI to update before redirecting
@@ -313,12 +316,14 @@ export const useAuthLogic = () => {
           title: "Correo ya registrado",
           description: "Este correo electrónico ya está registrado. Por favor, inicia sesión o usa otro correo.",
           variant: "destructive",
+          duration: 1500
         });
       } else {
         toast({
           title: "Error al crear la cuenta",
           description: error.message || "Ha ocurrido un error durante el registro.",
           variant: "destructive",
+          duration: 1500
         });
       }
       setIsInternalAction(false);
@@ -342,6 +347,7 @@ export const useAuthLogic = () => {
           title: "Datos incompletos",
           description: "El email y la contraseña son obligatorios.",
           variant: "destructive",
+          duration: 1500
         });
         setLoading(false);
         setIsInternalAction(false);
@@ -369,6 +375,7 @@ export const useAuthLogic = () => {
         toast({
           title: "Inicio de sesión exitoso",
           description: "Has iniciado sesión en tu cuenta.",
+          duration: 1500
         });
         
         // Allow the UI to update before redirecting
@@ -387,6 +394,7 @@ export const useAuthLogic = () => {
           ? "Credenciales inválidas. Verifica tu email y contraseña."
           : (error.message || "Ha ocurrido un error durante el inicio de sesión."),
         variant: "destructive",
+        duration: 1500
       });
       setIsInternalAction(false);
       throw error;
@@ -422,11 +430,13 @@ export const useAuthLogic = () => {
           title: "Error al cerrar sesión",
           description: error.message,
           variant: "destructive",
+          duration: 1500
         });
       } else {
         toast({
           title: "Sesión cerrada",
           description: "Has cerrado sesión correctamente.",
+          duration: 1500
         });
         
         setAuthKey('signed-out-' + Date.now());
@@ -445,6 +455,7 @@ export const useAuthLogic = () => {
         title: "Error al cerrar sesión",
         description: error.message || "Ha ocurrido un error al cerrar sesión.",
         variant: "destructive",
+        duration: 1500
       });
       setIsInternalAction(false);
     } finally {

@@ -145,10 +145,15 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
         finalCity = values.ciudad_otra;
       }
       
-      // For backwards compatibility, store the location info in sevilla_zona
+      // Para compatibilidad, guardar la info de ubicación en sevilla_zona
       let sevilla_zona_value = "";
       if (values.apartmentStatus === 'have') {
-        sevilla_zona_value = 'tengo_piso';
+        // Si tiene piso y ha seleccionado zona, guarda la zona
+        if (finalCity === 'Sevilla' && values.sevilla_zonas && values.sevilla_zonas.length > 0) {
+          sevilla_zona_value = values.sevilla_zonas[0];
+        } else {
+          sevilla_zona_value = ""; // No guardar 'tengo_piso'
+        }
       } else if (finalCity === 'Sevilla' && values.sevilla_zonas && values.sevilla_zonas.length > 0) {
         sevilla_zona_value = values.sevilla_zonas[0];
       } else if (finalCity) {
@@ -228,7 +233,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
         title: "Error al guardar",
         description: "Recuerda completar todos los campos requeridos.",
         variant: "destructive",
-        duration: 3000,
+        duration: 1500
       });
       return false;
     }
@@ -452,6 +457,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
       toast({
         title: "Perfil actualizado",
         description: "Tu información de perfil ha sido guardada.",
+        duration: 1500
       });
       
       if (onSaved) {
