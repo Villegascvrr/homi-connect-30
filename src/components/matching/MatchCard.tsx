@@ -25,16 +25,15 @@ interface MatchCardProps {
     guests: string;
     smoking: string;
   };
-  budget?: {
-    min: number;
-    max: number;
-  };
+  budget?: string;
   moveInDate?: string;
   onLike: (id: string) => void;
   onPass: (id: string) => void;
   onView: (id: string) => void;
   compact?: boolean;
   sevilla_zona: string;
+  roommatesNeeded: number;
+  has_apartment: boolean;
 }
 
 // Zonas específicas para diferentes ciudades
@@ -72,30 +71,34 @@ const MatchCard = ({
   onPass,
   onView,
   compact = false,
-  sevilla_zona
+  roommatesNeeded,
+  sevilla_zona,
+  has_apartment
 }: MatchCardProps) => {
   const [swiping, setSwiping] = useState<'left' | 'right' | null>(null);
   const [showDetails, setShowDetails] = useState(false);
   const lifestyleData = getLifestyle(lifestyle);
-  
-  // Generate number of roommates being sought (1-3)
-  const roommatesNeeded = Math.floor(Math.random() * 3) + 1;
-  
-  // Simular datos de vivienda (en una implementación real vendría de la base de datos)
-  const hasApartment = Math.random() > 0.5; // Esto debería venir de los datos del perfil
+
   const isZonaValida = sevilla_zona && sevilla_zona.trim() !== '' && sevilla_zona !== 'tengo_piso';
   const housingStatus = isZonaValida
-    ? (hasApartment ? `Tengo piso en ${sevilla_zona}` : `Busco piso en ${sevilla_zona}`)
-    : (hasApartment ? 'Tengo piso' : 'Busco piso');
-  console.log('Housing status:', housingStatus);
+    ? (has_apartment ? `Tengo piso en ${sevilla_zona}` : `Busco piso en ${sevilla_zona}`)
+    : (has_apartment ? 'Tengo piso' : 'Busco piso');
   
-  // Simular precio del piso (en una implementación real vendría de la base de datos)
-  const apartmentPrice = hasApartment ? Math.floor(Math.random() * 500) + 400 : null; // Entre 400-900€
+  
+  const handleSwipe = (direction: 'left' | 'right') => {
+    setSwiping(direction);
+    setTimeout(() => {
+      if (direction === 'right') {
+        onLike(id);
+      } else {
+        onPass(id);
+      }
+      setSwiping(null);
+    }, 400);
+  };
 
-  // Utilidad para obtener solo la primera palabra del nombre
   const firstName = name.split(' ')[0];
 
-  // If compact mode is enabled, show a simplified card design
   if (compact) {
     return (
       <div 
@@ -129,11 +132,11 @@ const MatchCard = ({
           {/* Housing status badge */}
           <div className="absolute top-2 left-2">
             <span className={`flex items-center gap-1 text-xs px-2 py-1 rounded-full ${
-              hasApartment 
+              has_apartment 
                 ? 'bg-green-500/90 text-white' 
                 : 'bg-blue-500/90 text-white'
             }`}>
-              {hasApartment ? <Home size={12} /> : <Search size={12} />}
+              {has_apartment ? <Home size={12} /> : <Search size={12} />}
               {housingStatus}
             </span>
           </div>
@@ -224,11 +227,11 @@ const MatchCard = ({
         {/* Housing status badge */}
         <div className="absolute top-2 left-2">
           <span className={`flex items-center gap-1 text-xs px-2 py-1 rounded-full ${
-            hasApartment 
+            has_apartment 
               ? 'bg-green-500/90 text-white' 
               : 'bg-blue-500/90 text-white'
           }`}>
-            {hasApartment ? <Home size={12} /> : <Search size={12} />}
+            {has_apartment ? <Home size={12} /> : <Search size={12} />}
             {housingStatus}
           </span>
         </div>

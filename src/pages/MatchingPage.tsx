@@ -26,7 +26,7 @@ const formatProfileForMatchCard = (profile: Profile) => {
     id: index + 1,
     name: interest
   }));
-  const budget = profile.budget || (profile.lifestyle && profile.lifestyle.budget) || undefined;
+  const { budgetMin, budgetMax } = parseBudget(profile.lifestyle?.budget || "");
   return {
     id: profile.id.toString(),
     name: profile.first_name + " "+ profile.last_name,
@@ -39,9 +39,17 @@ const formatProfileForMatchCard = (profile: Profile) => {
       name: "No se encontraron intereses"
     }],
     compatibility: profile.compatibility,
-    lifestyle: profile.lifestyle,
-    budget,
-    sevilla_zona: profile.sevilla_zona,
+    lifestyle: {
+      cleanliness: profile.lifestyle?.cleanliness || "",
+      noise: profile.lifestyle?.noise || "",
+      schedule: profile.lifestyle?.schedule || "",
+      guests: profile.lifestyle?.guests || "",
+      smoking: profile.lifestyle?.smoking || "",
+    },
+    budget: profile.lifestyle.budget,
+    sevilla_zona: (profile.lifestyle.sevilla_zonas || []).join(", "),
+    roommatesNeeded: profile.companeros_count,
+    has_apartment: profile.has_apartment,
     onLike: () => {},
     onPass: () => {},
     onView: () => {}
@@ -210,9 +218,10 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
         // Filtrar por presupuesto
         if (filters.presupuesto) {
           const [min, max] = filters.presupuesto;
-          // Buscar budget en profile.budget o en profile.lifestyle.budget
-          const budget = profile.budget || (profile.lifestyle && profile.lifestyle.budget);
-          match = match && budget && budget.min >= min && budget.max <= max;
+          
+          const budget = profile.lifestyle.budget;
+          const { budgetMin, budgetMax } = parseBudget(budget);
+          match = match && (!budgetMin ||  budgetMin >= min) && (!budgetMax || budgetMax <= max);
         }
 
         // Filtrar por ubicación
@@ -703,6 +712,23 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
       <Footer />
     </div>
   );
+};
+
+const parseBudget = (budget: string) => {
+  if (!budget) return { budgetMin: undefined, budgetMax: undefined };
+  
+  if (budget === "Más de 700€") {
+    return { budgetMin: 700, budgetMax: undefined };
+  }
+  
+  if (budget === "Menos de 200€") {
+    return { budgetMin: undefined, budgetMax: 200 };
+  }
+
+  // Para casos como "200€ - 300€"
+  const cleanBudget = budget.replace(/€/g, '').trim();
+  const [min, max] = cleanBudget.split('-').map(num => parseInt(num.trim()));
+  return { budgetMin: min, budgetMax: max };
 };
 
 export default MatchingPage;
