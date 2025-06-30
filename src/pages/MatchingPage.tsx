@@ -112,7 +112,8 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
   const [removedProfiles, setRemovedProfiles] = useState<Set<string>>(new Set());
   const [ availableProfiles, setAvailableProfiles ]= useState<any[]>([]);
   const { hasReachedDailyLimit, checkDailyLimit, updateDailyLimitAfterAction } = useSwipes(user?.id);
-
+  const isSuscriptor = user?.is_suscriptor;
+  
   React.useEffect(() => {
     if (profiles) {
       setFilteredProfiles(profiles);
@@ -572,8 +573,19 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                         <MatchingFilters 
                           activeFilters={activeFilters}
                           onApplyFilters={filters => {
-                            handleApplyFilters(filters);
-                            setOpenSearchFilters(false);
+                            if(isSuscriptor){
+                              handleApplyFilters(filters);
+                              setOpenSearchFilters(false);
+                            } else {
+                              toast({
+                                title: "Filtros",
+                                description: "Debes ser suscriptor para usar los filtros",
+                                variant: "destructive",
+                                duration: 1500
+                              });
+                              navigate('/precios');
+                            }
+                           
                           }} 
                           onClearFilters={handleClearFilters} 
                           activeTab="filtros" 

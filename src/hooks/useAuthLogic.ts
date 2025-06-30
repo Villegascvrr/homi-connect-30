@@ -16,6 +16,7 @@ export interface ExtendedUser extends User {
   profile_image?: string | null;
   completed?: boolean;
   profile_image_id?: string | null;
+  is_suscriptor?: boolean;
 }
 
 /**
@@ -114,13 +115,21 @@ export const useAuthLogic = () => {
           .select('profile_image_id, completed')
           .eq('id', refreshedUser.id)
           .maybeSingle();
+
+        const { data: subscriptionData, error: subscriptionError } = await supabase
+          .from('subscribers')
+          .select('*')
+          .eq('user_id', refreshedUser.id)
+          .maybeSingle();
+
         if (!profileError && profileData) {
           const profileImage = await useProfileImage(refreshedUser.id, profileData.profile_image_id);
           setUser({
             ...refreshedUser,
             profile_image: profileImage,
             profile_image_id: profileData.profile_image_id,
-            completed: profileData.completed
+            completed: profileData.completed,
+            is_suscriptor: subscriptionData?.subscribed ? true : false
           });
         } else {
           
@@ -285,10 +294,23 @@ export const useAuthLogic = () => {
         
         console.log("Profile created successfully");
         
+        const { data: subscriptionData } = await supabase
+          .from('subscribers')
+          .select('*')
+          .eq('user_id', authData.user.id)
+          .maybeSingle();
+
+        setUser({
+          ...authData.user,
+          profile_image: null,
+          profile_image_id: null,
+          completed: false,
+          is_suscriptor: subscriptionData?.subscribed ? true : false
+        });
+        
         if (authData.session) {
           
           setSession(authData.session);
-          setUser(authData.user);
           
           saveSessionToLocalStorage(authData.session);
         } else {
@@ -371,6 +393,17 @@ export const useAuthLogic = () => {
         setUser(data.user);
         
         saveSessionToLocalStorage(data.session);
+        
+        const { data: subscriptionData } = await supabase
+          .from('subscribers')
+          .select('*')
+          .eq('user_id', data.user.id)
+          .maybeSingle();
+
+        setUser({
+          ...data.user,
+          is_suscriptor: subscriptionData?.subscribed ? true : false
+        });
         
         toast({
           title: "Inicio de sesión exitoso",
@@ -555,11 +588,17 @@ export const useAuthLogic = () => {
                 if (profileData && isMounted) {
                   console.log('Profile data before setting user:', profileData);
                   const profileImage = await useProfileImage(authUser.id, profileData.profile_image_id);
+                  const { data: subscriptionData } = await supabase
+                    .from('subscribers')
+                    .select('*')
+                    .eq('user_id', authUser.id)
+                    .maybeSingle();
                   const userWithProfile = {
                     ...authUser,
                     profile_image: profileImage,
                     profile_image_id: profileData.profile_image_id,
-                    completed: profileData.completed
+                    completed: profileData.completed,
+                    is_suscriptor: subscriptionData?.subscribed ? true : false
                   };
                   console.log('User with profile data:', userWithProfile);
                   setUser(userWithProfile);
@@ -623,11 +662,17 @@ export const useAuthLogic = () => {
             if (!error && profileData) {
               console.log('Existing session profile data:', profileData);
               const profileImage = await useProfileImage(authUser.id, profileData.profile_image_id);
+              const { data: subscriptionData } = await supabase
+                .from('subscribers')
+                .select('*')
+                .eq('user_id', authUser.id)
+                .maybeSingle();
               const userWithProfile = {
                 ...authUser,
                 profile_image: profileImage,
                 profile_image_id: profileData.profile_image_id,
-                completed: profileData.completed
+                completed: profileData.completed,
+                is_suscriptor: subscriptionData?.subscribed ? true : false
               };
               console.log('Setting user with existing session profile:', userWithProfile);
               setUser(userWithProfile);
