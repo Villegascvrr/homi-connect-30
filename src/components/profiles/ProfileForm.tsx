@@ -188,7 +188,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
       if(user.profile_image_id !== newProfileImageId) {
         await supabase.storage.from('profile-images').remove([`user_${user.id}/profile_${user.profile_image_id}.jpeg`]);
       }
-
+      
       const updateData = {
         first_name: values.firstName,
         last_name: values.lastName,
@@ -204,6 +204,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
         completed: completed,
         companeros_count: values.companeros_count || '',
         lifestyle: lifestyle,
+        has_apartment: values.apartmentStatus === 'have',
         updated_at: new Date().toISOString()
       };
       
@@ -299,7 +300,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
         try {
           const { data: profileData, error } = await supabase
             .from('profiles')
-            .select('first_name, last_name, username, email, bio, edad, ocupacion, universidad, interests, is_profile_active, sevilla_zona, completed, companeros_count, lifestyle, profile_image_id')
+            .select('first_name, last_name, username, email, bio, edad, ocupacion, universidad, interests, is_profile_active, sevilla_zona, completed, companeros_count, lifestyle, profile_image_id, has_apartment')
             .eq('id', user.id)
             .single();
           
@@ -324,13 +325,19 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
               "Macarena", "Norte", "Viapol", "El Plantinar", "El Juncal", 
               "Gran Plaza", "Otro/Alrededores"
             ];
+
+            if(profileData.has_apartment) {
+              currentApartmentStatus = 'have';
+            } else {
+              currentApartmentStatus = 'looking';
+            }
             
             if (sevillaZones.includes(profileData.sevilla_zona)) {
               // Old format: it's a Sevilla zone
               ciudad = "Sevilla";
               sevilla_zonas = [profileData.sevilla_zona];
             } else if (profileData.sevilla_zona === 'tengo_piso') {
-              currentApartmentStatus = 'have';
+              
               ciudad = "Sevilla"; // Default to Sevilla for backwards compatibility
             } else {
               // It might be a city name

@@ -191,6 +191,7 @@ export type Database = {
           universidad: string | null
           updated_at: string
           username: string
+          has_apartment: boolean | null
         }
         Insert: {
           bio?: string | null
@@ -214,6 +215,7 @@ export type Database = {
           universidad?: string | null
           updated_at?: string
           username: string
+          has_apartment?: boolean | null
         }
         Update: {
           bio?: string | null
@@ -237,6 +239,7 @@ export type Database = {
           universidad?: string | null
           updated_at?: string
           username?: string
+          has_apartment?: boolean | null
         }
         Relationships: []
       }
