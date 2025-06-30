@@ -26,6 +26,7 @@ const formatProfileForMatchCard = (profile: Profile) => {
     id: index + 1,
     name: interest
   }));
+  const { budgetMin, budgetMax } = parseBudget(profile.lifestyle?.budget || "");
   return {
     id: profile.id.toString(),
     name: profile.first_name + " "+ profile.last_name,
@@ -38,8 +39,17 @@ const formatProfileForMatchCard = (profile: Profile) => {
       name: "No se encontraron intereses"
     }],
     compatibility: profile.compatibility,
-    lifestyle: profile.lifestyle,
-    budget: profile.budget,
+    lifestyle: {
+      cleanliness: profile.lifestyle?.cleanliness || "",
+      noise: profile.lifestyle?.noise || "",
+      schedule: profile.lifestyle?.schedule || "",
+      guests: profile.lifestyle?.guests || "",
+      smoking: profile.lifestyle?.smoking || "",
+    },
+    budget: profile.lifestyle.budget,
+    sevilla_zona: (profile.lifestyle.sevilla_zonas || []).join(", "),
+    roommatesNeeded: profile.companeros_count,
+    has_apartment: profile.has_apartment,
     onLike: () => {},
     onPass: () => {},
     onView: () => {}
@@ -132,7 +142,8 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
       toast({
         title: "Demostración",
         description: "Esta es una vista previa. Regístrate para utilizar esta función.",
-        variant: "default"
+        variant: "default",
+        duration: 1500
       });
     } else {
       action();
@@ -160,7 +171,8 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
         toast({
           title: `Filtros aplicados (${filterCount})`,
           description: filterCount > 0 ? "Se han aplicado los filtros seleccionados" : "No se han seleccionado filtros específicos",
-          variant: "default"
+          variant: "default",
+          duration: 1500
         });
       },
       "Función de filtros"
@@ -175,7 +187,8 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
         toast({
           title: "Filtros eliminados",
           description: "Se han eliminado todos los filtros",
-          variant: "default"
+          variant: "default",
+          duration: 1500
         });
       },
       "Función de limpiar filtros"
@@ -205,7 +218,10 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
         // Filtrar por presupuesto
         if (filters.presupuesto) {
           const [min, max] = filters.presupuesto;
-          match = match && profile.budget.min >= min && profile.budget.max <= max;
+          
+          const budget = profile.lifestyle.budget;
+          const { budgetMin, budgetMax } = parseBudget(budget);
+          match = match && (!budgetMin ||  budgetMin >= min) && (!budgetMax || budgetMax <= max);
         }
 
         // Filtrar por ubicación
@@ -291,7 +307,8 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
           toast({
             title: "¡Nuevo match!",
             description: "Has coincidido con este perfil",
-            variant: "default"
+            variant: "default",
+            duration: 1500
           });
         }
         refetchMatches();
@@ -349,7 +366,8 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
         toast({
           title: "Pasas",
           description: "Has pasado de este perfil",
-          variant: "default"
+          variant: "default",
+          duration: 1500
         });
       },
       "Función de pasar"
@@ -362,7 +380,8 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
         toast({
           title: "Ver perfil",
           description: "Viendo el perfil completo",
-          variant: "default"
+          variant: "default",
+          duration: 1500
         });
       },
       "Función de ver perfil"
@@ -428,7 +447,8 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
         toast({
           title: "Abrir chat",
           description: "Redirigiendo al chat con este usuario",
-          variant: "default"
+          variant: "default",
+          duration: 1500
         });
       },
       "Función de mensaje"
@@ -441,7 +461,8 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
         toast({
           title: "Ver perfil completo",
           description: "Viendo el perfil completo del usuario",
-          variant: "default"
+          variant: "default",
+          duration: 1500
         });
       },
       "Función de ver perfil completo"
@@ -588,7 +609,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                   {viewMode === 'swipe' && (
                     <div className="mb-6">
                       <SwipeInterface 
-                        profiles={filteredProfiles.map(profile => ({
+                        profiles={filteredProfiles.slice(0, 3).map(profile => ({
                           id: profile.id.toString(),
                           name: profile.name,
                           first_name: profile.first_name,
@@ -606,7 +627,10 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                           }],
                           compatibility: profile.compatibility,
                           lifestyle: profile.lifestyle,
-                          budget: profile.budget
+                          budget: profile.lifestyle.budget,
+                          sevilla_zona: profile.lifestyle.sevilla_zonas?.join(", ") ,
+                          has_apartment: profile.has_apartment,
+                          companeros_count: profile.companeros_count
                         }))} 
                         onLike={handleLike} 
                         onPass={handlePass} 
@@ -618,7 +642,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                   
                   {viewMode === 'grid' && (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {filteredProfiles.map(profile => {
+                      {filteredProfiles.slice(0, 3).map(profile => {
                         const cardProps = formatProfileForMatchCard(profile);
                         return (
                           <MatchCard 
@@ -691,6 +715,23 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
       <Footer />
     </div>
   );
+};
+
+const parseBudget = (budget: string) => {
+  if (!budget) return { budgetMin: undefined, budgetMax: undefined };
+  
+  if (budget === "Más de 700€") {
+    return { budgetMin: 700, budgetMax: undefined };
+  }
+  
+  if (budget === "Menos de 200€") {
+    return { budgetMin: undefined, budgetMax: 200 };
+  }
+
+  // Para casos como "200€ - 300€"
+  const cleanBudget = budget.replace(/€/g, '').trim();
+  const [min, max] = cleanBudget.split('-').map(num => parseInt(num.trim()));
+  return { budgetMin: min, budgetMax: max };
 };
 
 export default MatchingPage;

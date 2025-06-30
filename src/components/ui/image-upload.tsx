@@ -141,7 +141,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
         }
 
         // Set canvas size to a standard profile picture size
-        const outputSize = 400;
+        const outputSize = 800;
         canvas.width = outputSize;
         canvas.height = outputSize;
 
@@ -150,8 +150,8 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
         const scaledHeight = img.height * scale;
 
         // Calculate the position to center the image with offset
-        const offsetX = (outputSize - scaledWidth) / 2 + position.x;
-        const offsetY = (outputSize - scaledHeight) / 2 + position.y;
+        const offsetX = (outputSize - scaledWidth) / 2 + 2*position.x;
+        const offsetY = (outputSize - scaledHeight) / 2 + 2*position.y;
 
         // Fill background with white
         ctx.fillStyle = '#ffffff';

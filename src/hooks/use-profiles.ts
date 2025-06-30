@@ -21,14 +21,25 @@ export interface Profile {
   lifestyle: {
     cleanliness: string;
     noise: string;
-    schedule: string;
-    guests: string;
-    smoking: string;
+    budget?:  string;
+    pets?: string;
+    ciudad?: string;
+    guests?: string;
+    smoking?: string;
+    schedule?: string;
+    room_count?: string;
+    room_price?: string;
+    sevilla_zonas?: string[];
+    field_of_study?: string;
+    apartment_description?: string;
   };
   budget: {
     min: number;
     max: number;
   };
+  companeros_count: number;
+  has_apartment: boolean;
+  sevilla_zona: string;
 }
 
 export const useProfiles = (profileId?: string) => {
@@ -56,6 +67,7 @@ export const useProfiles = (profileId?: string) => {
                 lifestyle,
                 is_profile_active,
                 sevilla_zona,
+                has_apartment,
                 companeros_count,
                 completed,
                 discards:profile_discards!profile_discards_target_profile_id_fkey (id, profile_id, target_profile_id),
@@ -137,6 +149,7 @@ export const useProfiles = (profileId?: string) => {
               lifestyle,
               is_profile_active,
               profile_image_id,
+              has_apartment,
               sevilla_zona,
               companeros_count,
               discards:profile_discards!profile_discards_target_profile_id_fkey (id, profile_id, target_profile_id),

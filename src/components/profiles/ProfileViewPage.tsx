@@ -1,4 +1,3 @@
-
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/layout/Navbar';
@@ -166,6 +165,7 @@ const ProfileViewPage = () => {
       toast({
         title: "Enlace copiado",
         description: "El enlace al perfil ha sido copiado al portapapeles",
+        duration: 1500
       });
     }
   };
