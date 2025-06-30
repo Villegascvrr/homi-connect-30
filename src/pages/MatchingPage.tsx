@@ -627,7 +627,10 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                           }],
                           compatibility: profile.compatibility,
                           lifestyle: profile.lifestyle,
-                          budget: profile.budget
+                          budget: profile.lifestyle.budget,
+                          sevilla_zona: profile.lifestyle.sevilla_zonas?.join(", ") ,
+                          has_apartment: profile.has_apartment,
+                          companeros_count: profile.companeros_count
                         }))} 
                         onLike={handleLike} 
                         onPass={handlePass} 

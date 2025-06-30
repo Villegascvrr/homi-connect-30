@@ -27,11 +27,11 @@ interface SwipeProfile {
     guests: string;
     smoking: string;
   };
-  budget?: {
-    min: number;
-    max: number;
-  };
+  budget?: string;
   moveInDate?: string;
+  sevilla_zona: string;
+  has_apartment: boolean;
+  companeros_count: number;
 }
 
 interface SwipeInterfaceProps {
@@ -67,11 +67,6 @@ const   SwipeInterface = ({ profiles, onLike, onPass, onView, refetch }: SwipeIn
   const nextProfile = availableProfiles.length > currentIndex + 1 ? availableProfiles[currentIndex + 1] : null;
   
   const hasMoreProfiles = availableProfiles.length > 0 && currentProfile !== null;
-  
-  // Debug log the current state
-  useEffect(() => {
-    
-  }, [availableProfiles, currentIndex, currentProfile, removedProfiles]);
   
   useEffect(() => {
     if (nextProfile) {
