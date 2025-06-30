@@ -17,7 +17,8 @@ import {
   X, 
   Calendar,
   User,
-  HeartHandshake
+  HeartHandshake,
+  Building2
 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -36,6 +37,7 @@ interface FilterValues {
   invitados?: string;
   fumar?: string;
   mascotas?: string;
+  buscaPiso?: string;
 }
 
 interface MatchingFiltersProps {
@@ -43,12 +45,14 @@ interface MatchingFiltersProps {
   onClearFilters: () => void;
   className?: string;
   activeTab?: 'filtros' | 'preferencias';
+  activeFilters?: FilterValues;
 }
 
 const MatchingFilters: React.FC<MatchingFiltersProps> = ({
   onApplyFilters,
   onClearFilters,
   className,
+  activeFilters,
   activeTab = 'filtros'
 }) => {
   const [showFilters, setShowFilters] = useState(false);
@@ -58,7 +62,7 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
   const [fechaMudanza, setFechaMudanza] = useState<string>('cualquiera');
   const [estiloVida, setEstiloVida] = useState<string[]>([]);
   const [intereses, setIntereses] = useState<string[]>([]);
-  
+  const [buscaPiso, setBuscaPiso] = useState<string>('Cualquiera');
   const [nivelLimpieza, setNivelLimpieza] = useState<string>('alta');
   const [nivelRuido, setNivelRuido] = useState<string>('bajo');
   const [horarioHabitual, setHorarioHabitual] = useState<string>('madrugador');
@@ -69,6 +73,15 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
   const [mostrarPreferencias, setMostrarPreferencias] = useState(false);
   const isMobile = useIsMobile();
   
+  useEffect(() => {
+    if (activeFilters) {
+      setPresupuesto(activeFilters.presupuesto || [300, 800]);
+      setUbicacion(activeFilters.ubicacion || 'todas');
+      setRangoEdad(activeFilters.rangoEdad || 'todas');
+      setBuscaPiso(activeFilters.buscaPiso || 'Cualquiera');
+    }
+  }, [activeFilters]);
+
   useEffect(() => {
     setShowFilters(false);
     setMostrarPreferencias(false);
@@ -87,15 +100,8 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
       presupuesto,
       ubicacion: ubicacion !== 'todas' ? ubicacion : undefined,
       rangoEdad: rangoEdad !== 'todas' ? rangoEdad : undefined,
-      fechaMudanza: fechaMudanza !== 'cualquiera' ? fechaMudanza : undefined,
       estiloVida: estiloVida.length > 0 ? estiloVida : undefined,
-      intereses: intereses.length > 0 ? intereses : undefined,
-      nivelLimpieza,
-      nivelRuido,
-      horarioHabitual,
-      invitados,
-      fumar,
-      mascotas
+      buscaPiso
     });
   };
   
@@ -112,6 +118,7 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
     setInvitados('frecuente');
     setFumar('no');
     setMascotas('si');
+    setBuscaPiso('Cualquiera');
     onClearFilters();
   };
   
@@ -141,7 +148,7 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
             </CardHeader>
             <CardContent className="p-3">
               <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div className="space-y-1">
                     <Label className="text-xs font-medium">Ubicación</Label>
                     <Select value={ubicacion} onValueChange={setUbicacion}>
@@ -163,9 +170,26 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                       </SelectContent>
                     </Select>
                   </div>
+
+                  <div className="space-y-1">
+                    <Label className="text-xs font-medium">¿Busca piso?</Label>
+                    <Select value={buscaPiso} onValueChange={setBuscaPiso}>
+                      <SelectTrigger className="w-full bg-background h-9 text-sm">
+                        <div className="flex items-center gap-1.5">
+                          <Building2 className="h-4 w-4" />
+                          <SelectValue placeholder="Cualquiera" />
+                        </div>
+                      </SelectTrigger>
+                      <SelectContent position="popper" className="bg-background z-50">
+                        <SelectItem value="Cualquiera">Cualquiera</SelectItem>
+                        <SelectItem value="Si">Si</SelectItem>
+                        <SelectItem value="No">No</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                   
                   <div className="space-y-1">
-                    <Label className="text-xs font-medium">Rango de edad</Label>
+                    <Label className="text-xs font-medium">Edades</Label>
                     <Select value={rangoEdad} onValueChange={setRangoEdad}>
                       <SelectTrigger className="w-full bg-background h-9 text-sm">
                         <div className="flex items-center gap-1.5">
@@ -175,15 +199,15 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                       </SelectTrigger>
                       <SelectContent position="popper" className="bg-background z-50">
                         <SelectItem value="todas">Todas las edades</SelectItem>
-                        <SelectItem value="18-25">18-25 años</SelectItem>
-                        <SelectItem value="26-30">26-30 años</SelectItem>
-                        <SelectItem value="31-40">31-40 años</SelectItem>
-                        <SelectItem value="41+">Más de 41 años</SelectItem>
+                        <SelectItem value="18-19">18-19 años</SelectItem>
+                        <SelectItem value="20-21">20-21 años</SelectItem>
+                        <SelectItem value="22-25">22-25 años</SelectItem>
+                        <SelectItem value="26+">Más de 25 años</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   
-                  <div className="space-y-1">
+                  {/*<div className="space-y-1">
                     <Label className="text-xs font-medium">Fecha de mudanza</Label>
                     <Select value={fechaMudanza} onValueChange={setFechaMudanza}>
                       <SelectTrigger className="w-full bg-background h-9 text-sm">
@@ -193,17 +217,17 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                         </div>
                       </SelectTrigger>
                       <SelectContent position="popper" className="bg-background z-50">
-                        <SelectItem value="cualquiera">Cualquier fecha</SelectItem>
+                        <SelectItem value="cualquiera">Cualquiera</SelectItem>
                         <SelectItem value="inmediata">Inmediata</SelectItem>
                         <SelectItem value="1-mes">Próximo mes</SelectItem>
                         <SelectItem value="3-meses">Próximos 3 meses</SelectItem>
                         <SelectItem value="6-meses">Próximos 6 meses</SelectItem>
                       </SelectContent>
                     </Select>
-                  </div>
+                  </div>*/}
                 </div>
                 
-                <div className="space-y-1">
+                {<div className="space-y-1">
                   <Label className="text-xs font-medium flex items-center gap-1.5">
                     <DollarSign className="h-4 w-4" />
                     Presupuesto: {presupuesto[0]}€ - {presupuesto[1]}€
@@ -218,9 +242,9 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                       className="bg-purple-100"
                     />
                   </div>
-                </div>
+                </div>}
                 
-                <div className="space-y-1">
+                {/*<div className="space-y-1">
                   <Label className="text-xs font-medium">Estilo de vida</Label>
                   <div className="flex flex-wrap gap-1.5 mt-1">
                     {[
@@ -252,7 +276,7 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                       </div>
                     ))}
                   </div>
-                </div>
+                </div>*/}
                 
                 <div className="flex justify-end gap-2 pt-1">
                   <Button variant="outline" onClick={handleClearFilters} size="md">

@@ -69,6 +69,7 @@ interface FilterValues {
   invitados?: string;
   fumar?: string;
   mascotas?: string;
+  buscaPiso?: string;
 }
 
 interface Lifestyle {
@@ -201,7 +202,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
     let results = [...profiles];
 
     // Aplicar búsqueda por texto
-    if (query) {
+    if (query && false) {
       const searchLower = query.toLowerCase();
       results = results.filter(profile =>
         profile.first_name.toLowerCase().includes(searchLower) ||
@@ -209,7 +210,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
         profile.bio.toLowerCase().includes(searchLower)
       );
     }
-
+    
     // Aplicar filtros
     if (filters) {
       results = results.filter(profile => {
@@ -223,12 +224,24 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
           const { budgetMin, budgetMax } = parseBudget(budget);
           match = match && (!budgetMin ||  budgetMin >= min) && (!budgetMax || budgetMax <= max);
         }
-
+        
         // Filtrar por ubicación
         if (filters.ubicacion) {
-          match = match && profile.location.toLowerCase() === filters.ubicacion.toLowerCase();
+          if(!(filters.ubicacion === 'Sevilla' && profile.sevilla_zona.length > 0)){
+            match = match && (profile.location && profile.location.toLowerCase() === filters.ubicacion.toLowerCase());
+          }
         }
 
+        // Filtrar por busca piso
+        if (filters.buscaPiso) {
+          match = match && (( profile.has_apartment !== (filters.buscaPiso === 'Si')) || 
+          filters.buscaPiso === 'Cualquiera');
+        }
+
+        if(filters.rangoEdad){
+          const [min, max] = filters.rangoEdad.split('-').map(Number);
+          match = match && (Number(profile.edad) >= min && Number(profile.edad) <= max);
+        }
         // ... resto de la lógica de filtros ...
 
         return match;
@@ -534,7 +547,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                 </TabsTrigger>
               </TabsList>
               
-              {activeTab === 'discover' && false && (
+              {activeTab === 'discover' && (
                 <div className="flex gap-2">
                   {isMobile && (
                     <div className="flex items-center mr-auto">
@@ -557,6 +570,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                     <PopoverContent className="p-0 z-50" align="end" sideOffset={5} compact>
                       <div className="overflow-auto max-h-[80vh] max-w-[90vw] w-[500px] pb-3">
                         <MatchingFilters 
+                          activeFilters={activeFilters}
                           onApplyFilters={filters => {
                             handleApplyFilters(filters);
                             setOpenSearchFilters(false);
@@ -569,7 +583,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                     </PopoverContent>
                   </Popover>
                   
-                  <Popover open={openPreferences} onOpenChange={setOpenPreferences}>
+                  {/*<Popover open={openPreferences} onOpenChange={setOpenPreferences}>
                     <PopoverTrigger asChild>
                       <Button variant="outline" size="md" className="flex items-center gap-1.5" onClick={() => setOpenPreferences(!openPreferences)}>
                         <Settings className="h-4 w-4" />
@@ -589,7 +603,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                         />
                       </div>
                     </PopoverContent>
-                  </Popover>
+                  </Popover>*/}
                 </div>
               )}
             </div>
