@@ -50,9 +50,6 @@ const HowItWorks = () => {
                 <div className="w-20 h-20 rounded-full bg-gradient-to-br from-homi-purple to-homi-lightPurple flex items-center justify-center mb-6 shadow-xl border-4 border-white/50 backdrop-blur-sm hover:scale-105 transition-all duration-300">
                   {step.icon}
                 </div>
-                <span className="absolute top-6 bg-white text-homi-purple text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center shadow-lg border-2 border-homi-purple/20 -right-1 md:right-auto md:-right-3">
-                  {index + 1}
-                </span>
                 <h3 className="text-xl font-semibold mb-3 text-slate-800">{step.title}</h3>
                 <p className="text-slate-600 leading-relaxed">{step.description}</p>
               </div>

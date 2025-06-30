@@ -12,19 +12,21 @@ import { useProfiles } from '@/hooks/use-profiles';
 import type { Profile } from '@/hooks/use-profiles';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Filter, UserRound, LayoutGrid, SwatchBook, Heart, Users, Settings } from 'lucide-react';
+import { Filter, UserRound, LayoutGrid, SwatchBook, Heart, Users, Settings, Crown } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Link, useNavigate } from 'react-router-dom';
 import { useMatches } from '@/hooks/use-matches';
 import DemoBanner from '@/components/layout/DemoBanner';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
+import { useSwipes } from '@/hooks/use-swipes';
 
 const formatProfileForMatchCard = (profile: Profile) => {
   const tags = profile?.interests?.map((interest: string, index: number) => ({
     id: index + 1,
     name: interest
   }));
+  const { budgetMin, budgetMax } = parseBudget(profile.lifestyle?.budget || "");
   return {
     id: profile.id.toString(),
     name: profile.first_name + " "+ profile.last_name,
@@ -37,8 +39,17 @@ const formatProfileForMatchCard = (profile: Profile) => {
       name: "No se encontraron intereses"
     }],
     compatibility: profile.compatibility,
-    lifestyle: profile.lifestyle,
-    budget: profile.budget,
+    lifestyle: {
+      cleanliness: profile.lifestyle?.cleanliness || "",
+      noise: profile.lifestyle?.noise || "",
+      schedule: profile.lifestyle?.schedule || "",
+      guests: profile.lifestyle?.guests || "",
+      smoking: profile.lifestyle?.smoking || "",
+    },
+    budget: profile.lifestyle.budget,
+    sevilla_zona: (profile.lifestyle.sevilla_zonas || []).join(", "),
+    roommatesNeeded: profile.companeros_count,
+    has_apartment: profile.has_apartment,
     onLike: () => {},
     onPass: () => {},
     onView: () => {}
@@ -99,7 +110,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
   
   const [removedProfiles, setRemovedProfiles] = useState<Set<string>>(new Set());
   const [ availableProfiles, setAvailableProfiles ]= useState<any[]>([]);
-
+  const { hasReachedDailyLimit, checkDailyLimit, updateDailyLimitAfterAction } = useSwipes(user?.id);
 
   React.useEffect(() => {
     if (profiles) {
@@ -122,12 +133,17 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
     }
   }, [isMobile]);
 
+  React.useEffect(() => {
+    checkDailyLimit();
+  }, [checkDailyLimit]);
+
   const handleAction = (action: () => void, message: string) => {
     if (isPreview) {
       toast({
         title: "Demostración",
         description: "Esta es una vista previa. Regístrate para utilizar esta función.",
-        variant: "default"
+        variant: "default",
+        duration: 1500
       });
     } else {
       action();
@@ -155,7 +171,8 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
         toast({
           title: `Filtros aplicados (${filterCount})`,
           description: filterCount > 0 ? "Se han aplicado los filtros seleccionados" : "No se han seleccionado filtros específicos",
-          variant: "default"
+          variant: "default",
+          duration: 1500
         });
       },
       "Función de filtros"
@@ -170,7 +187,8 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
         toast({
           title: "Filtros eliminados",
           description: "Se han eliminado todos los filtros",
-          variant: "default"
+          variant: "default",
+          duration: 1500
         });
       },
       "Función de limpiar filtros"
@@ -200,7 +218,10 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
         // Filtrar por presupuesto
         if (filters.presupuesto) {
           const [min, max] = filters.presupuesto;
-          match = match && profile.budget.min >= min && profile.budget.max <= max;
+          
+          const budget = profile.lifestyle.budget;
+          const { budgetMin, budgetMax } = parseBudget(budget);
+          match = match && (!budgetMin ||  budgetMin >= min) && (!budgetMax || budgetMax <= max);
         }
 
         // Filtrar por ubicación
@@ -251,6 +272,9 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
               profile_id: user?.id,
               target_profile_id: id
             })
+          // Comprobar límite tras la inserción
+          const reached = await updateDailyLimitAfterAction();
+          if (reached) return;
         } catch (error) {
           console.error('Error inserting in profile_matches:', error);
         }
@@ -283,7 +307,8 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
           toast({
             title: "¡Nuevo match!",
             description: "Has coincidido con este perfil",
-            variant: "default"
+            variant: "default",
+            duration: 1500
           });
         }
         refetchMatches();
@@ -311,6 +336,9 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
               profile_id: user?.id,
               target_profile_id: id
             })
+          // Comprobar límite tras la inserción
+          const reached = await updateDailyLimitAfterAction();
+          if (reached) return;
         } catch (error) {
           console.error('Error inserting in profile_discards:', error);
         }
@@ -338,7 +366,8 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
         toast({
           title: "Pasas",
           description: "Has pasado de este perfil",
-          variant: "default"
+          variant: "default",
+          duration: 1500
         });
       },
       "Función de pasar"
@@ -351,7 +380,8 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
         toast({
           title: "Ver perfil",
           description: "Viendo el perfil completo",
-          variant: "default"
+          variant: "default",
+          duration: 1500
         });
       },
       "Función de ver perfil"
@@ -417,7 +447,8 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
         toast({
           title: "Abrir chat",
           description: "Redirigiendo al chat con este usuario",
-          variant: "default"
+          variant: "default",
+          duration: 1500
         });
       },
       "Función de mensaje"
@@ -430,7 +461,8 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
         toast({
           title: "Ver perfil completo",
           description: "Viendo el perfil completo del usuario",
-          variant: "default"
+          variant: "default",
+          duration: 1500
         });
       },
       "Función de ver perfil completo"
@@ -443,6 +475,30 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
 
   if (error) {
     return <div className="flex items-center justify-center min-h-screen">Error al cargar los perfiles</div>;
+  }
+
+  if (hasReachedDailyLimit) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <main className="flex-grow flex items-center justify-center">
+          <div className="text-center py-16 px-4 max-w-md mx-auto">
+            <h1 className="text-2xl font-bold mb-4">¡Has llegado al límite diario!</h1>
+            <p className="text-muted-foreground mb-6">
+              Has llegado a los swipes máximos diarios, puedes seguir hoy sin límites si te conviertes en un Homi: 
+            </p>
+            <Button 
+              onClick={() => navigate('/precios')}
+              className={`rounded-full bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 hover:from-yellow-500 hover:via-orange-500 hover:to-red-500 text-black font-bold`}
+            >
+              <Crown className="mr-2 h-4 w-4" />
+              ¡Hazte Premium!
+            </Button>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
   }
 
   if(filteredProfiles.length === 0){ refetch();}
@@ -553,7 +609,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                   {viewMode === 'swipe' && (
                     <div className="mb-6">
                       <SwipeInterface 
-                        profiles={filteredProfiles.map(profile => ({
+                        profiles={filteredProfiles.slice(0, 3).map(profile => ({
                           id: profile.id.toString(),
                           name: profile.name,
                           first_name: profile.first_name,
@@ -571,7 +627,10 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                           }],
                           compatibility: profile.compatibility,
                           lifestyle: profile.lifestyle,
-                          budget: profile.budget
+                          budget: profile.lifestyle.budget,
+                          sevilla_zona: profile.lifestyle.sevilla_zonas?.join(", ") ,
+                          has_apartment: profile.has_apartment,
+                          companeros_count: profile.companeros_count
                         }))} 
                         onLike={handleLike} 
                         onPass={handlePass} 
@@ -583,7 +642,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                   
                   {viewMode === 'grid' && (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {filteredProfiles.map(profile => {
+                      {filteredProfiles.slice(0, 3).map(profile => {
                         const cardProps = formatProfileForMatchCard(profile);
                         return (
                           <MatchCard 
@@ -656,6 +715,23 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
       <Footer />
     </div>
   );
+};
+
+const parseBudget = (budget: string) => {
+  if (!budget) return { budgetMin: undefined, budgetMax: undefined };
+  
+  if (budget === "Más de 700€") {
+    return { budgetMin: 700, budgetMax: undefined };
+  }
+  
+  if (budget === "Menos de 200€") {
+    return { budgetMin: undefined, budgetMax: 200 };
+  }
+
+  // Para casos como "200€ - 300€"
+  const cleanBudget = budget.replace(/€/g, '').trim();
+  const [min, max] = cleanBudget.split('-').map(num => parseInt(num.trim()));
+  return { budgetMin: min, budgetMax: max };
 };
 
 export default MatchingPage;

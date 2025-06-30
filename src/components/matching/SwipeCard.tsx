@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import CompatibilityBadge from '@/components/ui/CompatibilityBadge';
-import { Heart, X, MessageSquare, User, DollarSign, Calendar, Home, ShieldCheck, Clock, Undo2 } from 'lucide-react';
+import { Heart, X, MessageSquare, User, DollarSign, Calendar, Home, ShieldCheck, Clock, Undo2, Search, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
@@ -25,15 +25,15 @@ interface SwipeCardProps {
     guests: string;
     smoking: string;
   };
-  budget?: {
-    min: number;
-    max: number;
-  };
+  budget?: string;
   moveInDate?: string;
   onLike: (id: string) => void;
   onPass: (id: string) => void;
   onView: (id: string) => void;
   onUndo?: () => void;
+  sevilla_zona: string;
+  has_apartment: boolean;
+  companeros_count: number;
 }
 
 const SwipeCard = ({
@@ -51,7 +51,10 @@ const SwipeCard = ({
   onLike,
   onPass,
   onView,
-  onUndo
+  onUndo,
+  sevilla_zona,
+  has_apartment,
+  companeros_count
 }: SwipeCardProps) => {
   const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | null>(null);
   const [showDetails, setShowDetails] = useState(false);
@@ -222,7 +225,11 @@ const SwipeCard = ({
   };
 
   const lifestyleData = getLifestyle(lifestyle);
-  
+  const isZonaValida = sevilla_zona && sevilla_zona.trim() !== '' && sevilla_zona !== 'tengo_piso';
+  const housingStatus = isZonaValida
+    ? (has_apartment ? `Tengo piso en ${sevilla_zona}` : `Busco piso en ${sevilla_zona}`)
+    : (has_apartment ? 'Tengo piso' : 'Busco piso');
+
   return (
     <div className="h-full flex flex-col items-center justify-center py-2">
       <div 
@@ -277,13 +284,17 @@ const SwipeCard = ({
           </div>
           
           
-          {/* Verified badge */}
-          <div className="absolute top-2 left-2">
-            <span className="flex items-center gap-1 bg-white/90 text-homi-purple text-xs px-2 py-1 rounded-full">
-              <ShieldCheck size={12} />
-              Verificado
-            </span>
-          </div>
+
+        <div className="absolute top-2 left-2">
+          <span className={`flex items-center gap-1 text-xs px-2 py-1 rounded-full ${
+            has_apartment 
+              ? 'bg-green-500/90 text-white' 
+              : 'bg-blue-500/90 text-white'
+          }`}>
+            {has_apartment ? <Home size={12} /> : <Search size={12} />}
+            {housingStatus}
+          </span>
+        </div>
         </div>
         
         {/* Profile Details Section - more compact */}
@@ -298,12 +309,11 @@ const SwipeCard = ({
             </button>
             
             <div className="flex gap-1">
-              {budget && (
-                <span className="flex items-center text-xs gap-1 bg-homi-ultraLightPurple text-homi-purple px-2 py-0.5 rounded-full">
-                  <DollarSign size={12} />
-                  {budget.min}€-{budget.max}€
-                </span>
-              )}
+            {budget && (
+              <span className="flex items-center gap-0.5 text-xs bg-green-500/20 text-green-700 px-2 py-0.5 rounded-full">
+                {typeof budget === 'object' ? JSON.stringify(budget) : budget}
+              </span>
+            )}
             </div>
           </div>
           
@@ -367,6 +377,20 @@ const SwipeCard = ({
                   </div>
                 </div>
               </div>
+
+              <div className="mt-3 pt-2 border-t border-muted">
+              <div className="flex items-center gap-2 text-sm">
+                <span className="w-6 h-6 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
+                  <Users size={14} />
+                </span>
+                <div>
+                  <span className="text-xs text-muted-foreground">Busca</span>
+                  <span className="block font-medium">
+                    {companeros_count} compañero{companeros_count > 1 ? 's' : ''} de piso
+                  </span>
+                </div>
+              </div>
+            </div>
             </div>
           )}
         </div>

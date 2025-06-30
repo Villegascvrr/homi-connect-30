@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import useProfileImage from './use-profile-image';
 
 interface Tag {
   id: number;
@@ -40,11 +41,10 @@ export const useMatches = (profileId?: string) => {
               profile_two_id,
               created_at,
               updated_at,
-              profile_one:profile_one_id(id, first_name, last_name, profile_image),
-              profile_two:profile_two_id(id, first_name, last_name, profile_image)
+              profile_one:profile_one_id(id, first_name, last_name, profile_image_id),
+              profile_two:profile_two_id(id, first_name, last_name, profile_image_id)
             `)
-            .or(`profile_one_id.eq.${profileId},profile_two_id.eq.${profileId}`)
-            .limit(40),
+            .or(`profile_one_id.eq.${profileId},profile_two_id.eq.${profileId}`),
           new Promise((_, reject) => 
             setTimeout(() => reject(new Error('Timeout')), 10000)
           ),
@@ -59,15 +59,16 @@ export const useMatches = (profileId?: string) => {
           throw new Error('No data received');
         }
 
-        const matches = data.map((match) => {
+        const matches = await Promise.all(data.map(async (match) => {
           if (match.profile_two_id === profileId) {
             const profile = match.profile_one
+            const imgUrl = await useProfileImage(profile.id,profile.profile_image_id);
             return {
               id: match.id,
-              name: `${profile.first_name} ${profile.last_name}`,
+              name: `${profile.first_name} ${profile.last_name || ""}`,
               age: profile.edad,
               location: profile.location,
-              imgUrl: profile.profile_image,
+              imgUrl: imgUrl,
               compatibility: profile.compatibility,
               matchDate: match.created_at,
               messageCount: 0,
@@ -78,12 +79,13 @@ export const useMatches = (profileId?: string) => {
             }
           } else {
             const profile = match.profile_two
+            const imgUrl = await useProfileImage(profile.id,profile.profile_image_id);
             return {
               id: match.id,
-              name: `${profile.first_name} ${profile.last_name}`,
+              name: `${profile.first_name} ${profile.last_name || ""}`,
               age: profile.edad,
               location: profile.location,
-              imgUrl: profile.profile_image,
+              imgUrl: imgUrl,
               compatibility: profile.compatibility,
               matchDate: match.created_at,
               messageCount: 0,
@@ -93,9 +95,7 @@ export const useMatches = (profileId?: string) => {
               }],
             }
           }
-        })
-        console.log("matches", matches);
-        console.log("id", profileId);
+        }));
         return matches;
       } catch (error) {
         console.error('Query error:', error);

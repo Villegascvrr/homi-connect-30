@@ -24,7 +24,6 @@ const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const { subscriptionInfo, createCheckout, openCustomerPortal } = useSubscription();
 
-  
   // Early return if not authenticated and not loading
   if (!loading && !user && !session) {
     return (
@@ -72,7 +71,6 @@ const ProfilePage = () => {
         }
 
         const profileImage = await useProfileImage(user.id, data.profile_image_id);
-        console.log("profileImage", data.profile_image_id, profileImage);
         setProfile({ ...data, profile_image: profileImage });
       } catch (err) {
         console.error("Error in fetchProfileData:", err);
@@ -210,7 +208,8 @@ const ProfilePage = () => {
                   setIsEditing(false);
                   toast({
                     title: "Perfil actualizado",
-                    description: "Tu información de perfil ha sido guardada."
+                    description: "Tu información de perfil ha sido guardada.",
+                    duration: 1500
                   });
                 }}
                 cancelEdit={() => setIsEditing(false)}

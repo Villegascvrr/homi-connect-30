@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
@@ -26,7 +25,7 @@ const WelcomeMessage = ({ firstName, showWelcomeToast = false, isNewUser = false
         toast({
           title: "¡Bienvenido a HomiMatch!",
           description: isNewUser ? "Tu cuenta ha sido creada correctamente." : "Has iniciado sesión correctamente.",
-          duration: 8000, // Aumentado para asegurar visibilidad
+          duration: 1500
         });
       }, 800); // Tiempo aumentado para evitar problemas de timing
       
@@ -44,6 +43,7 @@ const WelcomeMessage = ({ firstName, showWelcomeToast = false, isNewUser = false
       toast({
         title: "¡Gracias por seguirnos!",
         description: "Te mantendremos informado de todas las novedades",
+        duration: 1500
       });
     }
   };
@@ -55,7 +55,7 @@ const WelcomeMessage = ({ firstName, showWelcomeToast = false, isNewUser = false
     toast({
       title: "Completa tu perfil",
       description: "Completa tu información para encontrar compañeros compatibles",
-      duration: 5000, // Mayor duración para nuevos usuarios
+      duration: 1500
     });
   }
 
