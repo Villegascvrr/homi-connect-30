@@ -2,6 +2,7 @@ import { useState } from 'react';
 import CompatibilityBadge from '@/components/ui/CompatibilityBadge';
 import { Heart, X, MessageSquare, User, Calendar, Home, MapPin, Clock, Briefcase, Users, Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useNavigate } from 'react-router-dom';
 
 interface Tag {
   id: number;
@@ -78,7 +79,7 @@ const MatchCard = ({
   const [swiping, setSwiping] = useState<'left' | 'right' | null>(null);
   const [showDetails, setShowDetails] = useState(false);
   const lifestyleData = getLifestyle(lifestyle);
-
+  const navigate = useNavigate();
   const isZonaValida = sevilla_zona && sevilla_zona.trim() !== '' && sevilla_zona !== 'tengo_piso';
   const housingStatus = isZonaValida
     ? (has_apartment ? `Tengo piso en ${sevilla_zona}` : `Busco piso en ${sevilla_zona}`)
@@ -103,7 +104,7 @@ const MatchCard = ({
     return (
       <div 
         className="relative glass-card overflow-hidden transition-all duration-300 hover:shadow-md cursor-pointer h-full rounded-xl"
-        onClick={() => onView(id)}
+        onClick={() => navigate(`/matching`)}
       >
         <div className="relative aspect-square overflow-hidden bg-gray-100 rounded-t-xl">
           <img
@@ -125,9 +126,7 @@ const MatchCard = ({
               </p>
             )}
           </div>
-          <div className="absolute top-2 right-2">
-            <CompatibilityBadge percentage={compatibility} size="sm" />
-          </div>
+          
           
           {/* Housing status badge */}
           <div className="absolute top-2 left-2">
@@ -168,12 +167,12 @@ const MatchCard = ({
               </span>
             )}
             
-            <div className="flex gap-1">
+            <div className="flex gap-1 justify-between">
               <button 
                 className="w-6 h-6 rounded-full bg-white border border-red-500 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onPass(id);
+                  navigate(`/matching`);
                 }}
               >
                 <X size={12} />
@@ -182,7 +181,7 @@ const MatchCard = ({
                 className="w-6 h-6 rounded-full bg-white border border-homi-purple text-homi-purple flex items-center justify-center hover:bg-homi-purple hover:text-white"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onLike(id);
+                  navigate(`/matching`);
                 }}
               >
                 <Heart size={12} />

@@ -41,14 +41,17 @@ const Index = () => {
       id: 3,
       name: 'Estudiante'
     }],
-    compatibility: 92
+    compatibility: 92,
+    sevilla_zona: 'Nervión',
+    roommatesNeeded: 2,
+    has_apartment: false
   }, {
     id: '2',
     name: 'Carlos',
     age: 25,
     location: 'Barcelona',
     bio: 'Desarrollador web, amante de la tecnología y los videojuegos. Busco un ambiente relajado donde pueda trabajar y descansar.',
-    imgUrl: 'https://images.unsplash.com/photo-1500648741775-53994a69daeb?q=80&w=1000',
+    imgUrl: 'https://salayaazmrghyqjddagm.supabase.co/storage/v1/object/public/profile-images/user_f181b7a2-9540-4386-b193-5c9712923f1f/profile_f181b7a2-9540-4386-b193-5c9712923f1f.jpeg',
     tags: [{
       id: 1,
       name: 'Tecnología'
@@ -59,7 +62,10 @@ const Index = () => {
       id: 5,
       name: 'Profesional'
     }],
-    compatibility: 88
+    compatibility: 88,
+    sevilla_zona: 'Triana',
+    roommatesNeeded: 1,
+    has_apartment: true
   }, {
     id: '3',
     name: 'Laurita',
@@ -77,7 +83,10 @@ const Index = () => {
       id: 3,
       name: 'Estudiante'
     }],
-    compatibility: 95
+    compatibility: 95,
+    sevilla_zona: 'Los Remedios',
+    roommatesNeeded: 2,
+    has_apartment: false
   }];
 
   const successStories = [
