@@ -136,6 +136,9 @@ const Hero = () => {
                 Acceder con Google
               </>}
           </Button>
+          <Button asChild variant="outline" size={isMobile ? "default" : "lg"} className="border-homi-purple text-homi-purple hover:bg-homi-purple/10 rounded-full sm:w-auto flex  w-full">
+            <Link to="/signin">Iniciar sesión</Link>
+          </Button>
         </div>
 
         
