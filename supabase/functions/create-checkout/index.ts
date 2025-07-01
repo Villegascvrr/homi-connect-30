@@ -99,7 +99,7 @@ serve(async (req) => {
         plan_id: planId,
       },
       // Customize checkout appearance
-      payment_method_types: ['card', 'paypal', "bizum"],
+      payment_method_types: ['card'],
       billing_address_collection: 'auto',
       // Custom checkout page configuration
       locale: 'es', // Spanish locale
