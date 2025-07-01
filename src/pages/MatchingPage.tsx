@@ -550,7 +550,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
               
               {activeTab === 'discover' && (
                 <div className="flex gap-2">
-                  {isMobile && (
+                  {isMobile && false && (
                     <div className="flex items-center mr-auto">
                       <Button variant="ghost" size="sm" className={`rounded-l-full ${viewMode === 'grid' ? 'bg-muted' : ''}`} onClick={() => setViewMode('grid')}>
                         <LayoutGrid size={16} />

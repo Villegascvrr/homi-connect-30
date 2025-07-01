@@ -160,13 +160,15 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                       </SelectTrigger>
                       <SelectContent position="popper" className="bg-background z-50">
                         <SelectItem value="todas">Todas las ciudades</SelectItem>
+                        <SelectItem value="Sevilla">Sevilla</SelectItem>
+                        <SelectItem value="Cádiz">Cádiz</SelectItem>
+                        <SelectItem value="Málaga">Málaga</SelectItem>
+                        <SelectItem value="Córdoba">Córdoba</SelectItem>
+                        <SelectItem value="Huelva">Huelva</SelectItem>
                         <SelectItem value="Madrid">Madrid</SelectItem>
                         <SelectItem value="Barcelona">Barcelona</SelectItem>
                         <SelectItem value="Valencia">Valencia</SelectItem>
-                        <SelectItem value="Sevilla">Sevilla</SelectItem>
-                        <SelectItem value="Bilbao">Bilbao</SelectItem>
-                        <SelectItem value="Málaga">Málaga</SelectItem>
-                        <SelectItem value="Zaragoza">Zaragoza</SelectItem>
+                        <SelectItem value="Salamanca">Salamanca</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
