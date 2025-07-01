@@ -98,7 +98,7 @@ serve(async (req) => {
         user_id: user.id,
         plan_id: planId,
       },
-      // Customize checkout appearance
+      
       payment_method_types: ['card'],
       billing_address_collection: 'auto',
       // Custom checkout page configuration
