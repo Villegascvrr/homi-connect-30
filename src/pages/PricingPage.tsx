@@ -27,8 +27,6 @@ const PricingPage = () => {
       description: 'Perfecto para empezar',
       features: [
         'Hasta 20 swipes diarios',
-        'Hasta 10 matches diarios', 
-        'Filtros básicos',
         'Chat integrado'
       ],
       buttonText: 'Usar gratis',
