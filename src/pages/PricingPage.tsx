@@ -41,7 +41,7 @@ const PricingPage = () => {
     {
       id: 'pro',
       name: 'Plan PRO',
-      price: '4,99€',
+      price: '2,99€',
       period: '/mes',
       icon: <Star className="w-6 h-6 text-homi-purple" />,
       description: 'La experiencia completa',
@@ -61,8 +61,8 @@ const PricingPage = () => {
     {
       id: 'founder',
       name: 'Plan Fundador',
-      price: '24,99€',
-      originalPrice: '59,99€',
+      price: '17,99€',
+      originalPrice: '35,88€',
       period: '/año',
       icon: <Crown className="w-6 h-6 text-yellow-500" />,
       description: 'Acceso exclusivo',

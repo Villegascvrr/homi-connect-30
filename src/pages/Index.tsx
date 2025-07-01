@@ -13,7 +13,6 @@ import { useAuth } from '@/context/AuthContext';
 import MatchCard from '@/components/matching/MatchCard';
 import { Check, Crown, Star, Zap, Sparkles, Users, Home, Quote, Heart } from 'lucide-react';
 import { useSubscription } from '@/hooks/useSubscription';
-import { supabase } from '@/integrations/supabase/client';
 
 const Index = () => {
   const {
@@ -334,6 +333,7 @@ const Index = () => {
     handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
   const handleRegisterClick = () => {
     navigate('/register');
   };
@@ -353,6 +353,7 @@ const Index = () => {
       }
     }
   };
+
   const plans = [{
     id: 'free',
     name: 'Plan Gratuito',
@@ -370,7 +371,7 @@ const Index = () => {
   }, {
     id: 'pro',
     name: 'Plan PRO',
-    price: '4,99€',
+    price: '2,99€',
     period: '/mes',
     icon: <Star className="w-6 h-6 text-homi-purple" />,
     description: 'Encuentra compañero en tiempo récord',
@@ -384,8 +385,8 @@ const Index = () => {
   }, {
     id: 'founder',
     name: 'Plan Fundador',
-    price: '24,99€',
-    originalPrice: '59,99€',
+    price: '17,99€',
+    originalPrice: '35,88€',
     period: '/año',
     icon: <Crown className="w-6 h-6 text-yellow-500" />,
     description: 'Acceso exclusivo',

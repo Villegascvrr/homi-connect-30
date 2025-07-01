@@ -178,6 +178,7 @@ export type Database = {
           email: string
           first_name: string
           gallery_images: string[] | null
+          has_apartment: boolean | null
           id: string
           interests: string[] | null
           is_profile_active: boolean | null
@@ -191,7 +192,6 @@ export type Database = {
           universidad: string | null
           updated_at: string
           username: string
-          has_apartment: boolean | null
         }
         Insert: {
           bio?: string | null
@@ -202,6 +202,7 @@ export type Database = {
           email: string
           first_name: string
           gallery_images?: string[] | null
+          has_apartment?: boolean | null
           id: string
           interests?: string[] | null
           is_profile_active?: boolean | null
@@ -209,13 +210,12 @@ export type Database = {
           lifestyle?: Json | null
           ocupacion?: string | null
           profile_image?: string | null
-          profile_image_id: string | null
+          profile_image_id?: string | null
           sevilla_zona?: string | null
           skips?: number
           universidad?: string | null
           updated_at?: string
           username: string
-          has_apartment?: boolean | null
         }
         Update: {
           bio?: string | null
@@ -226,6 +226,7 @@ export type Database = {
           email?: string
           first_name?: string
           gallery_images?: string[] | null
+          has_apartment?: boolean | null
           id?: string
           interests?: string[] | null
           is_profile_active?: boolean | null
@@ -239,7 +240,6 @@ export type Database = {
           universidad?: string | null
           updated_at?: string
           username?: string
-          has_apartment?: boolean | null
         }
         Relationships: []
       }

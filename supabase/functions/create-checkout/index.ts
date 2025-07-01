@@ -50,16 +50,16 @@ serve(async (req) => {
       logStep("No existing customer found");
     }
 
-    // Define plan configurations with enhanced descriptions
+    // Define plan configurations with updated prices
     const planConfigs = {
       pro: {
-        amount: 499, // 4.99€ in cents
+        amount: 299, // 2.99€ in cents
         interval: "month",
         name: "Suscripción Plan PRO",
         description: "Acceso completo a HomiMatch con funcionalidades premium: swipes ilimitados, filtros avanzados y visibilidad prioritaria para encontrar a tu compañero de piso ideal.",
       },
       founder: {
-        amount: 2499, // 24.99€ in cents
+        amount: 1799, // 17.99€ in cents
         interval: "year", 
         name: "Suscripción Plan Fundador",
         description: "Plan exclusivo para los primeros usuarios de HomiMatch. Incluye todas las ventajas PRO más acceso anticipado a nuevas funciones y distintivo especial en tu perfil.",
