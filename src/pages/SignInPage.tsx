@@ -160,7 +160,7 @@ const SignInPage = () => {
                   <span className="homi-gradient-text">Acceder a tu cuenta</span>
                 </h1>
                 <p className="text-muted-foreground">
-                  Accede a HomiMatch y conecta con compañeros ideales
+                  Accede a HomiMatch y encuentra compañeros de piso compatibles
                 </p>
               </div>
               

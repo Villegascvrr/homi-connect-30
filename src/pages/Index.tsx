@@ -463,7 +463,7 @@ const Index = () => {
             </div>
 
             {/* Enhanced Success Stories Section */}
-            <div className="mb-16">
+            {/*<div className="mb-16">
               <div className="text-center mb-12">
                 <h3 className="text-3xl font-bold mb-4">
                   <span className="homi-gradient-text">Historias de éxito</span>
@@ -531,7 +531,7 @@ const Index = () => {
                   <CarouselNext className="hidden md:flex" />
                 </Carousel>
               </div>
-            </div>
+            </div>*/}
             
             <div className="text-center">
               {user ? <Link to="/matching">
