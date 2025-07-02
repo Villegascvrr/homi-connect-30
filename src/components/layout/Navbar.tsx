@@ -61,7 +61,9 @@ const Navbar = () => {
     { name: 'Inicio', path: '/' },
     { name: 'Encuentra compañeros', path: '/matching' },
     { name: 'Chat', path: '/chat' },
+    { name: 'Próximamente', path: '/coming-soon' },
     { name: 'Perfil', path: '/profile' },
+    
   ];
 
   return (
