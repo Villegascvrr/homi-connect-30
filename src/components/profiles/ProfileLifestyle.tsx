@@ -1,7 +1,18 @@
-
-import React from 'react';
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import React from "react";
+import {
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Clock, Sparkles, Cigarette, Dog, Users } from "lucide-react";
 
@@ -15,7 +26,8 @@ const ProfileLifestyle = ({ form }: ProfileLifestyleProps) => {
       <CardHeader className="pb-3">
         <CardTitle className="text-xl font-semibold flex items-center gap-2">
           <Sparkles className="text-homi-purple" size={20} />
-          Estilo de vida
+          Estilo de vida<span className="text-red-500">*</span>{" "}
+          <span className="text-gray-500 text-md">(obligatorio)</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -29,10 +41,7 @@ const ProfileLifestyle = ({ form }: ProfileLifestyleProps) => {
                 <Clock className="text-homi-purple" size={18} />
                 Horario
               </FormLabel>
-              <Select 
-                onValueChange={field.onChange}
-                value={field.value}
-              >
+              <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="¿Prefieres mañanas o noches?" />
@@ -59,10 +68,7 @@ const ProfileLifestyle = ({ form }: ProfileLifestyleProps) => {
                 <Sparkles className="text-homi-purple" size={18} />
                 Limpieza
               </FormLabel>
-              <Select 
-                onValueChange={field.onChange}
-                value={field.value}
-              >
+              <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="¿Cómo eres con la limpieza?" />
@@ -90,10 +96,7 @@ const ProfileLifestyle = ({ form }: ProfileLifestyleProps) => {
                 <Cigarette className="text-homi-purple" size={18} />
                 Fumar
               </FormLabel>
-              <Select 
-                onValueChange={field.onChange}
-                value={field.value}
-              >
+              <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="¿Fumas?" />
@@ -101,7 +104,9 @@ const ProfileLifestyle = ({ form }: ProfileLifestyleProps) => {
                 </FormControl>
                 <SelectContent>
                   <SelectItem value="non_smoker">No fumo</SelectItem>
-                  <SelectItem value="outdoor_only">Solo fumo en exteriores</SelectItem>
+                  <SelectItem value="outdoor_only">
+                    Solo fumo en exteriores
+                  </SelectItem>
                   <SelectItem value="smoker">Soy fumador/a</SelectItem>
                 </SelectContent>
               </Select>
@@ -120,10 +125,7 @@ const ProfileLifestyle = ({ form }: ProfileLifestyleProps) => {
                 <Dog className="text-homi-purple" size={18} />
                 Mascotas
               </FormLabel>
-              <Select 
-                onValueChange={field.onChange}
-                value={field.value}
-              >
+              <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="¿Tienes o te gustan las mascotas?" />
@@ -132,8 +134,12 @@ const ProfileLifestyle = ({ form }: ProfileLifestyleProps) => {
                 <SelectContent>
                   <SelectItem value="no_pets">No tengo mascotas</SelectItem>
                   <SelectItem value="has_pets">Tengo mascotas</SelectItem>
-                  <SelectItem value="pets_welcome">Me encantan las mascotas</SelectItem>
-                  <SelectItem value="no_pets_allowed">Prefiero sin mascotas</SelectItem>
+                  <SelectItem value="pets_welcome">
+                    Me encantan las mascotas
+                  </SelectItem>
+                  <SelectItem value="no_pets_allowed">
+                    Prefiero sin mascotas
+                  </SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -151,10 +157,7 @@ const ProfileLifestyle = ({ form }: ProfileLifestyleProps) => {
                 <Users className="text-homi-purple" size={18} />
                 Visitas
               </FormLabel>
-              <Select 
-                onValueChange={field.onChange}
-                value={field.value}
-              >
+              <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="¿Sueles invitar a gente?" />

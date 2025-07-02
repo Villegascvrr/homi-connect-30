@@ -1,10 +1,22 @@
-
-import React from 'react';
-import { FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from "@/components/ui/form";
+import React, { type HTMLAttributes } from "react";
+import {
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+  FormDescription,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Briefcase, GraduationCap, BookOpen } from "lucide-react";
 
 interface ProfileBasicInfoProps {
@@ -17,10 +29,14 @@ const occupationOptions = [
   { value: "student", label: "Estudiante" },
   { value: "professional", label: "Profesional" },
   { value: "entrepreneur", label: "Emprendedor" },
-  { value: "other", label: "Otro" }
+  { value: "other", label: "Otro" },
 ];
 
-const ProfileBasicInfo = ({ form, showUniversityField = false, onOccupationTypeChange }: ProfileBasicInfoProps) => {
+const ProfileBasicInfo = ({
+  form,
+  showUniversityField = false,
+  onOccupationTypeChange,
+}: ProfileBasicInfoProps) => {
   const isMobile = useIsMobile();
 
   const handleOccupationTypeChange = (value: string) => {
@@ -32,14 +48,20 @@ const ProfileBasicInfo = ({ form, showUniversityField = false, onOccupationTypeC
   return (
     <div className="space-y-4">
       <h2 className="text-xl font-semibold">Información Personal</h2>
-      
-      <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-2 gap-6'}`}>
+
+      <div
+        className={`grid ${
+          isMobile ? "grid-cols-1 gap-4" : "grid-cols-2 gap-6"
+        }`}
+      >
         <FormField
           control={form.control}
           name="firstName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nombre</FormLabel>
+              <FormLabel>
+                Nombre <span className="text-red-500">*</span>
+              </FormLabel>
               <FormControl>
                 <Input placeholder="Tu nombre" {...field} />
               </FormControl>
@@ -60,7 +82,7 @@ const ProfileBasicInfo = ({ form, showUniversityField = false, onOccupationTypeC
             </FormItem>
           )}
         />
-        
+
         <FormField
           control={form.control}
           name="username"
@@ -87,13 +109,15 @@ const ProfileBasicInfo = ({ form, showUniversityField = false, onOccupationTypeC
             </FormItem>
           )}
         />
-        
+
         <FormField
           control={form.control}
           name="age"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Edad</FormLabel>
+              <FormLabel>
+                Edad <span className="text-red-500">*</span>
+              </FormLabel>
               <FormControl>
                 <Input placeholder="Tu edad" {...field} />
               </FormControl>
@@ -127,7 +151,9 @@ const ProfileBasicInfo = ({ form, showUniversityField = false, onOccupationTypeC
                 </FormControl>
                 <SelectContent>
                   {occupationOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -135,7 +161,7 @@ const ProfileBasicInfo = ({ form, showUniversityField = false, onOccupationTypeC
             </FormItem>
           )}
         />
-        
+
         {/* Show university and field of study fields only for students */}
         {showUniversityField && (
           <>
@@ -149,13 +175,16 @@ const ProfileBasicInfo = ({ form, showUniversityField = false, onOccupationTypeC
                     Universidad
                   </FormLabel>
                   <FormControl>
-                    <Input placeholder="Tu universidad o centro de estudios" {...field} />
+                    <Input
+                      placeholder="Tu universidad o centro de estudios"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            
+
             <FormField
               control={form.control}
               name="fieldOfStudy"
@@ -166,7 +195,10 @@ const ProfileBasicInfo = ({ form, showUniversityField = false, onOccupationTypeC
                     Qué estudias
                   </FormLabel>
                   <FormControl>
-                    <Input placeholder="Tu carrera o área de estudios" {...field} />
+                    <Input
+                      placeholder="Tu carrera o área de estudios"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -174,9 +206,9 @@ const ProfileBasicInfo = ({ form, showUniversityField = false, onOccupationTypeC
             />
           </>
         )}
-        
+
         {/* Custom occupation field for "other" option */}
-        {form.watch('occupationType') === 'other' && (
+        {form.watch("occupationType") === "other" && (
           <FormField
             control={form.control}
             name="occupation"
@@ -191,7 +223,7 @@ const ProfileBasicInfo = ({ form, showUniversityField = false, onOccupationTypeC
             )}
           />
         )}
-        
+
         <div className="col-span-full">
           <FormField
             control={form.control}
@@ -200,10 +232,10 @@ const ProfileBasicInfo = ({ form, showUniversityField = false, onOccupationTypeC
               <FormItem>
                 <FormLabel>Bio</FormLabel>
                 <FormControl>
-                  <Textarea 
-                    placeholder="Cuéntanos sobre ti..." 
-                    className="min-h-[100px]" 
-                    {...field} 
+                  <Textarea
+                    placeholder="Cuéntanos sobre ti..."
+                    className="min-h-[100px]"
+                    {...field}
                   />
                 </FormControl>
                 <FormMessage />
