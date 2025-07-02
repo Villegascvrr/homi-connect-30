@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import useProfileImage from './use-profile-image';
+import { profile } from 'console';
 
 export interface Profile {
   id: string;
@@ -207,7 +208,12 @@ export const useProfiles = (profileId?: string) => {
           profiles.push({ ...profile, profile_image: profileImage });
         }
         
-        return profiles;
+        const seed = parseInt(profileId.split("-")[0], 10);
+        return profiles.sort((a, b) => {
+          const randomA = Math.sin(seed + parseInt(a.id)) * 10000;
+          const randomB = Math.sin(seed + parseInt(b.id)) * 10000;
+          return randomA - randomB;
+        });
       } catch (error) {
         console.error('Query error:', error);
         throw error;
