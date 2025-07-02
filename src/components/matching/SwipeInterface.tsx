@@ -260,11 +260,6 @@ const   SwipeInterface = ({ profiles, onLike, onPass, onView, refetch }: SwipeIn
         )}
       </div>
       
-      <div className="text-center mt-4 animate-fade-in">
-        <p className="text-sm text-muted-foreground">
-          Perfil {currentIndex + 1} de {availableProfiles.length}
-        </p>
-      </div>
     </div>
   );
 };
