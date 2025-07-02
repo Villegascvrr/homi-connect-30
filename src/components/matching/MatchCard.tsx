@@ -317,7 +317,7 @@ const MatchCard = ({
               </div>
             </div>
             
-            <div className="mt-3 pt-2 border-t border-muted">
+            {roommatesNeeded && roommatesNeeded > 0 && (<div className="mt-3 pt-2 border-t border-muted">
               <div className="flex items-center gap-2 text-sm">
                 <span className="w-6 h-6 rounded-full bg-homi-ultraLightPurple flex items-center justify-center text-homi-purple">
                   <Users size={14} />
@@ -329,7 +329,7 @@ const MatchCard = ({
                   </span>
                 </div>
               </div>
-            </div>
+            </div>)}
           </div>
         )}
         
