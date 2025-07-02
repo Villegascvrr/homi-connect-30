@@ -228,7 +228,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
         
         // Filtrar por ubicación
         if (filters.ubicacion) {
-          if(!(filters.ubicacion === 'Sevilla' && profile.sevilla_zona.length > 0)){
+          if(!(filters.ubicacion === 'Sevilla' &&  profile.sevilla_zona && profile.sevilla_zona.length > 0)){
             match = match && (profile.location && profile.location.toLowerCase() === filters.ubicacion.toLowerCase());
           }
         }
