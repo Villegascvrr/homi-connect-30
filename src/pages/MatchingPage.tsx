@@ -668,7 +668,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                   
                   {viewMode === 'grid' && (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {filteredProfiles.slice(0, 3).map(profile => {
+                      {filteredProfiles.map(profile => {
                         const cardProps = formatProfileForMatchCard(profile);
                         return (
                           <MatchCard 
