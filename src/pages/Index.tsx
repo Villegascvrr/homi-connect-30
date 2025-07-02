@@ -25,7 +25,7 @@ const Index = () => {
   
   const featuredProfiles = [{
     id: '1',
-    name: 'Elenita',
+    name: 'Elena',
     age: 23,
     location: 'Madrid',
     bio: 'Estudiante de Arquitectura. Me gusta leer, el arte y las noches tranquilas. Busco piso cerca de la universidad.',
@@ -50,7 +50,7 @@ const Index = () => {
     age: 25,
     location: 'Barcelona',
     bio: 'Desarrollador web, amante de la tecnología y los videojuegos. Busco un ambiente relajado donde pueda trabajar y descansar.',
-    imgUrl: 'https://salayaazmrghyqjddagm.supabase.co/storage/v1/object/public/profile-images/user_f181b7a2-9540-4386-b193-5c9712923f1f/profile_f181b7a2-9540-4386-b193-5c9712923f1f.jpeg',
+    imgUrl: 'https://st3.depositphotos.com/1075946/12883/i/450/depositphotos_128838890-stock-photo-student-in-architecture-training-class.jpg',
     tags: [{
       id: 1,
       name: 'Tecnología'
@@ -67,7 +67,7 @@ const Index = () => {
     has_apartment: true
   }, {
     id: '3',
-    name: 'Laurita',
+    name: 'Laura',
     age: 22,
     location: 'Valencia',
     bio: 'Estudiante de Medicina. Me encanta cocinar y compartir momentos con amigos. Busco compañeros con intereses similares.',
@@ -456,7 +456,7 @@ const Index = () => {
               </p>
             </div>
             
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6 mb-16">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-6 mb-16 mr-5 ml-5">
               {featuredProfiles.map(profile => <div key={profile.id} className="animate-on-scroll">
                   <MatchCard {...profile} compact={true} onLike={id => console.log('Liked:', id)} onPass={id => console.log('Passed:', id)} onView={id => navigate('/profile')} />
                 </div>)}

@@ -1,6 +1,19 @@
-import React from 'react';
-import { FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from "@/components/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import React from "react";
+import {
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+  FormDescription,
+} from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -31,7 +44,7 @@ const spanishCities = [
   "Huelva",
   "Almería",
   "Jaén",
-  "Otro"
+  "Otro",
 ];
 
 // Zonas de Sevilla (solo se muestran si la ciudad es Sevilla)
@@ -51,7 +64,7 @@ const sevillaZones = [
   "El Plantinar",
   "El Juncal",
   "Gran Plaza",
-  "Otro/Alrededores"
+  "Otro/Alrededores",
 ];
 
 // Número de compañeros options
@@ -65,7 +78,7 @@ const budgetRanges = [
   "400€ - 500€",
   "500€ - 600€",
   "600€ - 700€",
-  "Más de 700€"
+  "Más de 700€",
 ];
 
 // Número de habitaciones options
@@ -73,49 +86,55 @@ const roomCountOptions = ["2", "3", "4", "5", "6+"];
 
 interface ProfileApartmentPreferencesProps {
   form: any;
-  apartmentStatus: 'looking' | 'have';
-  onApartmentStatusChange: (status: 'looking' | 'have') => void;
+  apartmentStatus: "looking" | "have";
+  onApartmentStatusChange: (status: "looking" | "have") => void;
 }
 
-const ProfileApartmentPreferences = ({ 
-  form, 
+const ProfileApartmentPreferences = ({
+  form,
   apartmentStatus,
-  onApartmentStatusChange
+  onApartmentStatusChange,
 }: ProfileApartmentPreferencesProps) => {
-  const selectedCity = form.watch('ciudad');
-  const isSevilla = selectedCity === 'Sevilla';
-  const selectedZones = form.watch('sevilla_zonas') || [];
+  const selectedCity = form.watch("ciudad");
+  const isSevilla = selectedCity === "Sevilla";
+  const selectedZones = form.watch("sevilla_zonas") || [];
 
   const handleZoneChange = (zone: string, checked: boolean) => {
     const currentZones = selectedZones || [];
-    
+
     if (checked) {
       // If user has apartment, only allow one zone selection
-      if (apartmentStatus === 'have') {
-        form.setValue('sevilla_zonas', [zone]);
+      if (apartmentStatus === "have") {
+        form.setValue("sevilla_zonas", [zone]);
       } else {
         // For those looking for apartment, allow up to 3 zones
         if (currentZones.length < 3) {
-          form.setValue('sevilla_zonas', [...currentZones, zone]);
+          form.setValue("sevilla_zonas", [...currentZones, zone]);
         }
       }
     } else {
       // Remove zone
-      form.setValue('sevilla_zonas', currentZones.filter((z: string) => z !== zone));
+      form.setValue(
+        "sevilla_zonas",
+        currentZones.filter((z: string) => z !== zone)
+      );
     }
   };
 
   const removeZone = (zoneToRemove: string) => {
     const currentZones = selectedZones || [];
-    form.setValue('sevilla_zonas', currentZones.filter((z: string) => z !== zoneToRemove));
+    form.setValue(
+      "sevilla_zonas",
+      currentZones.filter((z: string) => z !== zoneToRemove)
+    );
   };
 
-  const maxZones = apartmentStatus === 'have' ? 1 : 3;
+  const maxZones = apartmentStatus === "have" ? 1 : 3;
 
   const handlePriceChange = (value: string) => {
     // Remove any non-numeric characters
-    const numericValue = value.replace(/\D/g, '');
-    form.setValue('room_price', numericValue);
+    const numericValue = value.replace(/\D/g, "");
+    form.setValue("room_price", numericValue);
   };
 
   return (
@@ -123,21 +142,22 @@ const ProfileApartmentPreferences = ({
       <CardHeader className="pb-3">
         <CardTitle className="text-xl font-semibold flex items-center gap-2">
           <MapPin className="text-homi-purple" size={20} />
-          Situación de vivienda
+          Situación de vivienda<span className="text-red-500">*</span>{" "}
+          <span className="text-gray-500 text-md">(obligatorio)</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Apartment status options */}
         <FormItem className="space-y-3">
           <FormLabel>¿Cuál es tu situación actual?</FormLabel>
-          <RadioGroup 
-            defaultValue={apartmentStatus} 
+          <RadioGroup
+            defaultValue={apartmentStatus}
             onValueChange={(value) => {
-              onApartmentStatusChange(value as 'looking' | 'have');
+              onApartmentStatusChange(value as "looking" | "have");
               // Reset zones when changing apartment status
-              if (value === 'have' && selectedZones.length > 1) {
+              if (value === "have" && selectedZones.length > 1) {
                 // Keep only the first zone if switching to "have apartment"
-                form.setValue('sevilla_zonas', selectedZones.slice(0, 1));
+                form.setValue("sevilla_zonas", selectedZones.slice(0, 1));
               }
             }}
             className="flex flex-col space-y-1"
@@ -152,11 +172,13 @@ const ProfileApartmentPreferences = ({
               <FormControl>
                 <RadioGroupItem value="have" />
               </FormControl>
-              <FormLabel className="font-normal">Ya tengo piso y busco compañeros</FormLabel>
+              <FormLabel className="font-normal">
+                Ya tengo piso y busco compañeros
+              </FormLabel>
             </FormItem>
           </RadioGroup>
         </FormItem>
-        
+
         {/* Show different fields based on apartment status */}
         <div className="space-y-4">
           {/* City selection */}
@@ -166,17 +188,16 @@ const ProfileApartmentPreferences = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  {apartmentStatus === 'looking' 
-                    ? '¿En qué ciudad estás buscando piso?' 
-                    : '¿En qué ciudad está tu piso?'
-                  }
+                  {apartmentStatus === "looking"
+                    ? "¿En qué ciudad estás buscando piso?"
+                    : "¿En qué ciudad está tu piso?"}
                 </FormLabel>
-                <Select 
+                <Select
                   onValueChange={(value) => {
                     field.onChange(value);
                     // Reset zonas when city changes
-                    if (value !== 'Sevilla') {
-                      form.setValue('sevilla_zonas', []);
+                    if (value !== "Sevilla") {
+                      form.setValue("sevilla_zonas", []);
                     }
                   }}
                   value={field.value}
@@ -188,7 +209,9 @@ const ProfileApartmentPreferences = ({
                   </FormControl>
                   <SelectContent className="max-h-60">
                     {spanishCities.map((city) => (
-                      <SelectItem key={city} value={city}>{city}</SelectItem>
+                      <SelectItem key={city} value={city}>
+                        {city}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -198,7 +221,7 @@ const ProfileApartmentPreferences = ({
           />
 
           {/* Custom city input if "Otro" is selected */}
-          {selectedCity === 'Otro' && (
+          {selectedCity === "Otro" && (
             <FormField
               control={form.control}
               name="ciudad_otra"
@@ -206,7 +229,7 @@ const ProfileApartmentPreferences = ({
                 <FormItem>
                   <FormLabel>Especifica tu ciudad</FormLabel>
                   <FormControl>
-                    <Input 
+                    <Input
                       placeholder="Escribe el nombre de tu ciudad"
                       {...field}
                     />
@@ -216,7 +239,7 @@ const ProfileApartmentPreferences = ({
               )}
             />
           )}
-          
+
           {/* Zone selection for Sevilla only */}
           {isSevilla && (
             <FormField
@@ -225,12 +248,11 @@ const ProfileApartmentPreferences = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    {apartmentStatus === 'have' 
-                      ? '¿En qué zona de Sevilla está tu piso?' 
-                      : '¿En qué zonas de Sevilla? (máximo 3)'
-                    }
+                    {apartmentStatus === "have"
+                      ? "¿En qué zona de Sevilla está tu piso?"
+                      : "¿En qué zonas de Sevilla? (máximo 3)"}
                   </FormLabel>
-                  
+
                   {/* Selected zones display */}
                   {selectedZones.length > 0 && (
                     <div className="flex flex-wrap gap-2 mb-3">
@@ -260,15 +282,21 @@ const ProfileApartmentPreferences = ({
                         <Checkbox
                           id={zone}
                           checked={selectedZones.includes(zone)}
-                          onCheckedChange={(checked) => handleZoneChange(zone, !!checked)}
-                          disabled={!selectedZones.includes(zone) && selectedZones.length >= maxZones}
+                          onCheckedChange={(checked) =>
+                            handleZoneChange(zone, !!checked)
+                          }
+                          disabled={
+                            !selectedZones.includes(zone) &&
+                            selectedZones.length >= maxZones
+                          }
                         />
                         <label
                           htmlFor={zone}
                           className={`text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ${
-                            !selectedZones.includes(zone) && selectedZones.length >= maxZones 
-                              ? 'text-gray-400' 
-                              : 'cursor-pointer'
+                            !selectedZones.includes(zone) &&
+                            selectedZones.length >= maxZones
+                              ? "text-gray-400"
+                              : "cursor-pointer"
                           }`}
                         >
                           {zone}
@@ -276,19 +304,18 @@ const ProfileApartmentPreferences = ({
                       </div>
                     ))}
                   </div>
-                  
+
                   <FormDescription>
-                    {apartmentStatus === 'have' 
-                      ? 'Selecciona la zona donde está ubicado tu piso'
-                      : 'Selecciona hasta 3 zonas de Sevilla donde te gustaría vivir'
-                    }
+                    {apartmentStatus === "have"
+                      ? "Selecciona la zona donde está ubicado tu piso"
+                      : "Selecciona hasta 3 zonas de Sevilla donde te gustaría vivir"}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
           )}
-          
+
           {/* Companions count */}
           <FormField
             control={form.control}
@@ -299,7 +326,7 @@ const ProfileApartmentPreferences = ({
                   <Users className="text-homi-purple" size={18} />
                   ¿Cuántos compañeros de piso buscas?
                 </FormLabel>
-                <Select 
+                <Select
                   onValueChange={field.onChange}
                   value={field.value || ""}
                 >
@@ -310,7 +337,9 @@ const ProfileApartmentPreferences = ({
                   </FormControl>
                   <SelectContent>
                     {companeroOptions.map((option) => (
-                      <SelectItem key={option} value={option}>{option}</SelectItem>
+                      <SelectItem key={option} value={option}>
+                        {option}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -318,9 +347,9 @@ const ProfileApartmentPreferences = ({
               </FormItem>
             )}
           />
-          
+
           {/* Budget field - only for those looking for apartment */}
-          {apartmentStatus === 'looking' && (
+          {apartmentStatus === "looking" && (
             <FormField
               control={form.control}
               name="budget"
@@ -341,7 +370,9 @@ const ProfileApartmentPreferences = ({
                     </FormControl>
                     <SelectContent>
                       {budgetRanges.map((range) => (
-                        <SelectItem key={range} value={range}>{range}</SelectItem>
+                        <SelectItem key={range} value={range}>
+                          {range}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -355,13 +386,13 @@ const ProfileApartmentPreferences = ({
           )}
 
           {/* Apartment details - only for those who have an apartment */}
-          {apartmentStatus === 'have' && (
+          {apartmentStatus === "have" && (
             <div className="space-y-4 border-t pt-4">
               <h3 className="text-lg font-medium flex items-center gap-2">
                 <Home className="text-homi-purple" size={18} />
                 Detalles del piso
               </h3>
-              
+
               {/* Number of rooms */}
               <FormField
                 control={form.control}
@@ -380,7 +411,9 @@ const ProfileApartmentPreferences = ({
                       </FormControl>
                       <SelectContent>
                         {roomCountOptions.map((count) => (
-                          <SelectItem key={count} value={count}>{count}</SelectItem>
+                          <SelectItem key={count} value={count}>
+                            {count}
+                          </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -400,7 +433,7 @@ const ProfileApartmentPreferences = ({
                   <FormItem>
                     <FormLabel>Precio por habitación</FormLabel>
                     <FormControl>
-                      <Input 
+                      <Input
                         placeholder="300"
                         value={field.value || ""}
                         onChange={(e) => handlePriceChange(e.target.value)}
@@ -410,7 +443,8 @@ const ProfileApartmentPreferences = ({
                       />
                     </FormControl>
                     <FormDescription>
-                      Precio en euros que cobraría cada compañero por su habitación
+                      Precio en euros que cobraría cada compañero por su
+                      habitación
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

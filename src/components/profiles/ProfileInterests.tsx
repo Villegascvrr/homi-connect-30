@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FormItem, FormLabel } from "@/components/ui/form";
 import { Heart } from "lucide-react";
@@ -16,7 +15,7 @@ const INTERESTS_OPTIONS = [
   "Literatura",
   "Tecnología",
   "Moda",
-  "Fotografía", 
+  "Fotografía",
   "Naturaleza",
   "Fiesta",
   "Series",
@@ -24,7 +23,7 @@ const INTERESTS_OPTIONS = [
   "Teatro",
   "Política",
   "Activismo",
-  "Emprendimiento"
+  "Emprendimiento",
 ];
 
 interface ProfileInterestsProps {
@@ -36,9 +35,9 @@ const ProfileInterests = ({ form }: ProfileInterestsProps) => {
 
   const handleToggleInterest = (interest: string) => {
     const currentInterests = [...interests];
-    
+
     if (currentInterests.includes(interest)) {
-      const newInterests = currentInterests.filter(i => i !== interest);
+      const newInterests = currentInterests.filter((i) => i !== interest);
       form.setValue("interests", newInterests);
     } else {
       form.setValue("interests", [...currentInterests, interest]);
@@ -50,13 +49,14 @@ const ProfileInterests = ({ form }: ProfileInterestsProps) => {
       <CardHeader className="pb-3">
         <CardTitle className="text-xl font-semibold flex items-center gap-2">
           <Heart className="text-homi-purple" size={20} />
-          Intereses
+          Intereses<span className="text-red-500">*</span>{" "}
+          <span className="text-gray-500 text-md">(obligatorio)</span>
         </CardTitle>
       </CardHeader>
       <CardContent>
         <FormItem className="space-y-4">
           <FormLabel className="text-base">Selecciona tus intereses</FormLabel>
-          
+
           <div className="flex flex-wrap gap-2">
             {INTERESTS_OPTIONS.map((interest) => (
               <div
