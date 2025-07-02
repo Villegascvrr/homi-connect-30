@@ -158,7 +158,8 @@ export const useProfiles = (profileId?: string) => {
             `)
             .not('id', 'eq', profileId)
             .eq('completed', true)
-            .eq('is_profile_active', true),
+            .eq('is_profile_active', true)
+            .limit(100),
           new Promise((_, reject) => 
             setTimeout(() => reject(new Error('Timeout')), 10000)
           ),
