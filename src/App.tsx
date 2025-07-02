@@ -16,6 +16,7 @@ import { Toaster } from '@/components/ui/toaster';
 import ChatPage from './pages/ChatPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
+import ComingSoonPage from './pages/CoomingSoon';
 
 const queryClient = new QueryClient();
 
@@ -39,6 +40,7 @@ function App() {
               <Route path="/chat" element={<ChatPage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/reset-password" element={<ResetPasswordPage />} />
+              <Route path="/coming-soon" element={<ComingSoonPage />} />
             </Routes>
             <Toaster />
           </div>
