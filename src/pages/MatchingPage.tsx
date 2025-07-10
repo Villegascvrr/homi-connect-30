@@ -70,6 +70,7 @@ interface FilterValues {
   fumar?: string;
   mascotas?: string;
   buscaPiso?: string;
+  city_zone?: string;
 }
 
 interface Lifestyle {
@@ -228,9 +229,10 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
         
         // Filtrar por ubicación
         if (filters.ubicacion) {
-          if(!(filters.ubicacion === 'Sevilla' &&  profile.sevilla_zona && profile.sevilla_zona.length > 0)){
-            match = match && (profile.location && profile.location.toLowerCase() === filters.ubicacion.toLowerCase());
-          }
+          match = match && (profile.city && profile.city.toLowerCase() === filters.ubicacion.toLowerCase());
+        }
+        if (filters.city_zone && filters.ubicacion === 'Sevilla') {
+          match = match && (profile.city_zone && profile.city_zone.toLowerCase() === filters.city_zone.toLowerCase());
         }
 
         // Filtrar por busca piso
@@ -573,23 +575,13 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                         <MatchingFilters 
                           activeFilters={activeFilters}
                           onApplyFilters={filters => {
-                            if(isSuscriptor){
-                              handleApplyFilters(filters);
-                              setOpenSearchFilters(false);
-                            } else {
-                              // Mensaje original restaurado
-                              toast({
-                                title: "Filtros",
-                                description: "Debes ser suscriptor para usar los filtros",
-                                variant: "destructive",
-                                duration: 1500
-                              });
-                              navigate('/precios');
-                            }
+                            handleApplyFilters(filters);
+                            setOpenSearchFilters(false);
                           }} 
                           onClearFilters={handleClearFilters} 
                           activeTab="filtros" 
                           className="w-full" 
+                          isSuscriptor={isSuscriptor}
                         />
                       </div>
                     </PopoverContent>

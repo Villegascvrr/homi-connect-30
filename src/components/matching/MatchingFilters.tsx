@@ -52,6 +52,7 @@ interface MatchingFiltersProps {
   className?: string;
   activeTab?: "filtros" | "preferencias";
   activeFilters?: FilterValues;
+  isSuscriptor?: boolean; // NUEVO
 }
 
 const MatchingFilters: React.FC<MatchingFiltersProps> = ({
@@ -60,6 +61,7 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
   className,
   activeFilters,
   activeTab = "filtros",
+  isSuscriptor = false // NUEVO
 }) => {
   const [showFilters, setShowFilters] = useState(false);
   const [presupuesto, setPresupuesto] = useState<[number, number]>([300, 800]);
@@ -102,13 +104,19 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
   };
 
   const handleApplyFilters = () => {
-    onApplyFilters({
-      presupuesto,
-      ubicacion: ubicacion !== "todas" ? ubicacion : undefined,
-      rangoEdad: rangoEdad !== "todas" ? rangoEdad : undefined,
-      estiloVida: estiloVida.length > 0 ? estiloVida : undefined,
-      buscaPiso,
-    });
+    if (isSuscriptor) {
+      onApplyFilters({
+        presupuesto,
+        ubicacion: ubicacion !== "todas" ? ubicacion : undefined,
+        rangoEdad: rangoEdad !== "todas" ? rangoEdad : undefined,
+        estiloVida: estiloVida.length > 0 ? estiloVida : undefined,
+        buscaPiso,
+      });
+    } else {
+      onApplyFilters({
+        ubicacion: ubicacion !== "todas" ? ubicacion : undefined,
+      });
+    }
   };
 
   const handleClearFilters = () => {
@@ -155,6 +163,7 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
             <CardContent className="p-3">
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {/* Filtro de ciudad SIEMPRE visible */}
                   <div className="space-y-1">
                     <Label className="text-xs font-medium">Ubicación</Label>
                     <Select value={ubicacion} onValueChange={setUbicacion}>
@@ -164,16 +173,9 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                           <SelectValue placeholder="Todas las ciudades" />
                         </div>
                       </SelectTrigger>
-                      <SelectContent
-                        position="popper"
-                        className="bg-background z-50"
-                      >
-                        <SelectItem value="todas">
-                          Todas las ciudades
-                        </SelectItem>
-                        <SelectItem value="Sevilla">
-                          <span className="font-bold">Sevilla </span>
-                        </SelectItem>
+                      <SelectContent position="popper" className="bg-background z-50">
+                        <SelectItem value="todas">Todas las ciudades</SelectItem>
+                        <SelectItem value="Sevilla">Sevilla</SelectItem>
                         <SelectItem value="Cádiz">Cádiz</SelectItem>
                         <SelectItem value="Málaga">Málaga</SelectItem>
                         <SelectItem value="Córdoba">Córdoba</SelectItem>
@@ -185,137 +187,71 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                       </SelectContent>
                     </Select>
                   </div>
-
-                  <div className="space-y-1">
-                    <Label className="text-xs font-medium">¿Busca piso?</Label>
-                    <Select value={buscaPiso} onValueChange={setBuscaPiso}>
-                      <SelectTrigger className="w-full bg-background h-9 text-sm">
-                        <div className="flex items-center gap-1.5">
-                          <Building2 className="h-4 w-4" />
-                          <SelectValue placeholder="Cualquiera" />
-                        </div>
-                      </SelectTrigger>
-                      <SelectContent
-                        position="popper"
-                        className="bg-background z-50"
-                      >
-                        <SelectItem value="Cualquiera">Cualquiera</SelectItem>
-                        <SelectItem value="Si">Si</SelectItem>
-                        <SelectItem value="No">No</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-1">
-                    <Label className="text-xs font-medium">Edades</Label>
-                    <Select value={rangoEdad} onValueChange={setRangoEdad}>
-                      <SelectTrigger className="w-full bg-background h-9 text-sm">
-                        <div className="flex items-center gap-1.5">
-                          <User className="h-4 w-4" />
-                          <SelectValue placeholder="Todas las edades" />
-                        </div>
-                      </SelectTrigger>
-                      <SelectContent
-                        position="popper"
-                        className="bg-background z-50"
-                      >
-                        <SelectItem value="todas">Todas las edades</SelectItem>
-                        <SelectItem value="18-19">18-19 años</SelectItem>
-                        <SelectItem value="20-21">20-21 años</SelectItem>
-                        <SelectItem value="22-25">22-25 años</SelectItem>
-                        <SelectItem value="26+">Más de 25 años</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/*<div className="space-y-1">
-                    <Label className="text-xs font-medium">Fecha de mudanza</Label>
-                    <Select value={fechaMudanza} onValueChange={setFechaMudanza}>
-                      <SelectTrigger className="w-full bg-background h-9 text-sm">
-                        <div className="flex items-center gap-1.5">
-                          <Calendar className="h-4 w-4" />
-                          <SelectValue placeholder="Cualquier fecha" />
-                        </div>
-                      </SelectTrigger>
-                      <SelectContent position="popper" className="bg-background z-50">
-                        <SelectItem value="cualquiera">Cualquiera</SelectItem>
-                        <SelectItem value="inmediata">Inmediata</SelectItem>
-                        <SelectItem value="1-mes">Próximo mes</SelectItem>
-                        <SelectItem value="3-meses">Próximos 3 meses</SelectItem>
-                        <SelectItem value="6-meses">Próximos 6 meses</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>*/}
-                </div>
-
-                {
-                  <div className="space-y-1">
-                    <Label className="text-xs font-medium flex items-center gap-1.5">
-                      <DollarSign className="h-4 w-4" />
-                      Presupuesto: {presupuesto[0]}€ - {presupuesto[1]}€
-                    </Label>
-                    <div className="px-2 py-2">
-                      <Slider
-                        value={presupuesto}
-                        min={100}
-                        max={1500}
-                        step={50}
-                        onValueChange={(value) =>
-                          setPresupuesto(value as [number, number])
-                        }
-                        className="bg-purple-100"
-                      />
-                    </div>
-                  </div>
-                }
-
-                {/*<div className="space-y-1">
-                  <Label className="text-xs font-medium">Estilo de vida</Label>
-                  <div className="flex flex-wrap gap-1.5 mt-1">
-                    {[
-                      { id: 'ordenado', label: 'Ordenado' },
-                      { id: 'tranquilo', label: 'Tranquilo' },
-                      { id: 'sociable', label: 'Sociable' },
-                      { id: 'deportista', label: 'Deportista' },
-                      { id: 'nocturno', label: 'Nocturno' },
-                      { id: 'madrugador', label: 'Madrugador' },
-                      { id: 'no-fumador', label: 'No fumador' },
-                      { id: 'vegano', label: 'Vegano' }
-                    ].map(estilo => (
-                      <div key={estilo.id} className="inline-flex items-center justify-center">
-                        <label className={`
-                          flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs
-                          ${estiloVida.includes(estilo.id) 
-                            ? 'bg-primary text-primary-foreground' 
-                            : 'bg-secondary text-secondary-foreground border border-input'}
-                          cursor-pointer transition-colors
-                        `}>
-                          <input 
-                            type="checkbox" 
-                            className="sr-only" 
-                            checked={estiloVida.includes(estilo.id)}
-                            onChange={() => handleEstiloVidaToggle(estilo.id)}
-                          />
-                          {estilo.label}
-                        </label>
+                  {/* SOLO para premium: el resto de filtros */}
+                  {isSuscriptor && (
+                    <>
+                      {/* Aquí van los demás filtros premium, por ejemplo: */}
+                      <div className="space-y-1">
+                        <Label className="text-xs font-medium">¿Busca piso?</Label>
+                        <Select value={buscaPiso} onValueChange={setBuscaPiso}>
+                          <SelectTrigger className="w-full bg-background h-9 text-sm">
+                            <div className="flex items-center gap-1.5">
+                              <Building2 className="h-4 w-4" />
+                              <SelectValue placeholder="Cualquiera" />
+                            </div>
+                          </SelectTrigger>
+                          <SelectContent position="popper" className="bg-background z-50">
+                            <SelectItem value="Cualquiera">Cualquiera</SelectItem>
+                            <SelectItem value="Si">Si</SelectItem>
+                            <SelectItem value="No">No</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
-                    ))}
-                  </div>
-                </div>*/}
-
+                      <div className="space-y-1">
+                        <Label className="text-xs font-medium">Edades</Label>
+                        <Select value={rangoEdad} onValueChange={setRangoEdad}>
+                          <SelectTrigger className="w-full bg-background h-9 text-sm">
+                            <div className="flex items-center gap-1.5">
+                              <User className="h-4 w-4" />
+                              <SelectValue placeholder="Todas las edades" />
+                            </div>
+                          </SelectTrigger>
+                          <SelectContent position="popper" className="bg-background z-50">
+                            <SelectItem value="todas">Todas las edades</SelectItem>
+                            <SelectItem value="18-19">18-19 años</SelectItem>
+                            <SelectItem value="20-21">20-21 años</SelectItem>
+                            <SelectItem value="22-25">22-25 años</SelectItem>
+                            <SelectItem value="26+">Más de 25 años</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs font-medium flex items-center gap-1.5">
+                          <DollarSign className="h-4 w-4" />
+                          Presupuesto: {presupuesto[0]}€ - {presupuesto[1]}€
+                        </Label>
+                        <div className="px-2 py-2">
+                          <Slider
+                            value={presupuesto}
+                            min={100}
+                            max={1500}
+                            step={50}
+                            onValueChange={(value) => setPresupuesto(value as [number, number])}
+                            className="bg-purple-100"
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+                {/* Botones de aplicar/limpiar */}
                 <div className="flex justify-end gap-2 pt-1">
-                  <Button
-                    variant="outline"
-                    onClick={handleClearFilters}
-                    size="md"
-                  >
-                    Limpiar
-                  </Button>
-                  <Button
-                    onClick={handleApplyFilters}
-                    size="md"
-                    className="bg-violet-600 hover:bg-violet-700"
-                  >
+                  {isSuscriptor && (
+                    <Button variant="outline" onClick={handleClearFilters} size="md">
+                      Limpiar
+                    </Button>
+                  )}
+                  <Button onClick={handleApplyFilters} size="md" className="bg-violet-600 hover:bg-violet-700">
                     Aplicar
                   </Button>
                 </div>

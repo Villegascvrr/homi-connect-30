@@ -30,7 +30,7 @@ export interface Profile {
     schedule?: string;
     room_count?: string;
     room_price?: string;
-    sevilla_zonas?: string[];
+    city_zonas?: string[];
     field_of_study?: string;
     apartment_description?: string;
   };
@@ -40,7 +40,7 @@ export interface Profile {
   };
   companeros_count: number;
   has_apartment: boolean;
-  sevilla_zona: string;
+  city_zone: string;
 }
 
 export const useProfiles = (profileId?: string) => {
@@ -67,7 +67,8 @@ export const useProfiles = (profileId?: string) => {
                 interests,
                 lifestyle,
                 is_profile_active,
-                sevilla_zona,
+                city,
+                city_zone,
                 has_apartment,
                 companeros_count,
                 completed,
@@ -151,7 +152,8 @@ export const useProfiles = (profileId?: string) => {
               is_profile_active,
               profile_image_id,
               has_apartment,
-              sevilla_zona,
+              city,
+              city_zone,
               companeros_count,
               discards:profile_discards!profile_discards_target_profile_id_fkey (id, profile_id, target_profile_id),
               matches:profile_matches!profile_matches_target_profile_id_fkey (id, profile_id, target_profile_id)

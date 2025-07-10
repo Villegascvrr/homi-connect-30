@@ -41,7 +41,7 @@ const formSchema = z.object({
   apartmentStatus: z.enum(['looking', 'have']).default('looking'),
   ciudad: z.string().optional(),
   ciudad_otra: z.string().optional(),
-  sevilla_zonas: z.array(z.string()).default([]),
+  city_zonas: z.array(z.string()).default([]),
   companeros_count: z.string().optional(),
   budget: z.string().optional(),
   room_count: z.string().optional(),
@@ -97,7 +97,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
       apartmentStatus: 'looking',
       ciudad: "",
       ciudad_otra: "",
-      sevilla_zonas: [],
+      city_zonas: [],
       companeros_count: "",
       budget: "",
       room_count: "",
@@ -145,19 +145,19 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
         finalCity = values.ciudad_otra;
       }
       
-      // Para compatibilidad, guardar la info de ubicación en sevilla_zona
-      let sevilla_zona_value = "";
+      // Para compatibilidad, guardar la info de ubicación en city_zone
+      let city_zone_value = "";
       if (values.apartmentStatus === 'have') {
         // Si tiene piso y ha seleccionado zona, guarda la zona
-        if (finalCity === 'Sevilla' && values.sevilla_zonas && values.sevilla_zonas.length > 0) {
-          sevilla_zona_value = values.sevilla_zonas[0];
+        if (finalCity && values.city_zonas && values.city_zonas.length > 0) {
+          city_zone_value = values.city_zonas[0];
         } else {
-          sevilla_zona_value = ""; // No guardar 'tengo_piso'
+          city_zone_value = ""; // No guardar 'tengo_piso'
         }
-      } else if (finalCity === 'Sevilla' && values.sevilla_zonas && values.sevilla_zonas.length > 0) {
-        sevilla_zona_value = values.sevilla_zonas[0];
+      } else if (finalCity && values.city_zonas && values.city_zonas.length > 0) {
+        city_zone_value = values.city_zonas[0];
       } else if (finalCity) {
-        sevilla_zona_value = finalCity;
+        city_zone_value = finalCity;
       }
       
       let occupation = values.occupation;
@@ -175,8 +175,8 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
         ...(values.lifestyle || {}),
         budget: values.budget,
         ciudad: finalCity,
-        sevilla_zona: values.ciudad === 'Sevilla' && values.sevilla_zonas && values.sevilla_zonas.length > 0 ? values.sevilla_zonas[0] : undefined,
-        sevilla_zonas: values.sevilla_zonas,
+        city_zone: values.ciudad && values.city_zonas && values.city_zonas.length > 0 ? values.city_zonas[0] : undefined,
+        city_zonas: values.city_zonas,
         room_count: values.room_count,
         room_price: values.room_price,
         apartment_description: values.apartment_description,
@@ -200,7 +200,8 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
         profile_image_id: newProfileImageId,
         interests: values.interests,
         is_profile_active: values.isProfileActive,
-        sevilla_zona: sevilla_zona_value,
+        city: values.ciudad,
+        city_zone: values.ciudad && values.city_zonas && values.city_zonas.length > 0 ? values.city_zonas[0] : null,
         completed: completed,
         companeros_count: values.companeros_count || '',
         lifestyle: lifestyle,
@@ -300,7 +301,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
         try {
           const { data: profileData, error } = await supabase
             .from('profiles')
-            .select('first_name, last_name, username, email, bio, edad, ocupacion, universidad, interests, is_profile_active, sevilla_zona, completed, companeros_count, lifestyle, profile_image_id, has_apartment')
+            .select('first_name, last_name, username, email, bio, edad, ocupacion, universidad, interests, is_profile_active, city, city_zone, completed, companeros_count, lifestyle, profile_image_id, has_apartment')
             .eq('id', user.id)
             .single();
           
@@ -314,9 +315,9 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
           // Extract city and zone information
           let ciudad = "";
           let ciudad_otra = "";
-          let sevilla_zonas: string[] = [];
+          let city_zonas: string[] = [];
           
-          if (profileData.sevilla_zona) {
+          if (profileData.city_zone) {
             // Check if it's the old format (just a zone) or new format
             const sevillaZones = [
               "Casco Antiguo", "Triana", "Los Remedios", "Nervión", 
@@ -332,28 +333,28 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
               currentApartmentStatus = 'looking';
             }
             
-            if (sevillaZones.includes(profileData.sevilla_zona)) {
+            if (sevillaZones.includes(profileData.city_zone)) {
               // Old format: it's a Sevilla zone
               ciudad = "Sevilla";
-              sevilla_zonas = [profileData.sevilla_zona];
-            } else if (profileData.sevilla_zona === 'tengo_piso') {
+              city_zonas = [profileData.city_zone];
+            } else if (profileData.city_zone === 'tengo_piso') {
               
               ciudad = "Sevilla"; // Default to Sevilla for backwards compatibility
             } else {
               // It might be a city name
-              ciudad = profileData.sevilla_zona;
+              ciudad = profileData.city_zone;
             }
           }
 
-          // Handle new format where sevilla_zonas might be stored in lifestyle
+          // Handle new format where city_zonas might be stored in lifestyle
           const lifestyleData = typeof profileData.lifestyle === 'object' && profileData.lifestyle !== null
             ? profileData.lifestyle as Record<string, unknown>
             : {};
           
-          // Check if sevilla_zonas is stored in lifestyle object
-          if (lifestyleData.sevilla_zonas && Array.isArray(lifestyleData.sevilla_zonas)) {
-            sevilla_zonas = lifestyleData.sevilla_zonas as string[];
-            if (sevilla_zonas.length > 0) {
+          // Check if city_zonas is stored in lifestyle object
+          if (lifestyleData.city_zonas && Array.isArray(lifestyleData.city_zonas)) {
+            city_zonas = lifestyleData.city_zonas as string[];
+            if (city_zonas.length > 0) {
               ciudad = "Sevilla";
             }
           }
@@ -390,7 +391,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
             apartmentStatus: currentApartmentStatus,
             ciudad: ciudad,
             ciudad_otra: ciudad_otra,
-            sevilla_zonas: sevilla_zonas,
+            city_zonas: city_zonas,
             companeros_count: profileData.companeros_count || "",
             budget: lifestyleData.budget as string || "",
             room_count: lifestyleData.room_count as string || "",
@@ -428,7 +429,7 @@ const ProfileForm = ({ onSaved, cancelEdit }: ProfileFormProps) => {
             apartmentStatus: 'looking',
             ciudad: "",
             ciudad_otra: "",
-            sevilla_zonas: [],
+            city_zonas: [],
             companeros_count: "",
             budget: "",
             room_count: "",
