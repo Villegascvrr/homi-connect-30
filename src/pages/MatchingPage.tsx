@@ -288,7 +288,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
             })
           // Comprobar límite tras la inserción
           const reached = await updateDailyLimitAfterAction();
-          if (reached) return;
+          if (reached && !isSuscriptor) return;
         } catch (error) {
           console.error('Error inserting in profile_matches:', error);
         }
@@ -352,7 +352,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
             })
           // Comprobar límite tras la inserción
           const reached = await updateDailyLimitAfterAction();
-          if (reached) return;
+          if (reached && !isSuscriptor) return;
         } catch (error) {
           console.error('Error inserting in profile_discards:', error);
         }
@@ -491,7 +491,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
     return <div className="flex items-center justify-center min-h-screen">Error al cargar los perfiles</div>;
   }
 
-  if (hasReachedDailyLimit) {
+  if (hasReachedDailyLimit && !isSuscriptor) {
     return (
       <div className="min-h-screen flex flex-col">
         <Navbar />
@@ -577,6 +577,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                               handleApplyFilters(filters);
                               setOpenSearchFilters(false);
                             } else {
+                              // Mensaje original restaurado
                               toast({
                                 title: "Filtros",
                                 description: "Debes ser suscriptor para usar los filtros",
@@ -585,7 +586,6 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                               });
                               navigate('/precios');
                             }
-                           
                           }} 
                           onClearFilters={handleClearFilters} 
                           activeTab="filtros" 

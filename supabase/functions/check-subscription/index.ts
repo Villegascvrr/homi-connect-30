@@ -86,9 +86,9 @@ serve(async (req) => {
       const amount = price.unit_amount || 0;
       const interval = price.recurring?.interval;
       
-      if (amount === 499 && interval === "month") {
+      if (amount === 299 && interval === "month") {
         subscriptionTier = "PRO";
-      } else if (amount === 2499 && interval === "year") {
+      } else if (amount === 1799 && interval === "year") {
         subscriptionTier = "Fundador";
       } else {
         subscriptionTier = "Unknown";
