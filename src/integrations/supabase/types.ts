@@ -187,7 +187,8 @@ export type Database = {
           ocupacion: string | null
           profile_image: string | null
           profile_image_id: string | null
-          sevilla_zona: string | null
+          city: string | null
+          city_zone: string | null
           skips: number
           universidad: string | null
           updated_at: string
@@ -211,7 +212,8 @@ export type Database = {
           ocupacion?: string | null
           profile_image?: string | null
           profile_image_id?: string | null
-          sevilla_zona?: string | null
+          city?: string | null
+          city_zone?: string | null
           skips?: number
           universidad?: string | null
           updated_at?: string
@@ -235,7 +237,8 @@ export type Database = {
           ocupacion?: string | null
           profile_image?: string | null
           profile_image_id?: string | null
-          sevilla_zona?: string | null
+          city?: string | null
+          city_zone?: string | null
           skips?: number
           universidad?: string | null
           updated_at?: string
