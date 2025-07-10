@@ -115,6 +115,8 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
   const { hasReachedDailyLimit, checkDailyLimit, updateDailyLimitAfterAction } = useSwipes(user?.id);
   const isSuscriptor = user?.is_suscriptor;
   
+  const [orderedProfiles, setOrderedProfiles] = useState<any[]>([]);
+
   React.useEffect(() => {
     if (profiles) {
       setFilteredProfiles(profiles);
@@ -139,6 +141,34 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
   React.useEffect(() => {
     checkDailyLimit();
   }, [checkDailyLimit]);
+
+  React.useEffect(() => {
+    const fetchAndOrderProfiles = async () => {
+      if (!user?.id || !filteredProfiles) return;
+      // 1. Obtener los IDs de perfiles que han dado match al usuario
+      const { data: inverseMatches } = await supabase
+        .from('profile_matches')
+        .select('profile_id')
+        .eq('target_profile_id', user.id);
+      // 2. Obtener los IDs de perfiles descartados por el usuario
+      const { data: discards } = await supabase
+        .from('profile_discards')
+        .select('target_profile_id')
+        .eq('profile_id', user.id);
+      const matchedProfileIds = inverseMatches?.map(m => m.profile_id) || [];
+      const discardedProfileIds = discards?.map(d => d.target_profile_id) || [];
+      // 3. Filtrar los matches inversos que NO están en discards
+      const prioritizedProfiles = filteredProfiles.filter(
+        p => matchedProfileIds.includes(p.id) && !discardedProfileIds.includes(p.id)
+      );
+      // 4. El resto de perfiles
+      const otherProfiles = filteredProfiles.filter(
+        p => !prioritizedProfiles.includes(p)
+      );
+      setOrderedProfiles([...prioritizedProfiles, ...otherProfiles]);
+    };
+    fetchAndOrderProfiles();
+  }, [user, filteredProfiles]);
 
   const handleAction = (action: () => void, message: string) => {
     if (isPreview) {
@@ -622,12 +652,12 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                 </div>
               </div>
               
-              {filteredProfiles.length > 0 ? (
+              {orderedProfiles.length > 0 ? (
                 <>
                   {viewMode === 'swipe' && (
                     <div className="mb-6">
                       <SwipeInterface 
-                        profiles={filteredProfiles.slice(0, 3).map(profile => ({
+                        profiles={orderedProfiles.slice(0, 3).map(profile => ({
                           id: profile.id.toString(),
                           name: profile.name,
                           first_name: profile.first_name,
@@ -660,7 +690,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                   
                   {viewMode === 'grid' && (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {filteredProfiles.slice(0, 3).map(profile => {
+                      {orderedProfiles.slice(0, 3).map(profile => {
                         const cardProps = formatProfileForMatchCard(profile);
                         return (
                           <MatchCard 
