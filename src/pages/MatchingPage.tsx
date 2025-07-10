@@ -144,7 +144,11 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
 
   React.useEffect(() => {
     const fetchAndOrderProfiles = async () => {
-      if (!user?.id || !filteredProfiles) return;
+      if (!filteredProfiles) return;
+      if (!user?.id) {
+        setOrderedProfiles(filteredProfiles);
+        return;
+      }
       // 1. Obtener los IDs de perfiles que han dado match al usuario
       const { data: inverseMatches } = await supabase
         .from('profile_matches')
