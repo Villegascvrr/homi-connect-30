@@ -231,7 +231,7 @@ const ProfilePage = () => {
     let status = 'Estoy buscando piso';
     let location = 'No especificado';
     
-    // Nueva lógica: usar has_apartment
+    // Determine apartment status
     if (profile.has_apartment) {
       status = 'Ya tengo piso';
     }
