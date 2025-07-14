@@ -29,7 +29,7 @@ const Index = () => {
     age: 23,
     location: 'Madrid',
     bio: 'Estudiante de Arquitectura. Me gusta leer, el arte y las noches tranquilas. Busco piso cerca de la universidad.',
-    imgUrl: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1000',
+    imgUrl: '/3b1eaee0f490dfab8219bc84cffdd648.jpg',
     tags: [{
       id: 1,
       name: 'Ordenada'
@@ -50,7 +50,7 @@ const Index = () => {
     age: 25,
     location: 'Barcelona',
     bio: 'Desarrollador web, amante de la tecnología y los videojuegos. Busco un ambiente relajado donde pueda trabajar y descansar.',
-    imgUrl: 'https://st3.depositphotos.com/1075946/12883/i/450/depositphotos_128838890-stock-photo-student-in-architecture-training-class.jpg',
+    imgUrl: '/5abb58d3e467cea5db565121acb6a011.jpg',
     tags: [{
       id: 1,
       name: 'Tecnología'
@@ -71,7 +71,7 @@ const Index = () => {
     age: 22,
     location: 'Valencia',
     bio: 'Estudiante de Medicina. Me encanta cocinar y compartir momentos con amigos. Busco compañeros con intereses similares.',
-    imgUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1000',
+    imgUrl: '/a8a02f1699d7efe522aa4bc1247cc6cd.jpg',
     tags: [{
       id: 6,
       name: 'Sociable'

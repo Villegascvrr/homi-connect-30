@@ -231,8 +231,8 @@ const ProfilePage = () => {
     let status = 'Estoy buscando piso';
     let location = 'No especificado';
     
-    // Determine apartment status
-    if (profile.sevilla_zona === 'tengo_piso') {
+    // Nueva lógica: usar has_apartment
+    if (profile.has_apartment) {
       status = 'Ya tengo piso';
     }
     
@@ -264,7 +264,7 @@ const ProfilePage = () => {
   };
 
   const { status: apartmentStatus, location } = getLocationAndStatusDisplay();
-  const hasApartment = profile.sevilla_zona === 'tengo_piso';
+  const hasApartment = profile.has_apartment;
 
   const requiredFields = ['first_name', 'edad', 'profile_image', 'interests', 'lifestyle'];
   const completedFields = requiredFields.filter(field => {
