@@ -9,25 +9,25 @@ interface PremiumBadgeProps {
   className?: string;
 }
 
-const PremiumBadge: React.FC<PremiumBadgeProps> = ({ 
-  size = 'sm', 
+const PremiumBadge: React.FC<PremiumBadgeProps> = ({
+  size = 'sm',
   variant = 'default',
-  className 
+  className,
 }) => {
   const sizeClasses = {
     sm: 'text-xs px-1.5 py-0.5',
     md: 'text-sm px-2 py-1',
-    lg: 'text-base px-3 py-1.5'
+    lg: 'text-base px-3 py-1.5',
   };
 
   const iconSizes = {
     sm: 'h-3 w-3',
     md: 'h-3.5 w-3.5',
-    lg: 'h-4 w-4'
+    lg: 'h-4 w-4',
   };
 
   return (
-    <Badge 
+    <Badge
       variant={variant}
       className={cn(
         'bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold border-0 gap-1',
