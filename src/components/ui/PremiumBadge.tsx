@@ -30,13 +30,13 @@ const PremiumBadge: React.FC<PremiumBadgeProps> = ({
     <Badge
       variant={variant}
       className={cn(
-        'bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold border-0 gap-1',
+        'bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 text-black font-bold border-0 gap-1',
         sizeClasses[size],
         className
       )}
     >
       <Crown className={iconSizes[size]} />
-      PRO
+      Premium
     </Badge>
   );
 };
