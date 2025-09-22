@@ -213,7 +213,7 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                     <Select
                       value={buscaPiso}
                       onValueChange={
-                        isSuscriptor ? setBuscaPiso : handlePremiumFeatureClick
+                        isSuscriptor ? setBuscaPiso : (_value) => handlePremiumFeatureClick()
                       }
                       disabled={!isSuscriptor}
                     >
@@ -250,7 +250,7 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                     <Select
                       value={rangoEdad}
                       onValueChange={
-                        isSuscriptor ? setRangoEdad : handlePremiumFeatureClick
+                        isSuscriptor ? setRangoEdad : (_value) => handlePremiumFeatureClick()
                       }
                       disabled={!isSuscriptor}
                     >
@@ -363,7 +363,7 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                         onValueChange={
                           isSuscriptor
                             ? setNivelLimpieza
-                            : handlePremiumFeatureClick
+                            : () => handlePremiumFeatureClick()
                         }
                         disabled={!isSuscriptor}
                       >
@@ -406,7 +406,7 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                         onValueChange={
                           isSuscriptor
                             ? setNivelRuido
-                            : handlePremiumFeatureClick
+                            : (_value) => handlePremiumFeatureClick()
                         }
                         disabled={!isSuscriptor}
                       >
@@ -449,7 +449,7 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                         onValueChange={
                           isSuscriptor
                             ? setHorarioHabitual
-                            : handlePremiumFeatureClick
+                            : (_value) => handlePremiumFeatureClick()
                         }
                         disabled={!isSuscriptor}
                       >
@@ -501,7 +501,7 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                         onValueChange={
                           isSuscriptor
                             ? setInvitados
-                            : handlePremiumFeatureClick
+                            : (_value) => handlePremiumFeatureClick()
                         }
                         disabled={!isSuscriptor}
                       >
@@ -545,7 +545,7 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                       <Select
                         value={fumar}
                         onValueChange={
-                          isSuscriptor ? setFumar : handlePremiumFeatureClick
+                          isSuscriptor ? setFumar : (_value) => handlePremiumFeatureClick()
                         }
                         disabled={!isSuscriptor}
                       >
@@ -584,7 +584,7 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                       <Select
                         value={mascotas}
                         onValueChange={
-                          isSuscriptor ? setMascotas : handlePremiumFeatureClick
+                          isSuscriptor ? setMascotas : (_value) => handlePremiumFeatureClick()
                         }
                         disabled={!isSuscriptor}
                       >
@@ -643,7 +643,7 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                       onValueChange={
                         isSuscriptor
                           ? (value) => setPresupuesto(value as [number, number])
-                          : handlePremiumFeatureClick
+                          : (_value) => handlePremiumFeatureClick()
                       }
                       className="bg-purple-100"
                       disabled={!isSuscriptor}
@@ -689,7 +689,7 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                             onCheckedChange={
                               isSuscriptor
                                 ? () => handleInteresToggle(interes.id)
-                                : handlePremiumFeatureClick
+                                : (_checked) => handlePremiumFeatureClick()
                             }
                             className="h-3.5 w-3.5"
                             disabled={!isSuscriptor}
