@@ -29,6 +29,8 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { useIsMobile } from "@/hooks/use-mobile";
+import PremiumBadge from "@/components/ui/PremiumBadge";
+import { useNavigate } from "react-router-dom";
 
 interface FilterValues {
   presupuesto?: [number, number];
@@ -80,6 +82,7 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
 
   const [mostrarPreferencias, setMostrarPreferencias] = useState(false);
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (activeFilters) {
@@ -152,6 +155,12 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
     }
   };
 
+  const handlePremiumFeatureClick = () => {
+    if (!isSuscriptor) {
+      navigate('/precios');
+    }
+  };
+
   return (
     <div className={className}>
       <div className="space-y-4 relative">
@@ -187,70 +196,99 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                       </SelectContent>
                     </Select>
                   </div>
-                  {/* SOLO para premium: el resto de filtros */}
-                  {isSuscriptor && (
-                    <>
-                      {/* Aquí van los demás filtros premium, por ejemplo: */}
-                      <div className="space-y-1">
-                        <Label className="text-xs font-medium">¿Busca piso?</Label>
-                        <Select value={buscaPiso} onValueChange={setBuscaPiso}>
-                          <SelectTrigger className="w-full bg-background h-9 text-sm">
-                            <div className="flex items-center gap-1.5">
-                              <Building2 className="h-4 w-4" />
-                              <SelectValue placeholder="Cualquiera" />
-                            </div>
-                          </SelectTrigger>
-                          <SelectContent position="popper" className="bg-background z-50">
-                            <SelectItem value="Cualquiera">Cualquiera</SelectItem>
-                            <SelectItem value="Si">Si</SelectItem>
-                            <SelectItem value="No">No</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-1">
-                        <Label className="text-xs font-medium">Edades</Label>
-                        <Select value={rangoEdad} onValueChange={setRangoEdad}>
-                          <SelectTrigger className="w-full bg-background h-9 text-sm">
-                            <div className="flex items-center gap-1.5">
-                              <User className="h-4 w-4" />
-                              <SelectValue placeholder="Todas las edades" />
-                            </div>
-                          </SelectTrigger>
-                          <SelectContent position="popper" className="bg-background z-50">
-                            <SelectItem value="todas">Todas las edades</SelectItem>
-                            <SelectItem value="18-19">18-19 años</SelectItem>
-                            <SelectItem value="20-21">20-21 años</SelectItem>
-                            <SelectItem value="22-25">22-25 años</SelectItem>
-                            <SelectItem value="26+">Más de 25 años</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-1">
-                        <Label className="text-xs font-medium flex items-center gap-1.5">
-                          <DollarSign className="h-4 w-4" />
-                          Presupuesto: {presupuesto[0]}€ - {presupuesto[1]}€
-                        </Label>
-                        <div className="px-2 py-2">
-                          <Slider
-                            value={presupuesto}
-                            min={100}
-                            max={1500}
-                            step={50}
-                            onValueChange={(value) => setPresupuesto(value as [number, number])}
-                            className="bg-purple-100"
-                          />
+
+                  {/* Filtro ¿Busca piso? - Ahora siempre visible con badge PRO si no es suscriptor */}
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <Label className="text-xs font-medium">¿Busca piso?</Label>
+                      {!isSuscriptor && <PremiumBadge size="sm" />}
+                    </div>
+                    <Select 
+                      value={buscaPiso} 
+                      onValueChange={isSuscriptor ? setBuscaPiso : handlePremiumFeatureClick}
+                      disabled={!isSuscriptor}
+                    >
+                      <SelectTrigger 
+                        className={`w-full bg-background h-9 text-sm ${
+                          !isSuscriptor ? 'opacity-60 cursor-pointer' : ''
+                        }`}
+                        onClick={!isSuscriptor ? handlePremiumFeatureClick : undefined}
+                      >
+                        <div className="flex items-center gap-1.5">
+                          <Building2 className="h-4 w-4" />
+                          <SelectValue placeholder="Cualquiera" />
                         </div>
-                      </div>
-                    </>
-                  )}
+                      </SelectTrigger>
+                      <SelectContent position="popper" className="bg-background z-50">
+                        <SelectItem value="Cualquiera">Cualquiera</SelectItem>
+                        <SelectItem value="Si">Si</SelectItem>
+                        <SelectItem value="No">No</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Filtro de edad - Ahora siempre visible con badge PRO si no es suscriptor */}
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <Label className="text-xs font-medium">Edades</Label>
+                      {!isSuscriptor && <PremiumBadge size="sm" />}
+                    </div>
+                    <Select 
+                      value={rangoEdad} 
+                      onValueChange={isSuscriptor ? setRangoEdad : handlePremiumFeatureClick}
+                      disabled={!isSuscriptor}
+                    >
+                      <SelectTrigger 
+                        className={`w-full bg-background h-9 text-sm ${
+                          !isSuscriptor ? 'opacity-60 cursor-pointer' : ''
+                        }`}
+                        onClick={!isSuscriptor ? handlePremiumFeatureClick : undefined}
+                      >
+                        <div className="flex items-center gap-1.5">
+                          <User className="h-4 w-4" />
+                          <SelectValue placeholder="Todas las edades" />
+                        </div>
+                      </SelectTrigger>
+                      <SelectContent position="popper" className="bg-background z-50">
+                        <SelectItem value="todas">Todas las edades</SelectItem>
+                        <SelectItem value="18-19">18-19 años</SelectItem>
+                        <SelectItem value="20-21">20-21 años</SelectItem>
+                        <SelectItem value="22-25">22-25 años</SelectItem>
+                        <SelectItem value="26+">Más de 25 años</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Filtro de presupuesto - Ahora siempre visible con badge PRO si no es suscriptor */}
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <Label className="text-xs font-medium flex items-center gap-1.5">
+                        <DollarSign className="h-4 w-4" />
+                        Presupuesto: {presupuesto[0]}€ - {presupuesto[1]}€
+                      </Label>
+                      {!isSuscriptor && <PremiumBadge size="sm" />}
+                    </div>
+                    <div 
+                      className={`px-2 py-2 ${!isSuscriptor ? 'opacity-60 cursor-pointer' : ''}`}
+                      onClick={!isSuscriptor ? handlePremiumFeatureClick : undefined}
+                    >
+                      <Slider
+                        value={presupuesto}
+                        min={100}
+                        max={1500}
+                        step={50}
+                        onValueChange={isSuscriptor ? (value) => setPresupuesto(value as [number, number]) : handlePremiumFeatureClick}
+                        className="bg-purple-100"
+                        disabled={!isSuscriptor}
+                      />
+                    </div>
+                  </div>
                 </div>
                 {/* Botones de aplicar/limpiar */}
                 <div className="flex justify-end gap-2 pt-1">
-                  {isSuscriptor && (
-                    <Button variant="outline" onClick={handleClearFilters} size="md">
-                      Limpiar
-                    </Button>
-                  )}
+                  <Button variant="outline" onClick={handleClearFilters} size="md">
+                    Limpiar
+                  </Button>
                   <Button onClick={handleApplyFilters} size="md" className="bg-violet-600 hover:bg-violet-700">
                     Aplicar
                   </Button>
@@ -278,12 +316,21 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                     <h3 className="font-medium text-sm">Estilo de vida</h3>
 
                     <div className="space-y-1">
-                      <Label className="text-xs">Nivel de limpieza</Label>
+                      <div className="flex items-center gap-2">
+                        <Label className="text-xs">Nivel de limpieza</Label>
+                        {!isSuscriptor && <PremiumBadge size="sm" />}
+                      </div>
                       <Select
                         value={nivelLimpieza}
-                        onValueChange={setNivelLimpieza}
+                        onValueChange={isSuscriptor ? setNivelLimpieza : handlePremiumFeatureClick}
+                        disabled={!isSuscriptor}
                       >
-                        <SelectTrigger className="bg-background h-9 text-sm">
+                        <SelectTrigger 
+                          className={`bg-background h-9 text-sm ${
+                            !isSuscriptor ? 'opacity-60 cursor-pointer' : ''
+                          }`}
+                          onClick={!isSuscriptor ? handlePremiumFeatureClick : undefined}
+                        >
                           <SelectValue placeholder="Selecciona nivel de limpieza" />
                         </SelectTrigger>
                         <SelectContent
@@ -304,9 +351,21 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                     </div>
 
                     <div className="space-y-1">
-                      <Label className="text-xs">Nivel de ruido</Label>
-                      <Select value={nivelRuido} onValueChange={setNivelRuido}>
-                        <SelectTrigger className="bg-background h-9 text-sm">
+                      <div className="flex items-center gap-2">
+                        <Label className="text-xs">Nivel de ruido</Label>
+                        {!isSuscriptor && <PremiumBadge size="sm" />}
+                      </div>
+                      <Select 
+                        value={nivelRuido} 
+                        onValueChange={isSuscriptor ? setNivelRuido : handlePremiumFeatureClick}
+                        disabled={!isSuscriptor}
+                      >
+                        <SelectTrigger 
+                          className={`bg-background h-9 text-sm ${
+                            !isSuscriptor ? 'opacity-60 cursor-pointer' : ''
+                          }`}
+                          onClick={!isSuscriptor ? handlePremiumFeatureClick : undefined}
+                        >
                           <SelectValue placeholder="Selecciona nivel de ruido" />
                         </SelectTrigger>
                         <SelectContent
@@ -327,12 +386,21 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                     </div>
 
                     <div className="space-y-1">
-                      <Label className="text-xs">Horario habitual</Label>
+                      <div className="flex items-center gap-2">
+                        <Label className="text-xs">Horario habitual</Label>
+                        {!isSuscriptor && <PremiumBadge size="sm" />}
+                      </div>
                       <Select
                         value={horarioHabitual}
-                        onValueChange={setHorarioHabitual}
+                        onValueChange={isSuscriptor ? setHorarioHabitual : handlePremiumFeatureClick}
+                        disabled={!isSuscriptor}
                       >
-                        <SelectTrigger className="bg-background h-9 text-sm">
+                        <SelectTrigger 
+                          className={`bg-background h-9 text-sm ${
+                            !isSuscriptor ? 'opacity-60 cursor-pointer' : ''
+                          }`}
+                          onClick={!isSuscriptor ? handlePremiumFeatureClick : undefined}
+                        >
                           <SelectValue placeholder="Selecciona tu horario habitual" />
                         </SelectTrigger>
                         <SelectContent
@@ -362,9 +430,21 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                     </h3>
 
                     <div className="space-y-1">
-                      <Label className="text-xs">Invitados</Label>
-                      <Select value={invitados} onValueChange={setInvitados}>
-                        <SelectTrigger className="bg-background h-9 text-sm">
+                      <div className="flex items-center gap-2">
+                        <Label className="text-xs">Invitados</Label>
+                        {!isSuscriptor && <PremiumBadge size="sm" />}
+                      </div>
+                      <Select 
+                        value={invitados} 
+                        onValueChange={isSuscriptor ? setInvitados : handlePremiumFeatureClick}
+                        disabled={!isSuscriptor}
+                      >
+                        <SelectTrigger 
+                          className={`bg-background h-9 text-sm ${
+                            !isSuscriptor ? 'opacity-60 cursor-pointer' : ''
+                          }`}
+                          onClick={!isSuscriptor ? handlePremiumFeatureClick : undefined}
+                        >
                           <SelectValue placeholder="Frecuencia de invitados" />
                         </SelectTrigger>
                         <SelectContent
@@ -388,9 +468,21 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                     </div>
 
                     <div className="space-y-1">
-                      <Label className="text-xs">Fumar</Label>
-                      <Select value={fumar} onValueChange={setFumar}>
-                        <SelectTrigger className="bg-background h-9 text-sm">
+                      <div className="flex items-center gap-2">
+                        <Label className="text-xs">Fumar</Label>
+                        {!isSuscriptor && <PremiumBadge size="sm" />}
+                      </div>
+                      <Select 
+                        value={fumar} 
+                        onValueChange={isSuscriptor ? setFumar : handlePremiumFeatureClick}
+                        disabled={!isSuscriptor}
+                      >
+                        <SelectTrigger 
+                          className={`bg-background h-9 text-sm ${
+                            !isSuscriptor ? 'opacity-60 cursor-pointer' : ''
+                          }`}
+                          onClick={!isSuscriptor ? handlePremiumFeatureClick : undefined}
+                        >
                           <SelectValue placeholder="Preferencia sobre fumar" />
                         </SelectTrigger>
                         <SelectContent
@@ -409,9 +501,21 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                     </div>
 
                     <div className="space-y-1">
-                      <Label className="text-xs">Mascotas</Label>
-                      <Select value={mascotas} onValueChange={setMascotas}>
-                        <SelectTrigger className="bg-background h-9 text-sm">
+                      <div className="flex items-center gap-2">
+                        <Label className="text-xs">Mascotas</Label>
+                        {!isSuscriptor && <PremiumBadge size="sm" />}
+                      </div>
+                      <Select 
+                        value={mascotas} 
+                        onValueChange={isSuscriptor ? setMascotas : handlePremiumFeatureClick}
+                        disabled={!isSuscriptor}
+                      >
+                        <SelectTrigger 
+                          className={`bg-background h-9 text-sm ${
+                            !isSuscriptor ? 'opacity-60 cursor-pointer' : ''
+                          }`}
+                          onClick={!isSuscriptor ? handlePremiumFeatureClick : undefined}
+                        >
                           <SelectValue placeholder="Preferencia sobre mascotas" />
                         </SelectTrigger>
                         <SelectContent
@@ -434,29 +538,45 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                 </div>
 
                 <div className="space-y-1">
-                  <Label className="text-xs font-medium flex items-center gap-1.5">
-                    <DollarSign className="h-4 w-4" />
-                    Presupuesto: {presupuesto[0]}€ - {presupuesto[1]}€
-                  </Label>
-                  <div className="px-2 py-2">
+                  <div className="flex items-center gap-2">
+                    <Label className="text-xs font-medium flex items-center gap-1.5">
+                      <DollarSign className="h-4 w-4" />
+                      Presupuesto: {presupuesto[0]}€ - {presupuesto[1]}€
+                    </Label>
+                    {!isSuscriptor && <PremiumBadge size="sm" />}
+                  </div>
+                  <div 
+                    className={`px-2 py-2 ${!isSuscriptor ? 'opacity-60 cursor-pointer' : ''}`}
+                    onClick={!isSuscriptor ? handlePremiumFeatureClick : undefined}
+                  >
                     <Slider
                       value={presupuesto}
                       min={100}
                       max={1500}
                       step={50}
-                      onValueChange={(value) =>
-                        setPresupuesto(value as [number, number])
+                      onValueChange={isSuscriptor ? 
+                        (value) => setPresupuesto(value as [number, number]) : 
+                        handlePremiumFeatureClick
                       }
                       className="bg-purple-100"
+                      disabled={!isSuscriptor}
                     />
                   </div>
                 </div>
 
                 <div className="space-y-1">
-                  <Label className="text-xs font-medium">
-                    Intereses personales
-                  </Label>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1 mt-1">
+                  <div className="flex items-center gap-2">
+                    <Label className="text-xs font-medium">
+                      Intereses personales
+                    </Label>
+                    {!isSuscriptor && <PremiumBadge size="sm" />}
+                  </div>
+                  <div 
+                    className={`grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1 mt-1 ${
+                      !isSuscriptor ? 'opacity-60 cursor-pointer' : ''
+                    }`}
+                    onClick={!isSuscriptor ? handlePremiumFeatureClick : undefined}
+                  >
                     {[
                       { id: "musica", label: "Música" },
                       { id: "cine", label: "Cine" },
@@ -477,10 +597,12 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                           <Checkbox
                             id={`interes-${interes.id}`}
                             checked={intereses.includes(interes.id)}
-                            onCheckedChange={() =>
-                              handleInteresToggle(interes.id)
+                            onCheckedChange={isSuscriptor ? 
+                              () => handleInteresToggle(interes.id) : 
+                              handlePremiumFeatureClick
                             }
                             className="h-3.5 w-3.5"
+                            disabled={!isSuscriptor}
                           />
                           <span className="text-xs">{interes.label}</span>
                         </label>
