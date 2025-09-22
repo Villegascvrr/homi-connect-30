@@ -171,7 +171,7 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
             </CardHeader>
             <CardContent className="p-3">
               <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Filtro de ciudad SIEMPRE visible */}
                   <div className="space-y-1">
                     <Label className="text-xs font-medium">Ubicación</Label>
@@ -203,8 +203,8 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                   </div>
 
                   {/* Filtro ¿Busca piso? - Ahora siempre visible con badge PRO si no es suscriptor */}
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
                       <Label className="text-xs font-medium">
                         ¿Busca piso?
                       </Label>
@@ -242,8 +242,8 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                   </div>
 
                   {/* Filtro de edad - Ahora siempre visible con badge PRO si no es suscriptor */}
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
                       <Label className="text-xs font-medium">Edades</Label>
                       {!isSuscriptor && <PremiumBadge size="sm" />}
                     </div>
@@ -281,8 +281,8 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                   </div>
 
                   {/* Filtro de presupuesto - Ahora siempre visible con badge PRO si no es suscriptor */}
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
                       <Label className="text-xs font-medium flex items-center gap-1.5">
                         <DollarSign className="h-4 w-4" />
                         Presupuesto: {presupuesto[0]}€ - {presupuesto[1]}€
@@ -353,8 +353,8 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                   <div className="space-y-3">
                     <h3 className="font-medium text-sm">Estilo de vida</h3>
 
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
                         <Label className="text-xs">Nivel de limpieza</Label>
                         {!isSuscriptor && <PremiumBadge size="sm" />}
                       </div>
@@ -396,8 +396,8 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                       </Select>
                     </div>
 
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
                         <Label className="text-xs">Nivel de ruido</Label>
                         {!isSuscriptor && <PremiumBadge size="sm" />}
                       </div>
@@ -439,8 +439,8 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                       </Select>
                     </div>
 
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
                         <Label className="text-xs">Horario habitual</Label>
                         {!isSuscriptor && <PremiumBadge size="sm" />}
                       </div>
@@ -491,8 +491,8 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                       Preferencias de vivienda
                     </h3>
 
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
                         <Label className="text-xs">Invitados</Label>
                         {!isSuscriptor && <PremiumBadge size="sm" />}
                       </div>
@@ -537,8 +537,8 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                       </Select>
                     </div>
 
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
                         <Label className="text-xs">Fumar</Label>
                         {!isSuscriptor && <PremiumBadge size="sm" />}
                       </div>
@@ -576,8 +576,8 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                       </Select>
                     </div>
 
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
                         <Label className="text-xs">Mascotas</Label>
                         {!isSuscriptor && <PremiumBadge size="sm" />}
                       </div>
@@ -619,8 +619,8 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                   </div>
                 </div>
 
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
                     <Label className="text-xs font-medium flex items-center gap-1.5">
                       <DollarSign className="h-4 w-4" />
                       Presupuesto: {presupuesto[0]}€ - {presupuesto[1]}€
@@ -651,8 +651,8 @@ const MatchingFilters: React.FC<MatchingFiltersProps> = ({
                   </div>
                 </div>
 
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
                     <Label className="text-xs font-medium">
                       Intereses personales
                     </Label>
