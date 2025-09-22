@@ -605,7 +605,7 @@ const MatchingPage = ({ isPreview = false }: MatchingPageProps) => {
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="p-0 z-50" align="end" sideOffset={5} compact>
-                      <div className="overflow-auto max-h-[80vh] max-w-[90vw] w-[500px] pb-3">
+                      <div className="overflow-auto max-h-[80vh] max-w-[90vw] w-[500px]">
                         <MatchingFilters 
                           activeFilters={activeFilters}
                           onApplyFilters={filters => {
