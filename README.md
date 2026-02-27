@@ -1,70 +1,68 @@
+🏠 HOMIMATCH – Compatibility-Based Flatmate Matching Platform
 
-# Welcome to your Lovable project
+HOMIMATCH is a web platform designed to help people find compatible flatmates through structured lifestyle-based matching instead of traditional room listings.
 
-## Project info
+The platform focuses on reducing shared-housing conflicts by evaluating compatibility before move-in.
 
-**URL**: https://lovable.dev/projects/2f93282f-7fa1-47e9-8132-e38946a403cd
+✨ Key Features
 
-## How can I edit this code?
+🧠 Compatibility Questionnaire – Lifestyle-based structured onboarding
+📊 Matching Algorithm – Weighted compatibility scoring system
+👤 User Profiles – Detailed preferences & living expectations
+🔎 Advanced Filtering – Search by city, lifestyle, and housing criteria
+💬 Contact Initiation – Direct communication between compatible users
+📋 Personal Dashboard – Manage matches, preferences, and activity
 
-There are several ways of editing your application.
+🛠️ Tech Stack
 
-**Use Lovable**
+Frontend: React 18 / Next.js
+Language: TypeScript
+Styling: Tailwind CSS
+UI Components: shadcn/ui, Lucide Icons
+Backend / BaaS: Supabase (PostgreSQL, Auth, Realtime)
+State Management: React Context API / Zustand
+Routing: React Router DOM / Next Router
+Deployment: Vercel / Netlify
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/2f93282f-7fa1-47e9-8132-e38946a403cd) and start prompting.
+🚀 Getting Started (Development)
+Prerequisites
 
-Changes made via Lovable will be committed automatically to this repo.
+Node.js v18+
+npm or pnpm
 
-**Use your preferred IDE**
+Clone the repository
+git clone https://github.com/<your-username>/homimatch-web.git
+cd homimatch-web
+Install dependencies
+npm install
+Environment Variables
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+Create a .env file in the root directory:
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+VITE_SUPABASE_URL=
+VITE_SUPABASE_ANON_KEY=
+DATABASE_URL=
+JWT_SECRET=
+Start the development server
 npm run dev
-```
 
-**Edit a file directly in GitHub**
+Open:
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with .
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/2f93282f-7fa1-47e9-8132-e38946a403cd) and click on Share -> Publish.
-
-## I want to use a custom domain - is that possible?
-
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+http://localhost:5173
+🏗️ Project Structure
+/src
+├── components/        # Reusable UI components
+│   ├── layout/        # App shell (Sidebar, Header)
+│   ├── matching/      # Compatibility logic components
+│   └── ui/            # UI primitives
+├── pages/             # Main route views
+├── contexts/          # Global state & authentication
+├── hooks/             # Custom hooks
+├── services/          # API & Supabase client
+├── utils/             # Helper functions
+└── types/             # TypeScript interfaces
+📄 Available Scripts
+npm run dev       # Start development server
+npm run build     # Build for production
+npm run preview   # Preview production build
+npm run lint      # Run ESLint
